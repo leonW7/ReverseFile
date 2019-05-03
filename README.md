@@ -1,5 +1,5 @@
-# Reversefile
-rename file according to its fileformat
+# ReverseFile
+rename file according to its fileformat, uncompress, decomplier...
 
 ## add unzip 
 
