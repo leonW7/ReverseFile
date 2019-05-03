@@ -1,0 +1,1091 @@
+<?lua
+require "teamf1lualib/captivePortal"
+require "teamf1lualib/returnCodes" 
+require "teamf1lualib/captivePortal_returnCodes"
+require "teamf1lualib/errorMap"
+require "loginLuaLib"
+
+local returnCodes = require("com.teamf1.core.returnCodes")
+local captivePortalReturn = require("com.teamf1.core.captivePortal_returnCodes")
+local errorMap           = require ("com.teamf1.core.errorMap")
+
+
+local buttonName = cgi.ButtonType or ''
+
+-- is Captive Portal enabled
+
+local isenabled,profileId,vlanId, clientType = captivePortal.isEnabled()
+previewFlag="0"
+
+if (buttonName == "Preview") then
+	isenabled = "1"
+	previewFlag="1"
+else
+	if (spUrlStr ~= "2" and spUrlStr ~="4") then
+		spUrlStr = "0"
+	end
+
+	-- Check if User is already Logged in
+	-- If already logged in make spUrlStr 1
+
+	local alreadyLoggedIn = captivePortal.getLoginStatus ()
+	if(alreadyLoggedIn == "1" and spUrlStr ~= "2" and spUrlStr ~="4") then
+	    spUrlStr = "1"
+	end
+end
+if (isenabled == "0") then
+    NextPage = "index"
+    cpStatusMsg = ""
+    web.goToPage(NextPage, true, true)    
+elseif (ButtonType and ButtonType == "login") then
+    local inputTable = web.cgiToLuaTable(cgi)    
+    -- authenticate
+
+    result,statusCode,idletimeout,sessionTO = captivePortal.RunTimeAuthenticate(inputTable,vlanId,profileId,clientType)
+
+    local logUserName = inputTable["CaptivePortalSession.UserName"]     
+    local logMsg = " "
+    if(logUserName ~= nil) then
+       logMsg = logUserName .. " "
+    end
+    if (result == 0) then
+        util.appendDebugOut("Authentication Successful!<br>") 
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user Authentication Successful.", 6, "LOGIN" )
+        -- Login        
+        errorFlag, statusCode = captivePortal.RunTimelogin(inputTable,profileId,vlanId,idletimeout,clientType,sessionTO)
+        -- save db if no error
+        if (errorFlag == "OK") then
+        db.save()
+        end
+
+        usrName = inputTable["CaptivePortalSession.UserName"]     
+        cpStatusMsgClass = "msgSuccess"     
+        cpStatusMsg = statusCode 
+        spUrlStr = "1"
+        web.goToPage(NextPage, true, true)    
+    elseif (result == 1) then 
+        util.appendDebugOut("REPEAT LOGIN!<br>") 
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user already login.", 4, "LOGIN" )
+        local inputTable = web.cgiToLuaTable(cgi)   
+	    loginInfo = inputTable 
+        spUrlStr = "2"
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = statusCode 
+        web.goToPage(NextPage, true, true)
+     elseif (result == 2) then
+        util.appendDebugOut("Authentication Failed<br>")
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user Authentication Failed/invalid username or password.", 3, "LOGIN" )
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = statusCode
+        loginConf = inputTable
+        spUrlStr = "0"               
+        web.goToPage(NextPage, true, true)        
+     elseif (result == 3) then
+        util.appendDebugOut("Blocked Login from this browser<br>")
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user Blocked Login from this browser.", 4, "LOGIN" )
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = statusCode
+
+        loginConf = inputTable
+        spUrlStr = "0"               
+        web.goToPage(NextPage, true, true)
+	elseif (result == 4) then
+        util.appendDebugOut("Authentication Failed, Server Unreachable <br>")
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user Authentication Failed, Server Unreachable.", 3, "LOGIN" )
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = statusCode or ''
+        loginConf = inputTable
+        spUrlStr = "0"               
+        web.goToPage(NextPage, true, true)        
+    elseif (result == 5) then
+        util.appendDebugOut("SLA Page<br>")
+        local inputTable = web.cgiToLuaTable(cgi)
+        loginConf = inputTable
+	    usrName=inputTable["CaptivePortalSession.UserName"]
+	    password=inputTable["CaptivePortalSession.Password"]
+        spUrlStr = "4"               
+        web.goToPage(NextPage, true, true)
+    end
+elseif (ButtonType and ButtonType == "accept") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local inputTable1 = {}
+    inputTable1["CaptivePortalSession.UserName"]=inputTable["temp.username"]
+    inputTable1["CaptivePortalSession.Password"]=inputTable["temp.password"]
+    idletimeout=inputTable["temp.idletimeout"]
+    sessionTO = "0"
+    local wher = "UserName = '".. inputTable["temp.username"] .. "'"
+    local rowExist = db.getRowWhere ("tempUsers", wher)
+    if (rowExist == nil) then
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = CaptivePortal.AUTH_FAILURE_ACCT_EXPIRED_MSG or ''
+        spUrlStr = "0"
+    else
+         errorFlag, statusCode = captivePortal.RunTimelogin(inputTable1,profileId,vlanId,idletimeout,clientType,sessionTO)
+         -- save db if no error
+         if (errorFlag == "OK") then
+             db.save()
+         end
+		    accessType = db.getAttribute("intervlanrouting","vlanId",vlanId,"accessType") or "-1"
+	    if(accessType == "3") then
+		    db.execute("ATTACH '/tmp/cpAcc.db' as cpAccDB")
+		    usrName=inputTable1["CaptivePortalSession.UserName"]
+		    local profId = db.getAttribute("tempUsers","UserName",usrName,"ProfileId")
+		    if(profId) then
+			    alertType = db.getAttribute("tempCPUserProfiles","ProfileId",profId,"AlertType")
+			    alertValue = db.getAttribute("tempCPUserProfiles","ProfileId",profId,"AlertValue")
+			    if(alertType == "2" or alertType == "3") then
+				    maxValue =  db.getAttribute("tempUsers","ProfileId",profId,"MaxUsageTrafficInfo")
+				    alertValue = tonumber(alertValue)
+				    if(alertType == "3") then
+					    alertValue = alertValue * 1024
+				    end
+				    maxValue = tonumber(maxValue)
+			    else
+				    maxValue =  db.getAttribute("tempUsers","ProfileId",profId,"MaxUsageTimeInfo")
+				    maxValue = tonumber(maxValue)
+				    alertValue = tonumber(alertValue) * 3600
+				    if(alertType == "1") then
+					alertValue = alertValue * 24
+				end
+			end
+		end
+	end
+	db.execute("DETACH cpAccDB")
+    cpStatusMsg = statusCode or ''
+    spUrlStr = "1"
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "changePdw") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag, statusCode = captivePortal.changePassword(inputTable)
+    -- save db if no error
+    if (errorFlag == "OK") then
+        db.save()
+     end
+     cpStatusMsgClass = "msgInfo"
+     cpStatusMsg = statusCode 
+     spUrlStr = "1"
+        web.goToPage(NextPage, true, true)
+     
+elseif (ButtonType and ButtonType == "continue") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag, statusCode,cpType,idletimeout, sessionTO = captivePortal.forcedLoginPart1(inputTable,profileId,vlanId,clientType,sessionTO)
+    if (errorFlag == "OK") then
+    	if(cpType=="3") then
+	    spUrlStr = "4"
+	    usrName=inputTable["CaptivePortalSession.UserName"]
+	    password=inputTable["CaptivePortalSession.Password"]
+	else
+    	cpStatusMsg = statusCode
+
+        errorFlag, statusCode = captivePortal.forcedLoginPart2(inputTable,profileId,vlanId,idletimeout, clientType,sessionTO)
+	    spUrlStr = "1"
+        if (errorFlag == "OK") then
+        	db.save()
+	    end
+	end
+    end
+    cpStatusMsgClass = "msgSuccess"
+    cpStatusMsg = statusCode
+        web.goToPage(NextPage, true, true)
+    
+elseif (isenabled == "0") then
+    NextPage = "index"
+    cpStatusMsg = ""
+    web.goToPage(NextPage, true, true)    
+    
+elseif (ButtonType and ButtonType == "logout") then
+    -- go to next page - which will be login page
+    spUrlStr = "0"
+    captivePortal.RunTimelogout()
+        web.goToPage(NextPage, true, true)
+else
+	if (buttonName == "Preview") then
+		configRowId = cgi.rowId or ''
+		configRow = db.getRow("CaptivePortalPageDetails", "CaptivePortalPageDetails._ROWID_", configRowId)
+	else
+		configRow = db.getRow("CaptivePortalPageDetails", "profileId", profileId)
+    end
+
+        
+    local cpAdFont = ""
+    local cpAdFontSize = ""
+    local cpAdFontColor = ""
+    local cpFooterFontColor = ""
+    local cpHeadBgColor = ""
+    local cpHeaderFontColor = ""
+    local cpHeaderFontSize = ""
+    local cpHeaderFont = ""
+    local cpBgColor = ""
+    local cpLoginBoxTitle = "" 
+    local adStyle = "background-color: #eee;   border: 1px solid #aaa;  border-radius: 8px; color: #333;   font-family: Arial;  font-size: 16px;   padding: 15px;  text-align: center;"
+    local footerStyle = "font-family: Arial,sans-serif; text-align:center; color:#ffffff; font-size:12px;"
+
+    cpLoginBoxTitle = configRow["CaptivePortalPageDetails.LoginBoxTitle"] or 'CAPTIVE PORTAL LOGIN'
+
+    if (configRow["CaptivePortalPageDetails.AdEnable"] == "1") then
+    
+	    -- To get Font-family
+	    if (configRow["CaptivePortalPageDetails.AdFont"] == "1") then
+	    	cpAdFont = "Tahoma"
+	    elseif (configRow["CaptivePortalPageDetails.AdFont"] == "2") then
+	    	cpAdFont = "Times New Roman"
+	    elseif (configRow["CaptivePortalPageDetails.AdFont"] == "3") then
+	    	cpAdFont = "Verdana"
+	    elseif (configRow["CaptivePortalPageDetails.AdFont"] == "4") then
+	    	cpAdFont = "Arial"
+	    end
+	    
+	    -- To get Font Size
+	    if (configRow["CaptivePortalPageDetails.AdFontSize"] == "1") then
+	    	cpAdFontSize = "10px"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontSize"] == "2") then
+	    	cpAdFontSize = "12px"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontSize"] == "3") then
+	    	cpAdFontSize = "16px"
+	    end
+	    
+	    -- To get Font Color
+	    if (configRow["CaptivePortalPageDetails.AdFontColor"] == "1") then
+	    	cpAdFontColor = "ff0000"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontColor"] == "2") then
+	    	cpAdFontColor = "000000"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontColor"] == "3") then
+	    	cpAdFontColor = "00ff00"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontColor"] == "4") then
+	    	cpAdFontColor = "0000ff"
+	    end
+
+	    adStyle = "background-color: #eee; border: 1px solid #aaa; border-radius: 8px; color: #" .. cpAdFontColor .. "; font-family: " .. cpAdFont .. "; font-size:" .. cpAdFontSize .."; padding: 15px;  text-align: center;"
+	   
+	end
+    
+    -- To get Font-family
+    if (configRow["CaptivePortalPageDetails.headerFont"] == "1") then
+    	cpHeaderFont = "Tahoma"
+    elseif (configRow["CaptivePortalPageDetails.headerFont"] == "2") then
+    	cpHeaderFont = "Times New Roman"
+    elseif (configRow["CaptivePortalPageDetails.headerFont"] == "3") then
+    	cpHeaderFont = "Verdana"
+    elseif (configRow["CaptivePortalPageDetails.headerFont"] == "4") then
+    	cpHeaderFont = "Arial"
+    end
+      
+    -- To get Font Size
+    if (configRow["CaptivePortalPageDetails.headerFontSize"] == "1") then
+    	cpHeaderFontSize = "10px"
+    elseif (configRow["CaptivePortalPageDetails.headerFontSize"] == "2") then
+    	cpHeaderFontSize = "12px"
+    elseif (configRow["CaptivePortalPageDetails.headerFontSize"] == "3") then
+    	cpHeaderFontSize = "16px"
+    end
+    
+    -- To get Font Color
+    if (configRow["CaptivePortalPageDetails.headerFontColor"] == "1") then
+    	cpHeaderFontColor = "ff0000"
+    elseif (configRow["CaptivePortalPageDetails.headerFontColor"] == "2") then
+    	cpHeaderFontColor = "000000"
+    elseif (configRow["CaptivePortalPageDetails.headerFontColor"] == "3") then
+    	cpHeaderFontColor = "00ff00"
+    elseif (configRow["CaptivePortalPageDetails.headerFontColor"] == "4") then
+    	cpHeaderFontColor = "0000ff"
+    end
+     
+    -- To get Font Color
+    if (configRow["CaptivePortalPageDetails.headerBackColor"] == "1" ) then
+    	cpHeadBgColor = "ffffff"
+    elseif (configRow["CaptivePortalPageDetails.headerBackColor"] == "2") then
+    	cpHeadBgColor = "ff0000"
+    elseif (configRow["CaptivePortalPageDetails.headerBackColor"] == "3") then
+    	cpHeadBgColor = "00ff00"
+    elseif (configRow["CaptivePortalPageDetails.headerBackColor"] == "4") then
+    	cpHeadBgColor = "0000ff"
+    elseif (configRow["CaptivePortalPageDetails.headerBackColor"] == "5") then
+    	cpHeadBgColor = configRow["CaptivePortalPageDetails.headerCustomColor"]
+    end
+    
+    -- To get Font Color
+    if (configRow["CaptivePortalPageDetails.BackGroundColor"] == "1" ) then
+    	cpBgColor = "ffffff"
+    elseif (configRow["CaptivePortalPageDetails.BackGroundColor"] == "2") then
+    	cpBgColor = "ff0000"
+    elseif (configRow["CaptivePortalPageDetails.BackGroundColor"] == "3") then
+    	cpBgColor = "00ff00"
+    elseif (configRow["CaptivePortalPageDetails.BackGroundColor"] == "4") then
+    	cpBgColor = "0000ff"
+    elseif (configRow["CaptivePortalPageDetails.BackGroundColor"] == "5") then
+    	cpBgColor = configRow["CaptivePortalPageDetails.CustomColor"]
+    end
+    
+    if (configRow["CaptivePortalPageDetails.FooterEnable"] == "1") then
+	    -- To get Font Color
+	    if (configRow["CaptivePortalPageDetails.FooterFontColor"] == "1" ) then
+	    	cpFooterFontColor = "ffffff"
+	    elseif (configRow["CaptivePortalPageDetails.FooterFontColor"] == "2") then
+	    	cpFooterFontColor = "ff0000"
+	    elseif (configRow["CaptivePortalPageDetails.FooterFontColor"] == "3") then
+	    	cpFooterFontColor = "00ff00"
+	    elseif (configRow["CaptivePortalPageDetails.FooterFontColor"] == "4") then
+	    	cpFooterFontColor = "0000ff"
+	    elseif (configRow["CaptivePortalPageDetails.FooterFontColor"] == "5") then
+	    	cpFooterFontColor = "000000"
+	    end
+	    
+	    footerStyle = "font-family: Arial,sans-serif; text-align:center; color:#" .. cpFooterFontColor .. "; font-size:12px;"
+	end
+
+    local bodyStyle = ""
+    if (configRow["CaptivePortalPageDetails.pageBackgroundStyleSelector"] == "1" ) then
+       local backgroundimageId = configRow["CaptivePortalPageDetails.pageBackgroundImgConfigRow"] or ''
+       local backgroundImageName = ''
+       if (backgroundimageId == '' or backgroundimageId == nil) then --TODO:we can remove this check once we support background images
+           backgroundimageId = '1'
+       end
+
+       if (backgroundimageId ~= '') then
+           backgroundImageName = db.getAttribute("pageBackgroundImage", "pageBackgroundImage._ROWID_", backgroundimageId, "imageName")
+       end
+       bodyStyle = "background-color: #" .. cpBgColor ..";" .."background-image:url('images/capPort/" .. backgroundImageName .. "?page=captivePortal.html')" .. ";"
+     else
+	 bodyStyle = "background-color: #" .. cpBgColor ..";"
+     end	
+
+	local headerStyle = ""
+	
+	if (configRow["CaptivePortalPageDetails.headerBackground"] == "1" ) then
+        local imageId = configRow["CaptivePortalPageDetails.headerImage"] or ''
+        local imageName = ''
+        if (imageId == '' or imageId == nil) then  --TODO:we can remove this check once we support background images
+            imageId = '1'
+        end
+        if (imageId ~= '') then
+            imageName = db.getAttribute("ImageDetails", "ImageDetails._ROWID_", imageId, "name")
+        end
+
+        if (imageId == "1") then
+            logoEnable = "1"
+        else
+            logoEnable = "0" 
+        end
+
+		headerStyle = "border-bottom: 1px solid #333333;height:92px;background:#ffffff url('images/capPort/" .. imageName .. "?page=captivePortal.html') repeat scroll 0 0; font-family: " .. cpHeaderFont .. "; text-align:center; color:#" .. cpHeaderFontColor .. "; font-size:" .. cpHeaderFontSize .. "; padding-top: 15px;"
+   else
+        logoEnable = "0"
+		headerStyle = "background-color: #" .. cpHeadBgColor .."; border-bottom: 1px solid #333333; height: 92px; font-family: " .. cpHeaderFont .. "; text-align:center; color:#" .. cpHeaderFontColor .. "; font-size:" .. cpHeaderFontSize .. "; padding-top: 15px;"
+	end
+	
+	local welcomeMessage = configRow["CaptivePortalPageDetails.welcomeMessage"] or ''
+        
+    LANG_LOCALE = "13239,11899,11617,11133,13536,13209,13211,10973,13445,13547,10945,11772,10572,11152,10582,14381,14382,20012,20005,14383,30620,10571,12074,13546,11980,12144,10874"
+?>
+<!DOCTYPE html>
+<html style="position: relative !important; min-height: 100% !important;">
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>$| configRow["CaptivePortalPageDetails.title"] or 'CAPTIVE PORTAL' |$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+copyright (c) 2008-2015, TeamF1 Networks Pvt. Ltd. 
+(Subsidiary of D-Link India)
+All rights reserved.
+-->
+<style type="text/css">
+a, article, audio, body, body, canvas, caption, dd, details, div, dl, dt, em, figcaption, figure, footer, form, h1, h2, h3, h4, h5, header, html, i, iframe, img, label, legend, li, mark, menu, nav, object, ol, p, q, samp, section, small, span, strong, sub, summary, table, tbody, td, textarea, tfoot, th, thead, time, tr, ul, var, video {
+    border: 0 none;
+    font-family: Trebuchet MS, Arial, Verdana, Helvetica, Sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+* { margin:0; padding:0; }
+.show {  }
+.hide { display:none; }
+
+h1 { color: #006699; float: left; font-size: 16px; font-weight: normal; letter-spacing: 1px; padding: 0 0 5px; text-align: left; width: 75%; }
+
+.midWidth { min-width: 980px; width: 980px; } /* With width property you can change middle area width to full screen! */
+.midWidth2 { min-width: 600px; width: 600px; }
+div.msgError, div.msgInfo, div.msgSuccess { color: #FFFFFF; font-size: 16px; letter-spacing: 1px; padding: 12px; width: 455px;
+	-moz-border-radius: 6px 6px 6px 6px;
+	-webkit-border-radius: 6px 6px 6px 6px;
+	border-radius: 6px 6px 6px 6px;
+}
+div.msgError {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#ff9999',EndColorStr='#ff0202');
+	background:#ff9999;
+	background:-ms-linear-gradient(top,#ff9999,#ff0202);
+	background:-webkit-gradient(linear,left top,left bottom,from(#ff9999),to(#ff0202));
+	background:-moz-linear-gradient(top,#ff9999,#ff0202);
+	background:-o-linear-gradient(top,#ff9999,#ff0202);
+}
+div.msgInfo {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#0096af',EndColorStr='#045d93');
+	background:#0096af;
+	background:-ms-linear-gradient(top,#0096af,#045d93);
+	background:-webkit-gradient(linear,left top,left bottom,from(#0096af),to(#045d93));
+	background:-moz-linear-gradient(top,#0096af,#045d93);
+	background:-o-linear-gradient(top,#0096af,#045d93);
+}
+div.msgSuccess {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#32af00',EndColorStr='#95f931');
+	background:#32af00;
+	background:-ms-linear-gradient(top,#32af00,#95f931);
+	background:-webkit-gradient(linear,left top,left bottom,from(#32af00),to(#95f931));
+	background:-moz-linear-gradient(top,#32af00,#95f931);
+	background:-o-linear-gradient(top,#32af00,#95f931);
+}
+
+div.msgError > p, div.msgInfo > p, div.msgSuccess > p {
+ background: url("images/play.gif?page=captivePortal.html") no-repeat scroll 0 1px transparent;
+ line-height: 18px;
+ padding-left: 10px;
+ text-align: center;
+}
+
+.midArea {
+ background: none repeat scroll 0 0 #FFFFFF;
+ border-radius: 8px 8px 8px 8px;
+	-moz-box-shadow: 0 0 6px #999999;
+	-webkit-box-shadow: 0 0 6px #999999;
+	box-shadow: 0 0 6px #999999;
+ clear: both;
+ min-height: 280px;
+ margin: 0 0 25px 0;
+ padding: 15px;
+ width: auto;
+}
+
+.configLogin{
+	margin: 20px;
+}
+
+.configRow {
+	padding: 0 5px;
+}
+.configRow > label, .configRow > p {
+ color: #333333;
+ float: left;
+ font-size: 12px;
+ letter-spacing: 0.1em;
+ line-height: 22px;
+ min-width: 30%;
+ padding: 0 10px;
+ text-align: left;
+}
+
+.configRow > label.three{
+width:25%;
+min-width:10%;
+}
+
+.configRow > p.three{
+width:15%;
+min-width:10%;
+}
+
+.configRow > label.half {
+ min-width: 50%;
+}
+
+.configRow > p {
+ color: #006699;
+ letter-spacing: 1px;
+ min-width: 0;
+}
+.midMsg { font-size: 14px; margin: 20px 20px; color: #006699; text-align: center; }
+
+.configRow > input, select, textarea {
+ border: 1px solid #999999;
+ color: #006699;
+ float: left;
+ font-size: 11px;
+ height: 16px;
+ letter-spacing: 1px;
+ margin: 0 10px;
+ padding: 2px 4px;
+ width: 178px;
+}
+
+.configRow > input.one {
+    width: 66px;
+}
+
+.submitRow1 {
+	padding-left: 22%;
+}
+
+.submitRow2 {
+	padding-left: 35%;
+}
+
+td > select {
+	height: 23px;
+}
+
+.configRow > p > input[type="checkbox"], .configRow > p > input[type="radio"] {
+/*	border: medium none; */
+}
+
+.configRow > textarea {
+ border: thin solid #999999;
+ height: 200px;
+	width: 400px;
+}
+
+.break {
+ clear: both;
+ line-height: 8px;
+}
+
+.breakCP {
+ clear: both;
+ line-height: 3px;
+}
+.btnSubmit, .btnReset {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#64b1d9',EndColorStr='#1876a6');
+	background:#1876a6;
+	background:-ms-linear-gradient(top,#64b1d9,#1876a6);
+	background:-webkit-gradient(linear,left top,left bottom,from(#64b1d9),to(#1876a6));
+	background:-moz-linear-gradient(top,#64b1d9,#1876a6);
+	background:-o-linear-gradient(top,#64b1d9,#1876a6);
+	color: #FCFCFC;
+	border: 1px solid #ffffff;
+	border-radius: 2px 2px 2px 2px; 
+	box-shadow: 0 1px 2px #666666;
+	-moz-box-shadow: 0 1px 2px #666666;
+	-webkit-box-shadow: 0 1px 2px #666666;	
+	cursor: pointer; 
+	font-size: 14px;
+	float: left;
+	letter-spacing: 1px;
+	line-height: 18px;
+	margin: 5px 10px 5px 5px;
+	min-width: 104px;
+	padding: 4px 12px;
+	text-align: center;
+}
+
+.footer {
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#919191',EndColorStr='#2F2F2F');
+    
+	background:#919191;
+	background:-ms-linear-gradient(top,#919191,#2F2F2F);
+	background:-webkit-gradient(linear,left top,left bottom,from(#919191),to(#2F2F2F));
+	background:-moz-linear-gradient(top,#919191,#2F2F2F);
+	background:-o-linear-gradient(top,#919191,#2F2F2F);
+    color: #FFFFFF; font-size: 10px; letter-spacing: 1px; line-height: 20px;
+    text-align: center; margin: 0;
+}
+.logo { background: url("images/logo.png?page=captivePortal.html") no-repeat scroll 10px 16px
+transparent; color: #86C2FD; font-size: 14px; letter-spacing: 1px; padding: 54px
+10px 10px; text-align: center; margin-top: -2%;}
+
+/* for sticky footer */
+body {
+    margin: 0 0 68px;
+}
+
+.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 48px;
+    width: 100%;
+    line-height:48px;
+    text-align: center;
+    margin-top:20px !important;
+}
+/* for sticky footer Ends */
+
+.supportBrowser {
+    margin-top: 40px;
+}
+.supported {
+    bottom: 20px;
+    color: #006699;
+    font-size: 12px;
+    left: 120px;
+    position: absolute;
+    text-align: center;
+}
+.capLogin {
+    position: relative
+}
+</style>
+
+<script type="text/javascript" language="javascript"  src="js/captivePortal.js?page=captivePortal.html"></script>
+<?lua web.includeMenu("metaInclude.html")
+    web.includeMenu("dictionary.html")
+?>
+			        </head>
+
+      
+<body style="$| bodyStyle |$" onload="loginInit ();">
+
+    <div style="$| headerStyle |$">&nbsp;$| configRow["CaptivePortalPageDetails.headerCaption"] or '' |$
+        <?lua if (logoEnable == "1") then?>     
+        <div class="logo"> </div>
+        <?lua end?>
+</div>
+<div align="center">
+	<?lua if (buttonName ~= "Preview") then ?>
+	<form method="post" action="platform.cgi?page=captivePortal.html" id="tf1_captivePortalFrm">
+	<?lua end ?>
+    <input type="hidden" id='thispage' name="thispage" value="captivePortal.html">
+    <?lua if (configRow["CaptivePortalPageDetails.AdEnable"] == "0") then ?>
+    <div id="trLoginTbl" class="hide">
+    <div class="midWidth2">
+        <div class="break" style="margin-top:30px;">&nbsp;</div>
+        <div class="break">&nbsp;</div>
+        <div>
+            <?lua
+                if (spUrlStr == "0" and (cpStatusMsg == nil or cpStatusMsg == '')) then
+                    if (welcomeMessage ~= nil and welcomeMessage ~= '')then
+            ?>
+		  	<div class= "msgInfo" >
+		       	<p>$| welcomeMessage or '' |$</p>
+		    </div>
+            <?lua end
+                elseif (cpStatusMsg ~= nil and cpStatusMsg ~= '') then ?>
+			<div class= $| cpStatusMsgClass or 'msgInfo'|$ >
+		      	<p>$| cpStatusMsg or '' |$</p>
+            </div>
+            <?lua end?>
+        </div>
+        <div class="break"> &nbsp; </div>        
+            <div class="midArea capLogin">
+          	    <h1>$| cpLoginBoxTitle |$</h1>
+                <div class="configLogin">
+                    <div class="break"> &nbsp; </div>
+                    <div class="configRow">
+                        <label>$| LANG_LOCALE['13239'] |$</label>
+                        <input name="CaptivePortalSession.UserName" type="text" id="txtUserName" maxlength="24">
+                    </div>
+                    <div class="break"> &nbsp; </div>
+                    <div class="configRow">
+                        <label>$| LANG_LOCALE['11899'] |$</label>
+                        <input name="CaptivePortalSession.Password" type="password" id="txtPwd" maxlength="128">
+                    </div>
+                    <div class="break"> &nbsp; </div>
+                    <div class="submitRow2">
+                        <?lua if (buttonName == "Preview") then ?>
+						<input type="button" class="btnSubmit" value="$| LANG_LOCALE['11617'] |$" name="button.login.CaptivePortalSession.captivePortal" title="$| LANG_LOCALE['11617'] |$" id="loginBt">
+				        <?lua else ?>
+						<input type="submit" class="btnSubmit" value="$| LANG_LOCALE['11617'] |$" name="button.login.CaptivePortalSession.captivePortal" title="$| LANG_LOCALE['11617'] |$" id="loginBt" onclick="return loginValidate ();">
+						<?lua end ?>
+                    </div>
+                    <div class="break"> &nbsp; </div>
+                </div>
+                <div class="break"> &nbsp; </div>
+                <div class="supportBrowser">
+                    <p class="supported"> <b>$| LANG_LOCALE['14381'] |$: </b>$| LANG_LOCALE['14382'] |$ 9+, $| LANG_LOCALE['20012'] |$ 20+, $| LANG_LOCALE['20005'] |$ 25+, $| LANG_LOCALE['14383'] |$ 5+ </p>
+                </div>
+                <div class="break"> &nbsp; </div>
+            </div>
+        </div>
+    </div>
+    
+            <div id="trLoggedinTbl" class="hide">
+            <div class="midWidth2">
+                <div class="break" style="margin-top:30px;">&nbsp;</div>
+                <div class="break">&nbsp;</div>
+                    <?lua
+						local cur = {}
+						local ACCESS_TYPE = "-1"
+						local AUTH_SERVER_ID = "0"
+						local ENABLE_CHNG_PWD = "-1"
+   						if(usrName) then
+						    ENABLE_CHNG_PWD = db.getAttribute("Users","UserName", usrName, "enableChangePasswd")
+						end
+           			        ACCESS_TYPE = db.getAttribute("CaptivePortalVlan","vlanId", vlanId, "accessType")
+						    AUTH_SERVER_ID = db.getAttribute("CaptivePortalVlan", "vlanId", vlanId, "authServerId")
+					?>
+                    <div>
+                        <?lua if (spUrlStr == "0" and (cpStatusMsg == nil or cpStatusMsg == '')) then
+                            if (welcomeMessage ~= nil and welcomeMessage ~= '')then
+                        ?>
+			    	    <div class= "msgInfo" >
+		               	    <p>$| welcomeMessage or '' |$</p>
+		                </div>
+                        <?lua end
+                        elseif (cpStatusMsg ~= nil and cpStatusMsg ~= '') then ?>
+				    	<div class= $| cpStatusMsgClass or 'msgInfo'|$ >
+		                	<p>$| cpStatusMsg or '' |$</p>
+                        </div>
+                        <?lua end?>
+                    </div>
+                    <div class="break"> &nbsp; </div>
+                    <div class="midArea">
+                        <div class="break">&nbsp;</div>
+                        <h1>$| cpLoginBoxTitle |$</h1>
+                
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <?lua
+                            local flag
+                            if (previewFlag=="0" and ACCESS_TYPE == "2" and AUTH_SERVER_ID =="0" and ENABLE_CHNG_PWD == "1") then
+                                flag = "1"
+                            else
+                                flag = "2"
+                            end
+                            ?>
+                            <div class="submitRow$| flag |$">
+                                <input type="submit" value="$| LANG_LOCALE['13445'] |$" name="button.logout.CaptivePortalSession.captivePortal" class="btnSubmit" title="$| LANG_LOCALE['13445'] |$"  id="logoutBt">
+                                <?lua if (flag == "1") then  ?>
+                                <input type="button" value="$| LANG_LOCALE['13547'] |$" name="button.changePassword.CaptivePortalSession.captivePortal" class="btnSubmit" title="$| LANG_LOCALE['13547'] |$" id="logoutBt" onclick="changeScreenOnPass('LoggedinTbl ForcedLoginTbl LoginTbl', 'PasswordChengeTbl')">
+                                <?lua end ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="midWidth2">
+                <div class="break" style="margin-top:30px;">&nbsp;</div>
+                <div class="break"> &nbsp; </div>
+                <div id="trPasswordChengeTbl" class="hide">
+                    <div class="midArea">
+                        <div class="break">&nbsp;</div>
+                        <h1>$| LANG_LOCALE['13547'] |$</h1>
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <p>$| LANG_LOCALE['10945'] |$</p>
+                            </div>
+                            <div class="break">&nbsp;</div>
+                            <div class="configRow">
+                                <label style="width: 30%; line-height: 16px;">$| LANG_LOCALE['11772'] |$</label>
+                                <input name="CaptivePortalSession.nPassword" type="password" id="txtNewPassWd" maxlength="32" onkeypress="if (event.keyCode == 13) {return false;}">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label style="width: 30%; line-height: 16px;">$| LANG_LOCALE['10572'] |$</label>
+                                <input name="CaptivePortalSession.cnfPassword" type="password" id="txtCnfPwd" maxlength="32" onkeypress="if (event.keyCode == 13) {return false;}">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="submitRow2">
+							    <input type="submit" value="$| LANG_LOCALE['13547'] |$" name="button.changePdw.CaptivePortalSession.captivePortal" class="btnSubmit" title="$| LANG_LOCALE['13547'] |$" id="changePassBt" onclick="return loginConfirmPassword ();">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="trForcedLoginTbl" class="hide">
+            <div class="midWidth2">
+                <div class="break" style="margin-top:30px;">&nbsp;</div>
+                <div class="break"> &nbsp; </div>
+                <div>
+                    <?lua 
+                    if (spUrlStr == "0" and (cpStatusMsg == nil or cpStatusMsg == '')) then
+                        if (welcomeMessage ~= nil and welcomeMessage ~= '')then
+                    ?>
+			    	<div class= "msgInfo" >
+		               	<p>$| welcomeMessage or '' |$</p>
+		            </div>
+                    <?lua end
+                    elseif (cpStatusMsg ~= nil and cpStatusMsg ~= '') then ?>
+					<div class= $| cpStatusMsgClass or 'msgInfo'|$ >
+		              	<p>$| cpStatusMsg or '' |$</p>
+                    </div>
+                    <?lua end?>
+                </div>
+                <div class="break"> &nbsp; </div>
+                    <div class="midArea">
+                        <div class="break">&nbsp;</div>
+                        <h1>$| cpLoginBoxTitle |$</h1>
+                
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['11152'] |$</label>
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="submitRow2">
+							    <input type="submit" value="$| LANG_LOCALE['10582'] |$"  name="button.continue.captivePortal"  class="btnSubmit" title="$| LANG_LOCALE['10582'] |$"  style="float:none">
+                                <input type="submit" value="$| LANG_LOCALE['10449'] |$" name="button.logout.captivePortal"  class="btnSubmit"  title="$| LANG_LOCALE['10449'] |$" style="float:none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+			<?lua
+				else
+					if (configRow["CaptivePortalPageDetails.AdPlace"] == "2") then
+			?>
+            <div id="trLoginTbl" class="hide">
+            <div class="midWidth2">
+                <div class="break" style="margin-top:30px;">&nbsp;</div>
+                <div class="break">&nbsp;</div>
+                <div>
+                    <?lua 
+                    if (spUrlStr == "0" and (cpStatusMsg == nil or cpStatusMsg == '')) then
+                        if (welcomeMessage ~= nil and welcomeMessage ~= '')then
+                    ?>
+			    	<div class= "msgInfo" >
+		               	<p>$| welcomeMessage or '' |$</p>
+		            </div>
+                    <?lua end
+                    elseif (cpStatusMsg ~= nil and cpStatusMsg ~= '') then ?>
+					<div class= $| cpStatusMsgClass or 'msgInfo'|$ >
+		              	<p>$| cpStatusMsg or '' |$</p>
+                    </div>
+                    <?lua end?>
+                </div>
+                <div class="break"> &nbsp; </div>                
+                    <div class="midArea capLogin">
+		                <h1>$| cpLoginBoxTitle |$</h1>
+                        
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['13239'] |$</label>
+                                <input name="CaptivePortalSession.UserName" type="text" id="txtUserName" maxlength="24">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['11899'] |$</label>
+                                <input name="CaptivePortalSession.Password" type="password" id="txtPwd" maxlength="128">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="submitRow2">
+                                <?lua if (buttonName == "Preview") then ?>
+							    <input type="button" class="btnSubmit" value="$| LANG_LOCALE['11617'] |$" name="button.login.CaptivePortalSession.captivePortal" title="$| LANG_LOCALE['11617'] |$" id="loginBt">
+				                <?lua else ?>
+							    <input type="submit" class="btnSubmit" value="$| LANG_LOCALE['11617'] |$" name="button.login.CaptivePortalSession.captivePortal" title="$| LANG_LOCALE['11617'] |$" id="loginBt" onclick="return loginValidate ();">
+							    <?lua end ?>
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                        </div>
+                        <div class="break">&nbsp;</div>
+                        <div class="break">&nbsp;</div>
+                        <div class="break">&nbsp;</div>
+                        <div style="$| adStyle |$">$| configRow["CaptivePortalPageDetails.AdContent"] |$</div>
+                        <div class="break"> &nbsp; </div>
+                        <div class="supportBrowser">
+                            <p class="supported"> <b>$| LANG_LOCALE['14381'] |$: </b>$| LANG_LOCALE['14382'] |$ 9+, $| LANG_LOCALE['20012'] |$ 20+, $| LANG_LOCALE['20005'] |$ 25+, $| LANG_LOCALE['14383'] |$ 5+ </p>
+                        </div>
+                        <div class="break"> &nbsp; </div>
+                    </div>
+                </div>
+            </div>
+            
+			<?lua
+				else
+			?>
+                <div id="trLoginTbl" class="hide">
+                    
+            <div class="midWidth2">
+                <div class="break" style="margin-top:30px;">&nbsp;</div>
+                <div class="break"> &nbsp; </div>
+                <div>
+                    <?lua 
+                    if (spUrlStr == "0" and (cpStatusMsg == nil or cpStatusMsg == '')) then
+                        if (welcomeMessage ~= nil and welcomeMessage ~= '')then
+                    ?>
+			    	<div class= "msgInfo" >
+		               	<p>$| welcomeMessage or '' |$</p>
+		            </div>
+                    <?lua end
+                    elseif (cpStatusMsg ~= nil and cpStatusMsg ~= '') then ?>
+					<div class= $| cpStatusMsgClass or 'msgInfo'|$ >
+		              	<p>$| cpStatusMsg or '' |$</p>
+                    </div>
+                    <?lua end?>
+                </div>
+                <div class="break"> &nbsp; </div>
+                    <div class="midArea capLogin">
+                        <div style="$| adStyle |$">$| configRow["CaptivePortalPageDetails.AdContent"] |$ </div>
+                        <div class="break">&nbsp;</div>
+                        <div class="break">&nbsp;</div>
+	                    <h1>$| cpLoginBoxTitle |$</h1>
+                        
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['13239'] |$</label>
+                                <input name="CaptivePortalSession.UserName" type="text" id="txtUserName" maxlength="24">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['11899'] |$</label>
+                                <input name="CaptivePortalSession.Password" type="password" id="txtPwd" maxlength="128">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="submitRow2">
+                                <?lua if (buttonName == "Preview") then ?>
+						        <input type="button" class="btnSubmit" value="$| LANG_LOCALE['11617'] |$" name="button.login.CaptivePortalSession.captivePortal" title="$| LANG_LOCALE['11617'] |$" id="loginBt">
+				                <?lua else ?>
+							    <input type="submit" class="btnSubmit" value="$| LANG_LOCALE['11617'] |$" name="button.login.CaptivePortalSession.captivePortal" title="$| LANG_LOCALE['11617'] |$" id="loginBt" onclick="return loginValidate ();">
+							    <?lua end ?>
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                        </div>
+                        <div class="break"> &nbsp; </div>
+                        <div class="supportBrowser">
+                            <p class="supported"> <b>$| LANG_LOCALE['14381'] |$: </b>$| LANG_LOCALE['14382'] |$ 9+, $| LANG_LOCALE['20012'] |$ 20+, $| LANG_LOCALE['20005'] |$ 25+, $| LANG_LOCALE['14383'] |$ 5+ </p>
+                        </div>
+                        <div class="break"> &nbsp; </div>
+                    </div>
+                </div>
+            </div>
+			<?lua end ?>
+            <div id="trLoggedinTbl" class="hide">
+            <div class="midWidth2">
+                <div class="break" style="margin-top:30px;">&nbsp;</div>
+                <div class="break">&nbsp;</div>
+                    <?lua
+			            local where="vlanId="..vlanId
+                        local cur = db.getRowWhere("CaptivePortalVlan",where)
+					?>
+                <div>
+                    <?lua
+                        if (spUrlStr == "0" and (cpStatusMsg == nil or cpStatusMsg == '')) then
+                            if (welcomeMessage ~= nil and welcomeMessage ~= '')then
+                    ?>
+			    	<div class= "msgInfo" >
+		               	<p>$| welcomeMessage or '' |$</p>
+		            </div>
+                    <?lua end
+                    elseif (cpStatusMsg ~= nil and cpStatusMsg ~= '') then ?>
+					<div class= $| cpStatusMsgClass or 'msgInfo'|$ >
+		              	<p>$| cpStatusMsg or '' |$</p>
+                    </div>
+                    <?lua end?>
+                </div>
+                <div class="break"> &nbsp; </div>
+                    <div class="midArea">
+                        <div class="break">&nbsp;</div>
+                        <h1>CAPTIVE PORTAL LOGIN</h1>
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="break"> &nbsp; </div>
+						        <?lua
+                                local ENABLE_CHNG_PWD = "-1"
+                                local flag
+                                if(usrName) then
+						            ENABLE_CHNG_PWD = db.getAttribute("Users","UserName", usrName, "enableChangePasswd")
+						        end
+                                if (previewFlag == "0" and cur["CaptivePortalVlan.accessType"] == "2" and cur["CaptivePortalVlan.authServerId"] == "0" and ENABLE_CHNG_PWD == "1") then 
+                                    flag = "1"
+                                else
+                                    flag = "2"
+                                end
+                                ?>
+                            <div class="submitRow$| flag |$">
+                                <input type="submit" value="$| LANG_LOCALE['13445'] |$" name="button.logout.CaptivePortalSession.captivePortal" class="btnSubmit" title="$| LANG_LOCALE['13445'] |$" id="logoutBt">
+                                <?lua if (flag == "1") then ?>
+                                <input type="button" value="$| LANG_LOCALE['13547'] |$" name="button.changePassword.CaptivePortalSession.captivePortal" class="btnSubmit" title="$| LANG_LOCALE['13547'] |$" id="logoutBt" onclick="changeScreenOnPass('LoggedinTbl ForcedLoginTbl LoginTbl', 'PasswordChengeTbl')">
+                                <?lua end ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="trPasswordChengeTbl" class="hide">
+            <div class="midWidth2">
+                <div class="break" style="margin-top:30px;">&nbsp;</div>
+                <div class="break">&nbsp;</div>
+                    <div class="midArea">
+                        <div class="break">&nbsp;</div>
+                        <h1>$| LANG_LOCALE['13547'] |$</h1>
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <p>$| LANG_LOCALE['10945'] |$</p>
+                            </div>
+                            <div class="break">&nbsp;</div>
+                            <div class="configRow">
+                                <label style="width: 30%; line-height: 16px;">$| LANG_LOCALE['11772'] |$</label>
+                                <input name="CaptivePortalSession.nPassword" type="password" id="txtNewPassWd" maxlength="32" onkeypress="if (event.keyCode == 13) {return false;}">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label style="width: 30%; line-height: 16px;">$| LANG_LOCALE['10571'] |$</label>
+                                <input name="CaptivePortalSession.cnfPassword" type="password" id="txtCnfPwd" maxlength="32" onkeypress="if (event.keyCode == 13) {return false;}">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="submitRow2">
+							    <input type="submit" value="$| LANG_LOCALE['13547'] |$" name="button.changePdw.CaptivePortalSession.captivePortal" class="btnSubmit" title="$| LANG_LOCALE['13547'] |$" id="changePassBt" onclick="return loginConfirmPassword ();">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="trForcedLoginTbl" class="hide">
+            <div class="midWidth2">
+                <div class="break" style="margin-top:30px;">&nbsp;</div>
+                <div class="break">&nbsp;</div>
+                <div>
+                    <?lua 
+                    if (spUrlStr == "0" and (cpStatusMsg == nil or cpStatusMsg == '')) then
+                        if (welcomeMessage ~= nil and welcomeMessage ~= '')then
+                    ?>
+			    	<div class= "msgInfo" >
+		               	<p>$| welcomeMessage or '' |$</p>
+		            </div>
+                    <?lua end
+                    elseif (cpStatusMsg ~= nil and cpStatusMsg ~= '') then ?>
+					<div class= $| cpStatusMsgClass or 'msgInfo'|$ >
+		              	<p>$| cpStatusMsg or '' |$</p>
+                    </div>
+                    <?lua end?>
+                </div>
+                <div class="break"> &nbsp; </div>
+                    <div class="midArea">
+                        <div class="break">&nbsp;</div>
+                        <h1>$| LANG_LOCALE['11617'] |$</h1>
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['11152'] |$</label>
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="submitRow2">
+							    <input type="submit" value="$| LANG_LOCALE['10582'] |$" name="button.continue.captivePortal" class="btnSubmit" title="$| LANG_LOCALE['10582'] |$">
+                                <input type="submit" value="$| LANG_LOCALE['10449'] |$" name="button.logout.captivePortal" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?lua end ?>
+			<input type="hidden" name="Login.userAgent" id="hdUserAgent">
+	        <?lua
+	            if(spUrlStr == "2") then
+	        ?>
+            <input type="hidden" name="CaptivePortalSession.UserName" value="$| loginInfo["CaptivePortalSession.UserName"] or '' |$">
+            <input type="hidden" name="CaptivePortalSession.Password" value="$| loginInfo["CaptivePortalSession.Password"] or '' |$">
+        	<?lua end ?>
+			<input type="hidden" name="temp.username" id="hdUsrName" value="$| usrName or '' |$">
+			<input type="hidden" name="temp.idletimeout" id="hdIdleTimeOut" value="$| idletimeout or '' |$">
+			<input type="hidden" name="temp.password" id="hdPassword" value="$| password or ''|$">
+			<input type="hidden" name="temp.alertType" id="hdAlertType" value="$| alertType or '' |$">	
+			<input type="hidden" name="temp.maxValue" id="hdMaxValue" value="$| maxValue or '' |$">
+			<input type="hidden" name="temp.alertValue" id="hdAlertValue" value="$| alertValue or '' |$">
+			<input type="hidden" name="temp.accessType" id="hdAccessType" value="$| accessType or '' |$">
+        	<?lua if (buttonName ~= "Preview") then ?>
+			</form>
+			<?lua end ?>
+			<input type="hidden" id="hdSreenVal" value="$| spUrlStr |$">
+			<!-- js hidden fields -->
+   
+</div>
+
+<?lua
+	if (configRow["CaptivePortalPageDetails.FooterEnable"] == "0") then
+?>
+	<div class="footer">$| COPYRIGHTS |$</div>
+<?lua
+	else
+?>
+	<div class="footer" style="$|footerStyle|$">$| configRow["CaptivePortalPageDetails.FooterContent"] or '' |$</div>
+<?lua	
+	end
+?>
+</body>
+
+</html>
+<?lua end ?>
+

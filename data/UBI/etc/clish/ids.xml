@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="security-ids-config" prompt="security-config[ids]> "> 
+    <COMMAND name="save" help="Save IDS configuration changes.">
+	     <ACTION>lua clishCfgObjExec("idsConfiguration")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save IDS configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("idsConfiguration")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back IDS configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable"
+             help="Enable Intrusion detection system">
+             <PARAM name="idsStatus"
+                    help="Enable/Disable Intrusion detection system"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("idsConfiguration", "IdsConfiguration.IdsStatus", "${idsStatus}")              
+             </ACTION>
+    </COMMAND>
+    <!--<COMMAND name="black_listing_enable"
+             help="Enable/Disable Black Listing">
+             <PARAM name="blStatus"
+                    help="Enable/Disable Black listing"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("idsConfiguration", "IdsConfiguration.BlackListingStatus", "${blStatus}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="blocking_log_enable"
+             help="Enable/Disable Blocking Logs">
+             <PARAM name="blckLogStatus"
+                    help="Enable/Disable Blocking Logs"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("idsConfiguration", "IdsConfiguration.BlockingLogStatus", "${blckLogStatus}")              
+             </ACTION>
+    </COMMAND>-->
+    <COMMAND name="intrusion_log_enable"
+             help="Enable/Disable intrusion logs">
+             <PARAM name="intrusionLogStatus"
+                    help="Enable/Disable intrusion logs"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("idsConfiguration", "IdsConfiguration.IntrusionLogStatus", "${intrusionLogStatus}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================
+<VIEW name="security-session-config" prompt="security-config[session-settings]> "> 
+    <COMMAND name="save" help="Save security session settings configuration changes.">
+	     <ACTION>lua clishCfgObjExec("GlobalSettings")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save session settings configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("GlobalSettings")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back session settings configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="max_unidentified_sessions"
+             help="Maximum Unidentified Sessions">
+             <PARAM name="maxUnIdentfdSess"
+                    help="Maximum Unidentified Sessions"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("GlobalSettings", "GlobalSettings.MaxUnidentifiedSessions", "${maxUnIdentfdSess}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="max_half_open_sessions"
+             help="Maximum Half Open Sessions">
+             <PARAM name="maxHalfOpenSess"
+                    help="Maximum Half Open Sessions"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("GlobalSettings", "GlobalSettings.MaxHalfOpenSessions", "${maxHalfOpenSess}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="tcp_session_timeout"
+             help="TCP Session Timeout Duration">
+             <PARAM name="tcpSessTimeout"
+                    help="TCP Session Timeout Durations"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("GlobalSettings", "GlobalSettings.TcpSessionTimoutDuration", "${tcpSessTimeout}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="udp_session_timeout"
+             help="UDP Session Timeout Duration">
+             <PARAM name="udpSessTimeout"
+                    help="UDP Session Timeout Duration"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("GlobalSettings", "GlobalSettings.UdpSessionTimoutDuration", "${udpSessTimeout}")              
+             </ACTION>
+    </COMMAND>
+<COMMAND name="other_session_timeout"
+             help="Other Session Timeout Duration">
+             <PARAM name="otherSessTimeout"
+                    help="Other Session Timeout Duration"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("GlobalSettings", "GlobalSettings.OtherSessionTimeoutDuration", "${otherSessTimeout}")              
+             </ACTION>
+    </COMMAND>
+<COMMAND name="tcp_session_cleanup_latency"
+             help="TCP Session Cleanup Latency">
+             <PARAM name="tcpSessCleanupLatency"
+                    help="TCP Session Cleanup Latency"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("GlobalSettings", "GlobalSettings.TcpSessionCleanupLatency", "${tcpSessCleanupLatency}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>-->
+<!--=======================================================-->
+    <COMMAND name="security ids" help="IDS Configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security ids configure"
+             help="IDS configuration mode."
+             view="security-ids-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("idsConfiguration", 
+                              idsCfgInit, idsCfgSave, idsCfgVal, nil)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security ids" help="."/>
+    <COMMAND name="show security ids setup"
+            help="Display IDS configuration">
+	    <ACTION>lua clishCmdExec (idsInfoGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================
+    <COMMAND name="security session_settings" help="Session Settings Configuration setup."/>-->
+    <!--=======================================================
+    <COMMAND name="security session_settings configure"
+             help="Session Settings configuration mode."
+             view="security-session-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("GlobalSettings", 
+                              sessionSettingsCfgInit, sessionSettingsCfgSave, 
+				       NULL,nil)
+                   </ACTION>
+    </COMMAND>-->
+    <!--=======================================================
+    <COMMAND name="show security session_settings"
+            help="Display Session Settings configuration">
+	    <ACTION>lua clishCmdExec (sessionSettingsInfoGet)</ACTION>
+    </COMMAND>-->
+</CLISH_MODULE>
+

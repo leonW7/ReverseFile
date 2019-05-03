@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+# authInit - initialization script for sslvpn
+#
+# Copyright (c) 2012, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,29nov2012,AS written
+#
+
+
+if [ "$INCLUDE_AUTH_DAEMON_SUPPORT" = "y" ]; then
+ 
+# auth initialization
+echo -n "Auth Intialization .......  "
+
+# Setting up var directory
+mkdir -p /var/auth/conf/
+if [ -f /var/auth/conf/ldap.conf ]; then
+    # Using configured conf file
+    echo ""
+else
+    # Using default conf
+    cp $PFRM_AUTH_DIR/conf.default/ldap.conf /var/auth/conf/; 
+fi
+if [ -f /var/auth/conf/pop3.conf ]; then
+    # Using configured conf file
+    echo ""
+else
+    # Using default conf
+    cp $PFRM_AUTH_DIR/conf.default/pop3.conf /var/auth/conf/; 
+fi
+if [ -f /var/auth/conf/ad.conf ]; then
+    # Using configured conf file
+    echo ""
+else
+    # Using default conf
+    cp $PFRM_AUTH_DIR/conf.default/ad.conf /var/auth/conf/; 
+fi
+if [ -f /var/auth/conf/ntDomain.conf ]; then
+    # Using configured conf file
+    echo ""
+else
+    # Using default conf
+    cp $PFRM_AUTH_DIR/conf.default/ntDomain.conf /var/auth/conf/; 
+fi
+
+if [ -f /var/radius.conf ]; then
+    # Using configured conf file
+    echo ""
+else
+    # Using default conf
+    cp $PFRM_AUTH_DIR/conf.default/radius.conf /var/; 
+fi
+echo "starting auth daemon"
+
+# Starting ldap Auth Daemon
+$PFRM_DIR/bin/ldapAuthDaemon &
+
+# Starting pop3 Auth Daemon
+$PFRM_DIR/bin/pop3AuthDaemon &
+
+# Starting ntDomain Auth Daemon
+$PFRM_DIR/bin/ntDomainAuthDaemon &
+
+# Starting ad Auth Daemon
+$PFRM_DIR/bin/adAuthDaemon &
+
+# Starting rad Auth Daemon
+$PFRM_DIR/bin/radiusAuthDaemon &
+
+echo "Done"
+
+fi # if INCLUDE_AUTH_DAEMON_SUPPORT == y
+

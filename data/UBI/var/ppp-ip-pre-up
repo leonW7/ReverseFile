@@ -1,0 +1,28 @@
+#!/bin/sh
+# ppp-ip-pre-up script
+
+# Modification history.
+# 01b-25mar16-har  Adding exception for pptp/l2tp vpn client
+# 01a-23jul15-abd  Adding a pre-ip up script.
+
+
+# Description :
+# This file provides the necessary actions need to be taken before the ppp
+# interface comes up
+
+# Any global varaibles.
+PPTP_SERVER="pptpServer"
+L2TP_SERVER="l2tpServer"
+PPTP_VPN_CLIENT="ppp100"
+L2TP_VPN_CLIENT="ppp88"
+
+# As per the current design the masquerade rules are based on interface ifgroup
+if [ "$6" != "$PPTP_SERVER" ] && [ "$6" != "$L2TP_SERVER" ]; then
+    # execute the following command to set the ifgroup to 2.
+    # we do not need to set the ifgroup to 2 for L2TP/PPTP users.
+    # $1 will be the ppp interface name.
+    # Set ifgroup to only WAN types
+    if [ "$1" != "$PPTP_VPN_CLIENT" ] && [ "$1" != "$L2TP_VPN_CLIENT" ];then
+    	/pfrm2.0/bin/ifgroup -j -d $1 -G 2
+    fi
+fi

@@ -1,0 +1,153 @@
+<?lua
+require "teamf1lualib/ipv6_mode_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "ipMode"
+
+local ipMode6 = require("com.teamf1.bl.ipv6.mode")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require("com.teamf1.core.returnCodes")
+
+local errMsg, cookie
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+        errMsg, cookie = ipMode6.ipModeSectionSet (inputTable)
+        if (errMsg ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (errMsg)
+            web.goToPage("ipMode", true, true)
+        elseif(errMsg == returnCodes.SUCCESS)then
+            statusSuccessMessage = errorMap.errorStringGet (errMsg)
+            web.goToPage("progressBar", true, true)
+        end
+        
+else
+errMsg, cookie, mode ,ipv6GreyOutMode= ipMode6.ipModeSectionGet ()
+
+        if (errMsg ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (errMsg)
+        end
+        cgilua.header ("Content-Type","text/html; charset=UTF-8")
+        LANG_LOCALE = "30176,13583,11408,11438,11429,12758,10449"
+?>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+    <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"> </script>
+
+        <script>
+       function showAlert ()
+       {
+           var grayoutFlag = document.getElementById ('hdGrayout');
+           if (grayoutFlag.value == "1"){
+               alert(LANG_LOCALE['30176']);
+               return false;
+            }
+        var oldIPMode = document.getElementById ('hdIPMode').value;
+        var selectedMode = radioCheckedValueGet ('tf1_ipMode1');
+        if (oldIPMode != selectedMode)
+                {
+                var result = confirm (LANG_LOCALE['13583']);
+                return result;
+        }
+        return true;
+    }
+    function wanModeCheck ()
+	{
+	var grayoutFlag = document.getElementById ('hdGrayout');
+    if (!grayoutFlag) return;
+	if (grayoutFlag.value == "1")
+        alert(LANG_LOCALE['30176']);	
+	}
+</script>
+<?lua web.includeMenu("metaInclude.html")?>
+       	</head>
+	<body onLoad="onloadCall ();">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu3");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+                                        <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                                        ?>
+                                        <div class="msgError">
+                                             <p>$| statusErrorMessage |$</p>
+                                        </div>
+                                        <?lua
+                                         elseif(statusSuccessMessage ~= returnCodes.NIL) then
+                                          ?>
+                                         <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+		 			<div class="FL2">
+						<p class="hint">
+							$| helpHintText |$						</p>
+					</div>
+					<h1>$| LANG_LOCALE['11408'] |$</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmIpMode" id="tf1_frmIpMode" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="ipMode.html">
+								<div class="configRow">
+									<label>$| LANG_LOCALE['11408'] |$</label>
+									<p>
+										<input type="radio" name="ipMode.ipv6Mode" $|web.radioSelected(mode == "1") |$value="1" id="tf1_ipMode1" checked>
+										$| LANG_LOCALE['11438'] |$
+									</p>
+									<p>
+										<input type="radio"
+                                        name="ipMode.ipv6Mode" $|web.radioSelected(mode == "3") |$ id="tf1_ipMode2" value="3" onclick="return wanModeCheck()">
+										$| LANG_LOCALE['11429'] |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>								 
+								<div class="submitRow">
+									<input type="submit" class="btnSubmit"
+                                    title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" name="button.config.ipMode" onclick="return showAlert()">
+									<input type="button" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btCancel" onclick="this.form.reset(); resetImgOnOff('tf1_frmIpMode');">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+                            </form>
+                            <input type="hidden" id="hdIPMode" value="$| mode |$">
+                            <input type="hidden" id="hdGrayout" value="$|ipv6GreyOutMode |$">
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td><?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+    <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+	</body>
+</html>
+<?lua end ?>

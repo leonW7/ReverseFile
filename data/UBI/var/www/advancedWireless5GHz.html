@@ -1,0 +1,304 @@
+<?lua
+require "teamf1lualib/advancedWireless_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "wireless"
+    PAGE_HELP_SECTION = "advancedWireless5GHz"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local advancedWireless = require("com.teamf1.bl.wireless.advancedwireless")
+local radio_opMode 
+
+if (PRODUCT_ID == "DSR-1000AC_Ax") then
+    radio_opMode = db.getAttribute("dot11Radio", "interfaceName", "wifi0", "opMode")
+end
+
+local radio5 = 1
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["advancedWireless.radioId"]  = radio5
+    inputTable["advancedWireless.protectionMode"] ="0"
+
+    local returnCode, cookie = advancedWireless.advancedWirelessSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        -- Multicast To Unicast Button Changes
+        returnCode = advancedWireless.multiToUnicastSet (inputTable)
+        if (returnCode == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+
+else
+    local returnCode, cookie, beaconInterval, dtimInterval, rtsThreshold, 
+    fragThreshold, preambleMode, protectionMode, powerSave, txAntenna,
+    rxAntenna, ampdu, enableRTS = advancedWireless.advancedWirelessSectionGet (radio5)
+    
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+    local returnCode, cookie, multiToUnicast = advancedWireless.multiToUnicastGet(radio5)
+
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+    LANG_LOCALE = "10187,10371,11225,11711,30088,11253,12742,11344,11035,11264,12520,30447,30448,12567,30089,12502,11977,12005,12107,12014,30546,30547,12627,10683,11789,12758,10449"
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+</head>
+
+<body onload="onloadCall ();">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+		    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>					
+                    <div align="left">
+						<nav class="nav-bg">
+
+							<ul class="menu">
+								<li>
+									<a href="?page=advancedWireless.html">2.4 GHz</a>
+								</li>
+								<li class="current">
+									<a href="?page=advancedWireless5GHz.html">5 GHz</a>
+								</li>
+
+							</ul>
+						</nav>
+
+					</div>
+
+					<div class="FL2">
+						<p class="hint">
+                         $| helpHintText |$
+						</p>
+					</div>
+					<h1>$| LANG_LOCALE['10187'] |$ 5 GHz</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmadvancedSettings5GHz" id="tf1_frmadvancedSettings5GHz" action="platform.cgi" method="post">
+								<input type="hidden" name="thispage" id="thispage" value="advancedWireless5GHz.html">
+								<div class="configRow">
+				                   <label>$| LANG_LOCALE['10371'] |$</label>
+				                   <input type="text" size="6" maxlength="4" name="advancedWireless.beaconInterval" class="one" value="$| beaconInterval or '' |$" id="tf1_beaconInterval" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 40, 3500, true, LANG_LOCALE['11225']+': ', '');}"><dl>[$| LANG_LOCALE['10683'] |$: 100, $| LANG_LOCALE['12627'] |$: 40 - 3500 ] $| LANG_LOCALE['11711'] |$</dl>
+				                 </div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+				                  <label>$| LANG_LOCALE['30088'] |$</label>
+				                  <input type="text" size="6" maxlength="3" name="advancedWireless.dtimInterval" class="one" value="$| dtimInterval or '' |$" id="tf1_DtimInterval" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, LANG_LOCALE['11253']+': ', '');}"><dl>[$| LANG_LOCALE['10683'] |$: 2, $| LANG_LOCALE['12627'] |$: 1 - 255 ]</dl>
+				                </div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+				                     <label>Enable RTS Threshold</label>
+					                  <?lua
+					                      if (enableRTS == "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar="1"
+                                              else
+                                                statusStr="enable-disable-off"
+                                                statusVar="0"
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableRTS"></a>
+                                    <input type="hidden" value="$| statusVar |$" name="advancedWireless.enableRTS">
+				                </div>								
+				                <div class="break">
+									&nbsp;
+								</div>								
+								<div class="configRow" id="tf1_rtsThreshold_div">
+				                   <label>$| LANG_LOCALE['12742'] |$</label>
+				                   <input type="text" size="6" maxlength="4" name="advancedWireless.rtsThreshold" class="one" value="$| rtsThreshold or '' |$" id="tf1_rtsThreshold" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 256, 2346, true, LANG_LOCALE['11344']+': ', '');}"><dl>[$| LANG_LOCALE['12627'] |$: 256 - 2346 ]</dl>
+				                </div>
+								<div class="break" id="break_rtsThreshold_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_fragmentationThreshold_div">
+				                     <label>$| LANG_LOCALE['11035'] |$</label>
+				                     <input type="text" size="6" maxlength="4" name="advancedWireless.fragThreshold" class="one" value="$| fragThreshold or '' |$" id="tf1_fragmentationThreshold" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 257, 2346, LANG_LOCALE['11264']+': ', '');}"><dl>[$| LANG_LOCALE['10683'] |$: 2346, $| LANG_LOCALE['12627'] |$: 257 - 2346 ]</dl>
+				                </div>
+								<div class="break" id="break_fragmentationThreshold_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_preambleMode_div">
+				                   <label>$| LANG_LOCALE['12520'] |$</label>
+				                   <select name="advancedWireless.preambleMode" size="1">
+				                      <option $| web.dropdownSelected(preambleMode == "Long") |$ value="Long">$| LANG_LOCALE['30447'] |$</option>
+					                  <option $| web.dropdownSelected(preambleMode == "Short") |$ value="Short">$| LANG_LOCALE['30448'] |$</option>
+				                   </select>
+				               </div>
+								<div class="break" id="break_preambleMode_div">
+									&nbsp;
+								</div>
+								<!--
+								<div class="configRow">
+				                    <label>Protection Mode</label>
+				                       <select size="1" name="advancedWireless.protectionMode">
+				                           <option $| web.dropdownSelected(protectionMode == "0") |$ value="0">None</option>
+					                       <option $| web.dropdownSelected(protectionMode == "1") |$ value="1">CTS-to-Self Protection</option>
+				                       </select>
+				                </div>
+								<div class="break">
+									&nbsp;
+								</div>
+							    -->
+                                <?lua if (PRODUCT_ID == "DSR-1000AC_Ax" or
+                                PRODUCT_ID == "DSR-500AC_Ax") then ?>
+								<div class="configRow" id="tf1_txAntenna_div">
+									<label>Tx Antenna</label>
+									<select id="tf1_txAntenna" size="1" name="advancedWireless.txAntenna">
+										<option $| web.dropdownSelected(txAntenna == "0") |$ value="0">Auto</option>
+										<option $| web.dropdownSelected(txAntenna == "1") |$ value="1">1</option>
+										<option $| web.dropdownSelected(txAntenna == "2") |$ value="2">2</option>
+										<option $| web.dropdownSelected(txAntenna == "3") |$ value="3">3</option>
+									</select>
+								</div>
+								<div class="break" id="break_txAntenna_div">									&nbsp;
+								</div>
+ 								<div class="configRow" id="tf1_rxAntenna_div">
+									<label>Rx Antenna</label>
+									<select id="tf1_rxAntenna" size="1" name="advancedWireless.rxAntenna">
+										<option $| web.dropdownSelected(rxAntenna == "0") |$ value="0">Auto</option>
+										<option $| web.dropdownSelected(rxAntenna == "1") |$ value="1">1</option>
+										<option $| web.dropdownSelected(rxAntenna == "2") |$ value="2">2</option>
+										<option $| web.dropdownSelected(rxAntenna == "3") |$ value="3">3</option>
+									</select>
+								</div>
+								<div class="break" id="break_rxAntenna_div">									&nbsp;
+								</div>
+								<div class="configRow">
+				                     <label>AMPDU</label>
+					                  <?lua
+					                      if (ampdu== "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar="1"
+                                              else
+                                                statusStr="enable-disable-off"
+                                                statusVar="0"
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_image_OnOff"></a>
+                                    <input type="hidden" value="$| statusVar |$" name="advancedWireless.ampdu">
+				                </div>								
+				                <div class="break">
+									&nbsp;
+								</div>
+                                <?lua end ?>
+								<div class="configRow">
+				                <label>$| LANG_LOCALE['12502'] |$</label>
+					               <?lua
+					                    if (powerSave == "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar="1"
+                                              else
+                                                statusStr="enable-disable-off"
+                                                statusVar="0"
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_image_OnOff"></a>
+                                    <input type="hidden" value="$| statusVar |$" name="advancedWireless.powerSave">
+				                </div>
+								<div class="break">
+									&nbsp;
+								</div>
+                                <div class="configRow">
+				    <label>$| LANG_LOCALE['30546'] |$</label>
+					<?lua
+					    if (multiToUnicast == "1") then
+                            statusStr="enable-disable-on"
+                            statusVar="1"
+                        else
+                            statusStr="enable-disable-off"
+                            statusVar="0"
+                        end
+                    ?>
+                    <a class="$| statusStr |$" alt="" id="tf1_multiToUnicast"></a>
+                    <input type="hidden" value="$| statusVar |$" name="advancedWireless.multiToUnicast">
+				</div>
+				<div class="break">&nbsp;</div>
+				               
+								<div class="submitRow">
+                                    <input type="submit" name="button.config.advancedWireless5GHz" onclick="return advancedWirelessValidate('tf1_frmadvancedSettings5GHz')" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); advWirelessReset('tf1_frmadvancedSettings5GHz');" >
+				                </div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+            </td>
+		</tr>
+        <tr>
+		    <td>
+                <?lua web.includeMenu("footer.html")?>
+            </td>
+        </tr>
+		</table>
+		<input type="hidden" id="opMode" value="$| radio_opMode or ''|$">
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/advancedWireless.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				onloadCall();
+				fieldStateChangeWr ('tf1_fragmentationThreshold','','','');
+			 	vidualDisplay('tf1_fragmentationThreshold break_fragmentationThreshold', 'hide');
+			});
+		</script>
+	</body>
+
+</html>
+<?lua end ?>

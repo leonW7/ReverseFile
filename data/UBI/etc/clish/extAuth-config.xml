@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+    http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<!--=======================================================-->
+<VIEW name="NT-Domain-Settings" prompt="NT-Domain-Settings> "> 
+    <COMMAND name="save" help="Save NT Domain configuration changes.">
+        <ACTION>lua clishCfgObjExec("ntdomainsettings")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+        help="Save NT Domain configuration changes and exit." 
+        view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("ntdomainsettings")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_1" help="Set primary server IP address.">
+        <PARAM name="Authentication_Server_1" 
+            help="Configure Authentication Server 1 IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.AuthenticationServer", 
+            "${Authentication_Server_1}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_2" help="Set Second alternative server IP address.">
+        <PARAM name="Authentication_Server_2" 
+            help="Configure Authentication Server 2 IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.SecondAuthenticationServer", 
+            "${Authentication_Server_2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_3" help="Set third alternative server IP address.">
+        <PARAM name="Authentication_Server_3" 
+            help="Configure Authentication server 3 IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.ThirdAuthenticationServer", 
+            "${Authentication_Server_3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="workgroup" help="Set NT Domain Workgroup">
+        <PARAM name="workgroup" 
+            help="Configure NT Domain Workgroup."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.NTDomainWorkGroup", "${workgroup}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="second_workgroup" help="Set second alternative Workgroup">
+        <PARAM name="second_workgroup" 
+            help="Configure NT Domain Secondary Workgroup."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.NTDomainSecondWorkGroup", "${second_workgroup}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="third_workgroup" help="Set Third alternative Workgroup">
+        <PARAM name="third_workgroup" 
+            help="Configure NT Domain Third Workgroup."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.ThirdNTDomainWorkGroup", "${third_workgroup}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="timeout" help="Set NT Domain server connection timeout.">
+        <PARAM name="timeout" 
+            help="Configure NT Domain server connection timeout (in seconds)."
+            ptype="UINT"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.TimeOut", 
+            "${timeout}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="retries" help="Set NT Domain server connection retry attempts.">
+        <PARAM name="retries" 
+            help="Configure NT Domain server connection retry attempts."
+            ptype="UINT"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.Retries", 
+            "${retries}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="first_admin_name" help="Set NT Domain first server admin name">
+        <PARAM name="first_admin_name" 
+            help="Configure NT Domain admin name for first server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.FirstAdminAccount", "${first_admin_name}")
+        </ACTION>
+    </COMMAND>   
+    <COMMAND name="first_admin_passwd" help="Set NT Domain first server admin password">
+        <PARAM name="first_admin_passwd" 
+            help="Configure NT Domain admin password for first server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.FirstAdminPasswd", "${first_admin_passwd}")
+        </ACTION>
+    </COMMAND>       
+    <COMMAND name="first_admin_hostname" help="Set NT Domain first server admin hostname">
+        <PARAM name="first_admin_hostname" 
+            help="Configure NT Domain admin hostname for first server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.FirstServerHostname", "${first_admin_hostname}")
+        </ACTION>
+    </COMMAND>        
+    <COMMAND name="second_admin_name" help="Set NT Domain second server admin name">
+        <PARAM name="second_admin_name" 
+            help="Configure NT Domain admin name for second server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.SecondAdminAccount", "${second_admin_name}")
+        </ACTION>
+    </COMMAND>  
+    <COMMAND name="second_admin_passwd" help="Set NT Domain second server admin password">
+        <PARAM name="second_admin_passwd" 
+            help="Configure NT Domain admin password for second server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.SecondAdminPasswd", "${second_admin_passwd}")
+        </ACTION>
+    </COMMAND>   
+        <COMMAND name="second_admin_hostname" help="Set NT Domain second server admin hostname">
+        <PARAM name="second_admin_hostname" 
+            help="Configure NT Domain admin hostname for second server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.SecondServerHostname", "${second_admin_hostname}")
+        </ACTION>
+    </COMMAND>      
+    <COMMAND name="third_admin_name" help="Set NT Domain third server admin name">
+        <PARAM name="third_admin_name" 
+            help="Configure NT Domain admin name for third server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.ThirdAdminAccount", "${third_admin_name}")
+        </ACTION>
+    </COMMAND>      
+    <COMMAND name="third_admin_passwd" help="Set NT Domain third server admin password">
+        <PARAM name="third_admin_passwd" 
+            help="Configure NT Domain admin password for third server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.ThirdAdminPasswd", "${third_admin_passwd}")
+        </ACTION>
+    </COMMAND>       
+    <COMMAND name="third_admin_hostname" help="Set NT Domain third server admin hostname">
+        <PARAM name="third_admin_hostname" 
+            help="Configure NT Domain admin hostname for third server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ntdomainsettings", "NTDomainSettings.ThirdServerHostname", "${third_admin_hostname}")
+        </ACTION>
+    </COMMAND>            
+    <COMMAND name="serverCheck" help="Check the reachability of configured servers.">
+        <ACTION>lua clishCmdExec(serverStatusCheck, "ntDomain", "NTDomainSettings")</ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="Active-Directory-Settings" prompt="Active-Directory-Settings> "> 
+    <COMMAND name="save" help="Save Active Directory Configuration changes.">
+        <ACTION>lua clishCfgObjExec("activedirectorysettings")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+        help="Save Active Directory configuration changes and exit." 
+        view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("activedirectorysettings")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_1" help="Set primary server IP address.">
+        <PARAM name="Authentication_Server_1" 
+            help="Configure Authentication server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.AuthenticationServer", 
+            "${Authentication_Server_1}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_2" help="Set second alternative server IP address.">
+        <PARAM name="Authentication_Server_2" 
+            help="Configure Authentication server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.SecondAuthenticationServer", "${Authentication_Server_2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_3" help="Set third alternative server IP address.">
+        <PARAM name="Authentication_Server_3" 
+            help="Configure Authentication server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.ThirdAuthenticationServer", "${Authentication_Server_3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Active_Directory_Domain" help="Set Active Directory Domain">
+        <PARAM name="Active_Directory_Domain" 
+            help="Configure Active Directory Domain."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.ActiveDirectoryDomain", "${Active_Directory_Domain}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Second_Active_Directory_Domain" help="Set Second Alternative Active Directory Domain">
+        <PARAM name="Second_Active_Directory_Domain" 
+            help="Configure Secondary Active Directory Domain"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.SecondActiveDirectoryDomain", "${Second_Active_Directory_Domain}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Third_Active_Directory_Domain" help="Set Third Alternative Active Directory Domain">
+        <PARAM name="Third_Active_Directory_Domain" 
+            help="Configure Third Active Directory Domain"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.ThirdActiveDirectoryDomain", "${Third_Active_Directory_Domain}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="timeout" help="Set Active Directory domain connection timeout.">
+        <PARAM name="timeout" 
+            help="Configure Active Directory server connection timeout (in seconds)."
+            ptype="UINT"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.TimeOut", 
+            "${timeout}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="retries" help="Set Active Directory connection retry attempts.">
+        <PARAM name="retries" 
+            help="Configure Active Directory server connection retry attempts."
+            ptype="UINT"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.Retries", 
+            "${retries}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="first_admin_name" help="Set Active Directory first server admin name">
+        <PARAM name="first_admin_name" 
+            help="Configure Active Directory admin name for first server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.FirstAdminAccount", "${first_admin_name}")
+        </ACTION>
+    </COMMAND>   
+    <COMMAND name="first_admin_passwd" help="Set Active Directory first server admin password">
+        <PARAM name="first_admin_passwd" 
+            help="Configure Active Directory admin password for first server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.FirstAdminPasswd", "${first_admin_passwd}")
+        </ACTION>
+    </COMMAND>       
+    <COMMAND name="first_admin_hostname" help="Set Active Directory first server admin hostname">
+        <PARAM name="first_admin_hostname" 
+            help="Configure Active Directory admin hostname for first server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.FirstServerHostname", "${first_admin_hostname}")
+        </ACTION>
+    </COMMAND>        
+    <COMMAND name="second_admin_name" help="Set Active Directory second server admin name">
+        <PARAM name="second_admin_name" 
+            help="Configure Active Directory admin name for second server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.SecondAdminAccount", "${second_admin_name}")
+        </ACTION>
+    </COMMAND>  
+    <COMMAND name="second_admin_passwd" help="Set Active Directory second server admin password">
+        <PARAM name="second_admin_passwd" 
+            help="Configure Active Directory admin password for second server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.SecondAdminPasswd", "${second_admin_passwd}")
+        </ACTION>
+    </COMMAND>   
+        <COMMAND name="second_admin_hostname" help="Set Active Directory second server admin hostname">
+        <PARAM name="second_admin_hostname" 
+            help="Configure Active Directory admin hostname for second server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.SecondServerHostname", "${second_admin_hostname}")
+        </ACTION>
+    </COMMAND>      
+    <COMMAND name="third_admin_name" help="Set Active Directory third server admin name">
+        <PARAM name="third_admin_name" 
+            help="Configure Active Directory admin name for third server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.ThirdAdminAccount", "${third_admin_name}")
+        </ACTION>
+    </COMMAND>      
+    <COMMAND name="third_admin_passwd" help="Set Active Directory third server admin password">
+        <PARAM name="third_admin_passwd" 
+            help="Configure Active Directory admin password for third server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.ThirdAdminPasswd", "${third_admin_passwd}")
+        </ACTION>
+    </COMMAND>       
+    <COMMAND name="third_admin_hostname" help="Set Active Directory third server admin hostname">
+        <PARAM name="third_admin_hostname" 
+            help="Configure Active Directory admin hostname for third server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("activedirectorysettings", "ActiveDirectorySettings.ThirdServerHostname", "${third_admin_hostname}")
+        </ACTION>
+    </COMMAND>           
+    <COMMAND name="serverCheck" help="Check the reachability of configured servers.">
+        <ACTION>lua clishCmdExec(serverStatusCheck, "activeDirectory", "ActiveDirectorySettings")</ACTION>
+    </COMMAND>
+
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="LDAP-Settings" prompt="LDAP-Settings> "> 
+    <COMMAND name="save" help="Save LDAP configuration changes.">
+	<ACTION>lua clishCfgObjExec("ldapsettings")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save LDAP configuration changes and exit." 
+	     view="root-view" viewid="">
+	<ACTION>lua clishCfgObjExec("ldapsettings")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_1" help="Set primary server IP address.">
+	<PARAM name="Authentication_Server_1" 
+	       help="Configure Authentication server IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.AuthenticationServer", 
+		    "${Authentication_Server_1}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_2" help="Set second alternative server IP address.">
+	<PARAM name="Authentication_Server_2" 
+	       help="Configure Authentication server IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.SecondAuthenticationServer", 
+		    "${Authentication_Server_2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_3" help="Set third alternative server IP address.">
+	<PARAM name="Authentication_Server_3" 
+	       help="Configure Authentication server IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.ThirdAuthenticationServer", 
+		    "${Authentication_Server_3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="LDAP_Base_DN" help="Set LDAP Base DN">
+	<PARAM name="LDAP_Base_DN" 
+	       help="Configure LDAP Base DN."
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.LDAPBaseDN", "${LDAP_Base_DN}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Second_LDAP_Base_DN" help="Set second alternative LDAP Base DN">
+	<PARAM name="Second_LDAP_Base_DN" 
+	       help="Configure Second LDAP Base DN"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.SecondLDAPBaseDN", "${Second_LDAP_Base_DN}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Third_LDAP_Base_DN" help="Set Third alternative LDAP Base DN">
+	<PARAM name="Third_LDAP_Base_DN" 
+	       help="Configure Configure Third LDAP Base DN"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.ThirdLDAPBaseDN", "${Third_LDAP_Base_DN}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="LDAPAttribute1" help="Set LDAP Attribute 1">
+	<PARAM name="ldapattribute1" 
+	       help="Configure LDAP Attribute1"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.LDAPAttribute1", "${ldapattribute1}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="LDAPAttribute2" help="Set LDAP Attribute 2">
+	<PARAM name="ldapattribute2" 
+	       help="Configure LDAP Attribute2."
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.LDAPAttribute2", "${ldapattribute2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="LDAPAttribute3" help="Set LDAP Attribute 3">
+	<PARAM name="ldapattribute3" 
+	       help="Configure LDAP Attribute3"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.LDAPAttribute3", "${ldapattribute3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="LDAPAttribute4" help="Set LDAP Attribute 4">
+	<PARAM name="ldapattribute4" 
+	       help="Configure LDAP Attribute4"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.LDAPAttribute4", "${ldapattribute4}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="timeout" help="Set LDAP server connection timeout.">
+	<PARAM name="timeout" 
+	       help="Configure LDAP server connection timeout (in seconds)."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.TimeOut", "${timeout}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="retries" help="Set LDAP server connection retry attempts.">
+	<PARAM name="retries" 
+	       help="Configure LDAP server connection retry attempts."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.Retries", "${retries}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="first_admin_name" help="Set LDAP first server admin name">
+        <PARAM name="first_admin_name" 
+            help="Configure LDAP admin name for first server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.FirstAdminAccount", "${first_admin_name}")
+        </ACTION>
+    </COMMAND>   
+    <COMMAND name="first_admin_passwd" help="Set LDAP first server admin password">
+        <PARAM name="first_admin_passwd" 
+            help="Configure LDAP admin password for first server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.FirstAdminPasswd", "${first_admin_passwd}")
+        </ACTION>
+    </COMMAND>       
+    <COMMAND name="second_admin_name" help="Set LDAP second server admin name">
+        <PARAM name="second_admin_name" 
+            help="Configure LDAP admin name for second server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.SecondAdminAccount", "${second_admin_name}")
+        </ACTION>
+    </COMMAND>  
+    <COMMAND name="second_admin_passwd" help="Set LDAP second server admin password">
+        <PARAM name="second_admin_passwd" 
+            help="Configure LDAP admin password for second server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.SecondAdminPasswd", "${second_admin_passwd}")
+        </ACTION>
+    </COMMAND>   
+    <COMMAND name="third_admin_name" help="Set LDAP third server admin name">
+        <PARAM name="third_admin_name" 
+            help="Configure LDAP admin name for third server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.ThirdAdminAccount", "${third_admin_name}")
+        </ACTION>
+    </COMMAND>      
+    <COMMAND name="third_admin_passwd" help="Set LDAP third server admin password">
+        <PARAM name="third_admin_passwd" 
+            help="Configure LDAP admin password for third server"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("ldapsettings", "LDAPSettings.ThirdAdminPasswd", "${third_admin_passwd}")
+        </ACTION>
+    </COMMAND>       
+    <COMMAND name="serverCheck" help="Check the reachability of configured servers.">
+        <ACTION>lua clishCmdExec(serverStatusCheck, "ldap", "LDAPSettings")</ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="POP3-Server-Configuration" prompt="POP3-Server-Configuration> "> 
+    <COMMAND name="save" help="Save POP3 configuration changes.">
+        <ACTION>lua clishCfgObjExec("pop3settings")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+        help="Save POP3 configuration changes and exit." 
+        view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("pop3settings")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_1" help="Set primary server.">
+        <PARAM name="Authentication_Server_1" 
+            help="Configure Authentication server."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.Server", 
+            "${Authentication_Server_1}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_2" help="Set secondary server.">
+        <PARAM name="Authentication_Server_2" 
+            help="Configure Authentication server."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.SecondServer", 
+            "${Authentication_Server_2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Server_3" help="Set optional server.">
+        <PARAM name="Authentication_Server_3" 
+            help="Configure optional server."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.ThirdServer", 
+            "${Authentication_Server_3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Authentication_Port_1" help="Set port for primary server">
+        <PARAM name="Authentication_Port_1" 
+            help="Authentication port for primary server."
+            ptype="PORT_NUM"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.AuthenticationPort", "${Authentication_Port_1}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="Authentication_Port_2" help="Set port for secondary server">
+        <PARAM name="Authentication_Port_2" 
+            help="Authentication port for secondary server."
+            ptype="PORT_NUM"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.SecondAuthenticationPort", "${Authentication_Port_2}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="Authentication_Port_3" help="Set port for optional server">
+        <PARAM name="Authentication_Port_3" 
+            help="Authentication port for optional server."
+            ptype="PORT_NUM"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.ThirdAuthenticationPort", "${Authentication_Port_3}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="SSL_Enable_1" help="Enable SSL for primary server.">
+        <PARAM name="SSL_Enable_1" 
+            help="Enable SSL for primary server."
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.SSLEnable", "${SSL_Enable_1}")
+        </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="SSL_Enable_2" help="Enable SSL for secondary server.">
+        <PARAM name="SSL_Enable_2" 
+            help="Enable SSL for secondary server."
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.SecondSSLEnable", "${SSL_Enable_2}")
+        </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="SSL_Enable_3" help="Enable SSL for optional server.">
+        <PARAM name="SSL_Enable_3" 
+            help="Enable SSL for optional server."
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.ThirdSSLEnable", "${SSL_Enable_3}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="CA_File_1" help="CAFILE for primary server.">
+        <PARAM name="CA_File_1" 
+            help="Name of CAFILE for primary server."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.CAFile", "${CA_File_1}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="CA_File_2" help="CAFILE for secondary server.">
+        <PARAM name="CA_File_2" 
+            help="Name of CAFILE for secondary server."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.SecondCAFile", "${CA_File_2}")
+        </ACTION>
+    </COMMAND>
+    
+    <COMMAND name="CA_File_3" help="CAFILE for optional server.">
+        <PARAM name="CA_File_3" 
+            help="Name of CAFILE for optional server."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("pop3settings", "POPProfiles.ThirdCAFile", "${CA_File_3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="serverCheck" help="Check the reachability of configured servers.">
+        <ACTION>lua clishCmdExec(serverStatusCheck, "pop3", "POPProfiles")</ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="POP3_Trusted_CA" prompt="POP3_Trusted_CA> ">
+    <COMMAND name="exit" 
+        help="Exit POP3_Trusted_CA." 
+        view="root-view" viewid="">
+    </COMMAND> 
+    <COMMAND name="add" help="Add a certificate.">
+        <PARAM name="caFile" 
+            help="Add a CAFILE."
+            ptype="STRING"/>
+        <PARAM name="ipAddr" 
+            help="ip address of tftp server"
+            ptype="IP_ADDR"/>
+
+    <ACTION>lua clishCmdExec(pop3CaFileUpload, "${caFile}", "${ipAddr}")</ACTION>
+    </COMMAND>
+    <COMMAND name="delete" help="Delete a certificate.">
+        <PARAM name="caFile" 
+	       help="Delete a certificate."
+           ptype="STRING"/>
+    <ACTION>lua clishCmdExec(pop3DeleteCaFile, "${caFile}")</ACTION>
+    </COMMAND>
+</VIEW>
+
+    <!--=======================================================-->
+    <COMMAND name="system POP3_Settings"
+        help="System POP3 configuration commands."/>
+    
+    <!--=======================================================-->
+
+    <COMMAND name="system NT-Domain-Settings"
+        help="Configure NT-Domain Settings"
+        view="NT-Domain-Settings" viewid="">
+        <ACTION>lua clishCfgObjNew ("ntdomainsettings", 
+            ntdomainCfgInit, ntdomainCfgSave, 
+            ntdomainCfgInputVal)
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system Active-Directory-Settings"
+        help="Configure Active-Directory Settings"
+        view="Active-Directory-Settings" viewid="">
+        <ACTION>lua clishCfgObjNew ("activedirectorysettings", 
+            activedirectoryCfgInit, activedirectoryCfgSave, 
+            activedirectoryCfgInputVal)
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system LDAP_Settings"
+        help="Configure LDAP Settings"
+        view="LDAP-Settings" viewid="">
+        <ACTION>lua clishCfgObjNew ("ldapsettings", 
+            ldapCfgInit, ldapCfgSave, 
+            ldapCfgInputVal)
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system POP3_Settings POP3_Server_Configuration"
+        help="Configure POP3 Server"
+        view="POP3-Server-Configuration" viewid="">
+        <ACTION>lua clishCfgObjNew ("pop3settings", 
+            pop3CfgInit, pop3CfgSave, 
+            pop3CfgInputVal)
+        </ACTION>
+
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system POP3_Settings POP3_Trusted_CA"
+        help="Upload POP3 trusted Certificates"
+        view="POP3_Trusted_CA" viewid="">
+    </COMMAND>
+
+</CLISH_MODULE>

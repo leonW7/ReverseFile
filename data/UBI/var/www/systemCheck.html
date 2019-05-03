@@ -1,0 +1,149 @@
+<?lua 
+require "teamf1lualib/bl_systemCheck"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/ipv6_mode_bl"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "systemCheck"
+
+local system = require("com.teamf1.bl.diagnostics.network")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local mode6 = require("com.teamf1.bl.ipv6.mode")
+ 
+local errMsg, cookie, ipMode = mode6.ipModeSectionGet()
+
+
+local inputTable = {}
+
+if (ButtonType and ButtonType == "ipv4RouteDisplay") then
+    inputTable ["systemCheck.status"] = "ipv4"
+    errorFlag, cookie, outputText = system.systemCheckGet (inputTable)
+     if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "ipv6RouteDisplay") then
+    inputTable ["systemCheck.status"] = "ipv6"
+    errorFlag, cookie, outputText = system.systemCheckGet (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    if (outputText == nil) then
+        outputText = ""
+    end
+	cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+LANG_LOCALE = "13037,10761,10762,10544,11766,10464"
+?>
+    
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                               <li>
+                                     <a href="?page=networkTools.html">$| LANG_LOCALE['11766'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=capturePackets.html">$| LANG_LOCALE['10464'] |$</a>
+                                </li>
+                                <li class="current">
+                                  <a href="?page=systemCheck.html">$| LANG_LOCALE['13037'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13037'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmSystemCheck"
+                                id="tf1_frmSystemCheck" action="platform.cgi" method="post">
+                                <input type="hidden" name="thispage" id="thispage" value="systemCheck.html">
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['10761'] |$" value="$| LANG_LOCALE['10761'] |$" id="btSave" name="button.ipv4RouteDisplay.systemCheck">
+                                    <?lua
+                                    if (ipMode == "3") then
+                                    ?>
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['10762'] |$" value="$| LANG_LOCALE['10762'] |$" id="btSave" name ="button.ipv6RouteDisplay.systemCheck">
+                                    <?lua end ?>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10544'] |$ </label>
+                                    <textarea class="one" name="1" value = "" id>
+                                      $| outputText |$
+                                        </textarea>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+    </body>
+</html>
+<?lua end ?>
+

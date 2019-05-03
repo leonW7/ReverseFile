@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="security-webAccess-config" prompt="security-config[webAccess]> "> 
+    <COMMAND name="save" help="security webAccess configuration.">
+	     <ACTION>lua clishCfgObjExec("webAccessInfo")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save webAccess rules configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("webAccessInfo")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back webAccess rules configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="name"
+             help="name">
+             <PARAM name="name"
+                    help="Specify identifiable name for this rule"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("webAccessInfo", "webAccessInfo.name", "${name}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="accessType"
+             help="acessType">
+             <PARAM name="accessType"
+                    help="Specify accessType for this rule"
+                    ptype="ACCESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("webAccessInfo", "webAccessInfo.accessType", "${accessType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ipAddr"
+             help="ipAddr">
+             <PARAM name="ipAddr"
+                    help="Specify ipAddress for this rule"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("webAccessInfo", "webAccessInfo.IpAddr", "${ipAddr}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="vlanId"
+             help="vlanId">
+             <PARAM name="vlanId"
+                    help="Specify vlanId for this rule"
+                    ptype="VLAN_ID"/>
+             <ACTION>lua clishCfgObjAdd ("webAccessInfo", "webAccessInfo.vlanId", "${vlanId}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security webAccess" help="Web Access Filter Configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security webAccess status"
+             help="security webAccess status">
+	<PARAM name="status" 
+	       help=" Specify WebAccess status for this rule"
+	       ptype="WPS_STATUS"/>
+                   <ACTION>lua webAccessStatusConfig("${status}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security webAccess add"
+             help="security webAccess add"
+             view="security-webAccess-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("webAccessInfo", 
+                              webAccessInfoCfgInit, webAccessInfoCfgSave, 
+				       webAccessInfoCfgInputVal, nil)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security webAccess edit"
+             help="security webAccess edit"
+             view="security-webAccess-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Specify Row Id Of the rule to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("webAccessInfo", 
+                              webAccessInfoCfgInit, webAccessInfoCfgSave, 
+				       webAccessInfoCfgInputVal, "${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security webAccess delete"
+             help="security webAccess delete">
+	<PARAM name="row_id" 
+	       help=" Specify Row Id Of the rule to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua webAccessInfoCfgDel("${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security webAccess" help="."/>
+    <COMMAND name="show security webAccess setup"
+            help="Display security webAccess rules">
+	    <ACTION>lua clishCmdExec (webAccessInfoCfgGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+</CLISH_MODULE>

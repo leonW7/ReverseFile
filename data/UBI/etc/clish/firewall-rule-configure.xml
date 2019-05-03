@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="security-firewall-ipv4-config" prompt="security-config[firewall-ipv4]> "> 
+    <COMMAND name="save" help="Save Firewall IPV4 rules configuration changes.">
+	     <ACTION>lua clishCfgObjExec("FirewallRules")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Firewall IPV4 rules configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("FirewallRules")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back IPV4 rules configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="from_zone"
+             help="Set from Zone security type">
+             <PARAM name="from_zone"
+                    help="Set zone security type"
+                    ptype="ZONE_RULE_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.FromZoneType", "${from_zone}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="from_zone_vlan"
+             help="Set From Zone VLAN using corresponding VLAN name">
+             <PARAM name="from_zone_vlan"
+                    help="Set VLAN name from available vlans"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.FromZoneVlanName", "${from_zone_vlan}")              
+             </ACTION>
+    </COMMAND> 
+   <COMMAND name="to_zone"
+             help="Set to Zone security type">
+             <PARAM name="to_zone"
+                    help="Set to zone security type"
+                    ptype="ZONE_RULE_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.ToZoneType", "${to_zone}")              
+             </ACTION>
+    </COMMAND> 
+    <COMMAND name="to_zone_vlan"
+             help="Set To Zone VLAN using corresponding VLAN name">
+             <PARAM name="to_zone_vlan"
+                    help="Set VLAN name from available vlans (should be different from from_zone_vlan)"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.ToZoneVlanName", "${to_zone_vlan}")              
+             </ACTION>
+    </COMMAND>
+    
+    <COMMAND name="service" help="."/>
+
+    <COMMAND name="service service_custom"
+             help="Name of the custom  service for which a rule is to be added
+             custom name should already be added into custom service">
+             <PARAM name="services"
+                    help="Name of the service for which a rule is to be added"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.ServiceName", "${services}")              
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="service service_normal"
+             help="Name of the service for which a rule is to be added">
+             <PARAM name="service"
+                    help="Name of the service for which a rule is to be added"
+                    ptype="SERVICE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.ServiceName", "${service}")              
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="action"
+             help="Action to be taken by the rule">
+             <PARAM name="action"
+                    help="Action to be taken by the rule"
+                    ptype="ACTION_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.Action", "${action}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="schedule"
+             help="Name of schedule for which the rule is applicable">
+             <PARAM name="schedule"
+                    help="Name of schedule for which the rule is applicable"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.ScheduleName", "${schedule}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_address_type"
+             help="Type of the source user">
+             <PARAM name="srcType"
+                    help="Select source address type Any/Single Address/Address Range"
+                    ptype="USER_ADDRESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.SourceAddressType", "${srcType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address_type"
+             help="Type of the destination user">
+             <PARAM name="dstType"
+                    help="Select destination address type Any/Single Address/Address Range"
+                    ptype="USER_ADDRESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.DestinationAddressType", "${dstType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="snat_address_type"
+             help="Type of the SNAT address">
+             <PARAM name="snatType"
+                    help="Select snat type WAN1/Single Address "
+                    ptype="SNAT_ADDRESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.SNATAddressType", "${snatType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="log"
+             help="Log Always or Never">
+             <PARAM name="log"
+                    help="Log always or never"
+                    ptype="LOG_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.LogLevel", "${log}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_address_start"
+             help="IP of the Source user">
+             <PARAM name="srcAddrStart"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.SourceAddressStart", "${srcAddrStart}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_address_end"
+             help="IP of the Source user">
+             <PARAM name="srcAddrEnd"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.SourceAddressEnd", "${srcAddrEnd}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address_start"
+             help="IP of the Destination user">
+             <PARAM name="dstAddrStart"
+                    help="IP of the Destination User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.DestinationAddressStart", "${dstAddrStart}")                    </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address_end"
+             help="IP of the Destiation user">
+             <PARAM name="dstAddrEnd"
+                    help="IP of the Destination User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.DestinationAddressEnd", "${dstAddrEnd}")                        </ACTION>
+    </COMMAND>
+    <COMMAND name="qos_priority"
+             help="Firewall type of service">
+             <PARAM name="qos"
+                    help="Set Firewall type of service"
+                    ptype="FIREWALL_QOS"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.TypeOfService", "${qos}") </ACTION>
+    </COMMAND>
+  <COMMAND name="wan_interface"
+             help="WAN interface for Source NAT settings">
+             <PARAM name="wan"
+                    help="Set WAN interface for Source NAT settings"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.SNATInterface", "${wan}") </ACTION>
+         </COMMAND>
+    <COMMAND name="avail_WAN_inerfaces" help="Displays available interfaces">
+             <ACTION>lua clishCmdExec (availInterfacesGet)
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="snat_address"
+             help="IP of the SNAT Address">
+             <PARAM name="snatAddr"
+                    help="IP of the SNAT Address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.SNATAddress", "${snatAddr}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dnat_port"
+             help="The port number to use for DNAT, required if port forwarding is enabled">
+             <PARAM name="dnatport"
+                    help="The port number to use for DNAT, required if port forwarding is enabled"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.DNATPort", "${dnatport}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="port_forwarding_enable"
+             help="enable/disable port forwarding based on this firewall rule configuration settings">
+             <PARAM name="dnatenable"
+                    help="enable/disable port forwarding based on this firewall rule configuration settings"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.DNATPortEnable", "${dnatenable}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="internal_ip_address"
+             help="Send to Local Server (DNAT IP),Specifies an IP address and port number of a machine on the Local Network which is hosting the server.">
+             <PARAM name="dnatAddr"
+                    help="Send to Local Server (DNAT IP),Specifies an IP address and port number of a machine on the Local Network which is hosting the server."
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.DNATAddress", "${dnatAddr}")              
+             </ACTION>
+         </COMMAND>
+
+         <COMMAND name="dnat_ipaddress"
+             help="External IP address for DNAT settings">
+             <PARAM name="externalipaddress"
+                    help="Set external ip address for DNAT settings"
+                    ptype="STRING"/>
+                <ACTION>lua clishCfgObjAdd ("FirewallRules", "FirewallRules.DestinationPublicInterface", "${externalipaddress}") </ACTION>
+            </COMMAND>
+
+            <COMMAND name="External_IP_Address" help="Displays available external ip addresses.">
+             <ACTION>lua clishCmdExec (externalIpAddressGet)
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-firewall-algs-config" prompt="security-config[firewall-alg]> "> 
+    <COMMAND name="save" help="Save Firewall algs changes.">
+	     <ACTION>lua clishCfgObjExec("FirewalALGs")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Firewall algs changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("FirewalALGs")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll Firewall algs changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+  <COMMAND name="Rtsp"
+             help="Protocal to be enabled at ALGs">
+             <PARAM name="protocol"
+                    help="Type of rule to be added"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FirewalALGs", "AlgConf.Rtsp", "${protocol}")              
+             </ACTION>
+    </COMMAND>
+  <COMMAND name="Sip"
+             help="Protocal to be enabled at ALGs">
+             <PARAM name="protocol"
+                    help="Type of rule to be added"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FirewalALGs", "AlgConf.Sip", "${protocol}")              
+             </ACTION>
+    </COMMAND>
+  <COMMAND name="H323"
+             help="Protocal to be enabled at ALGs">
+             <PARAM name="protocol"
+                    help="Type of rule to be added"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FirewalALGs", "AlgConf.H323", "${protocol}")              
+             </ACTION>
+    </COMMAND>
+<COMMAND name="Tftp"
+             help="Protocal to be enabled at ALGs">
+             <PARAM name="protocol"
+                    help="Type of rule to be added"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FirewalALGs", "AlgConf.Tftp", "${protocol}")              
+             </ACTION>
+    </COMMAND>
+
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-firewall-ipv4-move" prompt="security-config[firewall-reorder]> "> 
+    <COMMAND name="save" help="Save Firewall IPV4 rule reordering changes.">
+	     <ACTION>lua clishCfgObjExec("RuleToMove")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Firewall IPV4 rule reordering changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("RuleToMove")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back IPV4 rule reordering changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="position"
+             help="New position for the rule">
+             <PARAM name="pos"
+                    help="Move rule to this position"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("RuleToMove", "RuleToMove.pos", "${pos}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<!--=======================================================-->
+    <COMMAND name="security firewall" license_support="Y" help="Firewall rules setup."/>
+    <COMMAND name="security firewall ipv4" help="Firewall IPv4 rules setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv4 configure"
+             help="Firewall IPV4 rules configuration mode."
+             view="security-firewall-ipv4-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("FirewallRules", 
+                              accessControlRuleCfgInit, accessControlRuleCfgSave, 
+				       accessControlRuleCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv4 default_outbound_policy"
+             help="Firewall Settings, Default Outbound Policy configuration mode."
+             >
+             <PARAM name="default_outbound_policy" help="enable/disable default ob policy" ptype="FIREWALL_POLICY"/>
+             <ACTION>lua clishCfgObjNew ("FirewallRules", 
+                              firewallSettings4CfgInit, firewallSettings4CfgSave, 
+				       nil,"${default_outbound_policy}")
+             clishCfgObjExec("FirewallRules")
+             </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv4 edit"
+             help="Firewall IPV4 rules configuration mode."
+             view="security-firewall-ipv4-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("FirewallRules", 
+                              accessControlRuleCfgInit, accessControlRuleCfgSave, 
+				       accessControlRuleCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv4 enable"
+             help="Firewall IPV4 rules configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be enabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(accessControlRuleModify, "${row_id}", "enable")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv4 disable"
+             help="Firewall IPV4 Rules configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be disabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(accessControlRuleModify, "${row_id}", "disable")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv4 delete"
+             help="Firewall IPV4 Rules configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(accessControlRuleModify, "${row_id}", "delete")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv4 move"
+             help="Firewall IPV4 Rule reordering mode."
+             view="security-firewall-ipv4-move" viewid="">        
+	<PARAM name="row_id" 
+	       help=" Row Id(s) Of the rule to be moved"
+	       ptype="FW_RULE_ROW_IDS"/>
+       <ACTION>lua clishCfgObjNew ("RuleToMove", ruleReorderInit, 
+                       ruleReorderSave, ruleReorderInVal,"${row_id}")
+       </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall algs"
+             help="Firewall ALGs  configuration mode."
+             view="security-firewall-algs-config" viewid="">
+		<ACTION>lua clishCfgObjNew ("FirewalALGs", 
+                              FirewalALGsInit, FirewalALGsSave, 
+				       FirewalALGsInputVal)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+</CLISH_MODULE>

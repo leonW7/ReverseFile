@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# timeInit - initialization script for ntpd
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,25oct07,chd written
+
+
+if [ "$INCLUDE_TIME" = "y" ]; then
+ln -s $TIME_INSTALL_PATH/etc/timezone/ /var/timezone
+echo -n "starting ntpd Daemon..."
+$TIME_INSTALL_PATH/bin/ntpd $DB_FILENAME &
+echo "Done"
+fi

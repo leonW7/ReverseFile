@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# umiInit - initialization script for umi
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_UMI" = "y" ]; then
+
+MODULES_DIR=$UMI_INSTALL_PATH/lib/modules/umi/
+
+[ -f $MODULES_DIR/umi.$MOD_SUFFIX ] && { insmod $MODULES_DIR/umi.$MOD_SUFFIX; }
+
+fi

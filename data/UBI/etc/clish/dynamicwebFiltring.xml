@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                          xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+                          http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<!--=======================================================-->
+<VIEW name="security-dynamic-filtering-config" prompt="security-config[dynamic_filtering]> ">
+    <COMMAND name="save" help="Save dynamic filter configuration changes.">
+             <ACTION>lua clishCfgObjExec("DynamicFiltering")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="choose_filter" 
+     help="Choose dynamic filter type."/>
+       <COMMAND name="choose_filter adult"
+           help="Select adult category as filter type">
+         <PARAM name="Adult"
+         help="Adds adult category to filter list"
+         ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.adult", "${Adult}") 
+            </ACTION>
+        </COMMAND>
+        
+       <COMMAND name="choose_filter news"
+           help="Select news category as filter type">
+         <PARAM name="News"
+         help="Adds News category to filter list"
+         ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.news", "${News}") 
+            </ACTION>
+        </COMMAND>
+
+        <COMMAND name="choose_filter jobsearch"
+            help="Select jobsearch category as filter type">
+             <PARAM name="Jobsearch"
+                    help="Adds Jobsearch category to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.jobSearch", "${Jobsearch}") 
+             </ACTION>
+         </COMMAND>
+
+        
+        <COMMAND name="choose_filter gambling"                                            
+           help="Select gambling category as filter type">                                        
+           <PARAM name="Gambling"                                                                    
+         help="Adds Gambling category to filter list"                                              
+       ptype="CHOICE_INT"/>                                                                      
+    <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.gambling", "${Gambling}")
+          </ACTION>                                                                                  
+     </COMMAND>
+     
+     <COMMAND name="choose_filter travel/tourism"         
+        help="Select travel/tourism category as filter type">
+              <PARAM name="Travel"                      
+                  help="Adds travel/tourism to filter list"  
+        ptype="CHOICE_INT"/>                                                                  
+          <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.travelTourism", "${Travel}")
+      </ACTION>                                                                            
+  </COMMAND> 
+
+<COMMAND name="choose_filter shopping"
+            help="Select shopping category as filter type">
+     <PARAM name="Shopping"
+    help="Adds Shopping category to filter list"
+  ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.shopping", "${Shopping}") 
+    </ACTION>
+</COMMAND>
+
+<COMMAND name="choose_filter entertainment"
+            help="Select entertainment category as filter type">
+             <PARAM name="Entertainment"
+                    help="Adds Entertainment category to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.entertainment", "${Entertainment}") 
+             </ACTION> 
+         </COMMAND>
+
+         <COMMAND name="choose_filter chatroomsims"
+                 help="Select chatrooms/im's category as filter type">
+             <PARAM name="Chatrooms"
+                    help="Adds chatrooms/im's  category to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.chatRoomsIms", "${Chatrooms}") 
+             </ACTION>
+         </COMMAND>
+
+         <COMMAND name="choose_filter datingsites"
+                 help="Select datingsites category as filter type">
+             <PARAM name="Datingsites"
+                    help="Adds datingsites category to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.datingSites", "${Datingsites}") 
+             </ACTION>
+             </COMMAND>
+<COMMAND name="choose_filter gamesites"
+                 help="Select gamesites category as filter type">
+             <PARAM name="Gamesites"
+                    help="Adds gamesites  category to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.gameSites", "${Gamesites}") 
+           </ACTION>
+
+             </COMMAND>
+<COMMAND name="choose_filter investmentsites"
+                 help="Select investment sites category as filter type">
+             <PARAM name="Investmemt"
+                    help="Adds investment sites  category to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.investmentSites", "${Investmemt}") 
+             </ACTION>
+             </COMMAND>
+<COMMAND name="choose_filter e-banking"
+                 help="Select e-banking category as filter type">
+             <PARAM name="E-banking"
+                    help="Adds E-bankingcategory to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.eBanking", "${E-banking}") 
+           </ACTION>
+
+             </COMMAND>
+             <COMMAND name="choose_filter crime/terrorism"
+                 help="Select Crime/Terrorism category as filter type">
+             <PARAM name="Crime"
+                 help="Adds crime/terrorism to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.crimeTerrorism", "${Crime}") 
+             </ACTION>
+             </COMMAND>
+             <COMMAND name="choose_filter personal-benifits-cults"
+                 help="Select personal benifits/cults category as filter type">
+             <PARAM name="Benifits"
+                    help="Adds personal benifits/cults to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.personalBeliefs", "${Benifits}") 
+             </ACTION>
+             </COMMAND>
+
+             <COMMAND name="choose_filter politics"
+                 help="Select polytics category as filter type">
+             <PARAM name="Polytics"
+                    help="Adds politics to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.polictics", "${Polytics}") 
+             </ACTION>
+             </COMMAND>
+              <COMMAND name="choose_filter sports"
+                 help="Select sports category as filter type">
+             <PARAM name="Sports"
+                    help="Adds sports to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.sports", "${Sports}") 
+             </ACTION>
+             </COMMAND>
+              <COMMAND name="choose_filter www-e-mailsites"
+                 help="Select www-e-mail sites category as filter type">
+             <PARAM name="Wwwwmailsites"
+                    help="Adds www-e-mail sites to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.wwwEmailSites", "${Wwwwmailsites}") 
+             </ACTION>
+             </COMMAND>
+
+             <COMMAND name="choose_filter violence/undesirable"
+                 help="Select violence/undesirable category as filter type">
+             <PARAM name="Violence"
+                 help="Adds violence/undesirable to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.violenceUndesirable", "${Violence}") 
+             </ACTION>
+             </COMMAND>
+
+             <COMMAND name="choose_filter malicious"
+                 help="Select malicious category as filter type">
+             <PARAM name="Malicious"
+                 help="Adds malicious to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.malicious", "${Malicious}") 
+             </ACTION>
+             </COMMAND>
+
+<COMMAND name="choose_filter searchsites"
+                 help="Select search sites category as filter type">
+             <PARAM name="Searchsites"
+                 help="Adds searchsites to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.searchSites", "${Searchsites}") 
+             </ACTION>
+             </COMMAND>
+<COMMAND name="choose_filter healthsites"
+                 help="Select health sites category as filter type">
+             <PARAM name="Healthsites"
+                 help="Adds helthsites to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.healthSites", "${Healthsites}") 
+             </ACTION>
+             </COMMAND>
+
+<COMMAND name="choose_filter clubsandsocialities"
+                 help="Select clubs and socialities  category as filter type">
+             <PARAM name="Clubssocialities"
+                 help="Adds clubs and socialities category to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.clubsSocieties", "${Clubssocialities}") 
+             </ACTION>
+             </COMMAND>
+             <COMMAND name="choose_filter music/video"
+                 help="Select music/video category as filter type">
+             <PARAM name="Musicvideo"
+                 help="Adds music/vidio category to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.musicVideo", "${Musicvideo}") 
+             </ACTION>
+             </COMMAND>
+<COMMAND name="choose_filter businessoriented"
+                 help="Select business oriented category as filter type">
+             <PARAM name="Business"
+                 help="Adds business oriented category to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.businessOriented", "${Business}") 
+             </ACTION>
+             </COMMAND>
+             <COMMAND name="choose_filter government-blocklist"
+                 help="Select government blocking list category as filter type">
+             <PARAM name="Government"
+                 help="Adds government blocking list to filter list"
+                    ptype="CHOICE_INT"/>
+           <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.governmentBlockingList", "${Government}") 
+             </ACTION>
+             </COMMAND>
+             <COMMAND name="choose_filter educational"
+                 help="Select educational category as filter type">
+             <PARAM name="Educational"
+                 help="Adds educational to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.educational", "${Educational}") 
+             </ACTION>
+             </COMMAND>
+             <COMMAND name="choose_filter advertising"
+                 help="Select advertising category as filter type">
+             <PARAM name="Advertising"
+                 help="Adds advertising to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.advertising", "${Advertising}") 
+             </ACTION>
+             </COMMAND>
+             <COMMAND name="choose_filter drugs/alcohol"
+                 help="Select drugs/alcohol category as filter type">
+             <PARAM name="Drugsalcohol"
+                 help="Adds drugs/alcohol to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.drugsAlcohol", "${Drugsalcohol}") 
+             </ACTION>
+             </COMMAND>
+             <COMMAND name="choose_filter computing/it"
+                 help="Select computing/it category as filter type">
+             <PARAM name="Computing"
+                 help="Adds computing/it to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.computingIT", "${Computing}") 
+             </ACTION>
+             </COMMAND>
+             <COMMAND name="choose_filter swimsuit/lingerie/models"
+                 help="Select Swimsuit/Lingerie/Models category as filter type">
+             <PARAM name="Swimsuit"
+                 help="Adds Swimsuit/Lingerie/Models to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.swimsuitLingerieModels", "${Swimsuit}") 
+             </ACTION>
+             </COMMAND>
+
+ <COMMAND name="choose_filter remote-control-desktop"
+     help="Select remote control/ desktop category as filter type">
+             <PARAM name="Remotecontrol"
+                 help="Adds remote control/desktop to filter list"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.remoteControlDesktop", "${Remotecontrol}") 
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="non-managed_action"
+             help="Select allow/block">
+             <PARAM name="action"
+                 help="Select allow/block"
+                    ptype="DYNAMIC_MANAGED_ACTION"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.nonmanagedaction", "${action}") 
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="allow_override"
+             help="Select allow override as enable/disable">
+             <PARAM name="allowaction"
+                 help="Select allow override as enable/disable"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.allowoverride", "${allowaction}") 
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="override_time_out"
+                 help="Select time_out value in Range : (60-3600) seconds">
+             <PARAM name="timeout"
+                 help="Select time_out value in Range : (60-3600) seconds"
+                    ptype="DYNAMIC_TIMEOUT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.overridetimeout", "${timeout}") 
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="update_on_access"
+             help="Select update on access as enable/disable">
+             <PARAM name="updateaction"
+                 help="Select update on access as enable/disable"
+                    ptype="CHOICE_INT"/>
+                <ACTION>lua clishCfgObjAdd ("DynamicFiltering", "dynamicFiltering.updateonaccess", "${updateaction}") 
+             </ACTION>
+         </COMMAND>
+
+        
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security dynamic_filter" license_support="Y" wcf_support="Y" help="dynamic filtering configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="security dynamic_filter configure"
+             help="security dynamic content filtering configuration."
+             view="security-dynamic-filtering-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("DynamicFiltering",
+                              DynamicFilteringCfgInit, DynamicFilteringCfgSave,
+                                       DynamicFilteringCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+
+<!--=======================================================-->
+</CLISH_MODULE>

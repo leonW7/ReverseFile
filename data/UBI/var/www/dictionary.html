@@ -1,0 +1,19 @@
+<?lua
+local commonLocale =
+"11281,12758,11387,11031,11789,12627,10683,13836,11592,11636,11295,12795,10862,10695,10449,13236,11032,11151,10582,13581,30001,10290,10937,11013,30482"
+if (LANG_LOCALE ~= nil and LANG_LOCALE ~= "") then
+    LANG_LOCALE = commonLocale .. "," .. LANG_LOCALE 
+else
+    LANG_LOCALE = commonLocale
+end
+LANG_LOCALE = db.getString (LANG_LOCALE)
+ ?>
+
+<script>
+var LANG_LOCALE = new Object();
+<?lua  
+local strV = "" 
+for k,v in pairs(LANG_LOCALE) do
+strV = v
+if (string.find(v,"'") == nil) then?>LANG_LOCALE['$|k|$'] = '$|strV|$';<?lua else strV = string.gsub(v,"'","&acute;") ?>LANG_LOCALE['$|k|$'] = '$|strV|$ '.replace(/&acute;/g, "'");<?lua end ?><?lua end ?>
+</script>

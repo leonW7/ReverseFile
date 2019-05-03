@@ -1,0 +1,218 @@
+<?lua
+require "teamf1lualib/bl_lanQos"
+require "teamf1lualib/bl_trustMode"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "trustModeSettings"
+	
+local guiLanQos    = require("com.teamf1.bl.lanqos.qosonlan")
+local guiTrustMode = require("com.teamf1.bl.lanqos.trustmode")
+local errorMap     = require ("com.teamf1.core.errorMap")
+local returnCodes  = require ("com.teamf1.core.returnCodes")
+
+local ENABLED     = "1"
+local errorInfo   = "1510015112"
+local trustModeTbl
+
+local errorCode, cookie, lanQosStatus = guiLanQos.isLanQosEnabled ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (lanQosStatus ~= ENABLED) then
+    statusInfoMessage = errorMap.errorStringGet (errorInfo)
+end
+
+errorCode, trustModeTbl = guiTrustMode.trustModeGetAll()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage1 = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "edit") then
+    local configRow = web.cgiToLuaTable(cgi)
+    
+	errorFlag, statusCode = guiTrustMode.trustModeSet (configRow)
+	if (errorFlag == returnCodes.SUCCESS) then
+		statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+	else
+    	statusErrorMessage = errorMap.errorStringGet (errorFlag) 
+    end
+	web.goToPage(NextPage, true, true)
+    
+else
+	cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<!--
+		Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+		All rights reserved.
+		-->
+
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+	<!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>				
+		<form name action="platform.cgi" method="post" name="tf1_frmTrustMode" id="tf1_frmTrustMode">
+			<input type="hidden" name="thispage" id="thispage" value="trustMode.html">			
+			<div id="tf1_dialog" class="configDialog"></div>		
+		</form>
+		<!-- Section for Pop up dialog ends -->	
+		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+			<ul>
+				<li id="edit">
+					Edit
+				</li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu3");
+					</script>
+					<!-- Status message place holder... [ 1. for error use
+                    "msgError" 2. for information use "msgInfo" 3. for sucess
+                    use "msgSuccess" CSS classes ]-->
+					<?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage1 ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage1 |$</p>
+                </div>
+                <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                <?lua end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=lanQos.html">LAN QoS Priority</a>
+								</li>
+								<li class="current">
+									<a href="?page=trustMode.html">Trust Mode Settings</a>
+								</li>
+								<li>
+									<a href="?page=priority802.html">802.1p Priority</a>
+								</li>
+								<li>
+									<a href="?page=ipDscp.html">IP DSCP Settings</a>
+								</li>
+								<li>
+									<a href="?page=portShapingRate.html">Port Shaping Rate</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+						</p>
+					</div>
+					<h1>Trust Mode List</h1>
+					<div class="CLR">
+						<div class="demo_jui" id="tf1_trustMode">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th> Port </th>
+										<th> Classification </th>
+									</tr>
+                                </thead>
+                                <?lua
+                                local i = 0
+                                for k, v in pairs (trustModeTbl) do
+                                    i=i+1
+                                    local row = trustModeTbl[i]
+                                    ?>
+                                   <tr class="gradeA" id="trustMode$| row["portNum"] |$">
+                                       <td>Port $| row["portNum"] |$</td>
+                                       <td>$| row["trustMode"] or '' |$</td>
+                                   </tr>
+                                       <?lua
+                                           end
+                                        ?>
+							</table>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+
+			$('#tf1_trustMode .gradeA').contextMenu('contextMenu', {
+				bindings : {
+				'editMenu' : function(t, e, rowId) {
+					openForm('button.edit.trustMode.trustMode',rowId,'tf1_dialog','trustMode','trustModeForm.html', 'tf1_trustModeDailogContent','');									
+				}
+				}
+			});
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+				 
+					$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+			   	});
+
+			});
+		</script>
+	</body>
+</html>
+<?lua end ?>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+          http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <COMMAND name="show vpn gre_tunnels" 
+             help="gre tunnels display mode">
+         <ACTION>lua clishCmdExec (getGreTunnels)</ACTION>
+    </COMMAND> 
+<!--=======================================================-->
+<VIEW name="vpn-gre-config" prompt="vpn-config[gre]> "> 
+    <COMMAND name="save" help="Save system user configuration changes.">
+	     <ACTION>lua clishCfgObjExec("GRE")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save system user configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("GRE")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back system user configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="tunnelname"
+             help="Enter the Tunnel Name here">
+             <PARAM name="tunnelname"
+                    help="Tunnel Name"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.TunnelName", "${tunnelname}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ipaddress"
+             help="Enter the tunnel IP Address here">
+             <PARAM name="ipaddress"
+                    help="tunnel IP Address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.IpAddress", "${ipaddress}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="subnet_mask"
+             help="Enter the tunnel Subnet Mask here">
+             <PARAM name="subnetmask"
+                    help="tunnel Subnet Mask "
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.SubnetMask", "${subnetmask}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="interface"
+             help="Enter the Interface on which the tunnel is established on">
+             <PARAM name="interfacename"
+                    help="Interface on which the tunnel is established on"
+                    ptype="GRE_INTERFACE_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.InterfaceName", "${interfacename}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="remote_ip"
+             help="Enter the Remote IP to which the tunnel is being established here">
+             <PARAM name="remoteip"
+                    help="Remote IP to which the tunnel is being established"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.RemoteIp", "${remoteip}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ddp_broadcast"
+             help="Select enable/disable DDP packet forwarding on the tunnel here">
+             <PARAM name="ddpbroadcast"
+                    help="enable/disable DDP packet forwarding on the tunnel"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.DdpBrd", "${ddpbroadcast}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="route_network"
+             help="Enter the destination network of GRE tunnel here">
+             <PARAM name="ripaddress"
+                    help="Destination network of GRE tunnel"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.DstIpAddr", "${ripaddress}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="route_netmask"
+             help="Enter the subnet mask of destination networki here">
+             <PARAM name="rnetmask"
+                    help="subnet mask of destination network"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.RouteNetMask", "${rnetmask}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="gateway"
+             help="Enter the gateway of the destination network here">
+             <PARAM name="gatewayip"
+                    help="gateway of the destination network"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("GRE", "GRE.GwIpAddr", "${gatewayip}")              
+             </ACTION>
+    </COMMAND>
+ </VIEW>
+<!--=======================================================-->
+<COMMAND name="vpn gre_tunnel" help="GRE Tunnel."/>
+    <COMMAND name="vpn gre_tunnel add"
+             help="GRE Tunnel configuration mode"
+             view="vpn-gre-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("GRE", greCfgInit, 
+                                      greCfgSave,
+                                       greCfgInputVal)
+	    </ACTION>
+    </COMMAND>
+    <COMMAND name="vpn gre_tunnel edit"
+             help="GRE Tunnel configuration mode"
+             view="vpn-gre-config" viewid="">
+             <PARAM name="row_id"
+                 help="Enter row id of the tunnel. Can be seen using <show vpn gre_tunnels>"
+                 ptype="UINT"/>
+            <ACTION>lua clishCfgObjNew ("GRE", greCfgInit, 
+                                      greCfgSave,
+                                       greCfgInputVal, "${row_id}")
+	    </ACTION>
+    </COMMAND>
+    <COMMAND name="vpn gre_tunnel delete"
+             help="GRE Tunnel delete mode">
+             <PARAM name="row_id"
+                 help="Enter row id of the tunnel. Can be seen using <show vpn gre_tunnels>"
+                 ptype="UINT"/>
+             <ACTION>lua clishCmdExec (greCfgDel,"${row_id}")
+	    </ACTION>
+    </COMMAND>
+
+</CLISH_MODULE>

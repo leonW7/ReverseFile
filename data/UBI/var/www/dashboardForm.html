@@ -1,0 +1,205 @@
+<?lua
+    require "teamf1lualib/bl_dashboard"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+
+    local errorMap     = require ("com.teamf1.core.errorMap")
+    local returnCodes  = require ("com.teamf1.core.returnCodes")
+    local trafficStats = require ("com.teamf1.bl.statistics.traffic")
+    
+    local ENABLED     = "1"
+    local DISABLED    = "0"
+
+    local errorCode, dashBoardUsers  = trafficStats.managedDashboardGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+
+	cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_dashboardDailogContent">
+	<div class="topBg">
+		<h1 data-localize="13562">Manage Dashboard</h1>
+		<close>
+			<a href="#" id="btnClose" title="Close">X</a>
+		</close>
+	</div>
+	<div class="dialogMidArea">
+		<div class="break">&nbsp;</div>
+		<div class="configRow">
+			<label data-localize="13125" class="three">Traffic Overview</label>
+			<p class="three">
+                <?lua if (dashBoardUsers.TrafficOverview == ENABLED) then
+                          statusStr="enable-disable-on"
+                          statusVar = ENABLED
+                      else
+                          statusStr="enable-disable-off"
+                          statusVar = DISABLED
+                       end
+                 ?>
+                  <a alt="" id="tf1_trafficOverview" class="$| statusStr |$"></a>
+                  <input type="hidden" name="dashboard.trafficOverview" id="tf1_trafficOverviewValue" value="$| statusVar |$">
+			</p>
+			<label data-localize="13311" class="three">WAN Ports</label>
+			<p class="three">
+                <?lua if (dashBoardUsers.OptionPorts == ENABLED) then
+                          statusStr="enable-disable-on"
+                          statusVar = ENABLED
+                      else
+                          statusStr="enable-disable-off"
+                          statusVar = DISABLED
+                       end
+                 ?>
+                  <a alt="" id="tf1_optionPorts" class="$| statusStr |$"></a>
+                  <input type="hidden" name="dashboard.optionPorts" id="tf1_optionPortsValue" value="$| statusVar |$">
+			</p>		
+		</div>
+		<div class="break">&nbsp;</div>
+		<div class="configRow">
+			<label data-localize="10361" class="three">Bandwidth Usage</label>
+			<p class="three">
+                <?lua if (dashBoardUsers.BandwidthUsage == ENABLED) then
+                          statusStr="enable-disable-on"
+                          statusVar = ENABLED
+                      else
+                          statusStr="enable-disable-off"
+                          statusVar = DISABLED
+                       end
+                 ?>
+                  <a alt="" id="tf1_bandwidthUsage" class="$| statusStr |$"></a>
+                  <input type="hidden" name="dashboard.bandwidthUsage" id="tf1_bandwidthUsageValue" value="$| statusVar |$">
+			</p>
+			<label data-localize="13299" class="three">VPNs</label>
+			<p class="three">
+                <?lua if (dashBoardUsers.VPNs == ENABLED) then
+                          statusStr="enable-disable-on"
+                          statusVar = ENABLED
+                      else
+                          statusStr="enable-disable-off"
+                          statusVar = DISABLED
+                       end
+                 ?>
+                  <a alt="" id="tf1_VPNs" class="$| statusStr |$"></a>
+                  <input type="hidden" name="dashboard.vpns" id="tf1_VPNsValue" value="$| statusVar |$">
+			</p>
+			</div>
+		<div class="break">&nbsp;</div>
+		<div class="configRow">
+			<label data-localize="10610" class="three">CPU Utilization</label>
+			<p class="three">
+				<?lua if (dashBoardUsers.CPUUtilization == ENABLED) then
+                          statusStr="enable-disable-on"
+                          statusVar = ENABLED
+                      else
+                          statusStr="enable-disable-off"
+                          statusVar = DISABLED
+                       end
+                 ?>
+                  <a alt="" id="tf1_CPUUtilization" class="$| statusStr |$"></a>
+                  <input type="hidden" name="dashboard.cpuUtilization" id="tf1_CPUUtilizationValue" value="$| statusVar |$">
+            </p>
+			<label data-localize="11706" class="three">Memory Utilization</label>
+			<p class="three">
+				<?lua if (dashBoardUsers.MemoryUtilization == ENABLED) then
+                          statusStr="enable-disable-on"
+                          statusVar = ENABLED
+                      else
+                          statusStr="enable-disable-off"
+                          statusVar = DISABLED
+                       end
+                 ?>
+                  <a alt="" id="tf1_MemoryUtilization" class="$| statusStr |$"></a>
+                  <input type="hidden" name="dashboard.memoryUtilization" id="tf1_MemoryUtilizationValue" value="$| statusVar |$">
+			</p>
+	</div>
+		<div class="break">&nbsp;</div>
+	</div>
+	<div class="dialogSubmitRow">
+		<input data-localize="12758" type="submit" class="btnSubmit" name="button.manage.dashboard.dashboard" title="Save" value="Save" id="btSave" onclick="validateDashboardMaps();">
+	</div>
+</div>
+<!-- Section for Pop up dialog ends -->
+
+
+<!-- Section for Pop up Wizard dialog starts -->
+<div id="tf1_dashboardWizardDailogContent">
+	<div class="topBg">
+		<h1 data-localize="11660">Manage Wizard</h1>
+		<close>
+			<a href="#" id="btnClose" title="Close">X</a>
+		</close>
+	</div>
+	<div class="dialogMidArea">
+		<div class="break">&nbsp;</div>
+		<div class="configRow">
+			<label data-localize="10583">Controller (General)</label>
+			<a alt="" id="tf1_generalWizard" class="enable-disable-off"></a>
+			<input type="hidden" name="tf1_generalWizard"  id="tf1_generalWizardValue" value="0">	
+		</div>
+		<div class="break">&nbsp;</div>
+		
+		<div class="configRow">
+			<label data-localize="11196">Internet</label>
+			<a alt="" id="tf1_internetWizard" class="enable-disable-off"></a>
+			<input type="hidden" name="tf1_internetWizard" id="tf1_internetWizardValue" value="0">
+		</div>
+		<div class="break">&nbsp;</div>
+		
+		<div class="configRow">
+			<label data-localize="13653">WLAN</label>
+			<a alt="" id="tf1_wlanWizard" class="enable-disable-off"></a>
+			<input type="hidden" name="tf1_wlanWizard" id="tf1_wlanWizardValue" value="0">
+		</div>
+		<div class="break">&nbsp;</div>
+		
+		<div class="configRow">
+			<label data-localize="10842">Dynamic DNS</label>
+			<a alt="" id="tf1_dynamicWizard" class="enable-disable-off"></a>
+			<input type="hidden" name="tf1_dynamicWizard" id="tf1_dynamicWizardValue" value="0">
+		</div>
+		<div class="break">&nbsp;</div>
+		
+		<div class="configRow">
+			<label data-localize="11007">Firewall</label>
+			<a alt="" id="tf1_firewalltWizard" class="enable-disable-off"></a>
+			<input type="hidden" name="tf1_firewalltWizard" id="tf1_firewalltWizardValue" value="0">
+		</div>
+		<div class="break">&nbsp;</div>
+		
+		<div class="configRow">
+			<label data-localize="11427">IPsec VPN</label>
+			<a alt="" id="tf1_ipsecWizard" class="enable-disable-off"></a>
+			<input type="hidden" name="tf1_ipsecWizard" id="tf1_ipsecWizardValue" value="0">
+		</div>
+		<div class="break">&nbsp;</div>
+		
+		<div class="configRow">
+			<label data-localize="12929">SSL VPN</label>
+			<a alt="" id="tf1_sslWizard" class="enable-disable-off"></a>
+			<input type="hidden" name="tf1_sslWizard" id="tf1_sslWizardValue" value="0">
+		</div>
+		<div class="break">&nbsp;</div>
+
+		
+		<div class="configRow">
+			<label data-localize="13243">Users</label>
+			<a alt="" id="tf1_userWizard" class="enable-disable-off"></a>
+			<input type="hidden" name="tf1_userWizard" id="tf1_userWizardValue" value="0">
+		</div>
+		<div class="break">&nbsp;</div>
+		
+		<div class="configRow">
+			<label data-localize="10666">Date and Time</label>
+			<a alt="" id="tf1_dateTimeWizard" class="enable-disable-off" onClick="openForm('button.add.dashboard.dashboard',-1,'tf1_dialog','dashboard','wizardDateTimeForm.html', 'tf1_wizardStepOneDailogContent','onloadCallFn');"></a>
+			<input type="hidden" name="tf1_dateTimeWizard" id="tf1_dateTimeWizardValue" value="0">
+		</div>
+		<div class="break">&nbsp;</div>
+
+	</div>
+	<div class="dialogSubmitRow">
+		<input data-localize="12758" type="button" class="btnSubmit" title="Save" value="Save" id="btSave">
+	</div>
+</div>
+<!-- Section for Pop up Wizard dialog ends -->
+

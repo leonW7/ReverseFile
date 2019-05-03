@@ -1,0 +1,786 @@
+<?lua
+require "teamf1lualib/captivePortal"
+require "loginLuaLib"
+
+local buttonName = cgi.ButtonType or ''
+
+-- is Captive Portal enabled
+
+local isenabled,profileId,vlanId, clientType, accessType = captivePortal.isEnabled()
+previewFlag="0"
+if (buttonName == "Preview") then
+	isenabled = "1"
+	previewFlag="1"
+else
+	if (spUrlStr ~= "2" and spUrlStr ~="4") then
+		spUrlStr = "0"
+	end
+
+	-- Check if User is already Logged in
+	-- If already logged in make spUrlStr 1
+
+	local alreadyLoggedIn = captivePortal.getLoginStatus ()
+	if(alreadyLoggedIn == "1" and spUrlStr ~= "2" and spUrlStr ~="4") then
+	    spUrlStr = "1"
+	end
+end
+	
+if (ButtonType and ButtonType == "login") then
+    local inputTable = web.cgiToLuaTable(cgi)    
+    -- authenticate
+
+    result,statusCode,idletimeout, sessionTimeOut = captivePortal.RunTimeAuthenticate(inputTable,vlanId,profileId,clientType) 
+     
+    local logUserName = inputTable["CaptivePortalSession.UserName"]     
+    local logMsg = " "
+    if(logUserName ~= nil) then
+       logMsg = logUserName .. " "
+    end
+    if (result == 0) then
+        util.appendDebugOut("Authentication Successful!<br>") 
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user Authentication Successful.", 6, "LOGIN" )
+        -- Login        
+       errorFlag, statusCode = captivePortal.RunTimelogin(inputTable,profileId,vlanId,idletimeout,clientType, sessionTimeOut)
+        -- save db if no error
+        if (errorFlag == "OK") then
+            db.save()
+        end
+        usrName = inputTable["CaptivePortalSession.UserName"]
+        cpStatusMsgClass = "msgSuccess"
+        cpStatusMsg = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or statusCode 
+        spUrlStr = "1"
+        web.goToPage(NextPage, true, true)    
+    elseif (result == 1) then 
+        util.appendDebugOut("REPEAT LOGIN!<br>") 
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user already login.", 4, "LOGIN" )
+        local inputTable = web.cgiToLuaTable(cgi)   
+	    loginInfo = inputTable 
+        spUrlStr = "2"
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or statusCode 
+        web.goToPage(NextPage, true, true)
+     elseif (result == 2) then
+        util.appendDebugOut("Authentication Failed<br>")
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user Authentication Failed/invalid username or password.", 3, "LOGIN" )
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or statusCode
+        loginConf = inputTable
+        spUrlStr = "0"                 
+        web.goToPage(NextPage, true, true)        
+     elseif (result == 3) then
+        util.appendDebugOut("Blocked Login from this browser<br>")
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user Blocked Login from this browser.", 4, "LOGIN" )
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or statusCode
+
+        loginConf = inputTable
+        spUrlStr = "0"               
+        web.goToPage(NextPage, true, true)
+	elseif (result == 4) then
+        util.appendDebugOut("Authentication Failed, Server Unreachable <br>")
+        loginLuaLib.luaLoginEventHandler (logMsg .. "user Authentication Failed, Server Unreachable.", 3, "LOGIN" )
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = statusCode or ''
+        loginConf = inputTable
+        spUrlStr = "0"               
+        web.goToPage(NextPage, true, true)        
+    elseif (result == 5) then
+        util.appendDebugOut("SLA Page<br>")
+	    local inputTable = web.cgiToLuaTable(cgi)
+        loginConf = inputTable
+	    usrName=inputTable["CaptivePortalSession.UserName"]
+	    password=inputTable["CaptivePortalSession.Password"]
+        spUrlStr = "4"               
+        web.goToPage(NextPage, true, true)
+    elseif (result == 6) then
+        cpStatusMsg = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or statusCode
+        web.goToPage(NextPage, true, true)
+      
+    end
+elseif (ButtonType and ButtonType == "accept") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local inputTable1 = {}
+    inputTable1["CaptivePortalSession.UserName"]=inputTable["temp.username"]
+    inputTable1["CaptivePortalSession.Password"]=inputTable["temp.password"]
+    idletimeout=inputTable["temp.idletimeout"]
+    sessionTimeOut = "0"
+    local wher = "UserName = '".. inputTable["temp.username"] .. "'"
+    local rowExist = db.getRowWhere ("tempUsers", wher)
+    if (rowExist == nil) then
+        cpStatusMsgClass = "msgError"
+        cpStatusMsg = CaptivePortal.AUTH_FAILURE_ACCT_EXPIRED_MSG or ''
+        spUrlStr = "0"
+    else
+        errorFlag, statusCode = captivePortal.RunTimelogin(inputTable1,profileId,vlanId,idletimeout,clientType, sessionTimeOut)
+        -- save db if no error
+        if (errorFlag == "OK") then
+            db.save()
+        end
+	if (clientType == CaptivePortal.LAN_CLIENT ) then
+		accessType = db.getAttribute("intervlanrouting","vlanId",vlanId,"accessType") or "-1"
+	else
+		accessType = db.getAttribute("CaptivePortalSSID","intfNum",vlanId,"accessType") or "-1"
+	end
+	if(accessType == "3") then
+		db.execute("ATTACH '/tmp/cpAcc.db' as cpAccDB")
+		usrName=inputTable1["CaptivePortalSession.UserName"]
+		local profId = db.getAttribute("tempUsers","UserName",usrName,"ProfileId")
+		if(profId) then
+			alertType = db.getAttribute("tempCPUserProfiles","ProfileId",profId,"AlertType")
+			alertValue = db.getAttribute("tempCPUserProfiles","ProfileId",profId,"AlertValue")
+			if(alertType == "2" or alertType == "3") then
+				maxValue =  db.getAttribute("tempUsers","ProfileId",profId,"MaxUsageTrafficInfo")
+				alertValue = tonumber(alertValue)
+				if(alertType == "3") then
+					alertValue = alertValue * 1024
+				end
+				maxValue = tonumber(maxValue)
+			else
+				maxValue =  db.getAttribute("tempUsers","ProfileId",profId,"MaxUsageTimeInfo")
+				maxValue = tonumber(maxValue)
+				alertValue = tonumber(alertValue) * 3600
+				if(alertType == "1") then
+					alertValue = alertValue * 24
+				end
+			end
+		end
+	end
+	db.execute("DETACH cpAccDB")
+    cpStatusMsg = statusCode or ''
+    spUrlStr = "1"
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "changePdw") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag, statusCode = captivePortal.changePassword(inputTable)
+    -- save db if no error
+    if (errorFlag == "OK") then
+        db.save()
+    end
+        cpStatusMsgClass = "msgInfo"
+     cpStatusMsg = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or statusCode 
+     spUrlStr = "1"
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "continue") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag, statusCode,cpType,idletimeout, sessionTimeOut = captivePortal.forcedLoginPart1(inputTable,profileId,vlanId,clientType)
+    if (errorFlag == "OK") then
+    	if(cpType=="3") then
+	    spUrlStr = "4"
+	    usrName=inputTable["CaptivePortalSession.UserName"]
+	    password=inputTable["CaptivePortalSession.Password"]
+    else
+        
+    	cpStatusMsg = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or statusCode
+
+        errorFlag, statusCode = captivePortal.forcedLoginPart2(inputTable,profileId,vlanId,idletimeout, clientType, sessionTimeOut)
+	    spUrlStr = "1"
+        if (errorFlag == "OK") then
+        	db.save()
+	    end
+	end
+    end
+    cpStatusMsgClass = "msgSuccess"
+    cpStatusMsg = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or statusCode 
+    web.goToPage(NextPage, true, true)
+    
+elseif (isenabled == "0") then
+    NextPage = "index"
+    cpStatusMsg = ""
+    web.goToPage(NextPage, true, true)    
+    
+elseif (isenabled == "1" and accessType == "1") then
+        local wher = "LogicalIfName ='LAN' and AddressFamily = 2"
+        local lanIPRow = db.getRowWhere ("ifStatic", wher)
+        local lanIP = lanIPRow["ifStatic.StaticIp"] 
+        cgilua.redirect ("http://" .. lanIP .."/scgi-bin/platform.cgi?page=slaLogin.html")
+
+    
+elseif (ButtonType and ButtonType == "logout") then
+    -- go to next page - which will be login page
+    spUrlStr = "0"
+    captivePortal.RunTimelogout()
+        web.goToPage(NextPage, true, true)
+else
+	if (buttonName == "Preview") then
+		configRowId = cgi.rowId or ''
+		configRow = db.getRow("CaptivePortalPageDetails", "CaptivePortalPageDetails._ROWID_", configRowId)
+	else
+		configRow = db.getRow("CaptivePortalPageDetails", "profileId", profileId)
+    end
+        
+
+    local cpLoginBoxTitle = "" 
+
+    cpLoginBoxTitle = configRow["CaptivePortalPageDetails.LoginBoxTitle"] or 'CAPTIVE PORTAL LOGIN'
+        
+    	
+	local welcomeMessage = configRow["CaptivePortalPageDetails.welcomeMessage"] or ''
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+ <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<link href="" rel="stylesheet" type="text/css" media="all" />
+<title>$| configRow["CaptivePortalPageDetails.title"] or 'CAPTIVE PORTAL' |$</title>
+<link rel="shortcut icon" href="images/favicon.png?page=mcaptivePortal.html" type="image/x-icon" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<script type="text/javascript" language="javascript" src="js/captivePortal.js?page=mcaptivePortal.html"></script>
+<script type="text/javascript" language="javascript" src="js/textValidations.js?page=mcaptivePortal.html"></script>
+<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js?page=mcaptivePortal.html"></script>
+
+<style>
+a, article, audio, body, body, canvas, caption, dd, details, div, dl, dt, em, figcaption, figure, footer, form, h1, h2, h3, h4, h5, header, html, i, iframe, img, label, legend, li, mark, menu, nav, object, ol, p, q, samp, section, small, span, strong, sub, summary, table, tbody, td, textarea, tfoot, th, thead, time, tr, ul, var, video {
+	border: 0 none;
+	font-family: "Trebuchet MS", Arial, Verdana, Helvetica, Sans-serif;
+	margin: 0;
+	padding: 0;
+}
+body {
+	background-color: #EAEAEA;
+	color: #006699;
+	font-size: 12px;
+}
+.wrapper {
+	margin: 0 auto;
+	width: 100%;
+}
+.header {
+	background: url("images/headerBg.png?page=mcaptivePortal.html") repeat-x scroll 0 0 transparent;
+	min-height: 100px;
+	text-align: center;
+}
+.logo {
+	background: url("images/logo.png?page=mcaptivePortal.html") no-repeat scroll 10px 16px transparent;
+	color: #86C2FD;
+	font-size: 14px;
+	letter-spacing: 1px;
+	padding: 54px 10px 10px;
+	text-align: left;
+}
+.btnLogout > div > div {
+ filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#64b1d9', EndColorStr='#1876a6');
+	background:#1876a6;
+	background:-ms-linear-gradient(top, #64b1d9, #1876a6);
+	background:-webkit-gradient(linear, left top, left bottom, from(#64b1d9), to(#1876a6));
+	background:-moz-linear-gradient(top, #64b1d9, #1876a6);
+	background:-o-linear-gradient(top, #64b1d9, #1876a6);
+	color: #FCFCFC;
+	font-size: 12px;
+	height: 100%;
+	line-height: 24px;
+	padding: 0 8px;
+}
+.btnLogout {
+	float: right;
+	cursor: default;
+	text-decoration: none;
+	margin: 15px 15px 0 0;
+	border: 2px solid #FEFEFE;
+	border-radius: 2px 2px 2px 2px;
+	padding: 0;
+}
+.footer {
+ filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#919191', EndColorStr='#2F2F2F');
+	background:#919191;
+	background:-ms-linear-gradient(top, #919191, #2F2F2F);
+	background:-webkit-gradient(linear, left top, left bottom, from(#919191), to(#2F2F2F));
+	background:-moz-linear-gradient(top, #919191, #2F2F2F);
+	background:-o-linear-gradient(top, #919191, #2F2F2F);
+	bottom:0px;
+	color: #FFFFFF;
+	font-size: 10px;
+	letter-spacing: 1px;
+	left:0px;
+	line-height: 29px;
+	text-align: center;
+	margin: 20px 0 0;
+	position:fixed;
+	width: 100%;
+}
+.midArea {
+	background: none repeat scroll 0 0 #FFFFFF;
+	border-radius: 8px 8px 8px 8px;
+	box-shadow: 0 0 6px #999999;
+	-moz-box-shadow: 0 0 6px #999999;
+	-webkit-box-shadow: 0 0 6px #999999;
+	clear: both;
+	margin: 0 25px 25px 25px;
+	min-height: 125px;
+	padding: 25px;
+	width: auto;
+}
+.configRow {
+	padding: 0 5px;
+}
+.configRow > label {
+	color: #333333;
+	float: left;
+	font-size: 12px;
+	letter-spacing: 0.1em;
+	line-height: 22px;
+	min-width: 49%; 
+	text-align: left;
+}
+.configRow > p {
+	color: #333333;
+	float: left;
+	font-weight: bold;
+	font-size: 12px;
+	letter-spacing: 0.1em;
+	line-height: 22px;
+	min-width: 49%;
+	padding: 0 0 0 10px;
+	text-align: left;
+}
+.FL {
+	float: left;
+}
+.FR {
+	float: right;
+}
+.btn {
+ filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#64b1d9', EndColorStr='#1876a6');
+	background:#1876a6;
+	background:-ms-linear-gradient(top, #64b1d9, #1876a6);
+	background:-webkit-gradient(linear, left top, left bottom, from(#64b1d9), to(#1876a6));
+	background:-moz-linear-gradient(top, #64b1d9, #1876a6);
+	background:-o-linear-gradient(top, #64b1d9, #1876a6);
+	border: 2px solid #FEFEFE!important;
+	border-radius: 2px 2px 2px 2px!important;
+	box-shadow: 0 0 6px #999999;
+	color: #FCFCFC!important;
+	cursor: pointer;
+	font-size: 14px!important;
+	letter-spacing: 1px!important;
+	height: 28px !important;
+	line-height: 28px!important;
+	padding: 0px 12px!important;
+	text-align: center!important;
+	min-width: 70px!important;
+	text-decoration: none;
+    }
+
+    
+    .btn2 {
+ filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#64b1d9', EndColorStr='#1876a6');
+	background:#1876a6;
+	background:-ms-linear-gradient(top, #64b1d9, #1876a6);
+	background:-webkit-gradient(linear, left top, left bottom, from(#64b1d9), to(#1876a6));
+	background:-moz-linear-gradient(top, #64b1d9, #1876a6);
+	background:-o-linear-gradient(top, #64b1d9, #1876a6);
+	border: 2px solid #FEFEFE!important;
+	border-radius: 2px 2px 2px 2px!important;
+	box-shadow: 0 0 6px #999999;
+	color: #FCFCFC!important;
+	cursor: pointer;
+	font-size: 14px!important;
+	letter-spacing: 1px!important;
+	height: 28px !important;
+	line-height: 28px!important;
+	padding: 0px 12px!important;
+	text-align: center!important;
+	min-width: 140px!important;
+	text-decoration: none;
+}
+
+.hide {
+
+    display:none;
+}
+
+.submitRow {
+	padding-left: 33%;
+}
+.break {
+	clear: both;
+	line-height: 8px;
+}
+.configRow > p {
+	color: #006699;
+	letter-spacing: 1px;
+	min-width: 0;
+}
+.configRow > input, select, textarea {
+	border: 1px solid #999999;
+	color: #006699;
+	float: left;
+	font-size: 11px;
+	height: 16px;
+	letter-spacing: 1px;
+	padding: 2px 4px;
+	min-width: 125px;
+}
+h1 {
+	color: #006699;
+	float: left;
+	font-size: 16px;
+	font-weight: normal;
+	letter-spacing: 1px;
+	margin: 25px 0 0 0;
+	padding: 0 0 10px 25px;
+	text-align: left;
+	width: 100%;
+}
+.loginPage {
+	overflow: hidden;
+    clear: both;
+    margin-bottom: 25px;
+}
+.mSlaLogin {
+	background: #f1f1f1;
+	color: #333333;
+	height: 275px;
+	margin: 0 auto;
+	overflow: auto;
+	padding: 10px;
+	text-align: justify;
+	width: auto;
+}
+table {
+	height: 100%;
+	margin: 0 auto;
+	padding-bottom: 20px;
+	padding :0px;
+	width: 100%;
+}
+.loginDiv {
+	height:100%;
+	margin:0 auto;
+	width:100%;
+}
+.configLogin {
+	padding: 0;
+	margin: 0;
+}
+
+.midWidth { 
+    width: 98%;
+}
+
+div.msgError, div.msgInfo, div.msgSuccess { color: #FFFFFF; font-size: 16px;
+    letter-spacing: 1px; padding: 12px; min-width: 50%; width:90%;
+	-moz-border-radius: 6px 6px 6px 6px;
+	-webkit-border-radius: 6px 6px 6px 6px;
+    border-radius: 6px 6px 6px 6px;
+    margin: 3px auto;
+}
+div.msgError {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#ff9999',EndColorStr='#ff0202');
+	background:#ff9999;
+	background:-ms-linear-gradient(top,#ff9999,#ff0202);
+	background:-webkit-gradient(linear,left top,left bottom,from(#ff9999),to(#ff0202));
+	background:-moz-linear-gradient(top,#ff9999,#ff0202);
+	background:-o-linear-gradient(top,#ff9999,#ff0202);
+}
+div.msgInfo {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#0096af',EndColorStr='#045d93');
+	background:#0096af;
+	background:-ms-linear-gradient(top,#0096af,#045d93);
+	background:-webkit-gradient(linear,left top,left bottom,from(#0096af),to(#045d93));
+	background:-moz-linear-gradient(top,#0096af,#045d93);
+	background:-o-linear-gradient(top,#0096af,#045d93);
+}
+div.msgSuccess {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#32af00',EndColorStr='#95f931');
+	background:#32af00;
+	background:-ms-linear-gradient(top,#32af00,#95f931);
+	background:-webkit-gradient(linear,left top,left bottom,from(#32af00),to(#95f931));
+	background:-moz-linear-gradient(top,#32af00,#95f931);
+	background:-o-linear-gradient(top,#32af00,#95f931);
+}
+
+div.msgError > p, div.msgInfo > p, div.msgSuccess > p {
+ background: url("images/play.gif?page=mcaptivePortal.html") no-repeat scroll 0 1px transparent;
+ line-height: 18px;
+ padding-left: 10px;
+ text-align: center;
+}
+
+
+</style>
+<?lua web.includeMenu("metaInclude.html")?>
+</head>
+<body onload="loginInit();">
+<div class="wrapper">
+  <div class="header">
+    <div class="logo FL">Unified Services Router - $| UNIT_NAME |$</div>
+    </div>
+    
+    <div class="loginPage">
+                   <?lua 
+                    if (spUrlStr == "0" and (cpStatusMsg == nil or cpStatusMsg == '')) then
+                        if (welcomeMessage ~= nil and welcomeMessage ~= '')then
+                    ?>
+						<div class= "msgInfo" >
+		                  	<p>$| welcomeMessage or '' |$</p>
+		                  </div>
+                          <?lua end
+                          elseif (cpStatusMsg ~= nil and cpStatusMsg ~= '') then ?>
+						<div class= $| cpStatusMsgClass or 'msgInfo'|$ >
+		                  	<p>$| cpStatusMsg or '' |$</p>
+                        </div>
+                        <?lua end?>
+						<div class="breakCP">
+                      	&nbsp;
+                    </div>
+
+        <div id = "trLoginTbl" class="hide">
+    <h1>$|cpLoginBoxTitle |$</h1>
+    <div class="midArea" >
+      <div class="configLogin">
+          <form name="login" method="post" id="tf1_login" action="platform.cgi?page=mcaptivePortal.html">
+              <input type="hidden" name="thispage"    value="mcaptivePortal.html" />
+          <div class="break"> &nbsp; </div>
+          <div class="configRow">
+            <label> Username </label>
+            <input type="text"  id="txtUserName" name="CaptivePortalSession.UserName">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRow">
+            <label> Password </label>
+            <input type="password" id="txtPwd" name="CaptivePortalSession.Password">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="break"> &nbsp; </div>
+          <p align="center"><input type="submit" value="Login" title="Login" class="btn"  name="button.login.CaptivePortalSession.mcaptivePortal" onclick="return loginValidate();">
+        </p>
+        <input type="hidden" name="Login.userAgent" id="hdUserAgent" />
+          <div class="break"> &nbsp; </div>
+        </form>
+      </div>
+      </div> 
+      </div>
+    
+      <!--Change password -->
+      <div id="trPasswordChengeTbl" class="hide">
+        <h1>Change Password</h1>
+    <div class="midArea">
+      <div class="configLogin">
+          <form name="changePassword" method="post" id="tf1_changePassword" action="platform.cgi?page=mcaptivePortal.html">
+              <input type="hidden" name="thispage"    value="mcaptivePortal.html" >
+          <div class="break"> &nbsp; </div>
+          <div class="configRow">
+            <label> New Password </label>
+           <input type="password" name="CaptivePortalSession.nPassword"  id="txtNewPassWd" value="">
+            </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRow">
+            <label> Confirm New Password</label>
+            <input type="password" name="CaptivePortalSession.cnfPassword" id="txtCnfPwd">
+            </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRow">
+            <label> &nbsp; </label>
+            <input type="submit" name="button.changePdw.CaptivePortalSession.mcaptivePortal" value="Change Password" title="Change Password"
+            class="btn2" onclick="return loginConfirmPassword();">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </form>
+        </div>
+        </div>
+    </div> 
+
+    
+    <!--Forced Login -->
+    
+      <div id="trForcedLoginTbl" class="hide">
+          
+  <h1>Forced Login</h1>
+    <div class="midArea">
+      <div class="configLogin">
+        <form action="platform.cgi?page=mcaptivePortal.html">
+              <input type="hidden" name="thispage"    value="mcaptivePortal.html" >
+
+          <div class="break"> &nbsp; </div>
+         	<div class="break">&nbsp; </div>
+			<p align="center">User Already Logged in!</p>
+			<p align="center">If you Want to close the other session, please click on"Continue" button. Click "Cancel" button lo logout.</p>
+						<div class="break">&nbsp; </div>
+
+                        <p align="center">
+                        <input type="submit" name="button.continue.mcaptivePortal" value="Continue" title="Continue" class="btn"> 
+                        <input type="submit" name="button.logout.mcaptivePortal" value="Cancel" title="Cancel" class="btn"></p>
+
+
+                        <div class="break"> &nbsp; </div>
+                         <?lua
+	            if(spUrlStr == "2") then
+	        ?>
+            <input type="hidden" name="CaptivePortalSession.UserName" value="$| loginInfo["CaptivePortalSession.UserName"] or '' |$">
+            <input type="hidden" name="CaptivePortalSession.Password" value="$| loginInfo["CaptivePortalSession.Password"] or '' |$">
+        	<?lua end ?>
+			<input type="hidden" name="temp.username" id="hdUsrName" value="$| usrName or '' |$">
+			<input type="hidden" name="temp.idletimeout" id="hdIdleTimeOut" value="$| idletimeout or '' |$">
+			<input type="hidden" name="temp.password" id="hdPassword" value="$| password or ''|$">
+			<input type="hidden" name="temp.alertType" id="hdAlertType" value="$| alertType or '' |$">	
+			<input type="hidden" name="temp.maxValue" id="hdMaxValue" value="$| maxValue or '' |$">
+			<input type="hidden" name="temp.alertValue" id="hdAlertValue" value="$| alertValue or '' |$">
+			<input type="hidden" name="temp.accessType" id="hdAccessType" value="$| accessType or '' |$">
+        </form>
+        </div>
+        </div>
+    </div> 
+
+    <!--Succesfully Loged in -->
+      <div id="trLoggedinTbl" class="hide">
+<h1>$|cpLoginBoxTitle |$</h1>
+    <div class="midArea">
+      <div class="configLogin">
+          <form method="post"   action="platform.cgi?page=mcaptivePortal.html" >
+              <input type="hidden" name="thispage"    value="mcaptivePortal.html" >
+              
+                                <?lua 
+                                local cur = {}
+			local ACCESS_TYPE = "-1"
+			local AUTH_SERVER_ID = "0"
+			local ENABLE_CHNG_PWD = "-1"
+			if(usrName) then
+			ENABLE_CHNG_PWD = db.getAttribute("Users","UserName", usrName, "enableChangePasswd")
+			end
+                ACCESS_TYPE = db.getAttribute("CaptivePortalVlan","vlanId", vlanId, "accessType")
+                AUTH_SERVER_ID = db.getAttribute("CaptivePortalVlan", "vlanId", vlanId, "authServerId")
+
+            if(previewFlag=="0" and ACCESS_TYPE == "3" ) then 
+                local inputTable =web.cgiToLuaTable(cgi)
+                if(inputTable) then						
+                    uname=inputTable["temp.username"] or ''
+                    where="UserName='"..uname.."'"
+                    userRow=db.getRowWhere("tempUsers",where)
+                    end
+                    if(userRow) then
+							db.execute("ATTACH '/tmp/cpAcc.db' as cpAccDB")	
+							local userAccountInfo = db.getRow("CPAccInfoUserAccount","UserName", userRow["tempUsers.UserName"])
+							if(userAccountInfo) then
+								if(userRow["tempUsers.MaxUsageTimeInfo"] ~= "0") then
+									usageTimeLeft=userRow["tempUsers.MaxUsageTimeInfo"]-userAccountInfo["CPAccInfoUserAccount.currentTimeUsage"]
+								else
+									usageTimeLeft="NA"
+								end
+					
+								if(userRow["tempUsers.MaxUsageTrafficInfo"] ~="0") then
+									usageTrafficLeft=userRow["tempUsers.MaxUsageTrafficInfo"]-userAccountInfo["CPAccInfoUserAccount.currentTrafficUsage"]
+								else
+									usageTrafficLeft="NA"
+								end
+							else
+								usageTimeLeft="NA"
+								usageTrafficLeft="NA"
+							end
+						
+					                if(userRow["tempUsers.ExpirationDate"]=="0") then
+        		                			expDate="NA"
+							else
+								expDate=captivePortal.dateToGUI(userRow["tempUsers.ExpirationDate"])
+							end
+
+							if(userRow["tempUsers.MaxUsageTimeInfo"]~= "0") then 
+								timeType,timeVal=captivePortal.timeConv(userRow["tempUsers.MaxUsageTimeInfo"])
+						?>
+
+          <div class="break"> &nbsp; </div>
+          <div class="configRow">
+            <label> Usage Time Left  </label>
+            <p>$| usageTimeLeft or '' |$ Seconds </p>
+        </div>
+         <?lua end 
+							 if(userRow["tempUsers.MaxUsageTrafficInfo"]~= "0") then 
+								trafficType,trafficVal=captivePortal.trafficConv(userRow["tempUsers.MaxUsageTrafficInfo"])
+							?>    
+          <div class="break"> &nbsp; </div>
+          <div class="configRow">
+            <label> Usage Traffic Left </label>
+             <p>$| usageTrafficLeft or '' |$ MB</p>
+         </div>
+         <?lua end
+         if(userRow["tempUsers.ExpirationDate"]~="0") then ?>
+          <div class="break"> &nbsp; </div>
+          <div class="configRow">
+            <label> Expiration Date </label>
+             <p>$| expDate or ''|$</p>
+         </div>
+         	<?lua end 
+						end
+					end ?>
+
+          <div class="break"> &nbsp; </div>
+          <p align="center"><input type="submit" value="Logout" name="button.logout.CaptivePortalSession.mcaptivePortal" title="Logout" class="btn">
+          <?lua 
+
+if (previewFlag=="0" and ACCESS_TYPE == "2" and AUTH_SERVER_ID =="0" and ENABLE_CHNG_PWD == "1") then  ?>
+
+            <input type="button"  name="button.changePassword.CaptivePortalSession.captivePortal"            value="Change Password" title="Change Password"   class="btn2"  onclick="changeScreenOnPass('LoggedinTbl ForcedLoginTbl LoginTbl', 'PasswordChengeTbl')">
+            <?lua end ?>
+            </p>
+
+            <div class="break"> &nbsp; </div>
+             <input type="hidden" name="Login.userAgent" id="hdUserAgent" />
+                    <?lua
+                        if(spUrlStr == "2") then
+                        ?>
+                    <input type="hidden" name="CaptivePortalSession.UserName" value="$| loginInfo["CaptivePortalSession.UserName"] or '' |$">
+                    <input type="hidden" name="CaptivePortalSession.Password" value="$| loginInfo["CaptivePortalSession.Password"] or '' |$">
+                    <?lua end ?>
+                    <input type="hidden" name="temp.username" id="hdUsrName" value="$| usrName or '' |$">
+                    <input type="hidden" name="temp.idletimeout" id="hdIdleTimeOut" value="$| idletimeout or '' |$">
+			        <input type="hidden" name="temp.password" id="hdPassword" value="$| password or ''|$">
+			        <input type="hidden" name="temp.alertType" id="hdAlertType" value="$| alertType or '' |$">
+			        <input type="hidden" name="temp.maxValue" id="hdMaxValue" value="$| maxValue or '' |$">
+			        <input type="hidden" name="temp.alertValue" id="hdAlertValue" value="$| alertValue or '' |$">
+			        <input type="hidden" name="temp.accessType" id="hdAccessType" value="$| accessType or '' |$">
+        </form>
+        </div>
+        </div>
+    </div> 
+    
+       <!--Succesfully Loged in -->
+<!--
+      <div id="trslaLoginTbl" class="hide">
+    <h1>$|cpLoginBoxTitle |$</h1>
+		<div class="midArea">
+			<div class="configLogin">
+				<form method="post"   action="platform.cgi?page=mcaptivePortal.html" >
+              <input type="hidden" name="thispage"    value="mcaptivePortal.html" >
+<?lua
+				--[[serviceRule=captivePortal.getslaRules(profileId)]]--
+			?>
+
+					<div class="break">&nbsp; </div>
+					<div class="mSlaLogin">
+						<p>$|serviceRule or ''|$</p>
+					</div>
+					<div class="break">&nbsp; </div>
+ 
+						<p align="center"><input type="checkbox" onclick="if (this.checked == false) {$('#tf1_btnLogin').attr('disabled','disabled')} else{ $('#tf1_btnLogin').removeAttr('disabled')}">I Accept to Terms 
+						&amp; Service</p>
+ 
+					<div class="break">&nbsp; </div>
+ 
+						<p align="center">
+						<input type="submit"
+                        name="button.accept.CaptivePortalSession.mcaptivePortal"
+                        disabled value="Login" title="Login" class="btn" id="tf1_btnLogin" ></p>
+ 
+                        <div class="break">&nbsp; </div>
+                         <input type="hidden" name="temp.username" id="hdUsrName" value="$| usrName or '' |$">
+                    <input type="hidden" name="temp.idletimeout" id="hdIdleTimeOut" value="$| idletimeout or '' |$">
+			        <input type="hidden" name="temp.password" id="hdPassword" value="$| password or ''|$">
+			        <input type="hidden" name="temp.alertType" id="hdAlertType" value="$| alertType or '' |$">
+			        <input type="hidden" name="temp.maxValue" id="hdMaxValue" value="$| maxValue or '' |$">
+			        <input type="hidden" name="temp.alertValue" id="hdAlertValue" value="$| alertValue or '' |$">
+			        <input type="hidden" name="temp.accessType" id="hdAccessType" value="$| accessType or '' |$">
+
+				</form>
+			</div>     
+			</div>     
+        </div> -->
+        <input type="hidden" id="hdSreenVal" value="$| spUrlStr |$" />
+
+  <div class="footer"> Copyright &#169; 2017 D-Link Corporation. </div>
+</div>
+</body>
+</html>
+<?lua end?>

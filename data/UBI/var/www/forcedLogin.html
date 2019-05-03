@@ -1,0 +1,125 @@
+<?lua
+require "teamf1lualib/login"
+require "teamf1lualib/forcedLogin_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local forced_login  = require("com.teamf1.bl.system.forced_login")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if (ButtonType and ButtonType == "logout") then
+    -- go to next page - which will be login page
+    web.goToPage(HOME_PAGE, true, true)
+
+elseif (ButtonType and ButtonType == "continue") then
+    if (NextPage ~= "dashboard") then
+        web.goToPage(HOME_PAGE, true, true)
+    else
+        local inputTable = web.cgiToLuaTable(cgi) 
+        local returnCode = forced_login.forcedLoginSectionSet(inputTable)
+        if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end                 
+        web.goToPage(NextPage, true, true)
+    end
+else
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<style type="text/css">
+body { background-color: #EAEAEA; color: #006699; font-size: 12px; }
+a, article, audio, body, body, canvas, caption, dd, details, div, dl, dt, em, figcaption, figure, footer, form, h1, h2, h3, h4, h5, header, html, i, iframe, img, label, legend, li, mark, menu, nav, object, ol, p, q, samp, section, small, span, strong, sub, summary, table, tbody, td, textarea, tfoot, th, thead, time, tr, ul, var, video { border: 0 none; font-family: Trebuchet MS,Arial,Verdana,Helvetica,Sans-serif; margin: 0; padding: 0; }
+h1 { color: #006699; float: left; font-size: 16px; font-weight: normal; letter-spacing: 1px; padding: 10px 0 10px; text-align: left; width: 75%; }
+.header { background: url("images/headerBg.png") repeat-x scroll 0 0 transparent; min-height: 140px; text-align: center; }
+.midWidth { min-width: 980px; width: 980px; }
+.logo { background: url("images/logo.png") no-repeat scroll 10px 16px transparent; color: #86C2FD; font-size: 14px; letter-spacing: 1px; padding: 54px 10px 10px; text-align: left; }
+.FL { float: left; }
+.headerRight { height: 90px; margin: 16px 16px 2px; }
+.FR { float: right; }
+.menuBg { clear: both; height: 56px; }
+.menuBg > div { height: 68px; margin: 0; padding: 0; width: auto; }
+.menuBg > div > div { height: 68px; margin: 0; padding: 0; width: auto; }
+.menuBg > div > div > div { filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#045690',EndColorStr='#048bb0'); background:#045690; background:-ms-linear-gradient(top,#045690,#048bb0); background:-webkit-gradient(linear,left top,left bottom,from(#045690),to(#048bb0)); background:-moz-linear-gradient(top,#045690,#048bb0); background:-o-linear-gradient(top,#045690,#048bb0); border-bottom: 5px solid #86C2FD; height: 52px; }
+.midWidth2 { min-width: 600px; width: 600px; }
+.midArea { background: none repeat scroll 0 0 #FFFFFF; border-radius: 8px 8px 8px 8px; -moz-box-shadow: 0 0 6px #999999; -webkit-box-shadow: 0 0 6px #999999; box-shadow: 0 0 6px #999999; clear: both; min-height: 250px; margin: 0 0 25px 0; padding: 15px; width: auto; }
+.footer { filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#919191',EndColorStr='#2F2F2F'); background:#919191; background:-ms-linear-gradient(top,#919191,#2F2F2F); background:-webkit-gradient(linear,left top,left bottom,from(#919191),to(#2F2F2F)); background:-moz-linear-gradient(top,#919191,#2F2F2F); background:-o-linear-gradient(top,#919191,#2F2F2F); color: #FFFFFF; font-size: 10px; letter-spacing: 1px; line-height: 48px; text-align: center; margin: 20px 0 0; }
+div.msgError, div.msgInfo, div.msgSuccess { color: #FFFFFF; font-size: 16px; letter-spacing: 1px; padding: 12px; width: 455px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px; border-radius: 6px 6px 6px 6px; margin-top: 10px; }
+div.msgError { filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#ff9999',EndColorStr='#ff0202'); background:#ff9999; background:-ms-linear-gradient(top,#ff9999,#ff0202); background:-webkit-gradient(linear,left top,left bottom,from(#ff9999),to(#ff0202)); background:-moz-linear-gradient(top,#ff9999,#ff0202); background:-o-linear-gradient(top,#ff9999,#ff0202); }
+div.msgInfo { filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#0096af',EndColorStr='#045d93'); background:#0096af; background:-ms-linear-gradient(top,#0096af,#045d93); background:-webkit-gradient(linear,left top,left bottom,from(#0096af),to(#045d93)); background:-moz-linear-gradient(top,#0096af,#045d93); background:-o-linear-gradient(top,#0096af,#045d93); }
+div.msgSuccess { filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#32af00',EndColorStr='#95f931'); background:#32af00; background:-ms-linear-gradient(top,#32af00,#95f931); background:-webkit-gradient(linear,left top,left bottom,from(#32af00),to(#95f931)); background:-moz-linear-gradient(top,#32af00,#95f931); background:-o-linear-gradient(top,#32af00,#95f931); }
+div.msgError > p, div.msgInfo > p, div.msgSuccess > p { background: url("images/play.gif") no-repeat scroll 0 4px transparent; line-height: 24px; padding-left: 24px; text-align: center; }
+.submitRow { margin-top: 5px; padding-left: 150px; }
+.btnSubmit, .btnReset{ filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#64b1d9',EndColorStr='#1876a6'); background:#1876a6; background:-ms-linear-gradient(top,#64b1d9,#1876a6); background:-webkit-gradient(linear,left top,left bottom,from(#64b1d9),to(#1876a6)); background:-moz-linear-gradient(top,#64b1d9,#1876a6); background:-o-linear-gradient(top,#64b1d9,#1876a6); color: #FCFCFC; border: 1px solid #ffffff; border-radius: 2px 2px 2px 2px; box-shadow: 0 1px 2px #666666; -moz-box-shadow: 0 1px 2px #666666; -webkit-box-shadow: 0 1px 2px #666666; cursor: pointer; font-size: 14px; float: left; letter-spacing: 1px; line-height: 18px; margin: 5px 10px 5px 5px;	min-width: 104px; padding: 4px 12px; text-align: center; }
+.midMsg { font-size: 14px; margin: 50px 25px; text-align: center; }
+</style>
+<?lua web.includeMenu("metaInclude.html")
+    web.includeMenu("dictionary.html")
+?>
+</head>
+
+<body>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+		<td class="header" valign="top" align="center">
+		<div align="center">
+			<div class="midWidth">
+				<div class="logo FL">
+					$| LANG_LOCALE['30001'] |$ - $| UNIT_NAME |$ </div>
+				<div class="FR headerRight">
+&nbsp; </div>
+				<div class="midWidth menuBg">
+					<div>
+						<div>
+							<div align="center">
+&nbsp;</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top" align="center">
+		<div class="midWidth2">
+			<div class="msgError">
+				<p>$| LANG_LOCALE['13236'] |$</p>
+			</div>
+			<h1>$| LANG_LOCALE['11032'] |$</h1>
+			<div class="midArea">
+				<div class="midMsg">
+					$| LANG_LOCALE['11151'] |$ </div>
+                    <form method="post" action="platform.cgi">
+                    <input type="hidden" name="thispage" value="forcedLogin.html">
+                    <input type="hidden" name="Users.UserName" value="$| loginInfo["Users.UserName"] or '' |$">
+                    <input type="hidden" name="Users.Password" value="$| loginInfo["Users.Password"] or '' |$">
+                    <input type="hidden" name="Login.userAgent" value="$| loginInfo["Login.userAgent"] or '' |$">
+				<div class="submitRow">
+					<input type="submit" name="button.continue.dashboard" class="btnSubmit" title="$| LANG_LOCALE['10582'] |$" value="$| LANG_LOCALE['10582'] |$" id="btContinue">
+					<input type="submit" name="button.logout.index" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btCancel">
+				</div>
+			</div>
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<div class="footer">$| COPYRIGHTS |$</div>
+		</td>
+	</tr>
+</table>
+
+</body>
+
+</html>
+<?lua end ?>

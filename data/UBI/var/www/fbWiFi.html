@@ -1,0 +1,287 @@
+<?lua
+require "teamf1lualib/fbwifi"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+
+    PAGE_HELP = "wireless"
+    PAGE_HELP_SECTION = "fbWiFi"
+
+local configRow = {}
+local urlAddr, regNum
+if (ButtonType and ButtonType == "register") then
+     if (ACCESS_LEVEL ~= 0) then
+		errorFlag, statusCode = -1, "ADMIN_REQD"
+        NextPage = "fbWiFi"
+	    statusErrorMessage = errorMap.errorStringGet (statusCode)
+        web.goToPage(NextPage, true, true)
+    else
+        stat,statusCode,urlAddr, regNum = fbwifi.register_gw ()
+        if (stat == "OK") then
+            statusSuccessMessage = errorMap.errorStringGet (statusCode)
+        else
+            statusErrorMessage = errorMap.errorStringGet (statusCode)
+        end
+        if (regNum == 1) then db.save() end
+    end
+end
+
+if (ButtonType and ButtonType == "config") then
+	if (ACCESS_LEVEL ~= 0) then
+		errorFlag, statusCode = -1, "ADMIN_REQD"
+        NextPage = "fbWiFi"
+	    statusErrorMessage = errorMap.errorStringGet (statusCode)
+    else
+    local inputTable = web.cgiToLuaTable(cgi)
+    -- update Configuration
+    errorFlag, statusCode = fbwifi.enable2(inputTable, "1", "edit")
+    -- save db if no error
+    if (errorFlag == "OK") then db.save() end
+        if (errorFlag == "OK") then
+            statusSuccessMessage = errorMap.errorStringGet (statusCode)
+        else
+            statusErrorMessage = errorMap.errorStringGet (statusCode)
+        end
+    end
+    web.goToPage(NextPage, true, true)
+else
+    configRow = db.getRow ("fbwifi", "_ROWID_", "1")
+    local regStatus = ""
+    if (configRow["fbwifi.id"] ~= '') then
+        regStatus = errorMap.errorStringGet ("REG_FB_WIFI_ID") .. " " ..configRow["fbwifi.id"]
+    else
+        regStatus = errorMap.errorStringGet ("NOT_REG_FB_WIFI")
+    end
+    LANG_LOCALE = "30635,30636,30637,30638,30639,13280,13274,30640,12758,10449"
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+                <div class="FL2">
+                    <p class="hint">$| helpHintText |$</p>
+                </div>
+				<h1>$| LANG_LOCALE['30635'] |$</h1>
+					<div class="midArea">
+                        <div align="left">
+							<form name="tf1_fbWiFi" id="tf1_fbWiFi" action="platform.cgi" method="post" enctype="multipart/form-data">
+							<input type="hidden" name="thispage" id="thispage" value="fbWiFi.html">
+                        	<div class="configRow">
+							    <label>$| LANG_LOCALE['30636'] |$</label>
+							    <?lua
+                                if (configRow["fbwifi.enabled"] == "1") then
+                                    statusStr="enable-disable-on"
+                                    statusVar = "1"
+                                else
+                                    statusStr="enable-disable-off"
+                                    statusVar = "0"
+                                end
+                                ?>
+                                <a class="$| statusStr |$" alt="" id="tf1_EnableFBWiFi" status="$| configRow["fbwifi.enabled"] |$"></a>
+                                <input type="hidden" name="fbwifi.enabled" value="$| statusVar |$">
+                                <p>
+                                <input name="button.register.fbWiFi" type="submit" class="btnSubmit btnSubmitHideShow" title="$| LANG_LOCALE['30637'] |$" value="$| LANG_LOCALE['30637'] |$" id="registerBtn" onclick="registerFB ();" style="margin-top: -4px; margin-left: 25px">
+                                </p>
+                            </div>
+                            <div class="break">
+                                &nbsp;
+				    	    </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['30638'] |$</label>
+                                <p id="tf1_regStatus">$| regStatus or ''|$</p>
+                            </div>
+                            <div class="break">
+                                &nbsp;
+				    	    </div>
+                            <div id="tf1_wirelessVlans_div">
+                                <h2>$| LANG_LOCALE['30639'] |$</h2>
+                                <div class="CLR">
+						            <div class="demo_jui">
+							            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								            <thead>
+									            <tr>
+										            <th>$| LANG_LOCALE['13280'] |$</th>
+										            <th>$| LANG_LOCALE['13274'] |$</th>
+                                                    <th>$| LANG_LOCALE['30640'] |$</th>
+									            </tr>
+								            </thead>
+                                            <?lua
+		                                        local i = 0
+		                                        local fbVlansTbl = db.getTable ("fbwifivlan")
+		                                        for k,v in pairs(fbVlansTbl) do
+		                                            i = i + 1							
+		                                        ?>
+									            <tr class="gradeA" id="$| v["fbwifivlan._ROWID_"] |$">
+									                <td>$| v["fbwifivlan.vlanName"] or '' |$</td>
+									                <td>$| v["fbwifivlan.vlanId"] or '' |$</td>
+                                                    <td>
+                                                        <?lua 
+                                                            if (v["fbwifivlan.fbwifion"] == "1") then
+                                                                statusStr="enable-disable-on"
+                                                                statusVar = "1"
+                                                            else
+						                                        statusStr="enable-disable-off"
+	                                                            statusVar = "0"
+						                                    end
+                                                        ?>
+                                                        <?lua if (configRow["fbwifi.enabled"] == "1") then ?>
+						                                <a class="$| statusStr |$" alt="" ></a>
+                                                        <?lua else
+                                                        if (statusVar == "1") then ?>
+                                                        <a class="enable-disable-on-noclick" alt=""></a>
+                                                        <?lua else ?>
+                                                        <a class="enable-disable-off-noclick" alt=""></a>
+                                                        <?lua end end ?>
+                                    		            <input type="hidden" name="fbwifivlan.fbwifion_$|v["fbwifivlan.vlanId"]|$" value="$| statusVar |$">
+                                                    </td>
+                                                </tr>
+                                                <?lua end ?>
+							            </table>
+						            </div>
+					            </div>
+					        </div>
+                            <div class="submitRow">
+                                <input name="button.config.fbWiFi" type="submit" class="btnSubmit btnSubmitHideShow" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" onclick="setHiddenChks('tf1_fbWiFi')">
+                                <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset();resetImgOnOff('tf1_fbWiFi');">
+                            </div>
+                            <div class="break">
+                                &nbsp;
+                            </div>
+                        </form>
+					</div>
+				</div>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <?lua
+        local enableStatus = db.getAttribute ("fbwifi", "_ROWID_", 1, "enabled") or ''
+        ?>
+        <input type="hidden" id="hdFbWiFiEnbl" value="$| enableStatus |$">
+        <input type="hidden" id="hdUrlAddr" value="$| urlAddr or '' |$">
+        <input type="hidden" id="hdRegNum" value="$| regNum or '' |$">
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                 onloadCall(fbWiFiOnload, {imageId:'', disableIndividual:'', disableGrp:'', enableIndividual:'', enableGrp:'', hideClass:'hide', showClass:'configRow', breakDivs:'', breakClass:'break', imagesInfo:{disableImages:'', enableImages:'', disableClass:'', enableClass:''}});
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(false);
+                openFbWiFiReg ();
+            });
+function fbWiFiOnload (data, thisObj)
+    {
+    onAnchorToggle(data);
+    }
+
+function openFbWiFiReg ()
+    {
+	var urlObj = document.getElementById ('hdUrlAddr');
+	var fbEnblObj = document.getElementById ('hdFbWiFiEnbl');
+	
+    if (urlObj && urlObj.value != "")
+	    {
+		var strWindowFeatures = "height=620,width=650,scrollbars=yes,status=yes";
+		window.open(urlObj.value, "_blank", strWindowFeatures);
+	    }
+
+	if (fbEnblObj && fbEnblObj.value == "1")
+	    {
+	        fieldStateChangeWr ('','','registerBtn','recordsData');
+	    }
+	else
+	    {
+	        fieldStateChangeWr ('registerBtn','recordsData','','');
+	    }
+    }
+
+function registerFB ()
+    {
+    var regNumObj = document.getElementById ('hdRegNum');
+    var fbWiFiMsgObj = document.getElementById ('fbWiFiMsg');
+    regNumObj.value = "";
+    if (regNumObj.value == "")
+        {   
+            if (fbWiFiMsgObj) 
+                {
+                fbWiFiMsgObj.innerHTML = LANG_LOCALE['30641'] + " ...."
+                }
+        }
+    else
+        {
+            if (fbWiFiMsgObj) 
+                {
+                fbWiFiMsgObj.innerHTML = ""
+                }
+        }
+    }
+        </script>
+    </body>
+</html>
+<?lua end ?>

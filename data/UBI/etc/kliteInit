@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# kliteInit - initialization script for klite
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_KLITE" = "y" ]; then
+
+MODULES_DIR=$KLITE_INSTALL_PATH/lib/modules/klite/
+
+[ -f $MODULES_DIR/klite.$MOD_SUFFIX ] && { insmod $MODULES_DIR/klite.$MOD_SUFFIX; }
+[ -f $MODULES_DIR/cavEZ.$MOD_SUFFIX ] && { insmod $MODULES_DIR/cavEZ.$MOD_SUFFIX; }
+
+fi

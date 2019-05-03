@@ -1,0 +1,35 @@
+#!/bin/sh
+# ppp-ipv6-up script
+# modified by adi
+# further modified by nis for PPTP and L2TP IPv6 support
+# nis added new environment variable - peername 
+
+if [ -z $LLLOCAL ]
+then
+    exit
+fi
+
+if [ -z $LLREMOTE ]
+then
+    exit
+fi
+
+# set the IP
+[ -z $LLLOCAL ] || { echo $LLLOCAL/10 > "/var/wan"$(($LINKNAME))"Ip"; }
+
+export LD_LIBARY_PATH=$LD_LIBARY_PATH:/pfrm2.0/lib
+echo $LLLOCAL > "/tmp/local.txt"
+
+if [ "x$LINKNAME" != x ]  
+then
+# update the networkInterface table
+/pfrm2.0/bin/ppp6StatsUpdate -d /tmp/system.db -a $LLLOCAL                      \
+                                               -g $LLREMOTE                     \
+                                               -i $LINKNAME
+else
+    LINKNAME=$(cat /proc/net/if_inet6 |grep $(sed -e 's/::/000000000000/g' </tmp/local.txt |sed -e 's/://g') | cut -c 53-55)   
+    echo $LLREMOTE > "/tmp/remote-"$(($LINKNAME))
+    echo $PEERNAME >> "/tmp/remote-"$(($LINKNAME))
+    /pfrm2.0/bin/ppp6StatsUpdate -d /tmp/system.db -a $LLLOCAL -g $LLREMOTE -i $LINKNAME
+fi
+   

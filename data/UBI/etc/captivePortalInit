@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# captivePortalInit - initialization script for captivePortal.
+#
+# Copyright (c) 2010, TeamF1, Inc.
+# Copyright (c) 2016, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India).
+#
+# modification history
+# --------------------
+# 01c,27jul15,nrb  made changes for fbwifi support
+# 01b,05oct12,nan  made changes for captiveportal background image
+# 01a,20oct10,kt   written.
+#
+# DESCRIPTION
+# This script is the initialization script for captivePortal component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_CAPTIVEPORTAL" = "y" ]; then
+    MODEL_ID=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+
+    mkdir -p /flash/tmp/capPort
+
+    if [ ! -e /flash/tmp/capPort/image0.gif ]; then
+        cp -f /pfrm2.0/var/www/images/headerBg.gif /flash/tmp/capPort/image0.gif
+    fi
+
+    if [ ! -e /flash/tmp/capPort/imageNew.gif ]; then
+        cp /pfrm2.0/var/www/images/_blank.gif /flash/tmp/capPort/imageNew.gif
+    fi
+    if [ ! -e /flash/tmp/capPort/pageBackgroundImage0.jpg ]; then
+        cp /pfrm2.0/var/www/images/cp_bkg.jpg /flash/tmp/capPort/pageBackgroundImage0.jpg
+         
+    fi
+	
+    if [ ! -e /flash/tmp/capPort/sla.txt ]; then
+       cp /pfrm2.0/var/sla.txt /flash/tmp/capPort/sla.txt
+    fi
+
+    echo -n "Starting captivePortal daemon... "
+    $CAPTIVEPORTAL_INSTALL_PATH/bin/captivePortald $DB_FILENAME &
+    echo "Done"
+
+    #if [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-1000AC" ] || [ $MODEL_ID == "DSR-500AC" ]; then
+	#echo -n "Starting CP Accounting daemon... "
+    #$CAPTIVEPORTAL_INSTALL_PATH/bin/captivePortalAccd $DB_FILENAME &
+    #echo "Done"	
+
+	#MODULES_DIR=$CAPTIVEPORTAL_INSTALL_PATH/lib/modules/cp_accounting/
+	#MOD_SUFFIX=ko
+
+	#[ -f $MODULES_DIR/cp_accounting.$MOD_SUFFIX ] && { insmod $MODULES_DIR/cp_accounting.$MOD_SUFFIX; }
+    #fi
+
+fi

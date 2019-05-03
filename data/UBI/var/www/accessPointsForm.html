@@ -1,0 +1,278 @@
+<?lua
+require "teamf1lualib/accessPoints_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/wirelessClients_bl"
+
+local accessPoint = require("com.teamf1.bl.wireless.accesspoints")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local wirelessClients_bl = require ("com.teamf1.bl.wirelessClients")
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, cookie
+    local accessPointsTbl = {}
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, curCookie, vapName, profileName, activeTime, 
+        scheduleControl, startHour, startMinute, 
+        startMeridian, stopHour, stopMinute, stopMeridian, wlanPartition = accessPoint.accessPointsSectionGetCur(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+
+        if (startHour ~= nil and startHour ~= '' and (tonumber(startHour) < 10)) then
+            startHour = '0'..startHour
+        end
+
+        if (startMinute ~= nil and startMinute ~= '' and (tonumber(startMinute) < 10)) then
+            startMinute = '0'..startMinute
+        end
+
+        if (stopHour ~= nil and stopHour ~= '' and (tonumber(stopHour) < 10)) then
+            stopHour = '0'..stopHour
+        end
+
+        if (stopMinute ~= nil and stopMinute ~= '' and (tonumber(stopMinute) < 10)) then
+            stopMinute = '0'..stopMinute
+        end
+
+    else
+        configRowId = "-1"
+        returnCode, vapName, profileName, wlanPartition = accessPoint.accessPointSectionGetDefaults ()
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_accessPointsDailogContent">
+    <div class="topBg">
+        <h1 data-localize="10035">Access Point Configuration</h1>
+            <close>
+                <a href="#" id="btnClose" title="Close">X</a>
+            </close>
+    </div>
+    <div class="dialogMidArea">
+	<div class="configRow">
+	    <label data-localize="10244">AP Name </label>
+		<?lua if(cgi["configRowId"] ~= "-1") then?>
+		<p>$| vapName or '' |$</p>
+		<input type="hidden" name="accessPoints.apName" value="$| vapName or '' |$" >
+		<?lua else ?>
+		<input type="text" maxlength="16" name="accessPoints.apName" value="$| vapName or '' |$" class="one" id="tf1_APName" onkeypress="return alphaNumericCheck (event, '')">
+		<?lua end ?>
+	</div>
+	<div class="break">&nbsp; </div>
+	    <div class="configRow">
+		<label data-localize="12560">Profile Name </label>
+		<select size="1" name="accessPoints.profileName" id="tf1_profileName">
+		    <?lua
+			local i = 0
+			local returnCode, table = accessPoint.profileSectionGetAll ()
+			for k,v in pairs(table) do
+			    i = i + 1
+			    local row = table[i]
+		    ?>
+		    <option $| web.dropdownSelected(profileName == row["dot11Profile.profileName"]) |$ value="$| row["dot11Profile.profileName"] |$">$| row["dot11Profile.profileName"] |$</option>
+		    <?lua end ?>
+		</select>
+	    </div>
+	<div class="break" >&nbsp; </div>
+	<div class="configRow">
+	    <label data-localize="10089">Active Time </label>
+	    <?lua 
+            if (activeTime == "1") then
+	        statusStr="enable-disable-on"
+	        statusVar = "1"
+            else
+	        statusStr="enable-disable-off"
+	        statusVar = "0"
+            end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableActiveTime"></a>
+	    <input type="hidden" value="$| statusVar |$" name= "accessPoints.activeTime" >
+	</div>
+	<div class="break">&nbsp; </div>
+	<div class="configRow" id="tf1_scheduleControl_div" >
+	    <label data-localize="30032">Schedule Control</label>
+	    <?lua 
+            if (scheduleControl == "1") then
+	        statusStr="enable-disable-on"
+	        statusVar = "1"
+            else
+	        statusStr="enable-disable-off"
+	        statusVar = "0"
+            end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_scheduleControl"></a>
+	    <input type="hidden" value="$| statusVar |$" name= "accessPoints.scheduleControl" >
+	</div>
+	<div class="break" id="break_scheduleControl_div">&nbsp; </div>
+	<div class="configRow" id="tf1_startTime_div">
+	    <label data-localize="12971">Start Time </label>
+		<input type="text" class="one" maxlength="2" name="accessPoints.startHour" value="$| startHour or '' |$" id="tf1_startTimeHour" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 12, true, trim(LANG_LOCALE['30034'])+': ', ''); }" onblur="prependZero ('tf1_startTimeHour')">
+		<dl><span data-localize="20013">Hour</span></dl>
+		<input type="text" class="one" maxlength="2" name="accessPoints.startMinute" value="$| startMinute or '' |$" id="tf1_startTimeMin" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 59, true, trim(LANG_LOCALE['30035'])+': ', ''); }" onblur="prependZero ('tf1_startTimeMin')">
+				<dl>
+                    <span data-localize="30036">Minute</span>
+				</dl>
+				<select class="two" name="accessPoints.startMeridian" id="tf1_startTimeMerid">
+				<option data-localize="30037" $| web.dropdownSelected(startMeridian == "0") |$ value="0">AM</option>
+				<option data-localize="30038" $| web.dropdownSelected(startMeridian == "1") |$ value="1">PM</option>
+				</select> 
+	</div>
+	<div class="break" id="break_startTime_div">&nbsp; </div>
+	<div class="configRow" id="tf1_stopTime_div">
+	    <label data-localize="13009">Stop Time </label>
+	        <input type="text" name="accessPoints.stopHour" value="$| stopHour or '' |$" class="one" maxlength="2" id="tf1_stopTimeHour" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 12, true, trim(LANG_LOCALE['30039'])+': ', ''); }" onblur="prependZero ('tf1_stopTimeHour')">
+		<dl><span data-localize="20013">Hour</span></dl>
+		<input type="text" name="accessPoints.stopMinute" value="$| stopMinute or '' |$" class="one" maxlength="2" id="tf1_stopTimeMin" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 59, true, 'Invalid Stop Time Minutes: ', ''); }" onblur="prependZero ('tf1_stopTimeMin')">
+		<dl> <span data-localize="30036">Minute</span> </dl>
+		    <select class="two" name="accessPoints.stopMeridian" id="tf1_stopTimeMerid">
+			<option data-localize="30037" $| web.dropdownSelected(stopMeridian == "0") |$ value="0">AM</option>
+			<option data-localize="30038" $| web.dropdownSelected(stopMeridian == "1") |$ value="1">PM</option>
+		    </select>
+      </div>
+      <div class="break" id="break_stopTime_div">&nbsp; </div>
+			
+      <div class="configRow" id="tf1_wlanPrtition_div">
+          <label data-localize="13410">WLAN Partition </label>
+	  <?lua 
+              if (wlanPartition == "1") then
+	          statusStr="enable-disable-on"
+	          statusVar = "1"
+              else
+	          statusStr="enable-disable-off"
+	          statusVar = "0"
+              end
+          ?>
+          <a class="$| statusStr |$" alt="" id="tf1_wlanPrtition"></a>
+	  <input type="hidden" value="$| statusVar |$" name= "accessPoints.wlanPartition" >
+      </div>
+      <div class="break" id="break_wlanPrtition_div">&nbsp; </div>
+</div>
+<div class="dialogSubmitRow">
+    <input data-localize="12758" type="submit" name="button.config.accessPoints.accessPoints.$| configRowId |$" onclick="return accessPointsValidation('tf1_frmAccessPoints');" class="btnSubmit" title="Save" value="Save" id="btSave">
+</div>
+
+<?lua elseif(ButtonType == "statusInfo") then 
+    configRowId = cgi["configRowId"]
+    local returnCode, accessTbl = 
+     accessPoint.accessPointStatusSectionGet (configRowId)
+?>
+<div id="tf1_accessPointsStatusDailogContent">
+	<div class="topBg">
+    	<h1 data-localize="10040">Access Points</h1>
+    	<close>
+    		<a href="#" id="btnClose" title="Close">X</a>
+    	</close>
+    </div>
+    <div class="dialogMidArea">
+    <h1 data-localize="30040">Access Points Status</h1>
+	<div class="CLR">
+	    <div class="demo_jui">
+    		<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsDataForm1">
+		    <thead>
+			<tr>
+	    		    <th data-localize="10244">AP <br>Name</th>
+	    		    <th data-localize="12591">Radio <br>&nbsp;</th>
+	    		    <th data-localize="11889">Packets rx</th>
+	    		    <th data-localize="11892">Packets tx</th>
+			    <th data-localize="10436">Bytes rx</th>
+			    <th data-localize="10441">Bytes tx</th>
+			    <th data-localize="10954">Errors rx</th>
+			    <th data-localize="10955">Errors tx</th>
+			    <th data-localize="10831">Dropped rx</th>
+			    <th data-localize="10832">Dropped tx</th>
+			    <th data-localize="30042">MultiCast <br>&nbsp;</th>
+			    <th data-localize="10542">Collisions <br>&nbsp;</th>
+			</tr>
+		    </thead>
+                    <?lua 
+                        i = 0
+                        for k,v in pairs(accessTbl) do
+                        i = i+1
+                    ?>         
+		        <tr class="gradeA">
+			    <td>$| accessTbl[i]["vapName"] or '' |$</td>
+			    <td>$| accessTbl[i]["radioNo"] or '' |$</td>
+			    <td>$| accessTbl[i]["rx_packets"] or '' |$</td>
+			    <td>$| accessTbl[i]["tx_packets"] or '' |$ </td>
+			    <td>$| accessTbl[i]["rx_bytes"] or '' |$ </td>
+			    <td>$| accessTbl[i]["tx_bytes"] or '' |$ </td>
+			    <td>$| accessTbl[i]["rx_errors"] or '' |$</td>
+			    <td>$| accessTbl[i]["tx_errors"] or '' |$</td>
+			    <td>$| accessTbl[i]["rx_dropped"] or '' |$</td>
+			    <td>$| accessTbl[i]["tx_dropped"] or '' |$</td>
+			    <td>$| accessTbl[i]["multicast"] or '' |$</td>
+			    <td>$| accessTbl[i]["collisions"] or '' |$</td>
+			</tr>
+                        <?lua end?>
+               </table>
+        </div>
+    </div>
+    <div class="break">&nbsp;</div>
+    <h1 data-localize="30043">Connected Clients</h1>
+    <div class="CLR">
+        <div class="demo_jui">
+            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsDataForm2">
+	        <thead>
+	            <tr>
+	    		<th data-localize="11636">MAC <br>Address </th>
+		        <th data-localize="12591">Radio <br>&nbsp;</th>
+            		<th data-localize="12792">Security <br>&nbsp;</th>
+            		<th data-localize="10916">Encryption <br>&nbsp;</th>
+            		<th data-localize="13449">Authentication <br>&nbsp;</th>
+            		<th data-localize="13087">Time Connected <br>&nbsp;</th>
+		    </tr>
+		</thead>
+            <?lua 
+                local returnCode, cookie, vapName = accessPoint.accessPointNameGet (configRowId)
+                local returnCode, clientInfoTbl = wirelessClients_bl.clientRowsGet (vapName)
+                for k,v in pairs(clientInfoTbl) do 
+                    local clientsTbl = {}
+                    if (UNIT_NAME == "DSR-150N") then
+                        clientsTbl =  
+                        wirelessClients_bl.clientRowGet150N (v["dot11Interface.interfaceName"])
+                    else
+                        local dot11TempTab = 
+                        wirelessClients_bl.clientRowGet250N (v["dot11Interface.interfaceName"])
+                        if (dot11TempTab == nil) then dot11TempTab = {} end
+                            for k,v in pairs(dot11TempTab) do
+			        clientsTbl[k] = {}
+				clientsTbl[k]["macAddress"] = v["dot11STA.macAddress"]
+				clientsTbl[k]["timeConnected"] = v["dot11STA.timeConnected"]
+				clientsTbl[k]["security"] = v["dot11STA.security"]
+				clientsTbl[k]["cipher"] = v["dot11STA.cipher"]
+				clientsTbl[k]["authentication"] = v["dot11STA.authentication"]
+			    end
+                        end
+                        for i,row in pairs(clientsTbl) do
+			    row["dot11VAP.vapName"] = v["dot11VAP.vapName"]
+			    row["dot11Interface.radioNo"] = v["dot11Interface.radioNo"]
+			    local timeElapsed = 
+                                        wirelessClients_bl.staConnectedTimeGet(row["timeConnected"])
+                             ?>
+                         <tr class="gradeA">
+                                          <?lua
+                        	     local len = #row["dot11VAP.vapName"]
+                        	     local clientVapName = ""
+                        	     if (len > 10) then
+                        		 row["dot11VAP.vapName"] = string.sub(row["dot11VAP.vapName"],1,10) .. "..."
+                        	      end
+                                     ?>
+                                     <td> $| row["macAddress"] or '' |$</td>
+                                     <td> $| row["dot11Interface.radioNo"] or '' |$</td>
+                                     <td> $| row["security"] or '' |$</td>
+                                     <td> $| row["cipher"] or '' |$</td>
+                                     <td> $| row["authentication"] or '' |$</td>
+                                     <td> $| timeElapsed |$</td>
+                                     </tr>
+                                 <?lua end
+                         end?>
+       </table>
+    </div>
+  </div>
+    </div>	
+</div>
+<?lua end ?>

@@ -1,0 +1,99 @@
+:|noHelpSet|:
+The table lists all the available logs in the system.
+:|noHelpSetEnd|:
+
+:|accessPoints|:
+The List of Available Access Points table lists the configured Access Points (AP) for this device. From this summary list, the status of each AP (over all radios) can be reviewed and AP parameter configuration settings can be accessed.
+
+:|accessPointsEnd|:
+
+:|accessPoints_1000ac|:
+The List of Available Access Points table lists the configured Access Points (AP) for this device. From this summary list, the status of each AP (over all radios) can be reviewed and AP parameter configuration settings can be accessed.
+
+:|accessPoints_1000acEnd|:
+
+:|accessPointMacFilters|:
+This page shows the access control list and also allows user to add new access control rules.
+:|accessPointMacFiltersEnd|:
+
+:|profiles|:
+A profile is a grouping of wireless settings which can be shared across multiple APs. AP specific settings are configured on the Access Point Configuration page. The profile allows for easy duplication of SSIDs, security settings, encryption methods, client authentication, etc. across APs.
+:|profilesEnd|:
+
+:|profiles_1000ac|:
+A profile is a grouping of wireless settings which can be shared across multiple APs. AP specific settings are configured on the Access Point Configuration page. The profile allows for easy duplication of SSIDs, security settings, encryption methods, client authentication, etc. across APs.
+:|profiles_1000acEnd|:
+
+:|profiles_500ac|:
+A profile is a grouping of wireless settings which can be shared across multiple APs. AP specific settings are configured on the Access Point Configuration page. The profile allows for easy duplication of SSIDs, security settings, encryption methods, client authentication, etc. across APs.
+:|profiles_500acEnd|:
+
+:|radioConfig_1000N|:
+This page allows you to configure the hardware settings for each available radio card. 
+:|radioConfig_1000NEnd|:
+
+:|radioConfig_500N|:
+This page allows you to configure the hardware settings for each available radio card. 
+:|radioConfig_500NEnd|:
+
+:|radioConfig_1000AC|:
+This page allows you to configure the hardware settings for each available radio card. 
+:|radioConfig_1000ACEnd|:
+
+:|radioConfig_500AC|:
+This page allows you to configure the hardware settings for each available radio card. 
+:|radioConfig_500ACEnd|:
+
+:|radioConfig_250N|:
+This page allows you to configure the hardware settings for each available radio card. 
+:|radioConfig_250NEnd|:
+
+:|radioConfig_250N_B1|:
+This page allows you to configure the hardware settings for each available radio card. 
+:|radioConfig_250N_B1End|:
+
+:|radioConfig_150N|:
+This page allows you to configure the hardware settings for each available radio card. 
+:|radioConfig_150NEnd|:
+
+:|radioConfig5GHz|:
+Hint Content goes here...
+:|radioConfig5GHzEnd|:
+
+:|wmm|:
+This page allows you to configure the Wi-Fi Multimedia(WMM) configuration parameters. 
+:|wmmEnd|:
+
+:|wds|:
+This page allows you to configure the Wireless Distribution System (WDS)
+configuration parameters for 2.4 GHz radio. 
+:|wdsEnd|:
+
+:|wds5GHz|:
+This page allows you to configure the Wireless Distribution System (WDS)
+configuration parameters for 5 GHz radio. 
+:|wds5GHzEnd|:
+
+:|advancedWireless|:
+This page is used to specify advanced configuration settings for the radio.
+:|advancedWirelessEnd|: 
+
+:|advancedWirelessAC|:
+This page is used to specify advanced configuration settings for the radio.
+:|advancedWirelessACEnd|:
+
+:|advancedWireless5GHz|:
+This page is used to specify advanced configuration settings for the radio.
+:|advancedWireless5GHzEnd|: 
+
+:|wps|:
+This page allows you to define and modify the Wi-Fi Protected Setup (WPS) configuration parameters.
+:|wpsEnd|:
+
+:|wps_ndev|:
+This page allows you to define and modify the Wi-Fi Protected Setup (WPS) configuration parameters.
+:|wps_ndevEnd|:
+
+:|fbWiFi|:
+The Facebook WiFi page allows the user to enable Facebook WiFi.
+:|fbWiFiEnd|:

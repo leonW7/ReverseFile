@@ -1,0 +1,25 @@
+<?lua
+    local helpTRext, mainHeading
+    local page = cgi.page
+    local helpFile = cgi.helpfile   
+    local f = assert(io.open("help/"..helpFile, "r"))
+    local data = ""
+    while true do
+    	local line = f:read("*line")
+    	if line == nil then break end
+    	data = data .. line
+    end
+    assert(f:close())
+    
+ 	helpText = ""
+    local helpStart1,helpEnd1 = string.find(data,":|"..cgi.help.."|:")
+    local helpStart2,helpEnd2 = string.find(data,":|"..cgi.help.."End|:")    
+    if (helpStart1 ~= nil and helpEnd1 ~= nil and helpStart2 ~= nil and helpEnd2 ~= nil) then
+        helpText = string.sub(data, helpEnd1+1, helpStart2-1)
+    else
+    	helpText = ""
+    end
+  cgilua.header ("Content-Type","text/html; charset=UTF-8")      
+?>
+$| helpText |$
+

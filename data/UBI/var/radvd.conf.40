@@ -1,0 +1,11 @@
+interface bdg1
+    {
+    AdvSendAdvert on;
+    MaxRtrAdvInterval 40;
+    MinRtrAdvInterval 30;
+    prefix 3ffe:501:ffff:100::/64
+        {
+        AdvOnLink on;
+        AdvAutonomous on;
+        };
+    };

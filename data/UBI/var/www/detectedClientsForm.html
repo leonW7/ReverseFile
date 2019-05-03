@@ -1,0 +1,505 @@
+<?lua
+require "teamf1lualib/dettectedClientsInfo_bl"
+require "teamf1lualib/bl_dettectedClients"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local detClients         = require("com.teamf1.bl.wlan.detectedClientInfo")
+local guiDetectedClients = require("com.teamf1.bl.wlan.detectedclients")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+local NO_PRE_AUTH_DATA = 1011
+local configRowId = cgi["VAPID"]
+?>
+
+<?lua
+if(ButtonType and ButtonType == "details") then
+      local returnCode
+      local detailsTbl = {}
+      returnCode, detailsTbl = guiDetectedClients.detectedClientsDetails (configRowId)
+      if (returnCode ~= returnCodes.SUCCESS) then
+          statusErrorMessage = errorMap.errorStringGet (returnCode)
+      end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")  
+?>
+
+
+<!-- Section for Managed Distributed Tunnels starts -->
+            <div id="tf1_dettectedClientsDailogContent">
+                <div class="topBg">
+                    <h1>Detected Client Status</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                    <div class="configRow">
+                        <label>MAC Address</label>
+                        <p>$| configRowId or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+                    <div class="configRow">
+                        <label>Client Status</label>
+                        <p>$| detailsTbl.clientStatus or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Authentication Status</label>
+                        <p>$| detailsTbl.authenticationStatus or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Threat Detection</label>
+                        <p>$| detailsTbl.threatDetection or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Threat Mitigation Status</label>
+                        <p>$| detailsTbl.threatMitigationStatus or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Time Since Entry Last<br>Updated</label>
+                        <p>$| detailsTbl.timeSinceEntryLastupdated or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Time Since Entry Create</label>
+                        <p>$| detailsTbl.timeSinceEntryCreate or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Client Name</label>
+                        <p>$| detailsTbl.clientName or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>RSSI	</label>
+                        <p>$| detailsTbl.RSSI or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Signal</label>
+                        <p>$| detailsTbl.signal or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Noise</label>
+                        <p>$| detailsTbl.noise or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Probe Req Recorded</label>
+                        <p>$| detailsTbl.probeReqRecorded or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Probe Collection Interval</label>
+                        <p>$| detailsTbl.probeCollectionInterval or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Highest Probes Detected</label>
+                        <p>$| detailsTbl.highestProbesDetected or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Channel</label>
+                        <p>$| detailsTbl.channel or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>OUI Description</label>
+                        <p>$| detailsTbl.OUIDescription or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Auth Msgs Recorded</label>
+                        <p>$| detailsTbl.authMsgsRecorded or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Auth Collection Interval</label>
+                        <p>$| detailsTbl.authCollectionInterval or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Highest Auth Msgs</label>
+                        <p>$| detailsTbl.highestAuthMsgs or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>De-Auth Msgs Recorded</label>
+                        <p>$| detailsTbl.deAuthMsgsRecorded or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>De-Auth Collection Interval</label>
+                        <p>$| detailsTbl.deAuthCollectionInterval or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Highest De-Auth Msgs	</label>
+                        <p>$| detailsTbl.highestDeAuthMsgs or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Authentication Failures	</label>
+                        <p>$| detailsTbl.authenticationFailures or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Probes Detected</label>
+                        <p>$| detailsTbl.probesDetected or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Broadcast BSSID Probes</label>
+                        <p>$| detailsTbl.broadcastBSSIDProbes or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Broadcast SSID Probes</label>
+                        <p>$| detailsTbl.broadcastSSIDProbes or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Specific BSSID Probes</label>
+                        <p>$| detailsTbl.specificBSSIDProbes or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Specific SSID Probes	</label>
+                        <p>$| detailsTbl.specificSSIDProbes or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Last Non-Broadcast BSSID</label>
+                        <p>$| detailsTbl.lastNonBroadcastBSSID or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Last Non-Broadcast SSID</label>
+                        <p>$| detailsTbl.lastNonBroadcastSSID or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>
+
+                    <div class="configRow">
+                        <label>Threat Mitigation Sent</label>
+                        <p>$| detailsTbl.threatMitigationSent or '' |$</p>
+                    </div>
+                    <div class="break">&nbsp;</div>  
+                </div>
+            </div>
+        <!-- Section for Managed Distributed Tunnels ends -->
+        
+        <!-- Section for Pre-Authentication History starts -->
+<?lua
+elseif(ButtonType and ButtonType == "preAuthDetails") then
+      local returnCode
+      local preAuthHistoryTbl = {}
+      returnCode, preAuthHistoryTbl = guiDetectedClients.preAuthHistory(cgi.VAPID) 
+      if (returnCode ~= returnCodes.SUCCESS and returnCode ~= NO_PRE_AUTH_DATA) then
+         errorCode = returnCode
+         statusErrorMessage = errorMap.errorStringGet (errorCode)
+      end  
+      
+      ?>
+      <div id="tf1_preAuthDailogContent">
+                <div class="topBg">
+                    <h1>Pre-Authentication History</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                     <div class="midArea">
+                        <div align="left">                           
+                                <div class="configRow">
+                                    <label>MAC Address</label>
+                                    <p>$|cgi.VAPID|$ </p>
+                                    
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData8">
+                                            <thead>
+                                                <tr>
+                                                    <th>AP MAC <br>&nbsp;</th>
+                                                    <th>Radio Interface Number<br>&nbsp;</th>
+                                                    <th>VAP MAC Address<br>&nbsp;</th>
+                                                    <th>SSID <br>&nbsp;</th>
+                                                    <th>User Name<br>&nbsp;</th>
+                                                    <th>Pre-Auth Status<br>&nbsp;</th>
+                                                    <th>Age <br>&nbsp;</th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            if (preAuthHistoryTbl ~= nil and preAuthHistoryTbl ~= "") then
+                                            ?>
+
+                                            <?lua
+                                                 for k, v in pairs(preAuthHistoryTbl) do
+                                                 local row = {}
+                                                 row = preAuthHistoryTbl[k]
+                                            ?>
+                                             
+                                            <tr class="gradeB">
+                                                <td>$|row.apMacAddress|$</td>
+                                                <td>$|row.radio|$</td>
+                                                <td>$|row.vapMac|$</td>
+                                                <td>$|row.ssid|$</td>
+                                                <td>$|row.userName|$</td>
+                                                <td>$|row.preAuthStatus|$</td>
+                                                <td>$|row.age|$</td>
+                                            </tr>
+                                            <?lua end ?>
+                                            <?lua end ?>
+                                            </tr>                                             
+                                        </table>
+                                    </div>
+                                </div>                            
+                        </div>
+                    </div> 
+                </div>                 
+            </div>       
+
+        <!-- Section for Pre-Authentication History ends -->
+
+        <!-- Section for Roma History starts -->
+<?lua
+elseif(ButtonType and ButtonType == "roam")then
+    local returnCode
+    local roamDetails = {}
+    returnCode, roamDetails = guiDetectedClients.wlanRoamDetails (configRowId)
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end        
+
+?>
+<div id="tf1_roamHistoryDailogContent">
+                <div class="topBg">
+                    <h1>List of Detected Clients Roam History</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                     <div class="midArea">
+                        <div align="left">
+                            <form name action="cgi-action.html">
+                                <div class="configRow">
+                                    <label>MAC Address</label>
+                                    <p>$| configRowId or '' |$ </p>
+                                    
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData3">
+                                            <thead>
+                                                <tr>
+                                                    <th>AP MAC<br />Address</th>
+                                                    <th>Radio<br />&nbsp;</th>
+                                                    <th>VAP MAC<br />Address</th>
+                                                    <th>SSID<br />&nbsp;</th>
+                                                    <th>Status<br />&nbsp;</th>
+                                                    <th>Time<br />Since Event </th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            if (roamDetails ~= nil) then
+                                            for k, v in pairs (roamDetails) do
+                                            local row = roamDetails[k]
+                                            ?>
+                                            <tr class="gradeB">
+                                                <td>$| row.apMacAddress or '' |$</td>
+                                                <td>$| row.radio or '' |$</td>
+                                                <td>$| row.vapMacAddress or '' |$</td>
+                                                <td>$| row.SSID or '' |$</td>
+                                                <td>$| row.status or '' |$</td>
+                                                <td>$| row.timeEvent or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                            end
+                                            end
+                                            ?>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div> 
+                </div>
+                 
+            </div>
+        <!-- Section for Roma History ends -->
+        <!-- Section for Triangulation Info starts -->
+<?lua
+
+elseif(ButtonType and ButtonType == "traiangulationDetails") then
+local file = io.open("/tmp/lp23.txt","w")
+file:write(ButtonType)
+file:write("entreed")
+    local returnCode
+    local traingulationTbl = {}
+    returnCode, traingulationTbl = detClients.triangulationInfoGet(configRowId)
+?>
+<div id="tf1_triangulationDailogContent">
+                <div class="topBg">
+                    <h1>Triangulation information</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                     <div class="midArea">
+                        <div align="left">                           
+                                <div class="configRow">
+                                    <label>MAC Address</label>
+                                    <p>$|configRowId|$ </p>
+                                    
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData5">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sentry<br>&nbsp;<br>&nbsp;</th>
+                                                    <th>MAC<br>Address<br>&nbsp;</th>
+                                                    <th>Radio<br>&nbsp;<br>&nbsp;</th>
+                                                    <th>RSSI(%)<br>&nbsp;<br>&nbsp;</th>
+                                                    <th>Signal<br>Strength<br>(dBm)</th>
+                                                    <th>Noise<br>Level<br>(dBm)</th>
+                                                    <th>Age<br>&nbsp;<br>&nbsp;</th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                                 for k, v in pairs(traingulationTbl) do
+                                                 local row = {}
+                                                 row = traingulationTbl[k]
+                                            ?>
+                                             
+                                            <tr class="gradeB">
+                                                <td>$|row.sentry|$</td>
+                                                <td>$|row.apMac|$</td>
+                                                <td>$|row.radio|$</td>
+                                                <td>$|row.rssi|$</td>
+                                                <td>$|row.sigStrength|$</td>
+                                                <td>$|row.noiseLevel|$</td>
+                                                <td>$|row.age|$</td>
+                                            </tr>
+                                             <?lua end ?>
+                                            </tr>                                         
+                                        </table>
+                                    </div>
+                                </div>                            
+                        </div>
+                    </div> 
+                </div>                 
+            </div>       
+        <!-- Section for Triangulation Info ends -->
+        <!-- Section for Rogue Classification starts -->
+<?lua
+elseif(ButtonType and ButtonType == "rogueClassification") then
+      local returnCode
+      local rogueClassificationTbl = {}
+      returnCode, rogueClassificationTbl = detClients.rogueClassificationInfoGet(configRowId)
+?>
+<div id="tf1_rogueClassificationDailogContent">
+                <div class="topBg">
+                    <h1>List of Threat Detection Tests</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                     <div class="midArea">
+                        <div align="left">
+                            <form name action="cgi-action.html">
+                                <div class="configRow">
+                                    <label>MAC Address</label>
+                                    <p>$|configRowId|$ </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData4">
+                                            <thead>
+                                                <tr>
+                                                    <th>Test<br />Description<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Condition<br />Detected<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Reporting<br />MAC<br />Address<br />&nbsp;</th>
+                                                    <th>Radio<br />&nbsp;<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Test<br />Config<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Test<br />Result<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Time Since<br />First Report</th>
+                                                    <th>Time Since<br />Last Report</th>
+                                                </tr>
+                                            </thead>
+					    <?lua
+                                                 for k, v in pairs(rogueClassificationTbl) do
+                                                 local row = {}
+                                                 row = rogueClassificationTbl[k]
+                                            ?>
+                                            <tr class="gradeB">
+                                                <td>$|row.testId|$</td>
+                                                <td>$|row.listCondition|$</td>
+                                                <td>$|row.rogueMac|$</td>
+                                                <td>$|row.radio|$</td>
+                                                <td>$|row.testEnabled|$</td>
+                                                <td>$|row.testResults|$</td>                                            
+                                                <td>$|row.timeFirstReported|$</td>
+                                                <td>$|row.timeLastReported|$</td>
+                                            </tr>
+                                            <?lua end ?>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div> 
+                </div>
+     

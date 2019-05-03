@@ -1,0 +1,247 @@
+<?lua
+
+require "teamf1lualib/systemLogs_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/admin_license"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "systemLogs"
+
+ROWID = "1"
+local log = require("com.teamf1.bl.logging.configuration")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local license  = require ("com.teamf1.core.admin.license")
+
+local wcfLicence = license.wcfLicenseStatusGet ()
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable ["systemLogs.cookie"] = ROWID
+    errorFlag, statusCode = log.systemLogSet (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage (NextPage, true, true)
+else
+    errorFlag, statusCode, unicastTraffic, broadcast, logftp, icmpRedirected,
+    invalidPacketLogs, categoryServerLogs, bwLimit = log.systemLogGet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+LANG_LOCALE = "14015,11312,12645,11051,10210,10213,13040,10355,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body onLoad="onloadCall ();">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    	<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13040'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmSystemLogs"
+                                id="tf1_frmSystemLogs" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="systemLogs.html">
+
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10213'] |$ </label>
+                                        <?lua if (unicastTraffic == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" ></a>
+                                        <input type="hidden" name="systemLogs.UnicastTraffic" value = "$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10210'] |$ </label>
+                                        <?lua if (broadcast == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" ></a>
+                                        <input type="hidden"  value = "$| statusVar |$" 
+                                        name="systemLogs.BroadCastORMulticastTraffic">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11051'] |$ </label>
+                                        <?lua if (logftp == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                                  end                                              
+                                        ?>
+
+                                        <a class="$| statusStr |$" alt="" ></a>
+                                        <input type="hidden" value="$| statusVar |$"
+                                        name="systemLogs.FtpLogs">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12645'] |$ </label>
+                                        <?lua if (icmpRedirected == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" ></a>
+                                        <input type="hidden" value="$| statusVar |$"
+                                        name="systemLogs.IcmpRedirectedLogs">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11312'] |$ </label>
+                                        <?lua if (invalidPacketLogs == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" ></a>
+                                        <input type="hidden" value="$| statusVar |$ "
+                                        name="systemLogs.logInvalidPacket">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10355'] |$ </label>
+                                        <?lua if (bwLimit == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" ></a>
+                                        <input type="hidden" value="$| statusVar |$" name="systemLogs.bwLimitLogs">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>                                
+                                <?lua if (wcfLicence) then ?>
+                                 <div class="configRow">
+                                    <label> $| LANG_LOCALE['14015'] |$ </label>
+                                        <?lua if (categoryServerLogs == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                              end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" ></a>
+                                        <input type="hidden" value="$| statusVar |$ "
+                                        name="systemLogs.categoryServerLogs">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <?lua end?>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit"
+                                    title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" name="button.config.systemLogs" onclick="setHiddenChks('tf1_frmSystemLogs');">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmSystemLogs');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>        
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+    </body>
+</html>
+<?lua end ?>
+

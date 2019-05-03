@@ -1,0 +1,95 @@
+#!/bin/sh 
+#
+# x509Init - initialization script for x509
+#
+# Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01f,24dec15,knr fixed spr-54612
+# 01e,27feb15,sr  added changes for spr#47444
+# 01d,03dec14,nan made changes to support variable key length for certificate generation
+# 01c,21apr11,rac Added  x509GetVersion for 20615 SPR
+# 01b,02dev08,til added UDI related info to certificate's CN
+# 01a,23nov07,chd written
+
+if [ "$INCLUDE_X509" = "y" ]; then    
+    mkdir -p $CERT_PATH
+    mkdir -p $CERT_PATH/ca
+    mkdir -p $CERT_PATH/self
+    mkdir -p $CERT_PATH/self/default   
+
+
+
+#TODO:
+# for now we are also including MAC Address details into subject
+if [ "$X509_UDI" = "y" ];then
+echo "x509Init : UDI-INFO : ProductID=$ProductID, VendorID=$VendorID, SerialNo=$SerialNo, DeviceId=$DeviceId, CN_WITH_UDI=$CN_WITH_UDI" 
+else
+CN=$CN
+fi
+
+# Check if certficates available in flash have valid version
+X509_VERSION=$("$X509_INSTALL_PATH"/bin/x509GetVersion "$CERT_FLASH")
+
+# Check if certificate is signed with sha1 algorithm
+X509_SIGALG=$("$X509_INSTALL_PATH"/bin/x509GetAlg "$CERT_FLASH")
+
+if [ "$X509_VERSION" = "3" ];then
+    rm -f $CERT_FLASH 
+    rm -f $KEY_FLASH
+fi
+
+#Removing the cert if it is signed with SHA1
+if [ "$X509_SIGALG" = "65" ];then
+    rm -f $CERT_FLASH
+    rm -f $KEY_FLASH
+fi
+
+# Check if certficates available in flash
+if [ -e $CERT_FLASH ]; then
+    echo -n "Restoring certficates from persistant storage..."
+    cp -f $CERT_FLASH  $CERT_PATH/self/default/https.crt
+    cp -f $KEY_FLASH  $CERT_PATH/self/default/https.key
+    echo "Done"
+else
+    echo -n "Installing new self signed certificates with 10 years validity..."
+    if [ $PRODUCT_ID == "DSR-1000AC_Ax" -o $PRODUCT_ID == "DSR-500AC_Ax" -o
+        $PRODUCT_ID == "DSR-1000_Bx" -o $PRODUCT_ID == "DSR-500_Bx" ]; then
+        date $BUILD_DATE > /dev/null
+    else
+        date $CURRENT_DATE > /dev/null
+    fi
+    # chk whether if all udi info is avlbl
+
+    if [ "$DeviceId" != "" ]; then
+         # if we have DeviceId ORGUNIT=ProductID here.
+        $X509_INSTALL_PATH/bin/x509SelfSign "$SERIAL" "$CN_WITH_UDI" "$ProductID" "$ORGNAME" "$COUNTRY" "$CERT_PATH/self/default" "https.crt" "https.key"   
+    else
+        # if DeviceId info is not available 
+       $X509_INSTALL_PATH/bin/x509SelfSign "$SERIAL" "$CN" "$ORGUNIT" "$ORGNAME" "$COUNTRY" "$CERT_PATH/self/default" "https.crt" "https.key" "$STATE" "$LOCALITY" "$CERT_KEY_LENGTH"   
+    
+    fi # if DeviceId
+    
+
+    cp $CERT_PATH/self/default/https.crt  $CERT_FLASH
+    cp $CERT_PATH/self/default/https.key  $KEY_FLASH
+    echo "Done"
+fi
+#To make DCC Certificate as default certificate
+if [ $MODEL_ID == "DSR-150N" -o $MODEL_ID == "DSR-150" ]; then
+	cp $PLATFORM_INSTALL_PATH/etc/https.crt $CERT_FLASH
+	cp $PLATFORM_INSTALL_PATH/etc/https.key $KEY_FLASH
+	cp $PLATFORM_INSTALL_PATH/etc/https.crt $CERT_PATH/self/default/https.crt
+	cp $PLATFORM_INSTALL_PATH/etc/https.key $CERT_PATH/self/default/https.key
+fi
+    ln -s $CERT_PATH/self/default/https.crt $CERT_PATH/self/https.crt
+    ln -s $CERT_PATH/self/default/https.key $CERT_PATH/self/https.key
+if [ "$INCLUDE_X509_IPSEC_SPECIFIC_CERT" = "y" ]; then 
+    ln -s $CERT_PATH/self/default/https.crt $CERT_PATH/self/ipsec.crt
+    ln -s $CERT_PATH/self/default/https.key $CERT_PATH/self/ipsec.key
+fi
+fi

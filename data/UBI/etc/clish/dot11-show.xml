@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+    <!--===================================================-->
+    <COMMAND name="show dot11"
+                 help="Display 802.11 configuration">
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show dot11 accesspoint"
+	     help="Display Access Point configuration.
+
+This command displays the list of configured Access Points for the
+device. From this summary list, status and parameters of each AP are
+available for display.
+
+<ap_name>: This is an AP identifier which uniquely identifies an AP in
+the list of configured APs.
+
+<Enabled>: An AP can be disabled if not in use and enabled as
+needed. The AP is disabled if this field has the value 'N' and it is
+enabled if it has the value 'Y'. Disabling an AP does not delete the
+configuration, but stops the AP. Enabling the AP creates a wireless
+network where computers and other devices can join and communicate
+with the devices connected to the access point or the devices on the
+Local Area Network (LAN).
+
+<SSID>: The name or Service Set Identifier (SSID) is the name of the
+wireless network serviced by this AP. Note that since a given wireless
+profile can be common to multiple APs, the SSID is not unique to an
+AP. In order for computers or devices to communicate via this wireless
+network serviced by this AP, all devices must select the same SSID
+from the list of wireless networks in the area.
+
+<Broadcast>: The field indicates whether SSID is broadcasted or not in
+the beacon frames transmitted by the AP. If SSID is not broadcast, the
+wireless devices will not be able to see the network name (SSID). If
+this field has the value 'Y', it indicates that the AP's SSID is
+broadcasted to the public. If it is 'N' it indicates the SSID is not
+to be broadcasted and a device would have to specify the SSID exactly
+to connect to this AP.
+
+<Profile>: This field has a brief description of the security,
+encryption and authentication combination assigned to the AP. A
+Profile is not necessarily unique to an AP, rather this grouping of
+wireless settings can be used on more than one AP at the same time.
+
+<Radio>: The physical radio(s) on which this AP is running on. An AP
+can run on multiple radios at the same time for load-balancing and
+better throughput.
+
+<VLAN>: The AP can be part of a logical network defined by the VLAN id.
+This allows devices connected to the VLAN through this AP to exchange
+data with one another as in a LAN.
+
+If the optional argument <ap_name> is specified, the following
+configuration information is displayed for the access point.
+
+<Beacon Interval>: The amount of time in milliseconds between beacon
+transmissions.
+
+<DTIM Interval>: Interval for delivery of traffic indication
+message. It is related to beacon interval.
+
+<RTS Threshold>: The Request to Send (RTS) threshold is the value the
+AP checks against its transmitting frames to determine if the
+RTS/Clear To Send (CTS) handshake is required with the receiving
+client. Using a small value causes RTS packets to be sent more often,
+consuming more of the available bandwidth, therefore reducing the
+apparent throughput of the network packet. The default is 2346, which
+effectively disables RTS.
+
+<Frag Threshold>: This is the maximum length of the frame, beyond
+which packets must be broken up (fragmented) into two or more
+frames. Collisions occur more often for long frames because sending
+them occupies the channel for a longer. The default is 2346, which
+effectively disables Fragmentation.
+
+<Preamble Mode>: 802.11b requires that a preamble be prepended to
+every frame before it is transmitted to the air. The preamble may be
+either the traditional long preamble, which requires 192 µs for
+transmission, or it may be an optional short preamble that requires
+only 96 µs. Long preamble is needed for the compatibility with legacy
+802.11 systems operating at 1 and 2 Mbps. The default is 'long'.
+
+<RTS/CTS Protection>: If selected the AP always performs RTS/CTS
+handshake before transmitting a packet. It is generally used to
+minimize collisions among hidden stations
+
+<Transmit Power Gain>: Defines the relative amplification (gain) in
+dbm for transmitted packets which is added to the TX power configured
+on the physical radio.
+
+<Retry Limit>: The number of retries the AP will use when a frame
+transmission fails. It is used for both long and short frames, of size
+less than or equal to the RTS threshold.
+
+<Supported Rate>: The rate or rates (in Mbps) which the AP will
+advertise in the beacon frames.
+
+">
+	     <PARAM name="ap_name" 
+		    help="Name of the Access Point."
+		    default="all"
+		    ptype="STRING"/>
+	     <ACTION>lua clishCmdExec(dot11APGet, "${ap_name}")
+	     </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show dot11 profile"
+	     help="Display Profile configuration. If no profile name
+is specified, this command will display a summary of the details of
+all the profiles configured in the system. If a profile name is
+specified, this command will display a detailed configured of the
+profile. If the argument 'DisplayQosInfo' is set to 'Y', the profile
+details will include the QoS details as well.">
+	     <PARAM name="profile_name" 
+		    help="Name of the Profile"
+		    default="all" 
+		    ptype="STRING"/>
+	     <PARAM name="display_qos" 
+		    help="Display Quality of Service Information"
+		    default="N"
+		    ptype="CHOICE"/>
+	     <ACTION>lua clishCmdExec (dot11ProfileGet, "${profile_name}",
+			  "${display_qos}")
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show dot11 statistics"
+	     help="Display access point and radio statistics.
+
+This table shows a cumulative total of relevant wireless statistics
+for the APs and radios; the counter is reset when the device is
+rebooted.
+
+Radio Statistics
+This table displays transmit/receive data for each radio. It has the
+following fields:
+
+<Pkt(Tx/Rx)>: The number of transmitted/received wireless packets
+<Byte(Tx/Rx)>: The number of transmitted/received bytes of information
+<Err(TRx/Rx)>: The number of transmitted/received packet errors
+reported to the radio
+<Drop(Tx/Rx)>: The number of transmitted/received packet drops between
+the radio and client
+<Mcast>: The number of multicast packets sent over this radio
+<Coll>: The number of packet collisions reported to the radio
+
+AP Statistics
+This table displays transmit/receive data for each AP. An AP can have
+multiple entries if it is running on multiple radios. It has the
+following fields:
+
+<Pkt(Tx/Rx)>: The number of transmitted/received wireless packets
+<Byte(Tx/Rx)>: The number of transmitted/received bytes of information
+<Err(TRx/Rx)>: The number of transmitted/received packet errors reported to
+the AP
+<Drop(Tx/Rx)>: The number of transmitted/received packet dropped by the AP
+<Mcast>: The number of multicast packets sent over this AP
+<Coll>: The number of packet collisions reported to the AP
+
+">
+	     <ACTION>lua clishCmdExec (dot11accesspointallGet)
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show dot11 acl"
+	     help="Display access control list information for the specified access point.">
+	     <PARAM name="ap_name" 
+		    help="Name of the access point."
+		    ptype="STRING"/>
+	     <ACTION>lua clishCmdExec (dot11ACLGet, "${ap_name}")
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show dot11 accesspoint status"
+	     help="Display wireless stats.">
+	     <PARAM name="ap_name" 
+		    help="Name of the access point."
+		    ptype="STRING"/>
+	     <ACTION>lua clishCmdExec (dot11accesspointGet, "${ap_name}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="show dot11 wmm"
+	     help="Display wireless stats.">
+	     <PARAM name="profile_name" 
+		    help="Name of the access point."
+		    ptype="STRING"/>
+	     <ACTION>lua clishCmdExec (dot11WmmProfileGet, "${profile_name}")
+             </ACTION>
+    </COMMAND>
+
+    <!--===================================================-->
+    <COMMAND name="show dot11 radius"
+	     help="Display radius Information.">
+	     <ACTION>lua clishCmdExec (dot11radiusGet)
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show dot11 wps"
+	     help="Display WPS Information.">
+	     <ACTION>lua clishCmdExec (dot11wpsGet)
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show dot11 wds"
+	     help="Display WDS Information.">
+	     <PARAM name="radio_no" 
+		    help="Name of the access point."
+		    ptype="UINT"/>
+	     <ACTION>lua clishCmdExec (dot11wdsGet, "${radio_no}")
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show dot11 wireless_statistics"
+	     help="Display wireless_statistics Information.">
+	     <ACTION>lua clishCmdExec (dot11WirelessGet)
+             </ACTION>
+    </COMMAND>
+  <!--===================================================-->
+
+    <COMMAND name="show dot11 radio"
+             help="Display Radio configuration
+
+Available Radios
+This table shows the list of available radios that an AP may use. It
+has the following fields:
+
+<Radio>: The radio number.
+
+<Card>: This field indicates which card the radio is using.
+
+<Path>: This field indicates which path the radio is mapped to.
+
+<RogueAP Enabled>: If this field has value 'Y' it indicates that
+RogueAP detection is enabled on this radio. If it is 'N' it indicates
+that RogueAP detection is disabled on this radio.
+
+If the optional argument <radioNum> is given the following
+cofiguration information is displayed for the given radio.
+
+Radio Settings
+<Radio>: The radio number.
+
+<Card Name>: This field indicates which card the radio is using.
+
+<Path>: This field indicates which path the radio is mapped to.
+
+<Current Channel>: The channel used by the radio.
+
+<RogueAP Enabled>: If this field has the value 'Yes' it indicates that
+RogueAP detection is enabled on this radio.
+
+<TX Power>: Value in dBm is the default transmitted power level for
+all APs that use this radio.
+
+<RX Diversity: Enable receive diversity (use multiple antennas to receive packets)
+
+List of Access Points for Radio
+This table shows all the APs that are configured for a particular
+radio.
+
+<AP Name>: This is the name of the AP.
+
+<BSSID>: The BSSID of the AP
+
+<SSID>: The SSID serviced by AP
+
+<Profile>: This field has a brief description of the security,
+encryption and authentication combination assigned to the AP. 
+
+">
+    	     <PARAM name="radio_no" 
+		    help="Radio number."
+		    ptype="UINT"/>
+
+	     <ACTION>lua clishCmdExec (dot11RadioGet, "${radio_no}")
+             </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

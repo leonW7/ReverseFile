@@ -1,0 +1,150 @@
+<?lua
+require "teamf1lualib/bl_globalStatus"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "controllerStatus"
+
+local guGlobalStatus = require("com.teamf1.bl.wlan.controllerstatus")
+local errorMap       = require ("com.teamf1.core.errorMap")
+local returnCodes    = require ("com.teamf1.core.returnCodes")
+
+local wlanOperationalStatus, IPAddress, peerControllers
+local isCluster, clusterIP
+errorCode, wlanOperationalStatus, IPAddress, peerControllers, 
+isCluster, clusterIP = guGlobalStatus.controllerStatusGet ()
+
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end           
+if(true) then
+ cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use
+                    "msgError" 2. for information use "msgInfo" 3. for sucess
+                    use "msgSuccess" CSS classes ]-->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua else end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li class="current">
+                                    <a href="?page=globalStatus.html">Controller Status</a>
+                                </li>
+                                <li><a href="?page=controllerAssociatedClients.html">Controller Associated Clients</a></li>
+                                <li>
+                                    <a href="?page=distributedTunneling.html">Distributed Tunnel</a>
+                                </li>
+                                <li>
+                                    <a href="?page=peerControllerReceiveStatus.html">Peer Controller Receive Status</a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="?page=peerControllerConfigurationStatus.html">Peer Controller Sent Status</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>Controller Status</h1>
+                    <div class="midArea">
+                        <div align="left">
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> WLAN Controller Operational Status </label>
+                                    <p>
+                                        $| wlanOperationalStatus or '' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> IP Address </label>
+                                    <p>
+                                        $| IPAddress or '' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Peer Controllers </label>
+                                    <p>
+                                        $| peerControllers or '' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Cluster Controller </label>
+                                    <p>
+                                        $| isCluster or '' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Cluster Controller IP Address </label>
+                                    <p>
+                                        $| clusterIP or '' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+    </body>
+</html>
+<?lua end ?>

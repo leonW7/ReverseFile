@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# usbInit - initialization script for USB
+#
+# Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+#(Subsidiary of D-Link India)
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,13oct14,sr added enabling usb port from userspace
+# 01a,21may08,ss written
+
+# initialize usb management generic database
+
+   
+
+$USB_INSTALL_PATH/bin/ledCtrl  1 2
+if [ $PRODUCT_ID == "DSR-1000AC_Ax" ] || [ $PRODUCT_ID == "DSR-1000_Bx" ]; then
+    $USB_INSTALL_PATH/bin/ledCtrl 2 2 #enable second USB port  
+fi
+

@@ -1,0 +1,151 @@
+<?lua
+require "teamf1lualib/apProvisioning_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bl_apProfiles"
+
+local apValidation = require("com.teamf1.bl.wlan.apProvisioning")
+local apProfiles = require("com.teamf1.bl.wlan.approfile")
+
+if(ButtonType and ButtonType == "edit") then
+    local returnCode
+    local provisionTable = {}
+    configRowId = cgi["configRowId"]
+    returnCode, provisionTable = apValidation.apProvisioningGet(configRowId)
+    errorCode, profileInfo = apProfiles.apProfileGet ()
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!-- Section for Pop up dialog starts -->
+			<div id="tf1_apProvisioningDailogContent">
+				<div class="topBg">
+					<h1>AP Provisioning Status</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+				<div class="dialogMidArea">
+					<div class="configRow">
+						<label> MAC Address </label>
+						<p>
+							$| provisionTable["apMac"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> IP Address </label>
+						<p>
+							$| provisionTable["apIp"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> Time Since Last Update </label>
+						<p>
+							$| provisionTable["age"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> Primary IP Address </label>
+						<p>
+							$| provisionTable["primaryIp"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> Backup IP Address </label>
+						<p>
+							$| provisionTable["backupIp"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> Mutual Authentication Mode </label>
+						<p>
+							$| provisionTable["mutualAuthMode"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> Unmanaged AP Reprovisioning
+							<br />
+							Mode </label>
+						<p>
+							$| provisionTable["unManagedMode"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label>AP Provisioning Status</label>
+						<p>
+							$| provisionTable["status"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> AP Certificate and Profile
+							<br />
+							Transmit </label>
+						<p>
+							$| provisionTable["certificationProfileTransmitStatus"] or '' |$
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> New Primary IP Address </label>
+						<input type="text" value="$| provisionTable["newPrimaryIp"] or '0.0.0.0' |$" name="apProvisioning.newPrimaryIp" id="tf1_newPrimaryIpAddr" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> New backup IP Address </label>
+						<input type="text" value="$| provisionTable["newBackupIp"] or '0.0.0.0' |$" name="apProvisioning.newBackupIp" id="tf1_newBackupIpAddr" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> Profile </label>
+						<select name="apProvisioning.apProfile">
+                                                <?lua
+                                                for k, v in pairs (profileInfo) do
+                                                        apProfileName = profileInfo[k].profileName
+                                                        apProfileId = profileInfo[k].profileId
+                                                ?>
+                                                  <option $|web.dropdownSelected(provisionTable["apProfile"]== apProfileId  .. "-" ..  apProfileName)|$ value="$|apProfileId|$">$| apProfileId  .. "-" ..  apProfileName |$</option>
+                                                <?lua
+                                                end
+                                                ?>
+						</select>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+				</div>
+				<div class="dialogSubmitRow">
+					<input type="submit" name="button.config.apProvisioning.apProvisioning.$| configRowId |$" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return pageValidate()">
+				</div>
+			</div>
+		<!-- Section for Pop up dialog ends -->
+<?lua end ?>

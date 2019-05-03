@@ -1,0 +1,125 @@
+#!/bin/sh
+#
+# switchdriverInit - initialization script for switchdriver
+#
+# Copyright (c) 2008, TeamF1, Inc.
+# Copyright (c) 2015, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01e,01dec15,abd  (AC Merge) adding AC support for this code base.
+# 01d,23aug13,abd  add device specific checks.
+# 01c,06feb10,sen  disable lan ports during bootup.
+# 01b,18deco9,db   added PowerMode module and removed other board specific rules
+# 01a,25jun08,raj  written
+#
+
+# get the device name 
+PRODUCT_NAME=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+
+if [ "$INCLUDE_SWDRV" = "y" ]; then
+
+# DSR AC module is different    
+if [ $PRODUCT_NAME == "DSR-1000AC" -o $PRODUCT_NAME == "DSR-500AC" -o $PRODUCT_ID == "DSR-1000_Bx" -o $PRODUCT_ID == "DSR-500_Bx" ]; then
+     
+MODULES_DIR=$SWDRV_INSTALL_PATH/lib/modules/
+
+# We do not have switch debug support for AC device
+INCLUDE_SWDEBUG=n
+
+echo -n "Inserting the Link Config Module..."
+
+[ -f $MODULES_DIR/link_config.$MOD_SUFFIX ] && { insmod $MODULES_DIR/link_config.$MOD_SUFFIX;  }
+mknod /dev/tf1LinkConfig c `awk '$ 2=="tf1LinkConfig" {print $ 1}' /proc/devices` 0
+
+/pfrm2.0/bin/linkConfig enableAll
+# Enabling all lan ports. .
+echo "Done"
+
+else
+MODULES_DIR=$SWDRV_INSTALL_PATH/lib/modules/swdrv/
+
+[ -f $MODULES_DIR/mii.$MOD_SUFFIX ] && { insmod $MODULES_DIR/mii.$MOD_SUFFIX; }
+
+boarddlink=`cat /proc/cpuinfo | grep DSR | wc -l`
+MODEL_ID=`cat /proc/productData/product_model_id |  awk '{print $1}'`
+
+
+#Module parameters for bcm module
+# @bcmswitch = name of the device
+# @wanportNo = port number to be used as WAN. If there is no configurable port
+#              is to be supported by switch user should pass -1.Default port for 
+#              bcm5395 is 5 & for bcm5398 is 8.
+# @privlegedID = Vlan ID used to sect a physical port for creating a WAN port
+#                logically. The default vlan ID is 4094. And the user
+#                configurable range is 0-4094.
+wanportNo= -1
+if [ $MODEL_ID == "DSR-150N" -o $MODEL_ID == "DSR-150" ]; then
+	[ -f $MODULES_DIR/bcm5398.$MOD_SUFFIX ] && { insmod $MODULES_DIR/bcm5398.$MOD_SUFFIX;  }
+    mknod /dev/bcm53980 c `awk '$ 2=="bcm5398" {print $ 1}' /proc/devices` 0
+else
+    #TODO: Check Configurable Port option, move this to management handler.
+    #for now, wan2/dmz will be configured.
+if [ $MODEL_ID == "DSR-250N" -o $MODEL_ID == "DSR-250" ]; then
+    [ -f $MODULES_DIR/bcm5398.$MOD_SUFFIX ] && { insmod $MODULES_DIR/bcm5398.$MOD_SUFFIX bcmswitch="bcm5395";  }
+else
+    [ -f $MODULES_DIR/bcm5398.$MOD_SUFFIX ] && { insmod $MODULES_DIR/bcm5398.$MOD_SUFFIX bcmswitch="bcm5395" $wanportNo;  }
+fi
+    mknod /dev/bcm53980 c `awk '$ 2=="bcm5395" {print $ 1}' /proc/devices` 0
+fi
+fi
+
+if [ "$INCLUDE_SWDEBUG" = "y" ]; then
+    
+echo -n "Inserting the bcm debug module..."
+    
+DEBUG_MODULES_DIR=$SWDRV_INSTALL_PATH/lib/modules/
+
+if [ $MODEL_ID == "DSR-150N" -o $MODEL_ID == "DSR-150" ]; then
+	[ -f $DEBUG_MODULES_DIR/bcmDebug.$MOD_SUFFIX ] && { insmod $DEBUG_MODULES_DIR/bcmDebug.$MOD_SUFFIX; }
+else
+[ -f $DEBUG_MODULES_DIR/bcmDebug.$MOD_SUFFIX ] && { insmod $DEBUG_MODULES_DIR/bcmDebug.$MOD_SUFFIX switchMode="managed"; }
+fi
+
+mknod /dev/bcmDebug c `awk '$ 2=="/dev/bcmDebug" {print $ 1}' /proc/devices` 0
+echo "Done"
+
+# disable lan ports. will be enabled later on when rows are inserted into portMgmt.
+# This will force windows host to renew their lease.
+if [ $MODEL_ID == "DSR-150N" -o $MODEL_ID == "DSR-150" -o $MODEL_ID == "DSR-250N" -o $MODEL_ID == "DSR-250" ]; then
+        echo "Not disabling the LAN ports."
+	#/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 0
+	#/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 1
+	#/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 2
+	#/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 3
+	#/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 4
+	#/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 5
+	#/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 6
+	#/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 7
+else
+	/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 0
+	/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 1
+	/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 2
+	/pfrm2.0/bin/switchConfig /dev/bcm53980 port disable 3
+fi
+fi  
+
+if [ "$INCLUDE_POWERMODE" = "y" ]; then
+    
+echo -n "Inserting the power saving module..."
+
+DEBUG_MODULES_DIR=$SWDRV_INSTALL_PATH/lib/modules/
+if [ $MODEL_ID == "DSR-1000N" -o $MODEL_ID == "DSR-500N" -o $PRODUCT_ID == "DSR-1000_Ax" -o $PRODUCT_ID == "DSR-500_Ax"  ]; then
+	[ -f $DEBUG_MODULES_DIR/powerMode.$MOD_SUFFIX ] && { insmod $DEBUG_MODULES_DIR/powerMode.$MOD_SUFFIX; }
+	mknod /dev/powerMode c `awk '$ 2=="powerMode" {print $ 1}' /proc/devices` 0
+fi
+echo "Done"
+fi
+fi
+
+# for igmp snooping kernel module and it is not supported in DSR-150 and DSR-150N devices
+if [ $PRODUCT_NAME == "DSR-1000N" -o $PRODUCT_NAME == "DSR-500N" -o $PRODUCT_ID == "DSR-1000_Ax" -o $PRODUCT_ID == "DSR-500_Ax" -o $PRODUCT_NAME == "DSR-250N" -o $PRODUCT_NAME == "DSR-250" ]; then
+insmod /pfrm2.0/lib/modules/igmpSnooping.ko
+mknod /dev/igmpSnooping c `awk '$ 2=="/dev/igmpSnooping" {print $ 1}' /proc/devices` 0
+fi

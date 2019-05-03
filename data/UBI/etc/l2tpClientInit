@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# l2tpClientInit - initialization script for L2TP VPN Client
+# 
+# Copyright (c) 2012, TeamF1, Inc.
+#
+# modification history
+# -----------------------
+# 01a,07aug12,nis written
+
+mkdir -p /etc/l2tp
+cp /pfrm2.0/etc/l2tp_client_connect /etc/l2tp/

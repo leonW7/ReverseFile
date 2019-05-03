@@ -1,0 +1,56 @@
+<?lua
+require "teamf1lualib/bl_ipDscp"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local guiIp2dscp  = require("com.teamf1.bl.lanqos.dscptoqueuemapping")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local configRow         = cgi
+local cookie            = {}
+cookie["ipDscp.cookie"] = configRow["configRowId"]
+
+local errorCode, ip2DscpInfo = guiIp2dscp.ip2dscpRemarkGetInfo (cookie)
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_ipDscpDailogContent">
+    <div class="topBg">
+        <h1>IP DSCP Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>DSCP</label>
+            <p>
+            <input type="hidden" name="ipDscp.cookie" value= "$|
+                        ip2DscpInfo["dscpNum"] |$" >
+            $| ip2DscpInfo["dscpNum"] |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Queue </label><select size="1" name="ipDscp.queue">
+            <option $| web.dropdownSelected(ip2DscpInfo["ethQueue"] == "3") |$
+            value="3">Highest</option>
+            <option $| web.dropdownSelected(ip2DscpInfo["ethQueue"] == "2") |$
+            value="2">Medium</option>
+            <option $| web.dropdownSelected(ip2DscpInfo["ethQueue"] == "1") |$
+            value="1" >Low</option>
+            <option $| web.dropdownSelected(ip2DscpInfo["ethQueue"] == "0") |$
+            value="0">Lowest</option>
+            </select> </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" name="button.edit.ipDscp" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+</form>
+<!-- Section for Pop up dialog ends -->

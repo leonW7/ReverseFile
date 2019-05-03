@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+        <!--===================================================-->
+    <COMMAND name="show net lan" help="."/>
+    <COMMAND name="show net lan ipv4" help="."/>
+    <COMMAND name="show net lan ipv4 setup"
+	     help="Show LAN Configuration.">
+	<DETAIL>
+This command shows the LAN configuration information. A description of
+all fields displayed is as follows:
+
+&lt;IP Address&gt;: Static IP address of this device
+&lt;IP Subnet Mask&gt;: IPv4 Subnet Mask
+&lt;Gateway IP Address&gt;: IP address of the gateway. This is usually
+provided by the ISP or your network administrator.
+&lt;DNS&gt;: Domain Name Server (DNS) server IP address to covert the
+internet name (such as www.google.com) to an IP address.
+        </DETAIL>
+        <ACTION>lua clishCmdExec (lanSetupGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net lan ipv4 lan_clients"
+	     help="Show LAN Clients.">
+	<DETAIL>
+This command shows the LAN clients information. A description of
+all fields displayed is as follows:
+
+&lt;IP Addr&gt;: IP Address of the client connected.
+&lt;Mac Address&gt;: Mac Address of the client connected. 
+&lt;Type&gt;: Type of the client connected whether it is Static or DHCP.
+        </DETAIL>
+        <ACTION>lua clishCmdExec (lanClientsGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net lan ipv6" help="."/>
+    <COMMAND name="show net lan ipv6 setup"
+	     help="Show LAN Configuration.">
+	<DETAIL>
+This command shows the LAN configuration information. A description of
+all fields displayed is as follows:
+
+&lt;IP Address&gt;: Static IPv6 address of this device
+&lt;Prefix Length&gt;: Prefix Length
+&lt;Gateway IP Address&gt;: IPv6 address of the gateway. This is usually
+provided by the ISP or your network administrator.
+&lt;DNS&gt;: Domain Name Server (DNS) server IPv6 address to convert the
+internet name (such as www.google.com) to an IPv6 address.
+        </DETAIL>
+        <ACTION>lua clishCmdExec (lanIPv6SetupGet)</ACTION>
+    </COMMAND>
+    <COMMAND name="show net lan ipv6 Prefix"
+	     help="Show Prefix for Prefix Delegation Configuration.">
+	<DETAIL>
+This command shows the Prefix for Prefix Delegation information. A description of
+all fields displayed is as follows:
+
+&lt;Prefix Address&gt;: Configred Prefix Ipv6 address of this device
+&lt;Prefix Length&gt;: Prefix Length
+&lt;Interface&gt;: Name of Vlan Interface.
+&lt;Vlan Ipv6 Status&gt;: Status of IPv6 on vlan Interface.
+        </DETAIL>
+        <ACTION>lua clishCmdExec (prefixIPv6SetupGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net statistics"
+	     help="Show Interface Statistics">
+	<DETAIL>
+This command shows a cumulative total of the relevant traffic
+statistics for the interface specified by the argument
+&lt;interface&gt;. If the argument is not specified, this command will
+print statistics for all the interfaces in the system. A description
+of all fields displayed is as follows:
+
+&lt;Interface Name&gt;: The stats are sorted by Ethernet port (eth0
+vs. bdgWAN1)
+&lt;Packets&gt;: The number of transmitted/received packets over the
+relevant Ethernet port
+&lt;Bytes&gt;: The number of transmitted/received bytes of information
+&lt;Errors&gt;: The number of transmitted/received packet errors
+reported to the relevant Ethernet port
+&lt;Dropped&gt;: The number of transmitted/received packet drops in
+the relevant Ethernet port
+&lt;Multicast&gt;: The number of multicast packets sent over the
+relevant Ethernet port
+&lt;Collisions&gt;: The number of packet collisions reported to the
+relevant Ethernet port
+	</DETAIL>
+	<PARAM name="interface" 
+	       help="Interface Name (eth0, bdg etc.)"
+	       default="all"
+	       

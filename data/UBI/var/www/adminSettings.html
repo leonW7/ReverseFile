@@ -1,0 +1,138 @@
+<?lua
+
+require "teamf1lualib/bl_adminSettings"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "systemSetting"
+
+local system = require("com.teamf1.bl.system.management")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+ROWID = "1"
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable ["adminSettings.cookie"] = ROWID
+    errorFlag, cookie = system.systemSettingSet (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage (NextPage, true, true)
+else
+    errorFlag, statusCode, systemName = system.systemSettingGet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+		cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+ LANG_LOCALE = "13044,10639,11771,12134,12758,10449"
+?>
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    	<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]                   
+                    -->
+                    <!--<div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li class="current">
+                                    <a href="?page=adminSettings.html">System Setting</a>
+                                </li>
+                                <li>
+                                    <a href="?page=languageSettings.html">Language Details</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>-->
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13044'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmAdminSettings"
+                                id="tf1_frmAdminSettings" action="platform.cgi" method="post">
+                                <input type="hidden" name="thispage" id="thispage" value="adminSettings.html">
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10639'] |$ </label>
+                                    <p>$| systemName |$</p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11771'] |$ </label>
+                                    <input type="text" name="adminSettings.name" value = "$| systemName or "" |$" maxlength="32" id="tf1_SysName" onkeypress="return alphaNumericCheck (event, '-')">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" onclick="return pageValidate()" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" name = "button.config.adminSettings" >
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave">
+                                </div>                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/adminSettings.js"></script>
+    </body>
+</html>
+<?lua end ?>
+

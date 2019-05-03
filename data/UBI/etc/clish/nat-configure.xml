@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="net-routing-mode-config" prompt="net-config[routing-mode]> "> 
+    <COMMAND name="save" help="Save NAT configuration changes.">
+	     <ACTION>lua clishCfgObjExec("NatTable")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save NAT configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("NatTable")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Basic Security Level configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+    
+    <COMMAND name="type" help="Select NAT or Transparent or Bridge mode.">
+	<PARAM name="natService" 
+         help="Select NAT or Transparent or Bridge mode"    
+	 ptype="ROUTING_MODE_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("NatTable", "NatTable.Enable", "${natService}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="bridgeModeSetup" help="Set Ip Addresses for Bridge and DMZ interfaces in same subnet"/>
+    <COMMAND name="bridgeModeSetup bridge_interfaceIp" help="Give bridge Interface Ip Address">
+     <PARAM name="bridgeIp" 
+           help="Set bridge Interface Ip Address"    
+      ptype="IP_ADDR"/>
+     <ACTION>lua clishCfgObjAdd ("NatTable", "ifStatic.StaticIp", "${bridgeIp}")
+     </ACTION>
+     </COMMAND>
+    <COMMAND name="bridgeModeSetup dmz_interfaceIp" help="Give DMZ Interface Ip Address">
+    <PARAM name="dmzip" 
+           help="Set DMZ Interface Ip Address"    
+     ptype="IP_ADDR"/>
+     <ACTION>lua clishCfgObjAdd ("NatTable", "ifStatic.StaticIp1", "${dmzip}")           
+     </ACTION>
+     </COMMAND>
+    <COMMAND name="bridgeModeSetup subnetMask" help="Give subnet for the DMZ and Bridge Interfaces">
+    <PARAM name="subnet" 
+           help="Set subnet for the DMZ and Bridge Interface"    
+     ptype="IP_ADDR"/>
+    <ACTION>lua clishCfgObjAdd ("NatTable", "ifStatic.NetMask", "${subnet}")          
+    </ACTION>
+    </COMMAND>
+    <COMMAND name="nat_wanInterface" help="Select WAN interfaces for which NAT is to be enabled">
+	<PARAM name="nat_wanInterface" 
+        help="Select WAN interface"    
+	 ptype="NATTED_INTERFACE_NAME"/>
+	<ACTION>lua clishCfgObjAdd ("NatTable", "NatTable.NATInterfaces", "${nat_wanInterface}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net routing mode" license_support="Y" help="Routing Mode between WAN and LAN setup."/>
+    <!--=======================================================-->
+    <COMMAND name="net routing mode configure"
+             help="Routing Mode between WAN and LAN configuration mode."
+             view="net-routing-mode-config" viewid="">
+                      <ACTION>lua clishCfgObjNew ("NatTable", 
+                              natCfgInit, natCfgSave, natCfgVal,NULL)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+
+</CLISH_MODULE>

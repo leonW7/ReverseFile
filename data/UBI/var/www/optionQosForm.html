@@ -1,0 +1,94 @@
+<?lua
+require "teamf1lualib/optionQos_bl"
+require "teamf1lualib/wan_configurablePort"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local qos = require("com.teamf1.bl.qos.optionQos")
+local configWanPort = require ("com.teamf1.core.wan.configurableport")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local returnCode, dummyCookie, configDmz = configWanPort.configPortUsageGet ()
+local DMZ_ENABLE = "DMZ"
+if (returnCode ~= returnCodes.SUCCESS) then
+   statusErrorMessage  = errorMap.errorStringGet (returnCode)
+end
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, cookie, profile, wanPort, maxBandwidth
+    local minBandwidth, priority
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, profile, wanPort, maxBandwidth, 
+            minBandwidth, priority = 
+                qos.optionQosbandwidthMonitorSectionGetCur(configRowId)
+    else
+        configRowId = "-1"
+        priority = "Urgent"
+        wanPort  = "Option1"
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_optionQosDailogContent">
+	<div class="topBg">
+		<h1>Option QoS Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+	<div class="dialogMidArea">
+		<div class="configRow">
+            <label>Profile Name </label>
+            <?lua if(configRowId ~= "-1") then ?>
+                $| profile |$
+            <?lua else?>
+            <input type="text" name= "optionQos.profile" value ="" id="tf1_txtProfileName" size="16" maxlength="16">
+            <?lua end?>
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label>Priority </label><select name= "optionQos.priority" size="1" id="tf1_priority">
+			<option $| web.dropdownSelected(priority == "Urgent") |$ value="Urgent">Highest</option>
+			<option $| web.dropdownSelected(priority == "High") |$ value="High">High</option>
+			<option $| web.dropdownSelected(priority == "Medium") |$ value="Medium" >Low</option>
+			<option $| web.dropdownSelected(priority == "Low") |$ value="Low" >Lowest</option>
+			</select> </div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label>Maximum Bandwidth </label>
+			<input type="text" name="optionQos.maxBandwidth" value= "$| maxBandwidth or '' |$" id="tf1_txtMaxBandwidth" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return maxBandwidthCheck ();}" maxlength="7" class="one">
+			<dl>
+				[Range: 1 - 1000000]
+			</dl>
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label>Minimum Bandwidth </label>
+			<input type="text" name="optionQos.minBandwidth" value= "$| minBandwidth or '' |$" id="tf1_txtMinBandwidth" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return minBandwidthCheck ();}" maxlength="7" class="one">
+			<dl>
+				[Range: 1 - 1000000]
+			</dl>
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label>Option Interface </label>
+			<p><input name="optionQos.wanPort" type="radio" $| web.radioSelected(wanPort == "Option1") |$ value="Option1" > Option1
+            </p>
+            <?lua if (configDmz ~= DMZ_ENABLE) then ?>
+            <p><input name="optionQos.wanPort" type="radio" $| web.radioSelected(wanPort == "Option2") |$ value="Option2"> Option2 </p>
+            <?lua end?>
+		</div>
+		<div class="break">
+&nbsp; </div>
+	</div>
+	<div class="dialogSubmitRow">
+        <input type="submit" 
+        name="button.config.optionQos.optionQos.$| configRowId |$" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="return optionQosConfigValidate()">
+	</div>
+</div>
+<?lua end?>

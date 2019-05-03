@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# This script is called in case of a lease expire or release. 
+# See dhclient-script
+
+export LD_LIBRARY_PATH=/pfrm2.0/lib
+ip_address="0.0.0.0"
+routers="0.0.0.0"
+subnet_mask="0.0.0.0"
+broadcast_address="0.0.0.0"
+dns_address1="0.0.0.0"
+dns_address2="0.0.0.0"
+
+export LD_LIBARY_PATH=$LD_LIBARY_PATH:/pfrm2.0/lib
+if [ -z $LOGICAL_IFNAME ]; then
+
+/pfrm2.0/bin/dhclientHook -d /tmp/system.db -a $ip_address            \
+                                            -g $routers               \
+                                            -m $subnet_mask           \
+                                            -b $broadcast_address     \
+                                            -p $dns_address1          \
+                                            -s $dns_address2          \
+                                            -i $interface             
+else 
+/pfrm2.0/bin/dhclientHook -d /tmp/system.db -a $ip_address            \
+                                            -g $routers               \
+                                            -m $subnet_mask           \
+                                            -b $broadcast_address     \
+                                            -p $dns_address1          \
+                                            -s $dns_address2          \
+                                            -i $interface             \
+                                            -l $LOGICAL_IFNAME
+fi

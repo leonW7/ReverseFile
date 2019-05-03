@@ -1,0 +1,8 @@
+KERNEL=="sd*", SYMLINK+="usb_disk%k", RUN+="/pfrm2.0/udev/sbin/usbProgram.sh %k %n $SYSFS{idVendor} $SYSFS{idProduct}"
+SUBSYSTEMS=="usb",KERNEL=="lp*",NAME="usb/%k",SYMLINK+="usb%k",ENV{SERIAL}="$attr{serial}",ENV{MANUFACTURE}="$attr{manufacturer}",ENV{PRODUCT}="$attr{product}",RUN+="/pfrm2.0/etc/usbPrinterProgram.sh %k"
+SUBSYSTEM=="usb",KERNEL=="lp*",NAME="usb/%k",SYMLINK+="usb%k",ENV{SERIAL}="$attr{serial}",ENV{MANUFACTURE}="$attr{manufacturer}",ENV{PRODUCT}="$attr{product}",RUN+="/pfrm2.0/etc/usbPrinterProgram.sh %k"
+SUBSYSTEMS=="usb",KERNEL=="lp*", ACTION=="remove", RUN+="/pfrm2.0/etc/usbPrinterProgram.sh %k"
+SUBSYSTEM=="usb",KERNEL=="lp*", ACTION=="remove", RUN+="/pfrm2.0/etc/usbPrinterProgram.sh %k"
+KERNEL=="sr*", RUN+="/pfrm2.0/udev/sbin/usbProgram.sh %k %n $SYSFS{idVendor} $SYSFS{idProduct}"
+SUBSYSTEMS=="usb", ACTION=="remove", RUN+="/pfrm2.0/udev/sbin/usbProgram.sh %k"
+SUBSYSTEM=="usb", SYSFS{idVendor}=="12d1", SYSFS{idProduct}=="1003", RUN+="/pfrm2.0/bin/ledctrl usb%n on"

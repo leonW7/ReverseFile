@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# cpuMemUsageInit - initialization script for cpuMemUsage
+#
+# Copyright (c) 2009, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,2jun09,vms written

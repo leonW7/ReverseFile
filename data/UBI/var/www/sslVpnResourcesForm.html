@@ -1,0 +1,207 @@
+<?lua
+require "teamf1lualib/sslvpnResources_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local resources = require("com.teamf1.bl.sslvpn.resource")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if(ButtonType == "addResources" or ButtonType == "editResources") then
+    local resourceName, serviceType, icmp, objectType, objectAddress, maskLength
+    local startPort, endPort, returnCode, cookie
+    if (ButtonType and ButtonType == "editResources") then
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, resourceName, serviceType, icmp, objectType, 
+        objectAddress, maskLength, startPort, endPort = 
+                   resources.sslvpnResourcesSectionGetCur(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+    else
+        configRowId = "-1"
+        serviceType = "1"
+    end
+   cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<div id="tf1_sslVpnResourcesDailogContent">
+    <div class="topBg">
+        <h1 data-localize="12945">SSL VPN Resources Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <h2 data-localize="12944">SSL VPN Resources</h2>
+        <div class="configRow">
+            <label data-localize="12683">Resource Name </label>
+            <?lua if(configRowId == "-1") then ?>
+	            <input name="sslvpnResources.resourceName" maxlength="128" value="$| resourceName or
+            '' |$"type="text" id="tf1_resourceName" onkeypress="return alphaNumericCheck (event, '')"> 
+            <?lua else  ?>
+                <input name="sslvpnResources.resourceName" value="$| resourceName |$"type="hidden" id="tf1_resourceName" >
+            	$| resourceName |$
+            <?lua  end ?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="12831">Service </label>
+            <?lua if(configRowId == "-1") then ?>
+            <p><input name="sslvpnResources.serviceType" type="radio" $| web.radioSelected(serviceType == "1") |$ value="1" >  <span data-localize="13297">VPN Tunnel</span>
+	            </p>
+                <p><input type="radio" $| web.radioSelected(serviceType == "2") |$ value="2" name="sslvpnResources.serviceType">  <span data-localize="12468">Port Forwarding</span> </p>
+                <p><input type="radio" $| web.radioSelected(serviceType == "3") |$ value="3" name="sslvpnResources.serviceType"> 
+                <span data-localize="10207">All</span> </p>
+	        <?lua else  ?>
+                <input name="sslvpnResources.serviceType" value="$| serviceType |$"type="hidden" >
+            	$| serviceType |$
+            <?lua  end ?>
+        </div>
+        <div class="break">&nbsp; </div>
+        <h2 data-localize="12685">Resource Object Configuration</h2>
+        <div class="configRow">
+            <label data-localize="11134">ICMP</label>
+            <?lua 
+                if (icmp == "1") then
+	            statusStr="enable-disable-on"
+	            statusVar = "1"
+		else
+		    statusStr="enable-disable-off"
+	            statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt=""></a>
+            <input type="hidden" name="sslvpnResources.icmp" value="$| statusVar |$">
+        </div>
+        <div class="break">&nbsp; </div>
+        
+        <div class="configRow">
+            <label data-localize="11809">Object Type</label>
+            <select onchange="ipNetworkChk()" id="tf1_addType" name="sslvpnResources.objectType">
+				<option data-localize="11387" $| web.dropdownSelected(objectType == "1" ) |$ value="1">IP Address</option>
+				<option data-localize="14097" $| web.dropdownSelected(objectType == "2" ) |$ value="2">IP Network</option>
+			</select>
+        </div>
+        <div class="break">&nbsp; </div>
+        
+        <div class="configRow">
+            <label data-localize="11808">Object Address</label>
+            <input type="text" onkeydown="if (event.keyCode == 9) { return objTypeCheck(); }" onkeypress="return numericValueCheck (event, '.')" class="txt1" maxlength="15" id="tf1_txtIpAddr" name="sslvpnResources.objectAddress" value="$| objectAddress or '' |$" >
+        </div>
+        <div class="break">&nbsp; </div>
+        
+        <div class="configRow" id="tf1_txtMaskLen_div">
+            <label data-localize="11684">Mask Length</label>
+            <input type="text" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 32, true, '', '');}" onkeypress="return numericValueCheck (event)" class="one" maxlength="2"  id="tf1_txtMaskLen" name="sslvpnResources.maskLength" value="$| maskLength  or '' |$">
+            <dl>[<span data-localize="12627">Range</span>: 0 - 32]</dl>
+        </div>
+        <div class="break">&nbsp; </div>
+        
+        <h2 data-localize="12477">Port Range / Port Number</h2>
+        <div class="configRow">
+            <label data-localize="10374"> Begin</label>
+            <input type="text" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, '', '');}" onkeypress="return numericValueCheck (event)" class="one" maxlength="5" id="tf1_txtStrPort" name="sslvpnResources.startPort" value="$| startPort or '' |$">
+            <dl>[<span data-localize="12627">Range</span>: 0 - 65535]</dl>
+        </div>
+        <div class="break">&nbsp; </div>
+        
+        <div class="configRow">
+            <label data-localize="10919">End</label>
+            <input type="text" onkeydown="if (event.keyCode == 9) {if (numericValueRangeCheck (this, '', '', 0, 65535, true, '', '') == true) {return checkPortRange ('tf1_txtStrPort','tf1_txtEndPort');} else {return false;}}" onkeypress="return numericValueCheck (event)" maxlength="5" class="one" id="tf1_txtEndPort" name="sslvpnResources.endPort" value="$| endPort or '' |$">
+            <dl>[<span data-localize="12627">Range</span>: 0 - 65535]</dl>
+        </div>
+        <div class="break">&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.configResources.sslVpnResources.sslVpnResources.$| configRowId |$" onclick="return sslVpnResourcesConfigurationValidate('tf1_frmSslVpnResources')" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<?lua end?>
+<?
+if(ButtonType == "addApps" or ButtonType == "editApps") then
+    local returnCode, cookie, appsMapServerIp, appsMapPort
+    if (ButtonType and ButtonType == "editApps") then
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, appsMapServerIp, appsMapPort = 
+                         resources.appsMapSectionGetCur(configRowId)
+    else
+        configRowId = "-1"
+    end
+?>
+<!-- Section for Pop up dialog ends -->
+<div id="tf1_sslVpnRuleDailogContent">
+    <div class="topBg">
+        <h1 data-localize="12470">Port Forwarding List for Configured Applications</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="11606">Local Server IP Address </label>
+            <input type="text" name="appsMap.appsMapServerIp" value="$|
+            appsMapServerIp or '' |$" id="tf1_ipAddress" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'SN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="13048">TCP Port Number </label>
+            <input type="text" class="one" name="appsMap.appsMapPort"
+            value="$| appsMapPort or '' |$" maxlength="5" id="tf1_port" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, LANG_LOCALE['13503'], '');}">
+            <dl>
+                [<span data-localize="12627">Range</span>: 0 - 65535]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+</div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.configApps.sslVpnResources.sslVpnResources.$| configRowId |$" onclick="return pageValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+
+<?lua end?>
+<?
+if(ButtonType == "addHosts" or ButtonType == "editHosts") then
+    local returnCode, cookie, FQDNMapServerIp, FQDNMapFQDNName
+    if (ButtonType and ButtonType == "editHosts") then
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, FQDNMapServerIp, FQDNMapFQDNName = 
+                                resources.fqdnMapSectionGetCur(configRowId)
+    else
+        configRowId = "-1"
+    end
+?>
+<!-- PortForwarding Host Name Starts -->
+<div id="tf1_hostConfigDailogContent">
+    <div class="topBg">
+        <h1 data-localize="12472">Port Forwarding List for Host Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="11606">Local Server IP Address </label>
+            <input type="text" name="fqdnMap.FQDNMapServerIp" value ="$|
+            FQDNMapServerIp or '' |$" id="tf1_localSeripAddress" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'SN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="11054">Fully Qualified Domain Name </label>
+            <input type="text" name="fqdnMap.FQDNMapFQDNName" value ="$| FQDNMapFQDNName or '' |$" id="tf1_domainNameHostConfig" maxlength="64">
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.configHosts.sslVpnResources.sslVpnResources.$|
+        configRowId |$" onclick="return pageValidate2()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<!-- PortForwarding Host Name Ends -->
+<?lua end?>

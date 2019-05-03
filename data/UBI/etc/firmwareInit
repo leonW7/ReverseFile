@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# firmwareInit - initialization script for firmware
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01e,19Feb14,abd executing with the lua bin.
+# 01d,28Mar11,nis increased sleep time to 2 sec to avoid db lock
+# 01c,26Aug09,sen moved push button init to userInit.
+# 01b,04Aug09,sen added support for push button module.
+# 01a,27aug07,sdk written
+
+echo -n "Getting firmware version..."
+$FIRMWARE_INSTALL_PATH/bin/lua $FIRMWARE_INSTALL_PATH/bin/ShowFirmVersion.lua $DB_FILENAME
+echo "Done"
+sleep 2 # to avoid DB locks !
+echo "Making Brand.conf... "
+sqlite3  $DB_FILENAME "select wb.*,syst.firmwareVer,untInf.hardwareVersion from webBrandingTags wb, system syst, unitInfo untInf" > /var/brand.conf
+VAL=`echo $?`
+while [ $VAL -ne 0 ]
+do
+   echo "Retrying due to SQL Lock"
+   sqlite3  $DB_FILENAME "select wb.*,syst.firmwareVer,untInf.hardwareVersion from webBrandingTags wb, system syst, unitInfo untInf" > /var/brand.conf
+   VAL=`echo $?`
+done
+echo "Done creating Brand.conf"

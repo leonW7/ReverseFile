@@ -1,0 +1,128 @@
+#!/bin/sh
+# ppp-ip-up script
+# modified by anp
+
+# set the DNSes
+[ -z $DNS1 ] || { echo $DNS1 > "/var/wan"$(($LINKNAME))"Dns"; }
+[ -z $DNS2 ] || { echo $DNS2 >> "/var/wan"$(($LINKNAME))"Dns"; }
+
+# log the uptime
+# TODO Need to add support for IPv6
+# In general, we should write wan up time in
+# wan<linkname>Time-<addressfamily> file
+# Currently hardcode for IPv4
+/pfrm2.0/bin/timeShow > "/var/wan"$(($LINKNAME))"Time-2"
+
+if [ -z $IPLOCAL ]
+then
+    exit
+fi
+
+if [ -z $IPREMOTE ]
+then
+    IPREMOTE="0.0.0.0"
+fi
+
+if [ -z $DNS1 ]
+then
+    DNS1="0.0.0.0"
+fi
+
+if [ -z $DNS2 ]
+then
+    DNS2="0.0.0.0"
+fi
+
+
+PPTP_SERVER="pptpServer"
+L2TP_SERVER="l2tpServer"
+
+if [ "$6" = "$PPTP_SERVER" ];then
+COMP_ID=41
+LOG_MESSAGE="PPTP tunnel connects for user: $PEERNAME with client IP: $IPREMOTE"
+SEND_SMS=1
+elif [ "$6" = "$L2TP_SERVER" ];then
+COMP_ID=47
+LOG_MESSAGE="L2TP tunnel connects for user: $PEERNAME with client IP: $IPREMOTE"
+SEND_SMS=1
+fi
+
+STATUS=1
+
+# set the IP
+[ -z $IPLOCAL ] || { echo $IPLOCAL > "/var/wan"$(($LINKNAME))"Ip"; }
+
+# set the Gw
+[ -z $IPREMOTE ] || { echo $IPREMOTE > "/var/wan"$(($LINKNAME))"Gw"; }
+
+export LD_LIBARY_PATH=$LD_LIBARY_PATH:/pfrm2.0/lib
+# update the user session information
+ 
+if [ -z $PEERNAME ]; then
+    PEERNAME="NON_AUTH_USER_$IPREMOTE"
+fi
+
+
+if [ "$IFNAME" != "ppp88" -a "$IFNAME" != "ppp100" ]; then
+    echo $PEERNAME $IPREMOTE $6 >> "/var/ppp_user_session"
+fi
+
+# update the networkInterface table
+/pfrm2.0/bin/pppStatsUpdate -d /tmp/system.db -a $IPLOCAL                      \
+                                              -g $IPREMOTE                     \
+                                              -p $DNS1                         \
+                                              -s $DNS2                         \
+                                              -i $LINKNAME
+
+if [ "$LINKNAME" == "100" ]; then
+    /pfrm2.0/bin/pppRouteUpdate $LINKNAME
+fi
+
+# glowing USB LED as solid green when ppp-ip-up is called
+
+MODEL_ID=$(head -n 1 /proc/productData/product_model_id);
+
+
+# check USB LED of threeG only for OCTEON DEVICES.
+
+if [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500N" ] || 
+   [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000N" ] ||
+   [ $MODEL_ID == "DSR-500AC" ] || [ $MODEL_ID == "DSR-1000AC" ] ;then
+
+   USB1FILE=/var/usb1Info
+   USB2FILE=/var/usb2Info
+   USB1_PROC_FILE=/proc/usb1_status
+   USB2_PROC_FILE=/proc/usb2_status
+
+   if [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-500AC" ];then
+       NIMF_FILE=/var/nimfConn-WAN2-2
+   elif [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000AC" ];then
+       NIMF_FILE=/var/nimfConn-WAN3-2
+   fi 
+
+
+   WAN_TYPE=$(head -n 1 $NIMF_FILE); 
+
+   # check for USB1 Port
+   if [ -e $USB1FILE ] && [ $WAN_TYPE == "threeg" ];then
+       dev=$(head -n 1 $USB1FILE | cut -d : -f3)
+       if [ $dev == "3G" ];then
+           echo "1" > $USB1_PROC_FILE
+       fi    
+   fi
+
+   # check for USB2 Port 
+   if [ -e $USB2FILE ] && [ $WAN_TYPE == "threeg" ];then
+       dev=$(head -n 1 $USB2FILE | cut -d : -f3)
+       if [ $dev == "3G" ];then
+           echo "1" > $USB2_PROC_FILE
+       fi    
+   fi
+
+fi
+
+if [ $SEND_SMS = "1" ];then
+# executing smsSupportConfig binary to send sms on vpn tunnel up/down
+/pfrm2.0/bin/smsSupportConfig /tmp/system.db $COMP_ID "$LOG_MESSAGE"
+/pfrm2.0/bin/eventTraps /tmp/system.db $COMP_ID $STATUS "$LOG_MESSAGE"
+fi

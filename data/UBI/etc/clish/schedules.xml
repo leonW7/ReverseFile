@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="security-schedules-config" prompt="security-config[schedules]> "> 
+    <COMMAND name="save" help="Save schedules configuration changes.">
+	     <ACTION>lua clishCfgObjExec("Schedules")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save schedules configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Schedules")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back schedules configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="name"
+             help="Name of the schedule for which a rule is to be added">
+             <PARAM name="schedule"
+                    help="Name of the schedule for which a rule is to be added"
+                    ptype="STRING_ALPHA_NUM_64"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.ScheduleName", "${schedule}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="days" help="schedule days"/>
+    <COMMAND name="days all"
+             help="select all days for schedule days">
+             <PARAM name="allDays"
+                    help="select all days for schedule days"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.allDays", "${allDays}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="days monday"
+             help="select all days for schedule days">
+             <PARAM name="monday"
+                    help="select all days for schedule days"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.monday", "${monday}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="days tuesday"
+             help="select all days for schedule days">
+             <PARAM name="tuesday"
+                    help="select all days for schedule days"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.tuesday", "${tuesday}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="days wednesday"
+             help="select all days for schedule days">
+             <PARAM name="wednesday"
+                    help="select all days for schedule days"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.wednesday", "${wednesday}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="days thursday"
+             help="select all days for schedule days">
+             <PARAM name="thursday"
+                    help="select all days for schedule days"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.thursday", "${thursday}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="days friday"
+             help="select all days for schedule days">
+             <PARAM name="friday"
+                    help="select all days for schedule days"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.friday", "${friday}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="days saturday"
+             help="select all days for schedule days">
+             <PARAM name="saturday"
+                    help="select all days for schedule days"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.saturday", "${saturday}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="days sunday"
+             help="select all days for schedule days">
+             <PARAM name="sunday"
+                    help="select all days for schedule days"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.sunday", "${sunday}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="time_of_day" help="scheduled time of day"/>
+    <COMMAND name="time_of_day all_enable"
+             help="type of schedule activation for time of the day">
+             <PARAM name="allDay"
+                    help="type of schedule activation for time of the day"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.AllDay", "${allDay}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="time_of_day start" help="start time"/>
+    <COMMAND name="time_of_day start mins"
+             help="minutes">
+             <PARAM name="startSchedMins"
+                    help="minutes"
+                    ptype="TIME_MM"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.startTimeMin", "${startSchedMins}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="time_of_day start hours"
+             help="hours">
+             <PARAM name="startSchedHours"
+                    help="hours"
+                    ptype="HOUR_T"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.startTimeHour", "${startSchedHours}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="time_of_day start meridiem"
+             help="meridiem">
+             <PARAM name="startSchedMeridian"
+                    help="meridiem"
+                    ptype="MERIDIEM_T"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.startTimeMeridian", "${startSchedMeridian}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="time_of_day end" help="end time"/>
+    <COMMAND name="time_of_day end mins"
+             help="minutes">
+             <PARAM name="endSchedMins"
+                    help="minutes"
+                    ptype="TIME_MM"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.endTimeMin", "${endSchedMins}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="time_of_day end hours"
+             help="hours">
+             <PARAM name="endSchedHours"
+                    help="hours"
+                    ptype="HOUR_T"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.endTimeHour", "${endSchedHours}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="time_of_day end meridiem"
+             help="meridiem">
+             <PARAM name="endSchedMeridian"
+                    help="meridiem"
+                    ptype="MERIDIEM_T"/>
+             <ACTION>lua clishCfgObjAdd ("Schedules", "Schedules.endTimeMeridian", "${endSchedMeridian}")              
+             </ACTION>
+    </COMMAND>
+                         
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security schedules" license_support="Y" help="Schedules Configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security schedules add"
+             help="Schedules configuration mode."
+             view="security-schedules-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("Schedules", 
+                              schedulesCfgInit, schedulesCfgSave, 
+			      schedulesCfgInputVal, nil)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security schedules edit"
+             help="Schedules configuration mode."
+             view="security-schedules-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("Schedules", 
+                              schedulesCfgInit, schedulesCfgSave, 
+			      schedulesCfgInputVal, "${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security schedules delete"
+             help="Schedules configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be deleted"
+           ptype="UINT"/>
+       <ACTION>lua clishCmdExec(schedulesCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security schedules" license_support="Y" help="."/>
+    <COMMAND name="show security schedules setup"
+            help="Display Schedules configuration">
+	    <ACTION>lua clishCmdExec (schedulesSetupGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

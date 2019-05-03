@@ -1,0 +1,214 @@
+<?lua
+require "teamf1lualib/bl_rfScanAps"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/util"
+
+local guiRfScanAPs = require("com.teamf1.bl.wlan.rfscanaps")
+local errorMap     = require ("com.teamf1.core.errorMap")
+local returnCodes  = require ("com.teamf1.core.returnCodes")
+
+local scanApDetails, errorCode
+local rougeClassifiedDetails = {}
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+
+if (ButtonType and ButtonType == "view") then
+local apTable = util.split (cgi.MAC , "_")
+cgi.MAC = apTable[1]
+errorCode, scanApDetails = guiRfScanAPs.rfScanApsDetailGet (cgi)
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_rfScanApsDailogContent">
+    <div class="topBg">
+        <h1>AP RF Scan Detailed Status</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>MAC Address </label>
+            <p>$| cgi.MAC or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>BSSID</label>
+            <p>$| scanApDetails.BSSID or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>SSID</label>
+            <p>$| scanApDetails.SSID or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Physical Mode</label>
+            <p>$| scanApDetails.physicalMode or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Channel</label>
+            <p>$| scanApDetails.channel or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>        
+        <div class="configRow">
+            <label>Security Mode</label>
+            <p>$| scanApDetails.securityMode or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Status</label>
+            <p>$| scanApDetails.status or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>802.11n Mode</label>
+            <p>$| scanApDetails.dotNMode or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Initial Status</label>
+            <p>$| scanApDetails.initialStatus or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Beacon Interval</label>
+            <p>$| scanApDetails.beaconInterval or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Transmit Rate</label>
+            <p>$| scanApDetails.transmitRate or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Highest Supported Rate</label>
+            <p>$| scanApDetails.highestSupportedRate or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>WIDS Rogue AP Mitigation</label>
+            <p>$| scanApDetails.widsRogueAPMitigation or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Peer Managed AP</label>
+            <p>$| scanApDetails.peerManagedAP or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Age </label>
+            <p>$| scanApDetails.age or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Ad HOC Network</label>
+            <p>$| scanApDetails.adhocNetwork or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Discovered Age</label>
+            <p>$| scanApDetails.discoveredAge or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->
+<!-- Section for Pop up dialog starts -->
+<?lua elseif (ButtonType and ButtonType == "classify") then
+        local apTable = util.split (cgi.MAC , "_")
+        cgi.MAC = apTable[1]
+        local apStatus = apTable[2]
+        errorCode, rougeClassifiedDetails = guiRfScanAPs.rfScanApsClassificationGet (cgi)
+        if (errorCode ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (errorCode)
+        end    
+?>
+<div id="tf1_rogueClassificationDailogContent">
+                <div class="topBg">
+                    <h1>List of Threat Detection Tests</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                     <div class="midArea">
+                        <div align="left">
+                            <form name action="cgi-action.html">
+                                <div class="configRow">
+                                    <label>MAC Address</label>
+                                    <p>$| cgi.MAC or '' |$</p>
+                                </div>
+                                <div class="break"> &nbsp;</div>
+                                 <div class="configRow">
+                                    <label>Status</label>
+                                    <p> $| apStatus or '' |$</p>
+                                </div>
+                                <div class="break"> &nbsp;</div>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData2">
+                                            <thead>
+                                                <tr>
+                                                    <th>Test<br />Description<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Condition<br />Detected<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Reporting<br />MAC<br />Address<br />&nbsp;</th>
+                                                    <th>Radio<br />&nbsp;<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Test<br />Config<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Test<br />Result<br />&nbsp;<br />&nbsp;</th>
+                                                    <th>Time Since<br />First Report</th>
+                                                    <th>Time Since<br />Last Report</th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                    if (rougeClassifiedDetails ~= nil) then
+                                        for k, v in pairs (rougeClassifiedDetails) do
+                                            local row = rougeClassifiedDetails[k]
+                                            ?>
+                                            <tr class="gradeB">
+                                                <td>$| row.description or '' |$</td>
+                                                <td>$| row.conditionDetected or '' |$</td>
+                                                <td>$| row.reportingMacAddress or '' |$</td>
+                                                <td>$| row.radio or '' |$</td>
+                                                <td>$| row.testConfig or '' |$</td>
+                                                <td>$| row.testResult or '' |$</td>
+                                                <td>$| row.firstTimeStamp or '' |$</td>
+                                                <td>$| row.lastTimeStamp or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                        end
+                                    end
+                                    ?>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div> 
+                </div>
+                 
+            </div>
+            <?lua end ?>
+<!-- Section for Pop up dialog ends -->

@@ -1,0 +1,257 @@
+/* global */
+
+html, body, div, td { font-family:Tahoma,Helvetica,Geneva,Arial,sans-serif; font-size:12px; }
+
+.bg0 { background-color:#ffffff; }
+.bg00 { background-color: #FFFFFF; border-bottom: 1px solid #FFFFFF; line-height: 1px; }
+.bg1 { background-color:#757575; }
+.bg2 { background-color:#434343; }
+.bg20 { background-color: #434343; border-bottom: 1px solid #434343; line-height: 1px; }
+.bg3 { background-color:#006699; }
+.bg4 { background-color:#dfdfdf; }
+
+.br0 { border:1px solid #ffffff; }
+.br1 { border:1px solid #006699; }
+.br2 { border:1px solid #434343; }
+.br3 { border:1px solid #dfdfdf; }
+.pd5 { padding:5px; }
+
+.brLR { border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF; }
+
+.deselectLink {color:#ffffff; }
+
+.selectLink { color:#006699; }
+
+.noLink { color:#dedede; }
+
+.floatR { float:right; }
+.floatL { float:left; }
+.alnL { text-align:left; }
+.alnR { text-align:right; }
+.alnC { text-align:center; }
+
+.w840 { width: 1000px; }
+.w550 { width: 677px; }
+.blank5 { line-height:5px; }
+
+.secError1, .secError1 a, .secError1 a:hover { text-align:center; padding:10px; font-size:12px; color:#ff0000; }
+
+.logout, .logout a, .logout a:hover { text-align:right; font-size:10px; color:#ffffff; text-decoration:none; }
+.logout a:hover { text-decoration:underline; }
+
+.help1, .help1 a:link { text-decoration:undeline; text-align:left;} 
+.help1 a:visited { color:#0000FF; text-decoration:underline;} 
+.help1 a:active { color:#0000FF; text-decoration:underline; }
+.help1 a:hover { text-decoration:underline; }
+
+.handcursor { cursor: pointer; }
+
+/* global-end */
+
+/* header */
+
+.txt01 { color:#ffffff; margin:5px; font-size:11px; }
+.logo { background-image:url('logo.gif'); height:90px; border-top:2px solid #FFFFFF; border-bottom:2px solid #FFFFFF; }
+
+/* header-end */
+
+/* links */
+
+.boxTitle { text-align:left; background:#434343 url(boxTitleBg.gif) no-repeat scroll 0 0; font-weight:bold; color:#434343; padding:5px; border:1px solid #434343; }
+div.mainMenu { line-height: 25px; padding: 0; width: 169px; }
+div.mainMenu ul { list-style:none; margin:0; padding:0; }
+div.mainMenu li.link,
+div.mainMenu li.link a,
+div.mainMenu li.link a:hover { color:#ffffff; display:block; font-weight:Bold; text-decoration:none; text-align:center; border:1px solid #434343; }
+div.mainMenu li.link a:hover { text-decoration:underline; }
+
+div.mainMenu li.link1,
+div.mainMenu li.link1 a,
+div.mainMenu li.link1 a:hover { color:#434343; display:block; font-weight:Bold; text-decoration:none; text-align:center; background-color:#f1f1f1; border:1px solid #434343; }
+
+div.helppg ul 
+{
+list-style:disc; margin:0; padding-left:35px;
+list-style-position:inside;
+}
+
+/* links-end */
+
+/* Left menu */
+
+.sidebarmenu ul{
+margin: 0;
+padding: 0;
+list-style-type: none;
+font: 12px Arial;
+width: 137px; /* Main Menu Item widths */
+}
+ 
+.sidebarmenu ul li{
+position: relative;
+}
+
+/* Top level menu links style */
+.sidebarmenu ul li a{
+display: block;
+overflow: auto; /*force hasLayout in IE7 */
+color: white;
+text-decoration: none;
+padding: 6px;
+border-bottom: 1px solid #ffffff;
+border-right: 1px solid #ffffff;
+}
+
+.sidebarmenu ul li a:link, 
+.sidebarmenu ul li a:visited, 
+.sidebarmenu ul li a:active {
+background-color: #434343; /*background of tabs (default state)*/
+}
+
+.sidebarmenu ul li a:visited {
+color: #fffff;
+}
+
+.sidebarmenu ul li a:hover {
+background-color: #dfdfdf;
+color: #434343;
+}
+
+/*Sub level menu items */
+.sidebarmenu ul li ul{
+position: absolute;
+width: 138px; /*Sub Menu Items width */
+top: 0;
+visibility: hidden;
+}
+
+.sidebarmenu a.subfolderstyle{
+background: url(right.gif) no-repeat 97% 50%;
+}
+
+ 
+/* Holly Hack for IE \*/
+* html .sidebarmenu ul li { float: left; height: 1%; }
+* html .sidebarmenu ul li a { height: 1%; }
+/* End */
+
+/* left menu end */
+
+/* For front desk profile config page */
+.l1 {
+text-align:left;
+width:20%;
+padding:6px 6px 6px 18px;
+font-weight:bold;
+font-size:12px;
+}
+
+
+.l2 {
+text-align:left;
+width:20%;
+padding:3px;
+color:#000;
+font-size:12px;
+}
+
+.l3 {
+text-align:left;
+width:50%;
+padding:3px;
+color:#000;
+font-size:12px;
+}
+
+/* mid */
+
+.midBg { padding:5px; }
+.submitBg { padding:5px;}
+.submitBg1 { padding:10 5 5 0px;}
+.submit, .submitDis,
+.submit0, .submit0Dis,
+.submit1, .submit1Dis,
+.submit2, .submit2Dis,
+.submit3, .submit3Dis,
+.submit4, .submit4Dis,
+.submit5, .submit5Dis { cursor:pointer; font-size:11px; letter-spacing:1pt; line-height:16px; width:75px; }
+.submit0, .submit0Dis { width:60px; }
+.submit1, .submit1Dis { width:100px; }
+.submit2, .submit2Dis { width:125px; }
+.submit3, .submit3Dis { width:150px; }
+.submit4, .submit4Dis { width:175px; }
+.submit5, .submit5Dis { width:220px; }
+.submit6, .submit6Dis { padding: 0 5 0 5px; cursor:pointer; font-size:11px; letter-spacing:1pt; line-height:16px; }
+.browse {  }
+
+.tb1, .tb2,
+.tb2 a, .tb2 a:hover { padding:3px; font-size:11px; color:#434343; background-color:#dfdfdf; border:1px solid #ffffff; text-align:center; }
+.tb2 a { border:0px; text-decoration:none; }
+.tb2 a:hover {  border:0px; text-decoration:underline; }
+.tb1 { font-weight:bold; }
+
+.h1, .h2, .h3, .h4 { text-align:left; color:#ffffff; font-size:12px; font-weight:bold; padding:5px; }
+.h1 { text-transform:uppercase; }
+.h2 { color:#ffffff; }
+.h3 { text-transform:none; }
+.h4 { text-transform:uppercase; text-align:right; padding: 0px 5px 0px 0px; }
+.btxt { text-align:left; color:#000000; font-size:11px; padding:10px; }
+.btxtH1 { text-align:left; font-weight:bold; padding-bottom:10px; }
+.lbl1 { text-align:left; color:#000000; font-size:12px; font-weight:bold; padding:6px 6px 6px 18px; width:45%; }
+.lbl10 { text-align:center; color:#000000; font-size:12px; font-weight:bold; padding:6px 6px 6px 18px; }
+.lbl2 { text-align:left; padding:3px; width:55%; }
+.lbl20 { text-align:center; padding:3px; }
+.lbl3 { text-align:left; color:#000000; font-size:10px;  padding:5px; }
+.lbl4 { text-align:right; color:#000000; font-size:10px;  padding:5px; }
+.lbl40 { text-align:right; font-weight:bold; color:#000000; font-size:12px; padding:5px; }
+.lbl5 { text-align:left; color:#000000; font-size:12px;  padding:5px; }
+.lbl50 { text-align:left; font-weight:bold; color:#000000; font-size:12px; padding:5px; }
+.lbl6 { text-align:left; color:#000000; font-size:12px; font-weight:normal; padding:2px 5px 3px 5px; vertical-align:top; }
+.txt1, .txt1Dis { font-size:11px; margin:3px; }
+.txt1Dis { background: #dfdfdf; }
+.txtbox1 { font-family: Courier New; font-size: 12px; margin:3px; }
+.txtLogin { font-size:11px; width:125px; }
+
+/* mid-end */
+
+/* wizard */
+.show {  }
+.hide { display:none; }
+.wtxtH1 { text-align:left; font-weight:bold; padding:10px; }
+.wsteps { text-align:left; color:#000000; font-size:11px; padding-left:15px; line-height: 18px; }
+/* wizard-end */
+
+/* help */
+
+.helpH1 { color: #FFFFFF; font-size: 11px; font-weight: bold; padding: 5px; text-align: left; width: 160px; }
+.helpTxt1 { text-align:left; color:#ffffff; font-size:11px; padding:5px; }
+.helpTxt2, .helpTxt2 a, .helpTxt2 a:hover { text-align:left; color:#6699cc; font-size:11px; font-weight: bold; padding:5 0 0 5px; text-decoration:none; }
+.helpTxt2 a, .helpTxt2 a:hover { padding:0px; }
+.helpTxt2 a:hover { color:#434343; background-color: #6699cc; }
+.helpTxt3 { color:#000000; font-size:11px; padding:8px; }
+.helppgTxt{ text-align:left; font-size:11px; padding:5px; }
+
+/* help-end */
+
+/* fotter */
+
+.footer { background:#434343 url(img_usr_bottom.gif) no-repeat scroll 0 0; border-top: 1px solid #FFFFFF; height:35px; }
+.footer1 { background:#434343 url(img_wireless_controller.gif) no-repeat scroll 0 0; border-top: 1px solid #FFFFFF; height:35px; }
+.cRrights { color:#ffffff; font-size:11px; padding:12px; text-align:center; }
+
+/* footer-end */
+
+/* User Portal */
+
+.userPortalIcons { width: 48px; )
+
+/* User portal-end */
+
+/* Captive Portal */
+
+.lbl7, .lbl7 a { text-align:left; color:#000000; font-size:12px; font-weight:bold; padding:2px 0px 0px 0px; text-decoration:none;}
+.lbl7 a, .lbl7 a:hover {text-align:left; color:#6699cc; padding:2px 0px 0px 10px; text-decoration:none;}
+.lbl7 a:hover { text-decoration: underline;}
+.cpImg1, .cpImgD { border:1px solid #ababab; width: 48px; height: 48px;}
+
+/* Captive Portal End */

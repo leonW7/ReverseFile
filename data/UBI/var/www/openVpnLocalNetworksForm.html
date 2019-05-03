@@ -1,0 +1,52 @@
+<?lua
+require "teamf1lualib/openVpnLocalNetworks_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local localNetworks = 
+    require("com.teamf1.bl.vpn.openvpnLocalNetworks")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, network, subnetmask
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, network, subnetmask = 
+              localNetworks.openVpnLocalNetworksSectionGetCur(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+    else
+        configRowId = "-1"
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_openVpnLocalNetworksDailogContent">
+    <div class="topBg">
+        <h1 data-localize="11824">OpenVPN Local Network Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="11600">Local Network </label>
+            <input type="text" name="openVpnLocalNetworks.localNetwork" value ="$| network or '' |$" id="tf1_txtLocalNetwork" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'SN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="13017">Subnet Mask </label>
+            <input type="text" name="openVpnLocalNetworks.localNetworkMask" value ="$| subnetmask or '' |$" id="tf1_txtSnetMask" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask ('txtSnetMask')}">
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.config.openVpnLocalNetworks.openVpnLocalNetworks.$| configRowId |$" onclick="return openVpnRemoteNetworksValidate ()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<?lua end ?>

@@ -1,0 +1,408 @@
+<?lua
+require "teamf1lualib/wps_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/dot11_returnCodes"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local wps = require("com.teamf1.bl.wireless.wps")
+local dot11ReturnCodes = require("com.teamf1.core.wireless.dot11.returnCodes")
+ 
+    PAGE_HELP = "wireless"
+    if(UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-1000N" or UNIT_NAME ==
+    "DSR-500N" or PRODUCT_ID == "DSR-250N_Bx") then
+    PAGE_HELP_SECTION = "wps_ndev"
+    else
+    PAGE_HELP_SECTION = "wps"
+    end
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+
+    local returnCode, cookie = 
+            wps.wpsSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "configPin") then
+    local inputTable = web.cgiToLuaTable(cgi)
+
+    local returnCode, cookie = 
+            wps.wpsPinSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+ 
+elseif (ButtonType and ButtonType == "configPbc") then
+    local inputTable = web.cgiToLuaTable(cgi)
+
+    local returnCode, cookie = 
+            wps.wpsPbcSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+else 
+    local returnCode, wpsRow, wpsStatusRow, vapTblRow = wps.wpsSectionGet ()
+    local WPSSaveAllow = nil
+    local WPSStatus = nil
+    if (returnCode ~= returnCodes.SUCCESS) then
+       WPSSaveAllow = "0"
+       WPSStatus = "0"
+       if (returnCode == dot11ReturnCodes.CANNOT_CONFIGURE_WPS) then
+           statusInfoMessage = errorMap.errorStringGet (returnCode)
+       else
+           statusErrorMessage = errorMap.errorStringGet (returnCode)
+       end
+    else
+       WPSSaveAllow = "1"
+       WPSStatus = wpsRow["dot11WPS.wpsEnabled"]
+    end 
+    sesStatus = "N\/A"
+    sesState = "0"
+    if (wpsStatusRow["dot11WPSSessStatus.sessionStatus"] ~= nil and 
+        wpsStatusRow["dot11WPSSessStatus.sessionStatus"] == "1") then
+		sesState = "1"
+		sesStatus = wpsStatusRow["dot11WPSSessStatus.sessionMsg"] or ''
+	    if (spUrlStr == "1") then
+            if (sesStatus == "Enabling WPS..") then
+                statusMessage = ""
+            else          
+                statusMessage = sesStatus           
+            end
+            spUrlStr = ""            
+        end
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "13434,13432,12807,30090,30091,13433,13435,30092,30093,30094,12838,30095,13003,11789,12792,13449,10916,12758,10449,30075"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body onload="onloadCall ();">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                            if (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua else ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua end?>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>  
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13434'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmWps" id="tf1_frmWps" action="platform.cgi" method="post"> 
+                                <input type="hidden" name="thispage" id="thispage"  value="wps.html">
+                                <h2>$| LANG_LOCALE['13432'] |$</h2>
+                                <div class="configRow" id="tf1_dot11WPS_div">
+                            <?lua 
+                            local enableCount = 0
+                            if((UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~=
+                            "DSR-250") or (UNIT_NAME == "DSR-250N" and (HW_VER ==
+                            "B1" or HW_VER == "B2"))) then 
+                            ?>
+                            <label>
+                                $| LANG_LOCALE['12807'] |$
+                            </label>
+                            <select name="wps.vapName" size="1" id="tf1_dot11WPS_vaps">
+                                <?lua
+                                local i = 0
+                                local optionsCount = 0
+				if (WPSSaveAllow ~= "0") then
+                                for k,v in pairs(vapTblRow) do
+                                    i = i + 1
+                                    local row = vapTblRow[i]
+                                    local profileName = row["dot11VAP.profileName"] or ''
+                                    local returnCode, profileConfig = wps.profileRowGetCur(profileName)
+                                    if (profileConfig ~= nil and
+                                        (profileConfig["dot11Profile.security"] == "WPA" or
+                                         profileConfig["dot11Profile.security"] == "WPA2" or
+                                         profileConfig["dot11Profile.security"] == "WPA+WPA2")) then
+                                         -- If only we have a 
+                                         optionsCount = optionsCount + 1
+                                         if (row["dot11VAP.vapEnabled"] == "1") then
+                                            enableCount = enableCount + 1
+                                ?>
+                                <option $| web.dropdownSelected(wpsRow["dot11WPS.vapName"] == row["dot11VAP.vapName"]) |$ value="$| row["dot11VAP.vapName"] |$">$| row["dot11VAP.vapName"] |$</option>
+                            <?lua 
+                                    end
+                                end
+				end
+			                end
+			                if (optionsCount == 0) then
+			                ?>
+                            <option value="None">$| LANG_LOCALE['11789'] |$</option>
+		                    <?lua end ?>
+                            </select>
+                        </div>
+                        <div class="break" id="break_dot11WPS_div">
+                            &nbsp;
+                        </div>
+                            <?lua 
+                            else
+                            ?>
+                            <div class="configRow" id="tf1_vapName_div">
+                                <label>
+                                    $| LANG_LOCALE['30090'] |$
+                                </label>
+                            <?lua
+                                -- We take only the default row
+                                local row = vapTblRow
+                                local profileName = row["dot11VAP.profileName"] or ''
+                                local returnCode, profileConfig = wps.profileRowGetCur(profileName)
+                                local vapEnabled = row["dot11VAP.vapEnabled"] or "0" 
+                                local count = 0
+                                local dispVapName = "None"
+				if (WPSSaveAllow ~= "0") then
+                                local vapName = row["dot11VAP.vapName"] or "0" 
+                                if (profileConfig ~= nil and (profileConfig["dot11Profile.security"] == "WPA" or profileConfig["dot11Profile.security"] == "WPA2" or profileConfig["dot11Profile.security"] == "WPA+WPA2")) then
+                                   count = count + 1
+                                   if(vapEnabled == "1") then
+                                      enableCount = enableCount + 1
+                                      dispVapName = vapName
+                                   end
+                                end
+                                end
+                                if(count == 0) then
+                                   dispVapName = "None"
+                                end
+			        		?>
+                            <p> $| dispVapName |$ </p>
+                            <input type="hidden" name="wps.vapName" value="$| dispVapName |$">
+                        </div>
+                        <div class="break" id="break_vapName_div">
+                            &nbsp;
+                        </div>
+                        <?lua 
+                        end
+                        ?> 
+                        <div class="configRow" id="tf1_enableWPSStatus_div">
+                            <label>
+                                $| LANG_LOCALE['30091'] |$
+                            </label>
+                        <?lua 
+				        if (wpsRow["dot11WPS.wpsEnabled"] == "1") then
+                            statusStr="enable-disable-on"
+                            statusVar="1"
+                        else
+                            statusStr="enable-disable-off"
+                            statusVar="0"
+                        end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_enableWPSStatus"></a>
+                        <input type="hidden" value="$| statusVar |$" name="wps.wpsStatus">
+                    </div>
+                    <div class="break" id="break_enableWPSStatus_div">
+                        &nbsp;
+                    </div>
+                    <h2>$| LANG_LOCALE['13433'] |$</h2>
+                    <div class="configRow" id="tf1_security_div">
+                        <?lua
+                        local ssid = "N\/A"
+                        local encType = "N\/A"
+                        local authType = "N\/A"
+                        local security = "N\/A"
+			if (WPSSaveAllow ~= "0") then
+                        local apName = wpsRow["dot11WPS.vapName"] or ''
+                        if (apName ~= nil and apName ~= '') then 
+                           returnCode, profileName = wps.wpsprofileNameGetCur (apName)
+                           returnCode, profileConfig = wps.profileRowGetCur (profileName)
+                           if (profileConfig ~= nil) then
+                               ssid = profileConfig["dot11Profile.ssid"] 
+	                           encType = profileConfig["dot11Profile.pairwiseCiphers"] or ""
+			       		       authType = profileConfig["dot11Profile.authMethods"] or ""
+			        	       security = profileConfig["dot11Profile.security"] or ""
+					           if (profileConfig["dot11Profile.security"] == "OPEN")  then
+					               encType = LANG_LOCALE['11789']
+						           authType = LANG_LOCALE['11789']
+			        	       elseif (profileConfig["dot11Profile.security"] == "WEP") then
+			               	       encType = profileConfig["dot11Profile.groupCipher"] or "N\/A"
+			                       authType = profileConfig["dot11Profile.wepAuth"] or "N\/A"
+                               end
+                           end
+                        end
+                        end
+
+					?>
+                                            <label>
+                                                $| LANG_LOCALE['12792'] |$
+                                            </label>
+                                            <p>
+                                                 	$| security |$
+                                            </p>
+                                        </div>
+                                        <div class="break" id="break_security_div">
+                                            &nbsp;
+                                        </div>
+                                        <div class="configRow" id="tf1_authentication_div">
+                                            <label>
+                                                $| LANG_LOCALE['13449'] |$
+                                            </label>
+                                            <p>
+                                                 	$| authType |$
+                                            </p>
+                                        </div>
+                                        <div class="break" id="break_authentication_div">
+                                            &nbsp;
+                                        </div>
+                                        <div class="configRow" id="tf1_encryption_div">
+                                            <label>
+                                                $| LANG_LOCALE['10916'] |$
+                                            </label>
+                                            <p>
+                                                 	$| encType |$
+                                            </p>
+                                        </div>
+                                        <div class="break" id="break_encryption_div">
+                                            &nbsp;
+                                        </div>
+                                        <div class="configRow" id="tf1_wpsSetupMethod_div">
+                                        <h2>$| LANG_LOCALE['13435'] |$</h2>
+                                        <div class="configRow" id="tf1_txtPINNum_div">
+                                            <label>
+                                                $| LANG_LOCALE['30092'] |$
+                                            </label>
+                                            <input type="text" class="txt1" name="wps.wpsStationPin" maxlength="8" id="tf1_txtPINNum" onKeyPress="return numericValueCheck (event)">
+                                        </div>
+                                        <div class="break" id="break_txtPINNum_div">
+                                            &nbsp;
+                                        </div>
+                                        <div class="configRow" id="tf1_wpsSetupSubmit_div">
+                                            <label>
+                                                &nbsp;
+                                            </label>
+                                            <div class="submitRow">
+                                            	<input type="submit" name="button.configPin.wps" class="btnSubmit" value="$| LANG_LOCALE['30093'] |$" title="$| LANG_LOCALE['30093'] |$" onclick="return pageValidate('tf1_frmWps')">
+												<input type="submit" class="btnSubmit" name="button.configPbc.wps" value="$| LANG_LOCALE['30094'] |$" title="$| LANG_LOCALE['30094'] |$" onclick="setHiddenChks ('tf1_frmWps');">          
+                                            </div>
+                                        </div>
+                                        <div class="break" id="break_wpsSetupSubmit_div">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                        <div class="break" id="break_wpsSetupMethod_div">
+                                            &nbsp;
+                                        </div>
+                                        <?lua 
+                                           if (tonumber(WPSStatus) == 1) then
+                                        ?> 
+                                        <div class="configRow" id="tf1_sessionStatus_div">
+                                            <label>
+                                                $| LANG_LOCALE['12838'] |$
+                                            </label>
+                                            <p id="lblSessionStatus" > </p>
+                                        </div>
+                                        <div class="break" id="break_sessionStatus_div">
+                                            &nbsp;
+                                        </div>
+				                        <?lua end ?>	                   
+                                        <div class="submitRow">                                        
+                                        <?lua 
+                                           if (tonumber(WPSSaveAllow) == 1) then
+                                        ?> 
+                                        <input type="submit" class="btnSubmit" name="button.config.wps" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$"  onClick="setHiddenChks ('tf1_frmWps');" >
+					                   	<input type="reset" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" onClick="this.form.reset(); wpsOnReset('tf1_frmWps');">  
+				                        <?lua end ?>	                   
+					                       
+                                        </div>
+                                        <div class="break">
+                                            &nbsp;
+                                        </div>
+                                    </form>
+	        <input type="hidden" id="hdUnitName" value="$| UNIT_NAME or '' |$">
+     		<input type="hidden" value="$| enableCount |$" id="hdenableCount">
+	    	<input type="hidden" value="$| wpsRow["dot11WPS.wpsEnabled"] or '0'|$" id="hdWpsStatus">
+			<input type="hidden" id="hdSessionStatus" value="$| sesState |$">
+				</div>
+			</div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/wps.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

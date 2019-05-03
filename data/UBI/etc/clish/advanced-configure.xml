@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="security-advanced-attack-checks-config" prompt="security-config[attack-checks]> "> 
+    <COMMAND name="save" help="Save Security Checks configuration changes.">
+	     <ACTION>lua
+                         clishCfgObjExec("AttackChecks") 
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Security Checks configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("AttackChecks")
+             </ACTION> 
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Security Checks configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+    <COMMAND name="enable_stealth_mode" help="Enable or Disable Stealth Mode.">
+	<PARAM name="stealthMode"
+         help="Enable / Disable Stealth Mode"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "AttackChecks.StealthMode", "${stealthMode}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="block_tcp_flood" help="Enable or Disable TCP Flood on WAN port.">
+	<PARAM name="tcpBlock"
+         help="Enable / Disable TCP Flood on WAN"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "AttackChecks.TcpFlood", "${tcpBlock}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="block_udp_flood" help="Enable or Disable UDP Flood on LAN port.">
+	<PARAM name="udpBlock"
+         help="Enable / Disable UDP Flood on LAN"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "AttackChecks.UdpFlood", "${udpBlock}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="allow_lan_icmp" help="Enable or Disable ICMP Notification on LAN port.">
+	<PARAM name="pingOnLan"
+         help="Enable / Disable ICMP Notification on LAN"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "AttackChecks.PingReplyOnLan", "${pingOnLan}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="block_spoofed_packets" help="Allow/Block spoofed packets.">
+	<PARAM name="blockSpoof"
+         help="Allow/Block spoofed packets."    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "AttackChecks.BlockSpoof", "${blockSpoof}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="Tcp_Filter_Check" help="Allow/Block Tcp Filter Check.">
+    <PARAM name="TcpFilterCheck"
+         help="Allow/Block Tcp Filter Check"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "AttackChecks.TcpFilterCheck", "${TcpFilterCheck}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="block_icmp_notification" help="Enable or Disable ICMP notifications on Internet Ports.">
+	<PARAM name="icmpBlock"
+         help="Enable / Disable ICMP Notification"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "IcsaSettings.BlockICMPNotification", "${icmpBlock}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="block_fragmented_packets" help="Enable or Disable Fragmented Packets on Internet Ports.">
+	<PARAM name="fragPktsBlock"
+         help="Enable / Disable Fragmented packets"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "IcsaSettings.BlockFragPkts", "${fragPktsBlock}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="block_multicast_packets" help="Enable or Disable Multicast packets on Internet Ports.">
+	<PARAM name="multicastBlock"
+         help="Enable / Disable Multicast packets"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "IcsaSettings.BlockMulticastPkts", "${multicastBlock}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="synflood_dectect_rate" help="Configure the Syn flood Detect Rate">
+	<PARAM name="synflood"
+         help="Configure Syn Flood Detect Rate (Value between 1-10000)"    
+	       ptype="DOS_ATTACKS_T"/> 
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "FwDosAttackSettings.SynFloodDetectRate", "${synflood}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="block_spoofed_tcp_rst" help="Enable or Disable blocking of spoofed tcp RST packets.">
+	<PARAM name="tcpRstBlock"
+         help="Enable / Disable TCP RST packet blocking"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "IcsaSettings.BlockTcpRST", "${tcpRstBlock}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="block_ftp_bounce_attack" help="Enable or Disable blocking of FTP Bounce Attack packets.">
+	<PARAM name="BlockFtpBounceAttack"
+         help="Enable / Disable FTP Bounce Attack packet blocking"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "IcsaSettings.BlockFtpBounceAttack", "${BlockFtpBounceAttack}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="echostorm_flood_rate" help="Configure the Echo Storm Flood Rate">
+	<PARAM name="echostorm"
+         help="Configure Echo Storm Flood Rate (Value between 1-10000)"    
+	       ptype="DOS_ATTACKS_T"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "FwDosAttackSettings.EchoStormFloodRate", "${echostorm}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="icmp_flood_rate" help="Configure the ICMP flood Rate">
+	<PARAM name="icmpflood"
+         help="Configure ICMP Flood Rate (Value between 1-10000)"    
+	       ptype="DOS_ATTACKS_T"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks", "FwDosAttackSettings.IcmpFloodRate", "${icmpflood}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="udp_connection_limit" help="Configure max number of symultanesous udp connections to allow">
+	<PARAM name="udpLimit"
+         help="(Value between 25-600)"    
+	       ptype="UDP_LIMIT"/>
+	<ACTION>lua clishCfgObjAdd ("AttackChecks","AttackChecks.UdpConnLimitVal", "${udpLimit}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-ips-config" prompt="security-advanced-config[ips]> "> 
+    <COMMAND name="save" help="Save ips configuration changes.">
+	     <ACTION>lua
+                         clishCfgObjExec("Ips") 
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save ips configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Ips")
+             </ACTION> 
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ips configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+    <COMMAND name="enable_intrusion_prevention" help="Enable or Disable Intrusion Prevention.">
+	<PARAM name="ips"
+         help="Enable / Disable Intrusion Prevention"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("Ips", "IPSConfig.ipsEnable", "${ips}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="enable_intrusion_detection" help="Enable or Disable Intrusion Detection.">
+	<PARAM name="ips"
+         help="Enable / Disable Intrusion Detection"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("Ips", "IPSConfig.idsEnable", "${ips}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="ips_check_active" help="Enable or Disable IPS checks."/>
+    <COMMAND name="ips_check_active lan-wan" help="Enable or Disable ips checks active between LAN and WAN.">
+	<PARAM name="ips"
+         help="Enable / Disable ips checks active between LAN and WAN"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("Ips", "IPSNetworkSegments.ipsEnable1", "${ips}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="ips_check_active dmz-wan" help="Enable or Disable ips checks active between DMZ and WAN">
+	<PARAM name="ips"
+         help="Enable / Disable ips checks active between DMZ and WAN"    
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("Ips", "IPSNetworkSegments.ipsEnable2", "${ips}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security advanced_network" help="Security advanced setup."/>
+<!--=======================================================-->
+    <COMMAND name="security advanced_network attack_checks" help="Firewall Security Checks setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security advanced_network attack_checks configure"
+             help="Security Checks configuration mode."
+             view="security-advanced-attack-checks-config" viewid="">
+                      <ACTION>lua clishCfgObjNew ( "AttackChecks",
+                            securityChecksCfgInit, securityChecksCfgSave, NULL)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security advanced_network ips" help="Security ips setup."/>
+    <!--=======================================================-->
+   <COMMAND name="security advanced_network ips setup"
+             help="Ips configuration mode."
+             view="security-ips-config" viewid="">
+                      <ACTION>lua clishCfgObjNew ("Ips",
+                            ipsCfgInit, ipsCfgSave, NULL)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+</CLISH_MODULE>

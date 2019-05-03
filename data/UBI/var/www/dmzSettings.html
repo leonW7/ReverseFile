@@ -1,0 +1,310 @@
+<?lua 
+require "teamf1lualib/dmzSettings_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "dmzSettings"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local cookie
+local errorFlag, configPortName = configPortNameGet()
+local disableFlag = "0"
+
+    if (errorFlag == returnCodes.SUCCESS) then
+        if ( (nil ~= configPortName) and ("DMZ" ~= configPortName )) then
+           disableFlag = "1"
+        end
+    end
+
+
+
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["dmzSettings.cookie"] = "5"
+if (UNIT_NAME == "DSR-1000AC" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" 
+    or UNIT_NAME == "DSR-500AC" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500") then 
+    --[[ set cookie for now only ]]--
+    if ("0" ~= disableFlag ) then
+        statusInfoMessage = "DMZ Settings cannot be configure when Configurable Port is WAN2"
+    else
+        errorFlag, cookie =  dmzSettingsSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    end
+else
+    if ("0" ~= disableFlag ) then
+        statusInfoMessage = "DMZ Settings cannot be configured when Configurable Port is LAN/WAN2"
+    else
+        errorFlag, cookie =  dmzSettingsSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    end
+end
+    web.goToPage(NextPage, true, true)
+else
+    local dmzInfoTable
+    errorFlag, cookie, dmzInfoTable = dmzSettingsGet ()
+if (UNIT_NAME == "DSR-1000AC" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" 
+    or UNIT_NAME == "DSR-500AC" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500") then 
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    elseif ( "0" ~= disableFlag ) then
+        statusInfoMessage = "DMZ Settings cannot be configure when Configurable Port is WAN2"
+    end
+else
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       if (errorFlag == returnCodes.DMZ_CANNOT_BE_CONFIGURED) then
+            statusInfoMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    elseif ( "0" ~= disableFlag ) then
+        statusInfoMessage = "DMZ Settings cannot be configure when Configurable Port is LAN/WAN2"
+    end 
+end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "10790,30145,30146,10786,10735,10738,10737,12977,10929,10685,10805,11564,13489,11126,12537,12782,13374,,11057,10885,13496,12392,12269,12041,11966,11251,12956,10935,12978,10930,10686,10921,11393,10733,11387,13017,11789,12627,12758,10449,30626,30627,30628,30629,30630,30631,30632,30633,30634,30097,12028,12133,11324,11346,11379"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body onLoad="changeDhcpMode();">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+					<?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['10790'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmDmzSettings" id="tf1_frmDmzSettings" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="dmzSettings.html">
+
+			 				<div id="tf1_dmzBlock_div"> <!-- Start Div block enable/disable -->
+		
+                                <h2>$| LANG_LOCALE['10786'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['11387'] |$</label>
+                                    <input type="text" name="dmzSettings.ipAddress" value="$| dmzInfoTable["dmzSettings.ipAddress"] |$" maxlength="15" value="" id="tf1_ipv4_addr" onKeyPress="return numericValueCheck (event, '.')" onblur="dhcpDMZRangeAutoFill ();">
+                                </div>
+                                <div class="break" id="break1_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['13017'] |$</label>
+                                    <input type="text" name="dmzSettings.subnetMask" value="$| dmzInfoTable["dmzSettings.subnetMask"] |$" maxlength="15" value="" id="tf1_snet" onKeyPress="return numericValueCheck (event, '.')" onblur="dhcpDMZRangeAutoFill ();">
+                                </div>
+                                <div class="break" id="break2_div">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['10733'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10735'] |$</label>
+                                    <p>
+                                        <input type="radio"  $|  web.radioSelected(dmzInfoTable["dmzSettings.dhcpType"] == "1") |$  value="1" name="dmzSettings.dhcpType" onClick="changeDhcpMode('tf1_radNtp1');" id="tf1_radNtp1" >
+                                        $| LANG_LOCALE['11789'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio"  $|  web.radioSelected(dmzInfoTable["dmzSettings.dhcpType"] == "2") |$  value="2" name="dmzSettings.dhcpType" onClick="changeDhcpMode('tf1_radNtp2');" id="tf1_radNtp2" >
+                                        $| LANG_LOCALE['10738'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" $|  web.radioSelected(dmzInfoTable["dmzSettings.dhcpType"] == "3") |$  value="3" name="dmzSettings.dhcpType" onClick="changeDhcpMode('tf1_radNtp3');" id="tf1_radNtp3" >
+                                        $| LANG_LOCALE['10737'] |$
+                                    </p>
+                                </div>
+                                <div class="break" id="break3_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_ipv4_start_div">
+                                    <label>$| LANG_LOCALE['12977'] |$</label>
+                                    <input type="text" name="dmzSettings.startIpAddr" value="$| dmzInfoTable["dmzSettings.startIpAddr"] |$" name="ntp.server1" id="tf1_ipv4_start" size="30" class="txt1" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break4_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_ipv4_end_div">
+                                    <label>$| LANG_LOCALE['10929'] |$</label>
+                                    <input type="text" name="dmzSettings.endIpAddr" value="$| dmzInfoTable["dmzSettings.endIpAddr"] |$"  name="ntp.server2" id="tf1_ipv4_end" size="30" class="txt1" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break5_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_ipv4_gateway_div">
+                                    <label>$| LANG_LOCALE['10685'] |$</label>
+                                    <input type="text" name="dmzSettings.defaultGateway" value="$| dmzInfoTable["dmzSettings.defaultGateway"] |$" maxlength="15" name="ntp.reSyncNtpVal" class="txt1" id="tf1_ipv4_gateway" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break6_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_domain_div">
+                                    <label>$| LANG_LOCALE['10805'] |$</label>
+                                    <input type="text" name="dmzSettings.domainName" value="$| dmzInfoTable["dmzSettings.domainName"] |$" id="tf1_domain" maxlength='256'>
+                                </div>
+                                <div class="break" id="break7_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_lease_time_div">
+                                    <label>$| LANG_LOCALE['11564'] |$</label>
+                                    <input type="text" name="dmzSettings.leaseTime" value="$| dmzInfoTable["dmzSettings.leaseTime"] |$" class="one" value id="tf1_lease_time" maxlength="6" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 262800, true, LANG_LOCALE['13489']+'.', LANG_LOCALE['11126']);}">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 1 - 262800] $| LANG_LOCALE['11126'] |$
+                                    </dl>
+                                </div>
+                                <div class="break" id="break8_div">
+                                    &nbsp;
+                                </div>
+                               
+                                <div class="configRow" id="tf1_ipv4_primary_div">
+                                    <label>$| LANG_LOCALE['12537'] |$</label>
+                                    <input type="text" name="dmzSettings.primaryDnsServer" value="$| dmzInfoTable["dmzSettings.primaryDnsServer"] |$" id="tf1_ipv4_primary" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11324']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break10_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_ipv4_secondary_div">
+                                    <label>$| LANG_LOCALE['12782'] |$</label>
+                                    <input type="text" name="dmzSettings.secondaryDnsServer" value="$| dmzInfoTable["dmzSettings.secondaryDnsServer"] |$" id="tf1_ipv4_secondary" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11346']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break11_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_wins_server_div">
+                                    <label>$| LANG_LOCALE['13374'] |$</label>
+                                    <input type="text" name="dmzSettings.winsServer" value="$| dmzInfoTable["dmzSettings.winsServer"] |$" id="tf1_wins_server" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11379']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break12_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_gateway_div">
+                                    <label>$| LANG_LOCALE['11057'] |$</label>
+                                    <input type="text" name="dmzSettings.dhcpRelay" value="$| dmzInfoTable["dmzSettings.dhcpRelay"] |$" id="tf1_gateway" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break13_div">
+                                    &nbsp;
+                                </div>
+				 <div class="configRow" id="tf1_dns_wins_div">
+                                    <label>$| LANG_LOCALE['10885'] |$</label>
+                                <?lua 
+                                      local statueStr
+                                     local statusVar
+                                     if (dmzInfoTable["dmzSettings.dnsProxy"]=="1") then
+                                       statusStr="enable-disable-on"
+                                       statusVar = "1"
+                                     else
+                                       statusStr="enable-disable-off"
+                                       statusVar = "0"
+                                     end
+                                           ?>
+                                            <a class="$| statusStr |$" alt="" id="tf1_dns_wins"></a>
+                        <input type="hidden" name="dmzSettings.dnsProxy" value="$| statusVar |$" id="tf1_hid_dns_wins">
+                                </div>
+                                <div class="break" id="break9_div">
+                                    &nbsp;
+                                </div>
+				</div> <!-- End Div block enable/disable -->
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.dmzSettings" onclick="return dmzSetupValidate('tf1_frmDmzSettings')" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset();dmzSettingsOnRest('tf1_frmDmzSettings');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+	<?lua
+	    local sslVpnStAddr = db.getAttribute("SSLVPNClientConf","_ROWID_",1,"BeginClientAddress") or ''
+	    local sslVpnEndAddr = db.getAttribute("SSLVPNClientConf","_ROWID_",1,"EndClientAddress") or ''
+	?>
+        <input type="hidden" value="$| sslVpnStAddr |$" id="hdSslVpnStAddr">
+        <input type="hidden" id="hdUnitName" value="$| UNIT_NAME or '' |$">     
+        <input type="hidden" value="$| sslVpnEndAddr |$" id="hdSslVpnEndAddr">
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/dmzSettings.js"></script>
+	<script>
+	  /** Set jQuery function call  **/
+		jQuery(function(){
+		    onloadCall (enableDisableFieldsByImageClick, {imageId:'', disableIndividual:'', disableGrp:'', enableIndividual:'', enableGrp:'', hideClass:'hide', showClass:'configRow', breakDivs:'', breakClass:'break', imagesInfo:{disableImages:'', enableImages:'', disableClass:'', enableClass:''}});
+<?lua if (UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N") then ?>
+		enableTextFieldByAnchorClick('tf1_enableDmz','tf1_ipv4_addr tf1_snet tf1_radNtp1 tf1_radNtp2 tf1_radNtp3 tf1_ipv4_start tf1_ipv4_end tf1_ipv4_gateway tf1_domain tf1_lease_time tf1_hid_dns_wins tf1_ipv4_primary tf1_ipv4_secondary tf1_wins_server tf1_gateway','break1 break2 break3 break4 break5 break6 break7 break8 break9 break10 break11 break12 break13','tf1_dmzBlock');
+<?lua end ?>
+		changeDhcpMode('tf1_radNtp1');
+		
+			 
+
+		});
+	</script>
+    </body>
+</html>
+<?lua end ?>
+

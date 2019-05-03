@@ -1,0 +1,163 @@
+:|noHelpSet|:
+The table lists all the available logs in the system.
+:|noHelpSetEnd|:
+
+:|systemSetting|:
+This page allows user to set the router identification name. 
+:|systemSettingEnd|:
+
+:|languageSettings|:
+The table lists all the available languageSettings in the system.
+:|languageSettingsEnd|:
+
+:|dateTime|:
+This page allows us to set the date, time and NTP servers. Network Time Protocol (NTP) is a protocol that is used to synchronize computer clock time in a network of computers. Accurate time across a network is important for many reasons. 
+:|dateTimeEnd|:
+
+:|sessionSettings|:
+This page allow the user to set session timeout value for administrator and guest users.
+:|sessionSettingsEnd|:
+
+:|licenseUpdate|:
+This page shows the list of activated licenses and also can be used for activating new WCF licenses. 
+:|licenseUpdateEnd|:
+
+:|usbSharePorts|:
+This page allows the user to configure the SharePort feature available in the device.
+:|usbSharePortsEnd|:
+
+:|usbSharePorts_single|:
+This page allows the user to configure the SharePort feature available in the device.
+:|usbSharePorts_singleEnd|:
+
+:|packageManager|:
+This page shows the list of available drivers. User can install or uninstall the drivers.
+:|packageManagerEnd|:
+
+:|setLanguage|:
+This page shows the list of available languages.
+:|setLanguageEnd|:
+
+:|inbox|:
+This page allows the users to check received messages in the Inbox and also to create new messages.
+:|inboxEnd|:
+
+:|createSms|:
+This page will allow users to create a new SMS and send it to a particular number.
+:|createSmsEnd|:
+
+:|webAccessFilter|:
+ This page allows the user to manage Device GUI access/deny permissions to VLAN host/ VLAN Network.
+:|webAccessFilterEnd|:
+
+:|remoteManagement|:
+From this page a user can configure the remote management feature. This feature can be used to manage the box remotely from WAN side. 
+:|remoteManagementEnd|:
+
+:|snmp|:
+Simple Network Management Protocol (SNMP) lets you monitor and manage your router from an SNMP manager. SNMP provides a remote means to monitor and control network devices, and to manage configurations, statistics collection, performance, and security. 
+:|snmpEnd|:
+
+:|snmpTrap|:
+If you use Simple Network Management Protocol (SNMP) to manage the Unified Wireless Controller, you can configure the SNMP agent on the Controller to send traps to the SNMP manager on your network.
+:|snmpTrapEnd|:
+
+:|snmpTrapList|:
+The table lists all IP addresses of SNMP agents to which the router will send trap messages.
+:|snmpTrapListEnd|:
+
+:|accessControlList|:
+The table lists all IP addresses of SNMP agents to which the router will allows several operations on the SNMP agents.
+:|accessControlListEnd|:
+
+:|snmpSystemInfo|:
+This page displays the current SNMP configuration of the router. The following MIB (Management Information Base) fields are displayed and can be modified here. 
+:|snmpSystemInfoEnd|:
+
+:|networkTools|:
+This page can be used for diagnostics purpose. This page provides user with some diagnostic tools like ping, dns lookup and traceroute.
+:|networkToolsEnd|:
+
+:|capturePackets|:
+This page provides user packet sniffer as a diagnostic tool. 
+:|capturePacketsEnd|:
+
+:|systemCheck|:
+This page display the router's static and dynamic routes.
+:|systemCheckEnd|:
+
+:|powerSaving|:
+This page allows user to enable/disable power saving in the router.
+:|powerSavingEnd|:
+
+:|systemPc|:
+This page allows user to upgrade/downgrade the router firmware. This page also shows the information regarding firmware version and build time.
+:|systemPcEnd|:
+
+:|usb|:
+This page allows user to upgrade/downgrade the router firmware via USB Device.
+:|usbEnd|:
+
+:|backupRestore|:
+This page allows user to do configuration related operations which includes backup and restore.
+:|backupRestoreEnd|:
+
+:|backupConfigurations|:
+This page allows user to do configuration related operations which includes backup configuration.
+:|backupConfigurationsEnd|:
+
+:|softReboot|:
+This page allows user to Reboot and Reboot with Factory Default the router. 
+:|softRebootEnd|:
+
+:|apSoftwareDownload|:
+The Unified Wireless Controller can upgrade software on the APs that it manages. The Cluster Controller can update code on APs managed by peer wireless controllers. It may take about 12 minutes for the upgrade process to complete for an AP.
+:|apSoftwareDownloadEnd|:
+
+:|apFirmwareStatus|:
+This page displays the Code Download Status and Success/Failure of the AP firmware upgrade process.
+:|apFirmwareStatusEnd|:
+
+:|facilityLogs|:
+This page allows user to configure logging severity levels for different logging facilities.
+:|facilityLogsEnd|:
+
+:|facilityLogs_wireless|:
+This page allows user to configure logging severity levels for different logging facilities.
+:|facilityLogs_wirelessEnd|:
+
+:|routingLogs|:
+The table lists all the available routing Logs in the system.
+:|routingLogsEnd|:
+
+:|systemLogs|:
+This page allows user to configure system wide log settings. 
+:|systemLogsEnd|:
+
+:|remoteLoging|:
+This page allows user to configure the remote logging options for the router. 
+:|remoteLogingEnd|:
+
+:|remoteLoging_RU|:
+This page allows user to configure the remote logging options for the router. 
+:|remoteLoging_RUEnd|:
+
+:|sysLogServer|:
+This page allows user to configure the syslog server logging options for the router. 
+:|sysLogServerEnd|:
+
+:|checkUpdate|:
+This page is used for checking the availability of newer firmware. Once you press the checknow button, the device will tell you if you are required to upgrade to a newer firmware.
+:|checkUpdateEnd|:
+
+:|eventLogs|:
+This page allows user to configure the available event Logs in the system.
+:|eventLogsEnd|:
+
+:|ipv6Logs|:
+This page allows user to configure log settings for IPv6 network.
+:|ipv6LogsEnd|:
+
+:|smsEvent|:
+This page allows user to get event based SMS on configured mobile number.
+:|smsEventEnd|:

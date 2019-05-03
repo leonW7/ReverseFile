@@ -1,0 +1,1954 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <PTYPE name="PORT_NAME"
+	   method="select"
+	   pattern="Port1-LAN(Port1-LAN) Port2-WAN(Port2-WAN)"
+	   help="Port name"/>
+<!--=======================================================-->
+ <PTYPE name="GPL_OPEN_CTRL"
+	   method="select"
+	   pattern="Disable(0), Alert(1), All(8)"
+       help="GPL/OPEN Control"/>
+<!--=======================================================-->
+	<PTYPE name="SESSION_TYPE"
+           method="select"
+	   pattern="separate(1) common(2)"
+        help="IPV6 PPPoE session type"/>
+<!--=======================================================-->
+    <PTYPE name="IPMODE_TYPE"
+           method="select"
+	   pattern="IPv4-Only(1) IPv4/IPv6(3)"
+	   help="select the ip address type"/>
+<!--=======================================================-->
+    <PTYPE name="END_POINT_ADDR_T"
+           method="select"
+	   pattern="LAN(1) Other_IP(0)"
+	   help="select the local end point address type"/>
+<!--=======================================================-->
+    <PTYPE name="PORT_NUM"
+	   method="integer"
+	   pattern="1..65535"
+	   help="Port number"/>
+<!--=======================================================-->
+    <PTYPE name="ROUTE6_INTERFACE_TYPE"
+           method="select"
+	   pattern="WAN1(WAN1) WAN2(WAN2) LAN(LAN) Sit0_Tunnel-WAN1(sit0-WAN1) Sit0_Tunnel-WAN2(sit0-WAN2)"
+	   help="select the ipv6 interface type"/>
+<!--=======================================================-->
+    <PTYPE name="ROUTE4_STATIC_INTERFACE_TYPE"
+    pattern=".+"
+    help="Use <show net routing static interface_list> to see list of interface"/>
+<!--=======================================================-->
+    <PTYPE name="SERVICE_NAME"
+           method="select"
+	   pattern="Radius(1)"
+	   help="select the service"/>
+<!--=======================================================-->
+    <PTYPE name="SERVICE_INTERFACE"
+           method="select"
+	   pattern="Primary-Auth(1) Secondary-Auth(2) Tertiary-Auth(3) Primary-Acct(4) Secondary-Acct(5) Tertiary-Acct(6)"
+	   help="select the service interface"/>
+<!--=======================================================-->
+    <PTYPE name="ROUTE_INTERFACE"
+           method="select"
+	   pattern="VLAN(1) IPSEC(2)"
+	   help="select the route interface"/>
+<!--=======================================================-->
+    <PTYPE name="ADDRESS_TYPE"
+           method="select"
+	   pattern="IPv4(2) IPv6(10)"
+	   help="select the ip address type"/>
+<!--=======================================================-->
+    <PTYPE name="DUPLEX_MODE_T"
+           method="select"
+	   pattern="Half(0) Full(1)"
+	   help="select the duplex mode"/>
+<!--=======================================================-->
+    <PTYPE name="PORT_SPEED_T"
+           method="select"
+	   pattern="10(10) 100(100) 1000(1000)"
+       help="select the speed"/>
+<!--=======================================================-->
+	<PTYPE name="VIEW_LOGS_FACILITY_INT"
+	       method="select"
+               pattern="All(255) Kernel(0) System(3) Wireless(16) Network(18) VPN(19) WCF(20) Firewall(21)"
+	       help="Facility types"/>
+<!--=======================================================-->
+	<PTYPE name="VIEW_LOGS_CATEGORY_STR"
+	       method="select"
+           pattern="ALL(all) 3G(3G) AUTH(AUTH) BRIDGE(BRIDGE) CAPTIVE_PORTAL(CAPTIVE_PORTAL) DHCP_CLIENT(DHCP_CLIENT) DHCP_RELAY(DHCP_RELAY) DHCP_SERVER(DHCP_SERVER) DNS(DNS) FRESET(FRESET) FIREWALL(FIREWALL) FIRMWARE(FIRMWARE) GRE(GRE) IGMP(IGMP) INTEL_AMT(INTEL_AMT) IPS(IPS) IPSEC(IPSEC) IPv4(IPv4) IPv6(IPv6) KERNEL(KERNEL) L2TP(L2TP) L2TP_CLIENT(L2TP_CLIENT) L2TP_SERVER(L2TP_SERVER) LM(LM) LOGIN(LOGIN) OPEN_VPN(OPEN_VPN) OSPF(OSPF) PPP(PPP) PPPoE(PPPoE) PPTP(PPTP) PPTP_CLIENT(PPTP_CLIENT) PPTP_SERVER(PPTP_SERVER) QOS(QOS) RIP(RIP) SMTPALG(SMTPALG) SNMP(SNMP) SSH(SSH) SSLVPN(SSLVPN) IFSTATIC(IFSTATIC) SYSTEM(SYSTEM) TIME(TIME) USB(USB) VLAN(VLAN) WATCH_DOG(WATCH_DOG) WCF(WCF) WIRELESS(WIRELESS)"
+	       help="Category types"/>
+<!--=======================================================-->
+	<PTYPE name="VIEW_LOGS_SEVERITY_INT"
+	       method="select"
+           pattern="All(0) Emergency(1) Alert(2) Critical(4) Error(8) Warning(16) Notification(32) Information(64) Debugging(128)"
+	       help="Severity types"/>
+<!--=======================================================-->
+	<PTYPE name="PORT_SPEED"
+	       method="select"
+           pattern="Auto_Sense(0) 10_BaseT_Half_Duplex(1) 10_BaseT_Full_Duplex(2) 100_BaseT_Half_Duplex(3) 100_BaseT_Full_Duplex(4) 1000_BaseT_Full_Duplex(6)"
+	       help="Port Speed types"/>
+<!--=======================================================-->
+    <PTYPE name="MAX_BW_RATE"
+           method="integer"
+	   pattern="100..100000"
+	   help="Maximum bandwidth rate 100-100000 Kbps"/>
+<!--=======================================================-->
+    <PTYPE name="MIN_BW_RATE"
+           method="integer"
+	   pattern="0..100000"
+	   help="Minimum bandwidth rate 0-Max bandwidth Kbps"/>
+<!--=======================================================-->
+ <PTYPE name="BW_RATE"
+           method="integer"
+	   pattern="1..199"
+	   help="Minimum bandwidth rate 1-199 Mbps"/>
+<!--=======================================================-->
+    <PTYPE name="BANDWIDTH_PRIORITY_TYPE"
+           method="select"
+	   pattern="Low(0) Medium(1) High(2)"
+	   help="bandwidth priority type"/>
+<!--=======================================================-->
+    <PTYPE name="RADVD_PREFERENCE_TYPE"
+           method="select"
+	   pattern="Low(1) Medium(2) High(3)"
+       help="radvd preference type"/>
+<!--=======================================================-->
+    <PTYPE name="RADVD_MODE_TYPE"
+           method="select"
+	   pattern="Unsolicited-Multicast(0) Unicast-Only(1)"
+	   help="radvd advertizement mode type"/>
+<!--=======================================================-->
+    <PTYPE name="IPV6_PREFIX_T"
+           method="select"
+	   pattern="6To4(1) Global/Local/ISATAP(2)"
+       help="ipv6 prefix type"/>
+<!--=======================================================-->
+	<PTYPE name="IPV6_PREFIX_LENGTH"
+	       method="integer"
+	       pattern="0..128"
+	       help="IPv6 Prefix length"/>
+<!--=======================================================-->
+    <PTYPE name="BANDWIDTH_PROFILE_TYPE"
+           method="select"
+	   pattern="Priority(0) Rate(1)"
+	   help="bandwidth profile type"/>
+<!--=======================================================-->
+ <PTYPE name="BANDWIDTH_POLICY_TYPE"
+           method="select"
+	   pattern="Outbound(0) Inbound(1)"
+	   help="bandwidth policy type"/>
+<!--=======================================================-->
+    <PTYPE name="MATCH_TYPE"
+           method="select"
+	   pattern="IP-Address(1) MAC-Address(2) Port-Name(3) VLAN(4) BSSID(6)"
+	   help="traffic selector match type"/>
+<!--=======================================================-->
+    <PTYPE name="PORT_TYPE"
+           method="select"
+	   pattern="Port1(Port1) Port2(Port2) Port3(Port3) Port4(Port4)"
+	   help="traffic selectors Port types"/>
+<!--=======================================================-->
+    <PTYPE name="DHCPV4_MODE"
+           method="select"
+	   pattern="None(0) DHCP-Server(1) DHCP-Relay(3)"
+	   help="dhcpv4 modes"/>
+<!--=======================================================-->
+    <PTYPE name="DHCPV6_MODE"
+           method="select"
+	   pattern="Stateless(1) Stateful(0)"
+	   help="dhcpv6 modes"/>
+<!--=======================================================-->
+    <PTYPE name="RIP_DIRECTION"
+           method="select"
+	   pattern="None(0) In-only(1) Out-only(2) Both(3)"
+	   help="rip direction"/>
+<!--=======================================================-->
+    <PTYPE name="RIP_VERSION"
+           method="select"
+	   pattern="Disabled(0) Rip1(1) Rip2B(2) Rip2M(3)"
+	   help="rip version"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_DIRECTION"
+           method="select"
+	   pattern="Inititator(0) Responder(1) Both(2)"
+	   help="vpn direction"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_PROTOCOL_VERSION"
+           method="select"
+	   pattern="IPV4(2) IPV6(10)"
+	   help="vpn protocol version"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_EXCHANGE_MODE"
+           method="select"
+	   pattern="Main(0) Aggressive(1)"
+	   help="vpn exchange mode"/>
+<!--=======================================================-->
+    <PTYPE name="WAN_HOST"
+           method="select"
+	   pattern="ANY(0) Specify_WAN_IPs(1)"
+	   help="Intel Amt Wan Host type"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_LOCAL_IDENTIFIER_TYPE"
+           method="select"
+	   pattern="Local-Wan-IP(0) FQDN(1) User-FQDN(2) DER-ASN1-DN(3)"
+	   help="vpn local/remote identifier type"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_ENCRYPTION_ALG"
+           method="select"
+	   pattern="None(0) DES(1) 3DES(2) AES-128(3) AES-192(4) AES-256(5) AES-CCM(6) AES-GCM(7) TWOFISH_128(8) TWOFISH_192(9) TWOFISH_256(10) BLOWFISH(11) CAST128(12)"
+	   help="vpn encryption algorithm"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_AUTHENTICATION_ALG"
+           method="select"
+	   pattern="MD5(1) SHA-1(2) SHA2-256(3) SHA2-384(4) SHA2-512(5)"
+	   help="vpn authentication algorithm"/>
+<!--=======================================================-->
+    <PTYPE name="MULTI_VPN_ENCRYPTION_ALG"
+           method="select"
+	   pattern="None(1) DES(2) 3DES(4) AES-128(8) AES-192(16) AES-256(32) AES-CCM(64) AES-GCM(128) TWOFISH_128(256) TWOFISH_192(512) TWOFISH_256(1024) BLOWFISH(2048) CAST128(4096)"
+	   help="vpn encryption algorithm"/>
+<!--=======================================================-->
+    <PTYPE name="MULTI_VPN_AUTHENTICATION_ALG"
+           method="select"
+	   pattern="MD5(2) SHA-1(4) SHA2-256(8) SHA2-384(16) SHA2-512(32) SHA2-224(64)"
+	   help="vpn authentication algorithm"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_AUTH_TYPE"
+           method="select"
+	   pattern="Pre-shared-Key(0) RSA-Signature(1)"
+	   help="vpn authentication type"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_KEEPALIVE_PERIOD"
+           method="integer"
+	   pattern="10..999"
+       help="keepalive detection period in seconds"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_KEEPALIVE_FAILURE_COUNT"
+           method="integer"
+	   pattern="3..99"
+	   help="keepalive failure count"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_DH_GROUP"
+           method="select"
+	   pattern="None(0) Group1(1) Group2(2) Group5(5)"
+	   help="vpn Diffie-Hellman (DH) Groups"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_POLICY_TYPE"
+           method="select"
+	   pattern="Auto-Policy(1) Manual-Policy(2)"
+	   help="vpn policy type"/>
+<!--=======================================================-->
+    <PTYPE name="SA_LIFETIME"
+           method="select"
+	   pattern="Seconds(0) KBytes(1)"
+	   help="vpn sa lifetime"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_REMOTE_ENDPOINT_TYPE"
+           method="select"
+	   pattern="IP-Address(0) FQDN(1)"
+	   help="vpn remote end point type"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_NTWK_TYPE"
+           method="select"
+	   pattern="ANY(0) SINGLE(1) RANGE(2) SUBNET(3)"
+	   help="vpn network type"/>
+<!--=======================================================-->
+    <PTYPE name="VPN_XAUTH_TYPE"
+           method="select"
+	   pattern="None(0) IPSecHost(1) EdgeDevice-UserDatabase(2) EdgeDevice-RadiusPAP(3) EdgeDevice-RadiusCHAP(4) EdgeDevice-Radius-MSCHAP(5) EdgeDevice-Radius-MSCHAPv2(6) EdgeDevice-Active-Directory(7) EdgeDevice-POP3(8) EdgeDevice-LDAP(9) EdgeDevice-NTDOMAIN(10)"
+	   help="xauth type"/>
+<!--=======================================================-->
+    <PTYPE name="RULE_TYPE"
+           method="select"
+	   pattern="WAN-To-LAN/Inbound(INSECURE_SECURE) LAN-To-WAN/Outbound(SECURE_INSECURE)"
+	   help="firewall rule type"/>
+<!--=======================================================-->
+    <PTYPE name="ZONE_RULE_TYPE"
+           method="select"
+	   pattern="SECURE_LAN(SECURE) SECURE_VLAN(SECURE_VLAN) INSECURE_WAN(INSECURE) DMZ(PUBLIC)"
+	   help="firewall rule type"/>
+<!--=======================================================-->
+      <PTYPE name="SER_TYPE"
+           method="select"
+	   pattern="NORMAL(NORMAL) CUSTOM(CUSTOM)"
+	   help="firewall service type"/>
+<!--=======================================================-->
+
+    <PTYPE name="SERVICE"
+           method="select"
+	   pattern="ANY(ANY) AIM(AIM) BGP(BGP) BOOTP_CLIENT(BOOTP_CLIENT) BOOTP_SERVER(BOOTP_SERVER) CU-SEEME:UDP(CU-SEEME:UDP) CU-SEEME:TCP(CU-SEEME:TCP) DNS:UDP(DNS:UDP) DNS:TCP(DNS:TCP) FINGER(FINGER) FTP(FTP) HTTP(HTTP) HTTPS(HTTPS) ICMP-TYPE-3(ICMP-TYPE-3) ICMP-TYPE-4(ICMP-TYPE-4) ICMP-TYPE-5(ICMP-TYPE-5) ICMP-TYPE-6(ICMP-TYPE-6) ICMP-TYPE-7(ICMP-TYPE-7) ICMP-TYPE-8(ICMP-TYPE-8) ICMP-TYPE-9(ICMP-TYPE-9) ICMP-TYPE-10(ICMP-TYPE-10) ICMP-TYPE-11(ICMP-TYPE-11) ICMP-TYPE-13(ICMP-TYPE-13) ICQ(ICQ) IMAP2(IMAP2) IMAP3(IMAP3) IRC(IRC) NEWS(NEWS) NFS(NFS) NNTP(NNTP) PING(PING) POP3(POP3) PPTP(PPTP) RCMD(RCMD) REAL-AUDIO(REAL-AUDIO) REXEC(REXEC) RLOGIN(RLOGIN) RTELNET(RTELNET) RTSP:TCP(RTSP:TCP) RTSP:UDP(RTSP:UDP) SFTP(SFTP) SMTP(SMTP) SNMP:TCP(SNMP:TCP) SNMP:UDP(SNMP:UDP) SNMP-TRAPS:TCP(SNMP-TRAPS:TCP) SNMP-TRAPS:UDP(SNMP-TRAPS:UDP) SQL-NET(SQL-NET) SSH:TCP(SSH:TCP) SSH:UDP(SSH:UDP) STRMWORKS(STRMWORKS) TACACS(TACACS) TELNET(TELNET) TFTP(TFTP) RIP(RIP) IKE(IKE) SHTTPD(SHTTPD) IPSEC-UDP-ENCAP(IPSEC-UDP-ENCAP) IDENT(IDENT) VDOLIVE(VDOLIVE) SSH(SSH) SIP-TCP(SIP-TCP) SIP-UDP(SIP-UDP)"
+	   help="service type"/>
+<!--=======================================================-->
+
+<PTYPE name="TSERVICE"
+           method="select"
+	   pattern="AIM(AIM) BGP(BGP) BOOTP_CLIENT(BOOTP_CLIENT) BOOTP_SERVER(BOOTP_SERVER) CU-SEEME:UDP(CU-SEEME:UDP) CU-SEEME:TCP(CU-SEEME:TCP) DNS:UDP(DNS:UDP) DNS:TCP(DNS:TCP) FINGER(FINGER) FTP(FTP) HTTP(HTTP) HTTPS(HTTPS) ICMP-TYPE-3(ICMP-TYPE-3) ICMP-TYPE-4(ICMP-TYPE-4) ICMP-TYPE-5(ICMP-TYPE-5) ICMP-TYPE-6(ICMP-TYPE-6) ICMP-TYPE-7(ICMP-TYPE-7) ICMP-TYPE-8(ICMP-TYPE-8) ICMP-TYPE-9(ICMP-TYPE-9) ICMP-TYPE-10(ICMP-TYPE-10) ICMP-TYPE-11(ICMP-TYPE-11) ICMP-TYPE-13(ICMP-TYPE-13) ICQ(ICQ) IMAP2(IMAP2) IMAP3(IMAP3) IRC(IRC) NEWS(NEWS) NFS(NFS) NNTP(NNTP) PING(PING) POP3(POP3) PPTP(PPTP) RCMD(RCMD) REAL-AUDIO(REAL-AUDIO) REXEC(REXEC) RLOGIN(RLOGIN) RTELNET(RTELNET) RTSP:TCP(RTSP:TCP) RTSP:UDP(RTSP:UDP) SFTP(SFTP) SMTP(SMTP) SNMP:TCP(SNMP:TCP) SNMP:UDP(SNMP:UDP) SNMP-TRAPS:TCP(SNMP-TRAPS:TCP) SNMP-TRAPS:UDP(SNMP-TRAPS:UDP) SQL-NET(SQL-NET) SSH:TCP(SSH:TCP) SSH:UDP(SSH:UDP) STRMWORKS(STRMWORKS) TACACS(TACACS) TELNET(TELNET) TFTP(TFTP) RIP(RIP) IKE(IKE) SHTTPD(SHTTPD) IPSEC-UDP-ENCAP(IPSEC-UDP-ENCAP) IDENT(IDENT) VDOLIVE(VDOLIVE) SSH(SSH) SIP-TCP(SIP-TCP) SIP-UDP(SIP-UDP)"
+	   help="TrafficSelector service type"/>
+<!--=======================================================-->
+
+    <PTYPE name="SERVICE6"
+           method="select"
+	   pattern="ANY(ANY) AIM(AIM) BGP(BGP) BOOTP_CLIENT(BOOTP_CLIENT) BOOTP_SERVER(BOOTP_SERVER) CU-SEEME:UDP(CU-SEEME:UDP) CU-SEEME:TCP(CU-SEEME:TCP) DNS:UDP(DNS:UDP) DNS:TCP(DNS:TCP) FINGER(FINGER) FTP(FTP) HTTP(HTTP) HTTPS(HTTPS) ICMPv6-TYPE-1(ICMPv6-TYPE-1) ICMPv6-TYPE-2(ICMPv6-TYPE-2) ICMPv6-TYPE-3(ICMPv6-TYPE-3) ICMPv6-TYPE-4(ICMPv6-TYPE-4) ICMPv6-TYPE-127(ICMPv6-TYPE-127) ICMPv6-TYPE-128(ICMPv6-TYPE-128) ICMPv6-TYPE-134(ICMPv6-TYPE-134) ICMPv6-TYPE-135(ICMPv6-TYPE-135) ICMPv6-TYPE-136(ICMPv6-TYPE-136) ICMPv6-TYPE-137(ICMPv6-TYPE-137) ICMPv6-TYPE-255(ICMPv6-TYPE-255) ICQ(ICQ) IMAP2(IMAP2) IMAP3(IMAP3) IRC(IRC) NEWS(NEWS) NFS(NFS) NNTP(NNTP) PING(PING) POP3(POP3) PPTP(PPTP) RCMD(RCMD) REAL-AUDIO(REAL-AUDIO) REXEC(REXEC) RLOGIN(RLOGIN) RTELNET(RTELNET) RTSP:TCP(RTSP:TCP) RTSP:UDP(RTSP:UDP) SFTP(SFTP) SMTP(SMTP) SNMP:TCP(SNMP:TCP) SNMP:UDP(SNMP:UDP) SNMP-TRAPS:TCP(SNMP-TRAPS:TCP) SNMP-TRAPS:UDP(SNMP-TRAPS:UDP) SQL-NET(SQL-NET) SSH:TCP(SSH:TCP) SSH:UDP(SSH:UDP) STRMWORKS(STRMWORKS) TACACS(TACACS) TELNET(TELNET) TFTP(TFTP) RIP(RIP) IKE(IKE) SHTTPD(SHTTPD) IPSEC-UDP-ENCAP(IPSEC-UDP-ENCAP) IDENT(IDENT) VDOLIVE(VDOLIVE) SSH(SSH) SIP-TCP(SIP-TCP) SIP-UDP(SIP-UDP)"
+	   help="service type"/>
+
+<!--=======================================================-->
+    <PTYPE name="OP_FREQ"
+           method="select"
+	   pattern="2.4GHz(b) 5GHz(a)"
+	   help="Dot11 Radio operating frequency band"/>
+<!--=======================================================-->
+    <PTYPE name="2.4_MODE"
+           method="select"
+	   pattern="g_and_b(212992) g_only(196608) b_only(196607) ng(475136) n_only(131072)"
+	   help="Dot11 Radio Mode"/>
+<!--=======================================================-->
+    <PTYPE name="CONTROL_BAND"
+           method="select"
+	   pattern="Upper(1) Lower(0)" 
+	   help="Dot11 Radio control band"/>
+<!--=======================================================-->
+    <PTYPE name="TXRATE"
+           method="select"
+	   pattern="Best_Automatic(0) MCS15-130[270](143) MCS14-117[243](142) MCS13-104[216](141) MCS12-78[162](140) MCS11-52[108](139) MCS10-39[81](138) MCS9-26[54](137) MCS8-13[27](136) MCS7-65[135](135) MCS6-58.5[121.5](134) MCS5-52[108](133) MCS4-39[81](132) MCS3-26[54](131) MCS2-19.5[40.5](130) MCS1-13[27](129) MCS0-6.5[13.5](128) 54(12) 48(8) 36(13) 24(9) 18(14) 12(10) 11(24) 9(15) 6(11) 5.5(25) 2(26) 1(27)"
+	   help="Dot11 Radio Transmission Rate"/>
+<!--=======================================================-->
+    <PTYPE name="ACTION_TYPE"
+           method="select"
+	   pattern="ALWAYS_BLOCK(DROP) ALWAYS_ALLOW(ACCEPT) BLOCK_BY_SCHEDULE(DROP_BY_SCHED_MATCH) ALLOW_BY_SCHEDULE(ACCEPT_BY_SCHED_MATCH)"
+	   help="firewall rule action type"/>
+<!--=======================================================-->
+    <PTYPE name="USER_ADDRESS_TYPE"
+           method="select"
+	   pattern="ANY(0) SINGLE_ADDRESS(1) ADDRESS_RANGE(2)"
+	   help="firewall rule address type"/>
+<!--=======================================================-->
+<PTYPE name="URL_Filtering_ACL_TYPE"
+           method="select"
+	   pattern="SINGLE_IP(0) ADDRESS_RANGE(1) INTERFACE(2)"
+	   help="url filtering acl type"/>
+<!--=======================================================-->
+ <PTYPE name="URL_Filtering_ACL_ACTION_TYPE"
+       method="select"
+       pattern="White_list(1) Black_list(0)"
+       help="Black or White List type"/>   
+<!--=======================================================-->
+    <PTYPE name="SNAT_ADDRESS_TYPE"
+           method="select"
+	   pattern="WAN_INTERFACE_ADDRESS(7)"
+	   help="firewall rule snat address type"/>
+<!--=======================================================-->
+    <PTYPE name="LOG_TYPE"
+           method="select"
+	   pattern="NEVER(1) ALWAYS(2)"
+	   help="firewall rule log enable/disable"/>
+<!--=======================================================-->
+    <PTYPE name="FIREWALL_QOS"
+           method="select"
+	   pattern="Normal-Service(0) Minimize-Cost(2) Maximize-Reliability(4) Maximize-Throughput(8) Minimize-Delay(16)"
+	   help="firewall type of service"/>
+<!--=======================================================-->
+    <PTYPE name="INTERNET_DEST_TYPE"
+           method="select"
+	   pattern="WAN(WAN1) OTHERS(OTHER)"
+	   help="internet destination type"/>
+<!--=======================================================-->
+    <PTYPE name="WAN_INTERFACE_TYPE"
+           method="select"
+	   pattern="WAN1(WAN1) WAN2(WAN2)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="EXT_INTERFACE_TYPE_FOR_FIREWALL"
+           method="select"
+	   pattern="Dedicated_WAN(WAN1) Configurable_WAN(WAN2)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="EXT_INTERFACE_TYPE"
+           method="select"
+	   pattern="Dedicated_WAN(WAN1)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="EXT_INTERFACE_TYPE1"
+           method="select"
+	   pattern="Dedicated_WAN(WAN1) Configurable_WAN(WAN2)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="EXT_INTERFACE_TYPE_DUAL_WANS"
+           method="select"
+	   pattern="Dedicated_WAN(WAN1) Configurable_WAN(WAN2)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="DMZ_ENABLE"
+ 	       method="select"
+           pattern="Y(DMZ) N(LAN)"
+           help="enable/disable dmz"/>       
+<!--=======================================================-->
+    <PTYPE name="INTERFACE_TYPE"
+           method="select"
+	   pattern="WAN1(WAN1) WAN2(WAN2) LAN(LAN) DMZ(DMZ)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="INTERFACE_TYPE_CAPTUREPACKET"
+           method="select"
+	   pattern="WAN1(WAN1) WAN2(WAN2) LAN(LAN)"
+       help="WAN interface type"/>
+
+<!--=======================================================-->
+      <PTYPE name="CONFIGURABLE_WAN_TYPE"
+           method="select"
+	   pattern="WAN2(WAN2) DMZ(DMZ)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="ROUTE4_INTERFACE_TYPE"
+           method="select"
+	   pattern="WAN1(WAN1) WAN2(WAN2) LAN(LAN) DMZ(DMZ)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="ROUTING_MODE_TYPE"
+           method="select"
+           pattern="NAT/Classical(1) Transparent(5) Bridge(6)"
+	   help="routing mode type"/>
+<!--=======================================================-->
+    <PTYPE name="NATTED_INTERFACE_NAME"
+           method="select"
+	   pattern="WAN1(1) WAN2(2) BOTH(3) NONE(4)"
+	   help="Select WAN interface"/>
+<!--=======================================================-->
+    <PTYPE name="VLAN_ID" 
+	   pattern="(409[0-5]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[1-9])"
+           help="Number in the range 1-4095"/>
+<!--=======================================================-->
+    <PTYPE name="IP_ADDR"
+	   pattern="(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))"
+	   help="IP address AAA.BBB.CCC.DDD where each part is in the range 0-255"/>
+<!--=======================================================-->
+    <PTYPE name="IPV6_ADDR"
+	   pattern="[0-9A-Fa-f.:]+"
+	   help="IP address abcd:abcd:abcd:abcd:abcd:abcd:abcd:abcd where each part is in the range [0-9A-Fa-f:]"/>
+<!--=======================================================-->
+    <PTYPE name="ADDR"
+       pattern="(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|((([0-9a-fA-F]{1,4}:){1,1}(:[0-9a-fA-F]{1,4}){1,6})|(([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5})|(([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4})|(([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3})|(([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2})|(([0-9a-fA-F]{1,4}:){1,6}(:[0-9a-fA-F]{1,4}){1,1})|((([0-9a-fA-F]{1,4}:){1,7}|:):)|(:(:[0-9a-fA-F]{1,4}){1,7}))"
+       help="IPV4 or IPv6 address depending upon protocol selected IPV4 or IPV6"/>
+<!--=======================================================-->
+    <PTYPE name="MAC_ADDR_T"
+	   pattern="([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])"
+	   help="MAC address AA:BB:CC:DD:EE:FF where each part is in the range 00-FF"/>
+<!--=======================================================-->
+    <PTYPE name="UINT"
+	   pattern="[0-9]+"
+	   help="Unsigned integer"/>
+<!--=======================================================-->
+    <PTYPE name="FW_RULE_ROW_IDS"
+	   pattern="(([0-9]+)(([,]([0-9]+))*))"
+	   help="Row id(s) a,b,c where each part is a valid rowid in the range [0-9]"/>
+<!--=======================================================-->
+<PTYPE name="MULTIPLE_PORT"
+	   pattern="((6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[1-9])(([,](6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[1-9]))*))"
+       help="comma separated list of Ports ranging from 1-65535."/>
+<!--=======================================================-->
+    <PTYPE name="LEASE_TIME"
+	   method="integer"
+	   pattern="1..262800"
+	   help="number in range of 1 to 262800 "/>
+<!--=======================================================-->
+    <PTYPE name="DHCPV6S_REBIND_TIME"
+	   method="integer"
+	   pattern="0..604800"
+	   help="number in range of 0 to 604800 "/>
+<!--=======================================================-->
+    <PTYPE name="DHCPV6S_DNS_T"
+	   method="select"
+	   pattern=" useDnsProxy(1) useDnsFromISP(2) useEnteredDns(3)"
+       help="dhcpv6 dns server types"/>
+<!--=======================================================-->
+    <PTYPE name="DDNS_SERVICE_TYPE"
+           method="select"
+           pattern="NONE(0) DynDns(1) DLinkDdns(3) Oray(4)"
+           help="select the Ddns Service type"/>   
+<!--=======================================================-->
+    <PTYPE name="STRING"
+	   pattern=".+"
+	   help="String"/>
+<!--=======================================================-->
+     <PTYPE name="DHCP_DOMAIN"
+            pattern=".*"
+            help="String"/>
+<!--=======================================================-->
+    <PTYPE name="RIP_STRING"
+	   pattern="[0-9/@:]+"
+	   help="String in the format YYYY/MM/DD@HH:MM:SS"/>
+<!--=======================================================-->
+    <PTYPE name="STRING_UINT"
+	   pattern="[0-9]+"
+	   help="Integer string"/>
+<!--=======================================================-->
+<PTYPE name="STRING_FILE"
+          pattern="[0-9a-zA-Z_.]+"
+          help="FileName string"/>
+<!--=======================================================-->
+<PTYPE name="STRING_DOMAIN_NAME"
+          pattern="[0-9a-zA-Z_.-]+"
+          help="Domain Name string"/>
+<!--=======================================================-->
+    <PTYPE name="LINUX_IFACE"
+	   pattern="([a-z]|[A-Z])([a-z]|[A-Z])([a-z]|[A-Z])[0-9]"
+	   help="String"/>
+<!--=======================================================-->
+    <PTYPE name="PORT"
+	   method="integer"
+	   pattern="0..65535"
+	   help="Port number"/>
+<!--=======================================================-->
+    <PTYPE name="BOOL"
+           method="select"
+	   pattern="true(1) false(0)"
+	   help="Boolean choice"/>
+<!--=======================================================-->
+    <PTYPE name="TIME_HHMMSS"
+	   pattern="(([0-1][0-9]|[2][0-3]):[0-5][0-9]:[0-5][0-9])"
+	   help="HH(00-23):MM(00-59):SS(00-59) using 24 hour clock"/>
+<!--=======================================================-->
+    <PTYPE name="TIME_HH"
+	   pattern="([0-1][0-9]|[2][0-3])"
+	   help="HH(00-23) using 24 hour clock"/>
+<!--=======================================================-->
+    <PTYPE name="TIME_H"
+	   pattern="([0][1-9]|[1][0-2])"
+	   help="H(01-12) using 12 hour clock"/>
+<!--=======================================================-->
+    <PTYPE name="TIME_MM"
+	   pattern="([0-5][0-9])"
+	   help="minute in the format MM(00-59)"/>
+<!--=======================================================-->
+    <PTYPE name="TIME_SS"
+	   pattern="([0-5][0-9])"
+	   help="Second in the format SS(00-59)"/>
+<!--=======================================================-->
+    <PTYPE name="TZ_OFFSET_HR"
+	   method="integer"
+	   pattern="-12..12"
+	   help="Time offset from UTC"/>
+<!--=======================================================-->
+    <PTYPE name="MONTH_MM"
+	   pattern="([0][1-9]|[1][0-2])"
+	   help="Month in the format MM(01-12)"/>
+<!--=======================================================-->
+    <PTYPE name="DAY_DD"
+	   pattern="([0][1-9]|[1-2][0-9]|[3][0-1])"
+	   help="Day in the format DD(01-31)"/>
+<!--=======================================================-->
+       <PTYPE name="DAY_MONTH"
+            method="integer"
+           pattern="1..31"
+              help="Calendar day of month"/>
+<!--=======================================================-->
+	 <PTYPE name="SYSLOG_SEVERITY"
+	   method="select"
+	   pattern="All(0) Log-Debug(128) Log-Info(64) Log-Notice(32)
+       Log-Warning(16) Log-Error(8) Log-Critical(4) Log-Alert(2) Log-Emerg(1)"
+	   help="syslog server severity types"/>
+
++<!--=======================================================-->
+     <PTYPE name="SYSLOG_FACILITY"
+	   method="select"
+	   pattern="All(255) Kernel(0) System(3) Wireless(16) Network(18) VPN(19) WCF(20) Firewall(21)"
+	   help="syslog server facility ID types"/>
++<!--=======================================================-->
+       <PTYPE name="TRAFFIC_TYPE"
+            method="select"
+           pattern="BestEffort(0) Background(1) Spare(2) ExcellentEffort(3) ControlledLoad(4) Video(5) Voice(6) NetworkControl(7)" 
+              help="Month of the year"/>
+       <!--=======================================================-->
+       <PTYPE name="MONTH_NAME"
+            method="select"
+           pattern="January(1) February(2) March(3) April(4) May(5) June(6) July(7) August(8) September(9) October(10) November(11) December(12)"
+              help="Month of the year"/>
+       <!--=======================================================-->
+       <PTYPE name="TZ_NAME"
+            method="select"
+            pattern="GMT-12:00::International-Date-Line-West(0)
+            GMT-11:00::Midway-Island-Samoa(1)
+            GMT-10:00::Hawaii(2)
+            GMT-09:00::Alaska(3)
+            GMT-08:00::Tijuana-Baja-California(4)
+            GMT-08:00::Pacific-Time-US-and-Canada(5)
+            GMT-07:00::Mountain-Time-US-and-Canada(6)
+            GMT-07:00::Chihuahua-La-Paz-Mazatlan-Old(7)
+            GMT-07:00::Chihuahua-La-Paz-Mazatlan-New(8)
+            GMT-07:00::Arizona(9)
+            GMT-06:00::Saskatchewan(10)
+            GMT-06:00::Guadalajara-Mexico-City-Monterrey-Old(11)
+            GMT-06:00::Guadalajara-Mexico-City-Monterrey-New(12)
+            GMT-06:00::Central-Time-US-and-Canada(13)
+            GMT-06:00::Central-America(14)
+            GMT-05:00::Indiana-East(15)
+            GMT-05:00::Eastern-Time-US-and-Canada(16)
+            GMT-05:00::Bogota-Lima-Quito-Rio-Branco(17)
+            GMT-04:30::Caracas(18)
+            GMT-04:00::Santiago(19)
+            GMT-04:00::Manaus(20)
+            GMT-04:00::La-Paz(21)
+            GMT-04:00::Atlantic-Time-Canada(22)
+            GMT-03:30::Newfoundland(23)
+            GMT-03:00::Montevideo(24)
+            GMT-03:00::Greenland(25)
+            GMT-03:00::Georgetown(26)
+            GMT-03:00::Buenos-Aires(27)
+            GMT-03:00::Brasilia(28)
+            GMT-02:00::Mid-Atlantic(29)
+            GMT-01:00::Cape-Verde-Is(30)
+            GMT-01:00::Azores(31)
+            GMT::Casablanca(32)
+            GMT::Greenwich-Mean-time-Dublin--Edinburgh--Lisbon--London(33)
+            GMT::Monrovia-Reykjavik(34)
+            GMT+01:00::Amsterdam-Berlin-Bern-Rome-Stockholm-Vienna(35)
+            GMT+01:00::Belgrade-Bratislava-Budapest-Ljubljana-Prague(36)
+            GMT+01:00::Brussels-Copenhagen-Madrid-Paris(37)
+            GMT+01:00::Sarajevo-Skopje-Warsaw-Zagreb(38)
+            GMT+01:00::West-Central-Africa(39)
+            GMT+02:00::Amman(40)
+            GMT+02:00::Athens-Bucharest-Istanbul(41)
+            GMT+02:00::Beirut(42)
+            GMT+02:00::Cairo(43)
+            GMT+02:00::Harare-Pretoria(44)
+            GMT+02:00::Helsinki--Kyiv-Riga-Sofia-Tallinn-Vilnius(45)
+            GMT+02:00::Jerusalem(46)
+            GMT+02:00::Minsk(47)
+            GMT+02:00::Windhoek(48)
+            GMT+03:00::Baghdad(49)
+            GMT+03:00::Kuwait-Riyadh(50)
+            GMT+03:00::Moscow-St-Petersburg-Volgograd(51)
+            GMT+03:00::Nairobi(52)
+            GMT+03:00::Tbilisi(53)
+            GMT+03:30::Tehran(54)
+            GMT+04:00::Abu-Dhabi(55)
+            GMT+04:00::Baku(56)
+            GMT+04:00::Caucasus-Standard-Time(57)
+            GMT+04:00::Port-Louis(58)
+            GMT+04:00::Yerevan(59)
+            GMT+04:30::Kabul(60)
+            GMT+05:00::Ekaterinburg(61)
+            GMT+05:00::Islamabad-Karachi(62)
+            GMT+05:00::Tashkent(63)
+            GMT+05:30::Chennai-Kolkata-Mumbai-New-Delhi(64)
+            GMT+05:30::Sri-Jayawardenepura(65)
+            GMT+05:45::Kathmandu(66)
+            GMT+06:00::Almaty-Novosibirsk(67)
+            GMT+06:00::Astana-Dhaka(68)
+            GMT+06:30::Yangon-(Rangoon)(69)
+            GMT+07:00::Bangkok-Hanoi-Jakarta(70)
+            GMT+07:00::Krasnoyarsk(71)
+            GMT+08:00::Beijing-Chongqing-Hong-Kong-Urumqi(72)
+            GMT+08:00::Irkutsk--Ulaan-Bataar(73)
+            GMT+08:00::Kuala-Lumpur--Singapore(74)
+            GMT+08:00::Perth(75)
+            GMT+08:00::Taipei(76)
+            GMT+09:00::Osaka-Sapporo-Tokyo(77)
+            GMT+09:00::Seoul(78)
+            GMT+09:00::Yakutsk(79)
+            GMT+09:30::Adelaide(80)
+            GMT+09:30::Darwin(81)
+            GMT+10:00::Brisbane(82)
+            GMT+10:00::Canberra-Melbourne-Sydney(83)
+            GMT+10:00::Guam-Port-Moresby(84)
+            GMT+10:00::Hobart(85)
+            GMT+10:00::Vladivostok(86)
+            GMT+11:00::Magadan-Solomon-Is--New-Caledonia(87)
+            GMT+12:00::Auckland-Wellington(88)
+            GMT+12:00::Fiji--Kamchatka--Marshall-Is(89)
+            GMT+13:00::Nuku'alofa(90)
+            GMT+14:00::Kiribati,Western-Samoa(91)"
+			   help = "Timezones"/>
+ <!--=======================================================-->
+       <PTYPE name="YYYY_YEAR"
+            method="integer"
+           pattern="1970..2037"
+              help="Year"/>
+    <!--=======================================================-->
+	<PTYPE name="CHOICE"
+	       method="select"
+	       pattern="Y(Y) N(N)"
+	       help="Boolean choice"/>
+    <!--=======================================================-->
+	<PTYPE name="CHOICE_INT"
+	       method="select"
+	       pattern="Y(1) N(0)"
+	       help="Boolean choice"/>
+    <!--=======================================================-->
+	<PTYPE name="CHOICE_INT_CP"
+	       method="select"
+	       pattern="Y(2) N(0)"
+	       help="Boolean choice"/>
+    <!--=======================================================-->
+	<PTYPE name="ROUTE_MODE"
+           method="select"
+           pattern="NAT(1) CLAASICAL(0)"
+           help="Select Route Mode"/>
+    <!--=======================================================-->
+	<PTYPE name="FIREWALL_POLICY"
+	       method="select"
+	       pattern="Allow(1) Block(0)"
+	       help="Boolean choice"/>
+     <!--=======================================================-->
+     <PTYPE name="AUTHENTICATION_TYPE"
+	       method="select"
+	       pattern="Local_User_Database(0) External_Radius_Server(1) External_LDAP_Server(2) External_AD_Server(3) External_NT_Domain_Server(4) External_POP3_Server(5) None_Authentication(6)"
+	       help="Authentication type"/>
+    <!--=======================================================-->
+	<PTYPE name="WPS_STATUS"
+	       method="select"
+	       pattern="Enable(1) Disable(0)"
+           help="WPS status"/>
+    <!--=======================================================-->
+	<PTYPE name="ACC_STATUS"
+	       method="select"
+	       pattern="Enable(1) Disable(0)"
+	       help="Accounting status"/>
+    <!--=======================================================-->
+	<PTYPE name="RTS_PROTECTION"
+	       method="select"
+	       pattern="CTS-to-Self_Protection(1) None(0)"
+	       help="RTSCTS Protection mode"/>
+    <!--=======================================================-->
+	<PTYPE name="CONN_TYPE"
+	       method="select"
+	       pattern="Idle_Time(1) Keep_Connected(0)"
+	       help="Connectivity type for PPPOE Profiles"/>
+    <!--=======================================================-->
+	<PTYPE name="IPSOURCE"
+	       method="select"
+	       pattern="Get_Dynamically_from_ISP(1) Use_Static_IP_Address(0)"
+	       help="IPSOURCE type for PPPOE Profiles"/>
+    <!--=======================================================-->
+	<PTYPE name="DNS_MODE"
+	       method="select"
+	       pattern="Get_Dynamically_from_ISP(1) Use_These_DNS_Servers(0)"
+	       help="DNS SOURCE type for PPPOE Profiles"/>
+    <!--=======================================================-->
+	<PTYPE name="AUTH_OPT"
+	       method="select"
+	       pattern="Auto-negotiate(1) PAP(2) CHAP(3) MS-CHAP(4) MS-CHAPv2(5)"
+	       help="Authentication optins for PPPOE profiles"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_COUNTRY_T"
+	       method="select"
+	       pattern="USA(840) INDIA(356) CANADA(124) HONG_KONG(344) CHINA(156) AUSTRALIA(36) SINGAPORE(702) THAILAND(764) BRUNEI_DARUSSALAM(96) INDONESIA(360) NEW_ZEALAND(554) PHILIPPINES(608) VIETNAM(704)"
+	       help="802.11 Security Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_SECURITY_T"
+	       method="select"
+	       pattern="OPEN(OPEN) WEP(WEP) WPA2(WPA2) WPA+WPA2(WPA+WPA2)"
+	       help="802.11 Security Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_AP_ACL_POL_T"
+	       method="select"
+	       pattern="Open(Open) Allow(Allow) Deny(Deny)"
+	       help="802.11 Access Point ACL Policy Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_RAP_SECURITY_T"
+	       method="select"
+	       pattern="OPEN(OPEN) WEP(WEP) WPA(WPA) WPA2(WPA2) WPA+WPA2(WPA+WPA2)"
+	       help="802.11 Rogue AP Security Types"/>
+    <!--=======================================================-->
+	<PTYPE name="WEP_KEY_IDX_T"
+	       method="select"
+	       pattern="1(0) 2(1) 3(2) 4(3)"
+	       help="WEP key index type (1-4)"/>
+    <!--=======================================================-->
+	<PTYPE name="WEP_AUTH"
+	       method="select"
+	       pattern="Open-System(Open) Shared-Key(Shared)"
+	       help="WEP Authentication Types"/>
+    <!--=======================================================-->
+	<PTYPE name="WEP_ENCR"
+	       method="select"
+	       pattern="64-bit-WEP(64) 128-bit-WEP(128)"
+	       help="WEP Encryption Types"/>
+    <!--=======================================================-->
+	<PTYPE name="WPA_AUTH"
+	       method="select"
+	       pattern="PSK(PSK) RADIUS(RADIUS) PSK+RADIUS(PSK+RADIUS)"
+	       help="WPA Authentication Types"/>
+    <!--=======================================================-->
+	<PTYPE name="WPA_ENCR"
+	       method="select"
+	       pattern="CCMP(CCMP) TKIP+CCMP(TKIP+CCMP)"
+	       help="WPA Encryption Types"/>
+    <!--=======================================================-->
+	<PTYPE name="RAP_WPA_AUTH"
+	       method="select"
+	       pattern="NONE(NONE) PSK(PSK) RADIUS(RADIUS) PSK+RADIUS(PSK+RADIUS)"
+	       help="WPA Authentication Types"/>
+    <!--=======================================================-->
+	<PTYPE name="RAP_WPA_ENCR"
+	       method="select"
+	       pattern="NONE(NONE) TKIP(TKIP) CCMP(CCMP) TKIP+CCMP(TKIP+CCMP)"
+	       help="WPA Encryption Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DEF_COS_T"
+	       method="select"
+	       pattern="Background(Background) BestEffort(BestEffort) Video(Video) Voice(Voice)"
+	       help="Class Of Service Types"/>
+    <!--=======================================================-->
+	<PTYPE name="COS_T"
+	       method="select"
+	       pattern="Default(Default) Background(Background) BestEffort(BestEffort) Video(Video) Voice(Voice)"
+	       help="Class Of Service Types"/>
+    <!--=======================================================-->
+	<PTYPE name="TOS_IDX_T"
+	       method="integer"
+	       pattern="0..63"
+	       help="IP DSCP/TOS Index Type"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_AP_ROLE_T"
+	       method="select"
+	       pattern="AP(AP) WDSRepeater(WDSRepeater) WDSRoot(WDSRoot)"
+	       help="Access Point Role Type"/>
+    <!--=======================================================-->
+	<PTYPE name="RADIO_NUM_T"
+	       method="select"
+	       pattern="1(1) 2(2) 3(4) 1+2(3) 1+3(5) 2+3 (6) 1+2+3(7)"
+	       help="Access Point Role Type"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_BAND_T"
+	       method="select"
+	       pattern="2.4GHz(b) 5GHz(a)"
+	       help="802.11 operating frequency Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_CHANNEL_SPACING_T"
+	       method="select"
+	       pattern="20MHz(20) 20-40MHz(2040)"
+	       help="802.11 channel spacing Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_TRANSMIT_POWER_T"
+	       method="select"
+	       pattern="100%(100) 75%(75) 50%(50) 25%(25) 0%(0)"
+	       help="802.11 transmit power Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_MODE_T"
+	       method="select"
+	       pattern="b(b) g(g) b+g(b+g)"
+	       help="802.11 Mode Types"/>
+    <!--=======================================================-->
+	<PTYPE name="VLAN_ID_T"
+	       method="integer"
+	       pattern="1..4095"
+	       help="VLAN ID Range Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_PREAMBLE_T"
+	       method="select"
+	       pattern="Long(Long) Short(Short)"
+	       help="802.11b Preamble Types"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_TX_POWER_GAIN_T"
+	       method="integer"
+	       pattern="-30..5, "
+	       help="802.11 Transmist Power Gain Type"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_TX_RETRY_T"
+	       method="select"
+	       pattern="1(1) 2(2) 5.5(5_5) 6(6) 9(9) 11(11) 12(12) 12(12) 18(18) 24(24) 36(36) 48(48) 54(54)"
+	       help="802.11 Rate (in Mbps) Type"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_RATES_T"
+	       method="integer"
+	       pattern="0..128"
+	       help="802.11 Number Of Frame Re-Transmission Type"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_RETRY_LIMIT"
+	       method="integer"
+	       pattern="0..128"
+	       help="802.11 Retry Limit"/>
+    <!--=======================================================-->
+	<PTYPE name="DOT11_CHANNEL_T"
+	       method="select"
+	       pattern="Auto(0) 1(1) 2(2) 3(3) 4(4) 5(5) 6(6) 7(7) 8(8) 9(9) 10(10) 11(11) 12(12) 13(13) 14(14)"
+	       help="Channel Type"/>
+    <!--=======================================================-->
+	<PTYPE name="LOG_FAC_T"
+	       method="select"
+	       pattern="Kernel(Kernel) System(System) Local0-Wireless(Local0-wireless) Local1-UTM(Local1-UTM)"
+       	       help="Logging Facility Type."/>
+    <!--=======================================================-->
+	<PTYPE name="LOG_LEVEL_T"
+	       method="select"
+	       pattern="Emergency(Emergency) Alert(Alert) Critical(Critical) Error(Error) Warning(Warning) Notification(Notification) Information(Information) Debugging(Debugging)"
+       	       help="Logging Facility Type."/>
+    <!--=======================================================-->
+	<PTYPE name="LOG_LEVEL_OPTIONS_T"
+	       method="select"
+	       pattern="Display_In_Event_Log(Display_In_Event_Log) Send_to_syslog(Send_to_syslog)"
+       	       help="Logging Level Options Type."/>
+    <!--=======================================================-->
+	<PTYPE name="LOG_SMTP_AUTH_T"
+	       method="select"
+	       pattern="None(-1) Plain(0) CRAM-MD5(1)"
+       	       help="SMTP Authentication Types."/>
+    <!--=======================================================-->
+	<PTYPE name="SCHED_UNIT_T"
+	       method="select"
+	       pattern="Never(0) Hourly(1) Daily(2) Weekly(3)"
+       	       help="Schedule Unit Types."/>
+    <!--=======================================================-->
+	<PTYPE name="SCHED_DAY_T"
+	       method="select"
+	       pattern="Sunday(0) Monday(1) Tuesday(2) Wednesday(3) Thursday(4) Friday(5) Saturday(6)"
+       	       help="Schedule Day Types."/>
+    <!--=======================================================-->
+	<PTYPE name="SCHED_TIME_T"
+	       method="select"
+	       pattern="0:00(0) 1:00(1) 2:00(2) 3:00(3) 4:00(4) 5:00(5) 6:00(6) 7:00(7) 8:00(8) 9:00(9) 10:00(10) 11:00(11)"
+       	       help="Schedule Time Units Types."/>
+    <!--=======================================================-->
+	<PTYPE name="SCHED_MERIDIEM_T"
+	       method="select"
+	       pattern="AM(0) PM(1)"
+	       help="Schedule Meridiem Types."/>
+   <!--=======================================================-->
+	<PTYPE name="MERIDIEM_T"
+	       method="select"
+	       pattern="AM(AM) PM(PM)"
+	       help="Schedule Meridiem Types."/>
+   <!--=======================================================-->
+	<PTYPE name="HOUR_T"
+	       method="integer"
+	       pattern="1..12"
+	       help="schedule time unit type."/>
+    <!--=======================================================-->
+	<PTYPE name="ETH_IFACE_T"
+	       method="select"
+	       pattern="eth0(eth0) eth1(eth1)"
+	       help="Ethernet Interface Types."/>
+    <!--=======================================================-->
+	<PTYPE name="UPNP_ADVP_T"
+	       method="integer"
+	       pattern="1..86400"
+	       help="UPnP Advertisement Period Type."/>
+    <!--=======================================================-->
+	<PTYPE name="UPNP_TTL_T"
+	       method="integer"
+	       pattern="1..255"
+	       help="UPnP Advertisement Time To Live Type."/>
+    <!--=======================================================-->
+	<PTYPE name="MTU_T"
+	       method="integer"
+           pattern="1200..1500"
+           help="mtu size"/>
+    <!--=======================================================-->
+    <PTYPE name="MTU_R"
+	       method="integer"
+           pattern="1280..1500"
+           help="mtu size"/>
+    <!--=======================================================-->
+	<PTYPE name="MTU_MIX"
+	       method="integer"
+           pattern="1200..9198"
+           help="mtu size"/>
+    <!--=======================================================-->
+    <PTYPE name="SESSION_LIMITING_SOURCE_TYPE"
+           method="select"
+	   pattern="SINGLE_IP(1) ADDRESS_RANGE(2) INTERFACE(3)"
+	   help="Session Limiting source type"/>
+    <!--=======================================================-->
+       <PTYPE name="MAXIMUM_SESSION"
+        method="integer"
+        pattern="1..999"
+        help="session range"/>
+    <!--=======================================================-->
+    <PTYPE name="DYNAMIC_TIMEOUT"
+	       method="integer"
+           pattern="60..3600"
+	       help="Dynamic filtering override interval range."/>
+    <!--=======================================================-->
+	<PTYPE name="DYNAMIC_MANAGED_ACTION"
+	       method="select"
+	       pattern="Allow(0) Block(1)"
+	       help="Boolean choice"/>
+     <!--=======================================================-->
+	<PTYPE name="MTU_TYPE"
+	       method="select"
+           pattern="Default(1) Custom(0)"
+	       help="mtu type"/>
+    <!--=======================================================-->
+    <PTYPE name="RADVD_IDLETO_T"
+	       method="integer"
+           pattern="10..1800"
+           help="RADVD idle timeout interval Type."/>
+    <!--=======================================================-->
+	<PTYPE name="PPPOE_IDLETO_T"
+	       method="integer"
+           pattern="5..999"
+	       help="PPPOE idle timeout Type."/>
+    <!--=======================================================-->
+	<PTYPE name="DTIM_INT"
+	       method="integer"
+           pattern="1..255"
+	       help="Dot11 Dtim Interval."/>
+    <!--=======================================================-->
+	<PTYPE name="RTS_INT"
+	       method="integer"
+           pattern="256..2346"
+	       help="Dot11 Rts thresold Interval."/>
+    <!--=======================================================-->
+	<PTYPE name="FRAG_INT"
+	       method="integer"
+           pattern="257..2346"
+	       help="Dot11 Fragmentation Interval."/>
+    <!--=======================================================-->
+	<PTYPE name="AUTH_TIMEOUT"
+	       method="integer"
+           pattern="1..999"
+	       help="Radius client authentication timeout Type."/>
+    <!--=======================================================-->
+    <PTYPE name="PPTP_USER_TIMEOUT"
+	       method="integer"
+           pattern="300..1800"
+           help="Radius client authentication timeout Type."/>
+    <!--=======================================================-->
+    <PTYPE name="ACCOUNTING_INTERIM_INTERVAL"
+	       method="integer"
+           pattern="300..3600"
+	       help="Radius accounting interim interval range."/>
+    <!--=======================================================-->
+    <PTYPE name="AUTO_DIAL_TIMEOUT"
+	       method="integer"
+           pattern="2..30"
+	       help="Client auto dial timeout Type."/>
+     <!--=======================================================-->
+	 <PTYPE name="DTP"
+	       method="integer"
+           pattern="1..31"
+	       help="Dot11 Radio default transmit power."/>
+    <!--=======================================================-->
+	<PTYPE name="PPPOE_AUTH_T"
+	       method="select"
+           pattern="Auto(1) PAP(2) CHAP(3) MS-CHAP(4) MS-CHAPv2(5)"
+           help="PPPOE Authentication Types."/>
+
+    <!--=======================================================-->
+	<PTYPE name="MOBILE_INTERNET_AUTH_T"
+	       method="select"
+           pattern="NONE(0) PAP(1) CHAP(2)"
+	       help="Mobile Internet Authentication Types."/>
+    <!--=======================================================-->
+	<PTYPE name="ISP_TYPE_T"
+	       method="select"
+           pattern="STATIC(1) DHCPC(0) PPPOE(2) PPTP(3) L2TP(4) Russian-PPTP(5)
+           Russian-L2TP(6) Japanese-PPPoE(7) Dual-Pppoe(9)"
+           help="ISP Types."/>
+    <!--=======================================================-->
+	<PTYPE name="ISP_TYPE_WAN2"
+	       method="select"
+           pattern="STATIC(1) DHCPC(0) PPPOE(2) PPTP(3) L2TP(4)  Russian-PPTP(5)
+           Russian-L2TP(6) Japanese-PPPoE(7) Dual-Pppoe(9) Mobile-Internet(8)" 
+	       help="WAN2 ISP Types."/>
+    <!--=======================================================-->
+	<PTYPE name="ISP_TYPE_V6_T"
+	       method="select"
+           pattern="STATIC(ifStatic6) DHCPC(dhcp6c) PPPoE(pppoe6)"
+	       help="ISP Types."/>
+    <!--=======================================================-->
+	<PTYPE name="STATELESS_MODE_T"
+	       method="select"
+           pattern="StatelessAddrAutoConfig(1) StatefulAddrAutoConfig(0)"
+	       help="stateless mode configuration."/>
+    <!--=======================================================-->
+	<PTYPE name="ISP_CONNECTIVITY_TYPE"
+	       method="select"
+           pattern="keepalive(0) idletimeout(1)"
+	       help="ISP Connectivity Types."/>
+    <!--=======================================================-->
+	<PTYPE name="PROTOCOL_TYPE"
+	       method="select"
+           pattern="TCP(6) UDP(17) BOTH(256) ICMP(1) ICMPv6(58)"
+	       help="type of protocol to be selected for a custom service."/>
+    <!--=======================================================-->
+     <PTYPE name="CUSTOM_PORT_TYPE"
+	       method="select"
+           pattern="RANGE/ICMP(0) MULTIPLE(2)"
+	       help="type to be selected for a custom service."/>
+    <!--=======================================================-->
+    <PTYPE name="ICMP_TYPE"
+	   method="integer"
+	   pattern="0..255"
+       help="number in range of 0-40(icmp) or 1-255(icmpv6) "/>
+    <!--=======================================================-->
+    <PTYPE name="QOS_T"
+	       method="select"
+           pattern="Normal-Service(0) Minimize-Cost(2) Maximize-Reliability(4) Maximize-Throughput(8) Minimize-Delay(16)"
+	       help="QoS."/>
+   <!--=======================================================-->
+	<PTYPE name="DOS_ATTACKS_T"
+	       method="integer"
+           pattern="1..10000"
+           help="range of packets sent per second in dos attack types."/>
+   <!--=======================================================-->
+	<PTYPE name="UDP_CONN_LIMIT_T"
+	       method="integer"
+           pattern="25..500"
+	       help="range of simultaneous active UDP connections to be accepted from a single computer on the LAN."/>
+<!--=======================================================-->
+	<PTYPE name="BLOCK_TRAFFIC_T"
+	       method="select"
+           pattern="Block-all-traffic(0) Block-all-traffic-except-email(1)"
+	       help="block traffic type."/>
+<!--=======================================================-->
+	<PTYPE name="TRAFFIC_T"
+	       method="select"
+           pattern="Nolimit(0) Downloadonly(1) Both Directions(2)"
+	       help="traffic meter types"/>
+<!--=======================================================-->
+	<PTYPE name="TRAFFIC_COUNTER_T"
+	       method="select"
+           pattern="SpecificTime(1) RestartCounter(0)"
+	       help="traffic counter type"/>
+<!--=======================================================-->
+	<PTYPE name="MAC_ADDR_POLICY_T"
+	       method="select"
+           pattern="Permit-And-Block-Rest(1) Block-And-Permit-Rest(0)"
+	       help="policy type for mac addresses"/>
+<!--=======================================================-->
+	<PTYPE name="NIMF_MAC_ADDR_T"
+	       method="select"
+           pattern="Use-Default-Mac(0) Use-This-Computers-Mac(1) Use-This-Mac(2)"
+	       help="Types of mac address source"/>
+<!--=======================================================-->
+	<PTYPE name="NIMF_IDLETO_T"
+	       method="integer"
+           pattern="5..999"
+           help="idle timeout value type."/>
+<!--=======================================================-->
+    <PTYPE name="RETRY_TIME"
+	   method="integer"
+	   pattern="30..999"
+       help="number in range of 30 to 999 "/>
+<!--=======================================================-->
+    <PTYPE name="FAILOVER_ATTEMPTS"
+	   method="integer"
+	   pattern="2..999"
+       help="number in range of 2 to 999 "/>
+<!--=======================================================-->
+    <PTYPE name="PORT_RANGE"
+	   method="integer"
+	   pattern="0..65535"
+       help="number in range of 0 to 65535 "/>
+<!--=======================================================-->
+	<PTYPE name="WAN_MODE_TYPE"
+	       method="select"
+           pattern="Single-WAN-Port(0) Load-Balancing(1) Auto-Rollover(2)"
+	       help="Types of WAN modes"/>
+<!--=======================================================-->
+	<PTYPE name="LOAD_BALANCE_ALGO_T"
+	       method="select"
+           pattern="Round-Robin(1) Spillover-Mode(3)"
+	       help="Types of Loadbalancing algorithms"/>
+<!--=======================================================-->
+	<PTYPE name="MAX_BW_UNIT_T"
+	       method="select"
+           pattern="BPS(0) KBPS(1) MBPS(2)"
+	       help="Types of max bandwidth unit "/>
+<!--=======================================================-->
+	<PTYPE name="FAILOVER_DETECTION_T"
+	       method="select"
+           pattern="None(0) DNS-lookup-Using-WAN-DNS(1) DNS-lookup-Using-CUSTOM(2) Ping-IP-Addresses(3)"
+	       help="Types of Faillover Detection methods"/>
+<!--=======================================================-->
+	<PTYPE name="AR_PROTOCOL_TYPE"
+	       method="select"
+          pattern="TCP(6) UDP(17)"
+	       help="type of protocol to be selected for a application rules."/>
+<!--=======================================================-->
+    <PTYPE name="AR_INTERFACE_TYPE"
+           method="select"
+	   pattern="LAN(SECURE) DMZ(PUBLIC)"
+       help="interface type"/>
+<!--=======================================================-->
+<PTYPE name="USB_TYPE"
+           method="select"
+	   pattern="Mobile_Internet_USB_Adaptor(3) USB_Disc(4)"
+       help="usb device type"/>
+<!--=======================================================-->
+   <PTYPE name="ACL_POLICY"
+	       method="select"
+	       pattern="Open(Open) Allow(Allow) Deny(Deny)"
+       help="Accesspoint ACL Policy type"/>
+<!--=======================================================-->
+	<PTYPE name="DIR_TYPE"
+	       method="select"
+           pattern="Initiator(0) Responder(1) Both(2)"
+	       help="IPsec VPN IKE direction Mode"/>
+<!--=======================================================-->
+	<PTYPE name="IKE_IDT_TYPE1"
+	       method="select"
+           pattern="Local_Wan_IP(0) FQDN(1) User-FQDN(2) DER_ASN1_DN(3)"
+	       help="IPsec VPN IKE local identifier type"/>
+<!--=======================================================-->
+	<PTYPE name="IKE_IDT_TYPE2"
+	       method="select"
+           pattern="Remote_Wan_IP(0) FQDN(1) User-FQDN(2) DER_ASN1_DN(3)"
+	       help="IPsec VPN IKE local identifier type"/>
+<!--=======================================================-->
+	<PTYPE name="IKE_ECP_ALG"
+	       method="select"
+           pattern="DES(1) 3DES(2) AES_128(3) AES_192(4) AES_256(5) BLOWFISH(6) CAST128(7)"
+	       help="IPsec VPN IKE encryption algorithm type"/>
+<!--=======================================================-->
+	<PTYPE name="IKE_AUTH_ALG"
+	       method="select"
+           pattern="MD5(1) SHA_1(2) SHA2_256(3) SHA2_384(4) SHA2_512(5)"
+	       help="IPsec VPN IKE authentication algorithm type"/>
+<!--=======================================================-->
+	<PTYPE name="IKE_DH_GRP"
+	       method="select"
+           pattern="Group1_768_bit(1) Group2_1024_bit(2) Group5_1536_bit(5) DH_Group14_2048_bit(14) DH_Group_15_3072_bit(15) DH_Group_16_4096_bit(16) DH_Group_17_6144_bit(17) DH_Group_18_8192_bit(18)"
+	       help="IPsec VPN IKE Diffie-Hellman (DH) Group type"/>
+<!--=======================================================-->
+	<PTYPE name="IKE_AUTH_METH"
+	       method="select"
+           pattern="Pre_shared_key(0) RSA_Signature(1)"
+	       help="IPsec VPN IKE authentication algorithm method"/>
+<!--=======================================================-->
+	<PTYPE name="IKE_EXTENDED_AUTH_METH"
+	       method="select"
+           pattern="None(0) IPSec_Host(1) Edge_Device(2)"
+           help="IPsec VPN IKE extended authentication method"/>
+<!--=======================================================-->
+	<PTYPE name="IKE_EXTENDED_AUTH_TYPE"
+	       method="select"
+           pattern="UserDatabase(2) Radius-PAP(3) Radius-CHAP(4) Radius-MSCHAP(5) Radius-MSCHAPv2(6) Active-Directory(7) POP3(8) LDAP(9) NTDOMAIN(10)"
+           help="IPsec VPN IKE extended authentication method"/>
+<!--=======================================================-->
+	<PTYPE name="EXCG_MODE"
+ 	       method="select"
+	       pattern="MAIN(0) AGGRESSIVE(1)"
+	       help="VPN Exchange Mode"/>
+<!--=======================================================-->
+	<PTYPE name="VPN_GW"
+	       method="select"
+           pattern="Dedicated_WAN(0) Configurable_WAN(1)"
+	       help="VPN gateway"/>
+<!--=======================================================-->
+	<PTYPE name="VPN_IPSECMODE"
+ 	       method="select"
+           pattern="Tunnel_Mode(1) Transport_Mode(0)"
+	       help="VPN ipsec modes"/>
+<!--=======================================================-->
+    <PTYPE name="SSLVPN_RESOURCE"
+           method="select"
+	   pattern="VPN-TUNNEL(VIRTUAL-PASSAGE) PORT-FORWARDING(VIRTUAL-TRANSPORT) all(all)"
+	   help="sslvpn resource"/>
+<!--=======================================================-->
+<PTYPE name="SSLVPN_RESOURCE_OBJECT_TYPE"
+           method="select"
+	   pattern="IP-Address(1) IP-Network(2)"
+	   help="sslvpn resource object type"/>
+<!--=======================================================-->
+<PTYPE name="SSLVPN_POLICY_TYPE"
+           method="select"
+	   pattern="global(global) group(group) user(user)"
+	   help="sslvpn policy type"/>
+<!--=======================================================-->
+<PTYPE name="SSLVPN_POLICY_PERMISSION"
+           method="select"
+	   pattern="Permit(Permit) Deny(Deny)"
+	   help="sslvpn policy type"/>
+<!--=======================================================-->
+<PTYPE name="SSLVPN_POLICY_DESTINATION_TYPE"
+           method="select"
+	   pattern="Netowrk-Resource(1) IP-Address(2) IP-Network(3) All-Addresses(4)"
+	   help="sslvpn policy destination type"/>
+<!--=======================================================-->
+<PTYPE name="MASK_LENGTH"
+	   method="integer"
+	   pattern="1..32"
+       help="number in range of 1 to 32 "/>
+<!--=======================================================-->
+<PTYPE name="REM_NET"
+    method="integer"
+    pattern="0..32"
+    help="number in range of 1 to 32 "/>
+<!--=======================================================-->
+<PTYPE name="STRING128"
+	pattern="[^&apos; &quot;]{1,128}"
+	   help="String, Max 128 characters and no &apos; or empty space or &quot;"/>
+<!--=======================================================-->
+<PTYPE name="STRING16"
+	pattern="[^&apos; &quot;]{1,16}"
+	   help="String, Max 16 characters and no &apos; or empty space or &quot;"/>
+<!--=======================================================-->
+<PTYPE name="STRING15"
+	pattern="[^&apos; &quot;]{1,15}"
+	   help="String, Max 15 characters and no &apos; or empty space or &quot;"/>
+
+<!--=======================================================-->
+<PTYPE name="STRING2"
+	pattern="[^&apos; &quot;]{1,2}"
+	   help="String, Max 2 characters and no &apos; or empty space or &quot;"/>
+<!--=======================================================-->
+<PTYPE name="STRING20"
+	pattern="[^&apos; &quot;]{1,20}"
+	   help="String, Max 20 characters and no &apos; or empty space or &quot;"/>
+
+<!--=======================================================-->
+<PTYPE name="STRING256"
+	pattern="[^&apos; &quot;]{1,256}"
+	   help="String, Max 256 characters and no &apos; or empty space or &quot;"/>
+<!--=======================================================-->
+<PTYPE name="STRING_ACCEPT_SPACE"
+	pattern="[^&apos;]*"
+	   help="String, &apos character is not supported;"/>   
+ <!--=======================================================-->
+<PTYPE name="STRING64"
+	pattern="[^&apos; &quot;]{1,64}"
+	   help="String, Max 64 characters and no &apos; or empty space or &quot;"/>
+ <!--=======================================================-->
+<PTYPE name="STRING32"
+	pattern="[^&apos; &quot;]{1,32}"
+	   help="String, Max 32 characters and no &apos; or empty space or &quot;"/>
+<!--=======================================================-->
+<PTYPE name="STRING128_ACCEPT_SPACE"
+    pattern="[^&apos;]{1,128}"
+	   help="String, MAX 128 characters,&apos is not supported;"/>
+<!--=======================================================-->
+<PTYPE name="STRING64_ACCEPT_SPACE"
+      pattern="[^&apos;]{1,64}"
+         help="String, MAX 64 characters,&apos is not supported;"/>
+ <!--=======================================================-->
+<PTYPE name="UPSTREAM_INTERFACE_WAN"
+       method="select"
+       pattern="WAN-DHCP(0) WAN-PPTP(1) WAN-L2TP(2)"
+       help="WAN interface type WAN-DHCP/WAN-PPTP/WAN-L2TP"/>
+<!--=======================================================-->
+    <PTYPE name="HEX"
+           pattern="0x[0-9A-F]{3,8}"
+           help="Takes a hexadecimal value between 3 and 8 characters "/>
+<!--=======================================================-->
+    <PTYPE name="IKE_VERSION"
+	       method="select"
+           pattern="IKEV1(1) IKEV2(2)"
+           help="IPsec VPN IKE Version "/>
+<!--=======================================================-->
+    <PTYPE name="VPN_PROTOCOL"
+	       method="select"
+           pattern="AH(0) ESP(1)"
+	       help="IPsec VPN Protocol "/>
+<!--=======================================================-->
+	<PTYPE name="AUTHTYPE"
+ 	       method="select"
+           pattern="local_user_database(local) radius_pap(radius_pap) radius_chap(radius_chap) radius_mschap(radius_mschap) radius_mschapv2(radius_mschapv2) nt_domain(ntdomain) active_directory(active-directory) ldap(ldap)"
+	       help="Users domain authentication type"/>
+<!--=======================================================-->
+	<PTYPE name="IDLE_TIMEOUT"
+	       method="integer"
+           pattern="1..999"
+           help="idle timeout value for user."/>
+<!--=======================================================-->
+	<PTYPE name="USER_TYPE"
+ 	       method="select"
+           pattern="ssl_vpn_user(0) administrator(3) guest(4) xauth_user(5)
+           l2tp_user(7) pptp_user(8) local_user(9) RunTineAuth_user(10)"
+	       help="Users type"/>
+<!--=======================================================-->
+	<PTYPE name="BROWSER"
+ 	       method="select"
+           pattern="internet_explorer(MSIE) opera(Opera)  firefox(Firefox) chrome(Chrome)"
+	       help="Supported browsers"/>
+<!--=======================================================-->
+	<PTYPE name="AUTH_TYPE"
+ 	       method="select"
+           pattern="local(local) radius_pap(radius_pap) radius_chap(radius_chap) radius_mschap(radius_mschap) radius_mschapv2(radius_mschapv2) ntdomain(ntdomain) active-directory(active-directory) ldap(ldap) pop3(pop)"
+	       help="Supported authentication type"/>
+<!--=======================================================-->
+	<PTYPE name="IPPOLICY_ADDRESS_TYPE"
+ 	       method="select"
+           pattern="ip_address(0) ip_network(1)"
+	       help="source address type for users ip policy"/>
+<!--=======================================================-->
+	<PTYPE name="SSL_ICMP_BLOCK"
+ 	       method="select"
+           pattern="Yes(yes) No(no)"
+	       help="icmp block types"/>
+<!--=======================================================-->
+            <PTYPE name="security_level"
+ 	       method="select"
+           pattern="NoAuthNoPriv(0) AuthNoPriv(1) AuthPriv(2)"
+	       help="snmp security level type for snmpv3users list"/>
+<!--=======================================================-->
+     <PTYPE name="auth_algo"
+ 	       method="select"
+           pattern="SHA1(SHA) MD5(MD5)"
+	       help="snmpv3uers list authentication algorithm type "/>
+<!--=======================================================-->
+    <PTYPE name="priv_algo"
+ 	       method="select"
+           pattern="DES(DES) AES(AES)"
+	       help="snmpv3uers list privacy algorithm type "/>
+<!--=======================================================-->
+    <PTYPE name="snmp_user"
+ 	       method="select"
+           pattern="admin(admin) guest(guest)"
+	       help="snmpv3uers list user type "/>
+<!--=======================================================-->
+
+	 <PTYPE name="WLAN_COUNTRY_CODE"
+            method="select"
+	        pattern="United-Arab-Emirates(AE) Antigua-Barbuda(AG) Netherlands-Antilles(AN) Argentina(AR) American-Somoa(AS) Austria(AT) Australia(AU) Aruba(AW) Azerbaijan(AZ) Bosnia(BA) Barbados(BB) Bangladesh(BD) Belgium(BE) Bulgaria(BG) Bahrain(BH) Bermuda(BM) Brunei(BN) Bolivia(BO) Brazil(BR) Bahamas(BS) Bhutan(BT) Belarus(BY) Canada(CA) Switzerland(CH) Chile(CL) China(CN) Colombia(CO) Costa-Rica(CR) Cuba(CU) Cape-Verde(CV) Cyprus(CY) Czech-Republic(CZ) Germany(DE) Denmark(DK) Dominica(DM) Dominican-Republic(DO) Ecuador(EC) Estonia(EE) Egypt(EG) Spain(ES) Finland(FI) Faulkl-Islands(FK) Federated-States-of-Micronesia(FM) France(FR) United-Kingdom(GB) French-Guiana(GF) Guernsey(GG) Gibralter(GI) Guadeloupe(GP) Greece(GR) Guatemala(GT) Guam(GU) Hong-Kong(HK) Honduras(HN) Croatia(HR) Haiti(HT) Hungary(HU) Indonesia(ID) Ireland(IE) Israel(IL) Isle-of-Man(IM) India(IN) Iceland(IS) Italy(IT) Jersey(JE) Jamaica(JM) Jordan(JO) Japan(JP) Kenya(KE) Kiribati(KI) Korea-Republic(KR) Kuwait(KW) Cayman-Islands(KY) Lao-People-Democratic-Republic(LA) Lebanon(LB) Liechtenstein(LI) Sri-Lanka(LK) Lesotho(LS) Lithuania(LT) Luxembourg(LU) Latvia(LV) Morocco(MA) Monaco(MC) Macedonia(MK) Macao(MO) Northern-Mariana-Islands(MP) Martinique(MQ) Mauritania(MR) Malta(MT) Mauritius(MU) Maldives(MV) Malawi(MW) Mexico(MX) Malaysia(MY) Nigeria(NG) Nicaragua(NI) Netherlands(NL) Norway(NO) New-Zealand(NZ) Oman(OM) Panama(PA) Peru(PE) Papua-New-Guinea(PG) Philippines(PH) Pakistan(PK) Poland(PL) St.-Pierre-and-Miquelon(PM) Puerto-Rico(PR) Portugal(PT) Reunion(RE) Romania(RO) Russia(RU) Saudi-Arabia(SA) Sweden(SE) Singapore(SG) Slovenia(SI) Slovak-Republic(()) El-Salvador(SV) Syria(SY) Thailand(TH) Tajikistan(TJ) Tunisia(TN) Turkey(TR) Trinidad-Tobago(TT) Taiwan(TW) Tanzania(TZ) Ukraine(UA) United-States-Minor-Outlying-Islands(UM) United-States(US) Uruguay(UY) Uzbekistan(UZ) Holy-See-Vatican-City-State(VA) Venezuela(VE) Virgin-Islands-British(VG) Virgin-Island-United-State(VI) Vietnam(VN) Mayotte(YT) South-Africa(ZA) Zambia(ZM)" help="Country Code"/>
+ <!--=======================================================-->
+    <PTYPE name="AP_VALIDATION_T"
+           method="select"
+	   	   pattern="local(local) radius(radius)"
+	   	   help="wireless ap validation type"/>
+<!--=======================================================-->
+	<PTYPE name="RADIO_INTERFACE"
+           method="select"
+	   	   pattern="Sentry(1) 802.11bgn(2)"
+	       help="wireless radio interface"/>
+<!--=======================================================-->
+	<PTYPE name="AP_MANAGED_MODE"
+           method="select"
+	       pattern="rogue(rogue) standalone(standalone) ws-managed(ws-managed)"
+	       help="AP mode"/>
+<!--=======================================================-->
+	<PTYPE name="AP_PROFILE_ID"
+           method="integer"
+	       pattern="1..16"
+	       help="AP Profile ID"/>
+<!--=======================================================-->
+	<PTYPE name="AP_STANDALONE_SEC"
+           method="select"
+ 	       pattern="any(any) open(open) wep(wep) wpa(wpa)"
+	       help="Stand Alone AP Security Mode"/>
+<!--=======================================================-->
+	<PTYPE name="AP_STANDALONE_WDS"
+           method="select"
+	       pattern="any(any) bridge(bridge) normal(normal)"
+	       help="stand-alone AP expected WDS mode."/>
+<!--=======================================================-->
+	<PTYPE name="AP_STANDALONE_WIRED"
+           method="select"
+	       pattern="allowed(allowed) not-allowed(not-allowed)"
+	       help="stand-alone AP expected wired network mode"/>
+<!--=======================================================-->
+	<PTYPE name="POWER_PERCENTAGE"
+           method="integer"
+	       pattern="1..100"
+	       help="range of power perventage"/>
+<!--=======================================================-->
+	<PTYPE name="RADIO_FREQ_BAND"
+           method="select"
+	       pattern="802.11an(an) 802.11bgn(bgn)"
+	       help="Radio frequency Band"/>
+<!--=======================================================-->
+	<PTYPE name="CHANNEL_PLAN_MODE"
+           method="select"
+	       pattern="interval(interval) manual(manual) time(time)"
+	       help="Channel Plan Mode"/>
+<!--=======================================================-->
+	<PTYPE name="POWER_PLAN_MODE"
+           method="select"
+	       pattern="interval(interval) manual(manual)"
+	       help="Mode of Power Plan"/>
+<!--=======================================================-->
+	<PTYPE name="VLAN_ID_RANGE"
+           method="integer"
+	       pattern="2..4094"
+	       help="vlan id possible values"/>
+<!--=======================================================-->
+	<PTYPE name="WIRELESS_CLIENT_AUTH"
+           method="select"
+	       pattern="deny(deny) global-action(global-action) grant(grant)"
+	       help="Known Client Authentication Action"/>
+<!--=======================================================-->
+	<PTYPE name="AP_RADIO_MODE"
+           method="select"
+	       pattern="802.11a(a) 802.11an(a-n) 802.11bg(bg) 802.11bgn(bg-n) 5GHz 802.11n(n-only-a) 2.4GHz 802.11n(n-only-g)"
+	       help=""/>
+<!--=======================================================-->
+	<PTYPE name="MAC_AUTH_MODE"
+           method="select"
+	       pattern="black-list(black-list) white-list(white-list)"
+	       help="MAC Authentication mode"/>
+<!--=======================================================-->
+	<PTYPE name="TUNNEL_MTU_SIZE"
+           method="select"
+	       pattern="1500(1500) 1520(1520)"
+	       help="MAC Authentication mode"/>
+<!--=======================================================-->
+	<PTYPE name="EDCA_T"
+           method="select"
+	       pattern="ap-edca(ap-edca) station-edca(station-edca)"
+	       help=" AP EDCA parameters or Station EDCA parameters"/>
+<!--=======================================================-->
+	<PTYPE name="EDCA_QUEUE_T"
+           method="select"
+	       pattern="background(background) best-effort(best-effort) video(video) voice(voice)"
+	       help="EDCA Parameters"/>
+<!--=======================================================-->
+	<PTYPE name="NETWORK_REDIRECT_M"
+           method="select"
+	       pattern="http(http) none(none)"
+	       help="network redirect mode"/>
+<!--=======================================================-->
+	<PTYPE name="AP_HARDWARE_T"
+           method="select"
+	       pattern="Any(Any) hw_dwl3600(hw_dwl3600) hw_dwl6600(hw_dwl6600) hw_dwl8600(hw_dwl8600)i"
+	       help="AP Hardware Types"/>
+<!--=======================================================-->
+	<PTYPE name="WLAN_NETWORK_ID"
+           method="integer"
+	   	   pattern="1..64"
+	       help="WLAN Network ID"/>
+<!--=======================================================-->
+	<PTYPE name="TRANSMIT_RATES"
+           method="select"
+	   	   pattern="802.11a(a) 802.11b(bg)"
+	       help="Multicast transmit rated"/>
+<!--=======================================================-->
+    <PTYPE name="BASE_RECHABLE_TIME"
+	   method="integer"
+	   pattern="30..150"
+	   help="number in range of 30 to 150 "/>
+<!--=======================================================-->
+    <PTYPE name="PING_SIZE"
+	   method="integer"
+	   pattern="1..1500"
+	   help="number in range of 1 to 1500 "/>
+<!--=======================================================-->
+
+    <PTYPE name="LAN_PORT_TYPE"
+           method="integer"
+           pattern="1..5"
+           help="Lan Port on the switch"/>
+<!--=======================================================-->
+    <PTYPE name="QOS_COS_TYPE"
+           method="integer"
+           pattern="0..7"
+           help="CoS value to be configured."/>
+<!--=======================================================-->
+    <PTYPE name="QOS_PRIORITY_QUEUE_TYPE"
+           method="select"
+           pattern="Highest(3) Medium(2) Low(1) Lowest(0)"
+           help="Priority of the QoS Queue."/>
+<!--=======================================================-->
+    <PTYPE name="QOS_DSCP_TYPE"
+           method="integer"
+           pattern="0..63"
+           help="DSCP value to be configured."/>
+<!--=======================================================-->
+    <PTYPE name="ACTIVATION_KEY"
+           pattern="[0-9A-Za-z]{25}"
+           help="Takes a string value that has only AtoZ, atoz and 0to9 characters only"/>
+<!--=======================================================-->
+    <PTYPE name="BW_PROFILE_NAME"
+           pattern="[0-9A-Za-z]"
+           help="BW profile name AtoZ, atoz and 0to9 characters only"/>
+<!--=======================================================-->
+    <PTYPE name="QOS_BW_PROFILE_PRIORITY"
+           method="select"
+           pattern="Urgent(0) High(1) Medium(2) Low(3)"
+           help="Priority of the traffic"/>
+<!--=======================================================-->
+    <PTYPE name="QOS_TRAFFIC_SELECTOR"
+           method="integer"
+           pattern="0..100"
+           help="Traffic selector ID that is displayed"/>
+<!--=======================================================-->
+    <PTYPE name="QOS_MATCH_TYPE"
+           method="select"
+	   pattern="IP-Address(1) MAC-Address(2) Port-Name(3) Interface(4) DSCP(5)
+       BSSID(6)"
+	   help="traffic selector match type"/>
+<!--=======================================================-->
+    <PTYPE name="QOS_PORT_QUEUE_SCHEDULING_ALGO"
+           method="select"
+	   pattern="strict(0) weighted-round-robin(1)"
+       help="Select QoS Scheduling Algorithm type"/>
+<!--=======================================================-->
+   <PTYPE name="QOS_WAN_INTERFACE_TYPE"
+       method="select"
+       pattern="WAN1(1) WAN2(2)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+   <PTYPE name="PPP6_DHCPV6_OPT"
+       method="select"
+       pattern="Disable-Dhcpv6(0) Stateless-Dhcpv6(1) Stateful-Dhcpv6(2) Stateless-Dhcpv6-PrefixDelegation(3) Stateful-Dhcpv6-PrefixDelegation(4)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+   <PTYPE name="OSPF_AUTH_T"
+       method="select"
+       pattern="None(None) Simple(Simple) Md5(Md5)"
+       help="OSPF Authentication type"/>
+<!--=======================================================-->
+	 <PTYPE name="OSPF_INTERFACE_T"
+       method="select"
+       pattern="LAN(LAN) WAN1(WAN1) WAN2(WAN2) L2TPoverIPSEC(L2TPoverIPSEC)"
+       help="OSPF Interfaces type"/>
+<!--=======================================================-->
+	 <PTYPE name="OSPF6_INTERFACE_T"
+       method="select"
+       pattern="LAN(LAN) WAN1(WAN1) WAN2(WAN2)"
+       help="OSPF Interfaces type"/>
+<!--=======================================================-->
+	 <PTYPE name="RECONNECT_MODE"
+       method="select"
+       pattern="ALWAYS_ON(0) ON_DEMAND(1)"
+       help="Reconnect Mode type"/>
+<!--=======================================================-->
+     <PTYPE name="L2TP_ACTION_TYPE"
+       method="select"
+       pattern="Connect(1) Drop(0)"
+       help="Reconnect Mode type"/>
+<!--=======================================================-->
+     <PTYPE name="INTERFACE_NAME"
+       method="select"
+       pattern="LAN(LAN) WAN(WAN1)"
+       help="Interfaces type"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_MAXRTRADVINTERVAL"
+       method="integer"
+       pattern="4..1800"
+       help="MaxRtrAdvInterval range"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_MINRTRADVINTERVAL"
+       method="integer"
+       pattern="3..1350"
+       help="MinRtrAdvInterval range"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_ADVCURHOPLIMIT"
+       method="integer"
+       pattern="0..255"
+       help="AdvCurHopLimit range"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_ADVDEFAULTLIFETIME"
+       method="integer"
+       pattern="0..9000"
+       help="AdvDefaultLifetime range"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_ADVREACHABLETIME"
+       method="integer"
+       pattern="0..3600000"
+       help="AdvReachableTime range"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_ADVRETRANSTIMER"
+       method="integer"
+       pattern="0..4294967295"
+       help="AdvRetransTimer range"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_ADVLINKMTU"
+       method="integer"
+       pattern="0..1500"
+       help="AdvLinkMTU range"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_ADVVALIDLIFETIME"
+       method="integer"
+       pattern="0..4294967295"
+       help="AdvValidLifetime range"/>
+<!--=======================================================-->
+         <PTYPE name="RADVD_ADVPREFERREDLIFETIME"
+       method="integer"
+       pattern="0..4294967295"
+       help="AdvPreferredLifetime range"/>
+<!--=======================================================-->
+	<PTYPE name="ON_OFF"
+	       method="select"
+	       pattern="true(on) false(off)"
+           help="Boolean choice"/>
+<!--=======================================================-->
+    <PTYPE name="RADIUS_TIMEOUT"
+        method="integer"
+        pattern="0..999"
+        help="radius server connection timeout in seconds"/>
+<!--=======================================================-->
+    <PTYPE name="RADIUS_RETRIES"
+        method="integer"
+        pattern="0..999"
+        help="radius server retries attemps."/>
+<!--=======================================================-->
+	<PTYPE name="TIME_TYPE"
+	       method="select"
+	       pattern="day(1) hours(0)"
+	       help="Time Type"/>
+<!--=======================================================-->
+	<PTYPE name="BANDWIDTH_TYPE"
+	       method="select"
+	       pattern="GB(3) MB(2)"
+	       help="Bandwidth Type"/>
+<!--=======================================================-->
+	<PTYPE name="CP_ACC_ALERT_TYPE"
+	       method="select"
+	       pattern="day(0) hours(1) GB(3) MB(2)"
+	       help="CP Temp Alert Type"/>
+<!--=======================================================-->
+	<PTYPE name="CP_ACC_DURATION_TYPE"
+	       method="select"
+	       pattern="start_account_created(0) start_account_login(1) begin_from(2)"
+	       help="CP Temp Duration Type"/>
+ <!--=======================================================-->
+    <PTYPE name="GRE_INTERFACE_TYPE"
+           method="select"
+      pattern="WAN1(WAN1) WAN2(WAN2)"
+       help="WAN interface type"/>
+<!--=======================================================-->
+    <PTYPE name="CP_ACCESS_TYPE"
+           method="select"
+	   pattern="Free(0) SLA(1) Permanent(2) Temporary(3)"
+       help="Captive Portal Type for SSID"/>
+<!--=======================================================-->
+   <PTYPE name="CP_AUTH_MODE"
+       method="select"
+       pattern="LocalUser(0) RadiusServer(1) LDAPServer(2) Active-Directory(3) NT-Domain(4) POP3(5)"
+       help="Authentication Type for Captive Portal user"/>
+<!--=======================================================-->
+   <PTYPE name="CP_AUTH_TYPE"
+       method="select"
+       pattern="PAP(1) CHAP(2) MS-CHAP(3) MS-CHAPv2(4)"
+       help="Radius Authentication type"/>
+<!--=======================================================-->
+   <PTYPE name="CP_PROFILE"
+       method="integer"
+       pattern="1..300"
+       help="Captive Portal Profile ID"/>
+<!--=======================================================-->
+    <PTYPE name="PORT_VLAN_MODE"
+        method="select"
+        pattern="access(0) general(1) trunk(2)"
+        help="Captive Portal Profile ID"/>
+ <!--=======================================================-->
+    <PTYPE name="PORTNAME"
+        method="select"
+        pattern="Port1(port1) Port2(port2) Port3(port3) Port4(port4)"
+        help="Captive Portal Profile ID"/>
+ <!--=======================================================-->
+   <PTYPE name="LEASETIME"
+ 	   method="integer"
+ 	   pattern="1..24"
+ 	   help="number in range of 1 to 24 "/>
+<!--=======================================================-->
+	<PTYPE name="REDIRECT_TYPE"
+           method="select"
+	       pattern="HTTP(0) HTTPS(1)"
+           help="network redirect mode"/>
+<!--=======================================================-->
+    <PTYPE name="PORTNAMEW"
+        method="select"
+        pattern="Port1(Port1) Port2(Port2) Port3(Port3) Port4(Port4)"
+        help="port ID"/>
+<!--=======================================================-->
+<PTYPE name="VLANID_RANGE"
+           method="integer"
+          pattern="1..4093"
+          help="vlan id possible values"/>
+<!--========================================================-->
+     <PTYPE name="OPENVPN_MODE"
+      	method="select"
+      	pattern="server_mode(0) client_mode(1) access_server_client_mode(2)"
+   		help="OpenVPN daemon mode."/>
+<!--=======================================================-->
+	<PTYPE name="OPENVPN_SERVERIPTYPE"
+        method="select"
+        pattern="IP-Address(0) FQDN(1)"
+        help="OpenVPN server identifier type"/>
+<!--=======================================================-->
+        <PTYPE name="ENCR_ALRTM"
+     	method="select"
+     	pattern="BF-CBC(0) AES-128(1) AES-192(2) AES-256(3)"
+     	help="The cipher with which the packets are encrypted"/>
+<!--=======================================================-->
+        <PTYPE name="HASH_ALRTM"
+      	method="select"
+      	pattern="SHA1(0) SHA256(1) SHA512(2)"
+     	help="Message digest algorithm used to authenticate packets"/>
+<!--=======================================================-->
+        <PTYPE name="TUNNEL_TYPE"
+      	method="select"
+    	pattern="full_tunnel(0) split_tunnel(1)"
+     	help="type of tunnel"/>
+<!--=======================================================-->
+       <PTYPE name="PROTOCOL"
+     	method="select"
+     	pattern="UDP(0) TCP(1)"
+        help="The protocol used to communicate with the remote host"/>
+<!--=======================================================-->
+       <PTYPE name="TRUSTED_PROTOCOL"
+     	method="select"
+     	pattern="HTTP(0)"
+      	help="The protocol of which the Urls are allowed"/>
+<!--=======================================================-->
+       <PTYPE name="OPENVPN_AUTH_MODE"
+       method="select"
+       pattern="local(0) radius_server(1) ldap(2) pop3(3) active-directory(4) ntdomain(5)"
+       help="Authentication Type for OPENVPN Portal user"/>
+<!--=======================================================-->
+   <PTYPE name="OPENVPN_AUTH_TYPE"
+       method="select"
+       pattern="PAP(1) CHAP(2) MS-CHAP(3) MS-CHAPv2(4)"
+       help="Radius Authentication type"/>
+<!--=======================================================-->
+
+	<PTYPE name="ACCESS_TYPE"
+         method="select"
+	 pattern="SINGLE_IPADDR(0) VLAN_NETWORK(1)"
+         help="Access Type for web access filter"/>
+<!--=======================================================-->
+       <PTYPE name="L2TP_MODE"
+        method="select"
+        pattern="None(0) CLIENT(1) GATEWAY(2)"
+        help="IPsec L2tp Mode "/>
+
+<!--=======================================================-->
+       <PTYPE name="SESSION_TIMEOUT"
+        method="integer"
+        pattern="0..999"
+        help="session timeout range"/>
+<!--=======================================================--> 
+        <PTYPE name="STRING_ALPHA_NUM"
+         pattern="[0-9A-Za-z]+"
+         help="Only AtoZ, atoz and 0to9 characters are allowed"/>
+<!--=======================================================-->
+        <PTYPE name="STRING_ALPHA_NUM_32"
+         pattern="^[a-zA-Z0-9^]{1,32}$"
+         help="String, Max of 32 alpha numeric characters;"/>
+<!--=======================================================-->
+        <PTYPE name="UDP_LIMIT"
+         method="integer"
+	 pattern="25..600"
+	 help="number in range of 25 to 600"/>
+<!--=======================================================-->			       
+         <PTYPE name="SNMP_ACCESS_TYPE"
+          method="select"
+          pattern="rocommunity(1)  rwcommunity(2)"
+          help="access type either read only or read write"/>
+<!--=======================================================-->
+         <PTYPE name="SNMP_Version"
+          method="select"
+          pattern="v1(0) v2c(1) v3(2)"
+          help="snmp version"/>
+<!--=======================================================-->
+         <PTYPE name="DDNSSERVICE"
+     	  method="select"
+          pattern="Disable(1) DynDNS(2) D-LinkDDNS(3) FreeDNS(4) NO-IP(6) 
+                   3322.org(7) Custom(11) Oray(12)"
+      	  help="Dynamic DNS Services available."/>
+<!--=======================================================-->
+         <PTYPE name="DDNSTIME"
+          method="integer"
+          pattern="1..30"
+          help="ddns update interval in days"/>
+<!--=======================================================-->
+         <PTYPE name="DDNSTYPE"
+     	  method="select"
+     	  pattern="Dynamic(1) Static(2) Custom(3)"
+      	  help="Dynamic DNS Type available."/>
+<!--=======================================================-->
+         <PTYPE name="IGMP_PORT_MEMSHIP"
+	   pattern="(([1-4]+)(([,]([1-4]+))*))"
+	   help="Port number(s) a,b,c where each part is a valid port number in the range [1-4]"/>
+<!--=======================================================-->
+  <PTYPE name="MOBILE_NUMBER"
+          pattern="^[0-9]{11,12}"
+          help="enter mobile number of 11 or 12 digits"/>
+<!--=======================================================-->
+<PTYPE name="SIM_PIN"
+          pattern="^[0-9]{1,8}"
+          help="enter pin number of Max 8 numeric digits"/>
+<!--=======================================================-->
+<PTYPE name="STRING63"
+      pattern="[^&apos;]{8,63}"
+         help="String, MIN 8 and MAX 63 characters are supported"/>
+<!--=======================================================-->
+          <PTYPE name="USERTYPE"
+     	  method="select"
+     	  pattern="Admin(1) Network(2) Guest(3)"
+      	  help="User Type available."/>
+<!--=======================================================-->
+     <PTYPE name="STRING_ALPHA_NUM_31"
+         pattern="[a-zA-Z0-9]{1,31}"
+         help="String, Max of 31 alpha numeric characters"/>
+<!--=======================================================-->
+    <PTYPE name="5_MODE"
+           method="select"
+           pattern="a_only(65536) na(393216) n_only(131072) a/n/ac(983040) ac_only(983041)"
+	   help="Dot11 Radio Mode"/>
+<!--=======================================================-->
+    <PTYPE name="WMM_CLASS"
+           method="select"
+      pattern="default(Default) background(Background) best_effort(Best_Effort) video(Video) voice(Voice)"
+      help="Dot11 WMM class"/>
+<!--=======================================================-->
+    <PTYPE name="DOT11_RADIO_MODE"
+           method="select"
+      pattern="2.4Ghz(b) 5Ghz(a)" 
+      help="Dot11 Radio band"/>
+<!--=======================================================-->
+    <PTYPE name="ANTENNA"
+           method="select"
+      pattern="Auto(0) 1(1) 2(2)" 
+      help="Dot11 Antenna No"/>
+<!--=======================================================-->
+	<PTYPE name="BEACON_INT"
+	       method="integer"
+           pattern="40..3500"
+	       help="Dot11 BEACON Interval."/>
+<!--=======================================================-->
+	<PTYPE name="CHANNEL"
+	       method="select"
+           pattern="Auto(0) 1-2.412GHz(1) 2-2.417GHz(2) 3-2.422GHz(3) 4-2.427GHz(4) 5-2.432GHz(5) 6-2.437GHz(6) 7-2.442GHz(7) 8-2.447GHz(8) 9-2.452GHz(9) 10-2.457GHz(10) 11-2.462GHz(11) 12-2.467GHz(12) 13-2.472GHz(13) 36-5.18GHz(36) 40-5.2GHz(40) 44-5.22GHz(44) 48-5.24GHz(48) 52-5.26(52) 56-5.28(56) 60-5.30(60) 64-5.32(64) 100-5.5(100) 104-5.52(104) 108-5.54(108) 112-5.56(112) 116-5.58(116) 120-5.60(120) 124-5.62(124) 128-5.64(128) 132-5.66(132) 136-5.68(136) 140-5.70(140) 149-5.745GHz(149) 153-5.765GHz(153) 157-5.785(157) 161-5.805GHz(161) 165-5.825GHz(165)"
+           help="Dot11 Radio Channels."/>
+<!--=======================================================-->
+	<PTYPE name="CHANNEL_SPACING"
+	       method="select"
+           pattern="80MHZ(80) 20_40MHz(2040) 20MHz(20)"           
+	       help="Radio Channel Spacing."/>
+<!--=======================================================-->
+    <PTYPE name="RADIO_NO"
+	   method="integer"
+	   pattern="1..2"
+	   help="radio number"/>
+<!--=======================================================-->
+     <PTYPE name="STRING_ALPHA_NUM_24"
+         pattern="[a-zA-Z0-9]{1,24}"
+         help="String, Max of 24 alpha numeric characters"/>
+<!--=======================================================-->
+     <PTYPE name="STRING_ALPHA_NUM_16"
+         pattern="[a-zA-Z0-9]{1,16}"
+         help="String, Max of 16 alpha numeric characters"/>
+<!--=======================================================-->
+     <PTYPE name="STRING_ALPHA_NUM_64"
+         pattern="[a-zA-Z0-9]{1,64}"
+         help="String, Max of 64 alpha numeric characters"/>
+<!--=======================================================-->
+     <PTYPE name="STRING_ALPHA_NUM_128"
+         pattern="[a-zA-Z0-9]{1,128}"
+         help="String, Max of 128 alpha numeric characters"/>
+<!--=======================================================-->
+      <PTYPE name="STRING_PSK"
+         pattern="[^ \]{8,49}"
+         help="String, Min 8 and Max 49 characters and no space and \ symbol"/>
+<!--=======================================================-->
+     <PTYPE name="STRING64_RESTRICT_HASH"
+         pattern="[^&apos; &quot; #]{1,64}"
+         help="String, Max 64 characters and no &apos; or empty space or &quot or # symbol;"/>
+<!--=======================================================-->
+<PTYPE name="OPENVPN_POLICY_PERMISSION"
+           method="select"
+	   pattern="Permit(Permit) Deny(Deny)"
+	   help="openvpn policy type"/>
+<!--=======================================================-->
+<PTYPE name="OPENVPN_POLICY_TYPE"
+           method="select"
+	   pattern="global(global) user(user)"
+	   help="openvpn policy type"/>
+<!--=======================================================-->
+<PTYPE name="OPENVPN_POLICY_DESTINATION_TYPE"
+           method="select"
+	   pattern="IP-Address(1) IP-Network(2)"
+	   help="openvpn policy destination type"/>
+
+<!--=======================================================-->
+
+      
+</CLISH_MODULE>

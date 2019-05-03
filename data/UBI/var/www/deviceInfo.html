@@ -1,0 +1,151 @@
+<?lua 
+require "teamf1lualib/deviceInfo_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/system_productData"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "device"
+
+local deviceInfo = require("com.teamf1.bl.system.deviceInfo")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local productData = require("com.teamf1.core.system.productdata")
+
+local returnCode, cookie, systemname, firmwareVersion, hardwareVersion
+local serialNumber, portName
+returnCode, cookie, systemname, firmwareVersion, hardwareVersion, 
+serialNumber, portName = deviceInfo.systemInfoGet ()
+if(returnCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (returnCode)
+end
+returnCode , cookie, countryCode = productData.countryCodeGet ()
+
+   -- Append Country code to Firmware Version
+	firmwareVersion = firmwareVersion .. "_" .. countryCode
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE = "30014,30015,30016,30017,13036,11515,30018,13446,13039,11061,13042,11013,11101,12819,10777"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        	<tr>
+                	<td class="header" valign="top" align="center">
+                	<?lua web.includeMenu("header.html")?></td>
+            	</tr>
+		<tr>
+		<td valign="top" align="center">
+			<div class="midWidth">
+			<script language="JavaScript">
+				mmSel("mainMenu1");
+			</script>
+			<?lua if(statusErrorMessage ~= returnCodes.NIL) then ?>
+			<div class="msgInfo">
+                    		<p>$| statusErrorMessage |$</p>
+                    	</div>
+                    	<?lua end?>
+			<div align="left">
+				<nav class="nav-bg">
+					<ul class="menu">
+						<?lua 
+							local wan1DispName
+							local wan2DispName
+						    wan1DispName = LANG_LOCALE['30015']
+							wan2DispName = LANG_LOCALE['30017']
+						?>
+						<li class="current"><a href="?page=deviceInfo.html">$| LANG_LOCALE['13036'] |$</a></li>
+						<li><a href="?page=lanInfo.html">$| LANG_LOCALE['11515'] |$</a> </li>
+						<li><a href="?page=wan1Info.html">$|wan1DispName|$</a> </li>
+                        <?lua if ( UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+                            if (portName ~= "DMZ") then
+                        ?>
+                        <li><a href="?page=wan2Info.html">$|wan2DispName|$</a></li>
+                        <?lua else ?>
+                        <li><a href="?page=dmzInfo.html">$| LANG_LOCALE['10777'] |$</a></li>
+                        <?lua end else ?>
+                        <?lua if (portName == "WAN2") then ?>
+                        <li><a href="?page=wan2Info.html">$|wan2DispName|$</a></li>
+			            <?lua elseif (portName == "DMZ") then ?>
+                        <li><a href="?page=dmzInfo.html">$| LANG_LOCALE['10777'] |$</a></li>
+						<?lua end end if( UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+						<li><a href="?page=wan3Info.html">$| LANG_LOCALE['30018'] |$</a></li>
+						<?lua end 
+						    if (UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then
+						?>
+						<li><a href="?page=wirelessInfo.html">$| LANG_LOCALE['13446'] |$</a></li>
+						<?lua end ?>
+					</ul>
+				</nav>
+			</div>
+			<div class="FL2">
+				<p class="hint">$| helpHintText |$</p>
+			</div>
+			<h1>$| LANG_LOCALE['13039'] |$</h1>
+			<div class="midArea">
+				<div align="left">
+					<h2>$| LANG_LOCALE['11061'] |$</h2>
+					<div class="configRow">
+						<label>$| LANG_LOCALE['13042'] |$</label>
+						<p>$| systemname |$</p>
+					</div>
+					<div class="break">&nbsp; </div>
+					<div class="configRow">
+						<label>$| LANG_LOCALE['11013'] |$</label>
+						<p>$| firmwareVersion |$</p>
+					</div>
+					<div class="break">&nbsp; </div>
+					<div class="configRow">
+						<label>$| LANG_LOCALE['11101'] |$</label>
+						<p>$| hardwareVersion |$</p>
+					</div>
+					<div class="break">&nbsp; </div>
+					<div class="configRow">
+						<label>$| LANG_LOCALE['12819'] |$</label>
+						<p>$| serialNumber |$</p>
+					</div>
+					<div class="break">&nbsp; </div>
+				</div>
+			</div>
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td><?lua web.includeMenu("footer.html")?></td>
+	</tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+            });
+        </script>
+    </body>
+</html>

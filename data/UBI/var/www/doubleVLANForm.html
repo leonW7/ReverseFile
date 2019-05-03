@@ -1,0 +1,39 @@
+<?lua
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_doubleVlanDailogContent">
+    <div class="topBg">
+        <h1>Double VLAN Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>Ether Type </label>
+            <p>
+            <input type="radio" value="1" checked name="tf1_etherType" id="tf1_etherTypeDot1q" onclick="changeEtherType('tf1_etherTypeDot1q')"> 
+            Dot1q </p>
+            <p>
+            <input type="radio" value="2" name="tf1_etherType" id="tf1_etherTypeVLAN" onclick="changeEtherType('tf1_etherTypeVLAN')"> 
+            VLAN </p>
+            <p>
+            <input type="radio" value="3" name="tf1_etherType" id="tf1_etherTypeCustom" onclick="changeEtherType('tf1_etherTypeCustom')"> 
+            Custom </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtCustomTag_div">
+            <label>Custom Tag </label>
+            <input type="text" name="tf1_txtCustomTag" id="tf1_txtCustomTag" maxlength="32" onkeypress="return numericValueCheck (event, '');">
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" onclick="return dVlanConfigValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+</form>
+<!-- Section for Pop up dialog ends -->

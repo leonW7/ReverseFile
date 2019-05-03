@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+   http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="system-snmpSys-config" prompt="system-config[SNMP System]> "> 
+    <COMMAND name="save" help="Save SNMP system configuration changes.">
+	     <ACTION>lua clishCfgObjExec("snmpSys")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back snmp configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save SNMP system configuration changes and exit current mode."
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("snmpSys")</ACTION>
+    </COMMAND>
+    <COMMAND name="sys-contact" help="Set system contact information.">
+	     <PARAM name="contact"
+		    help="System contact identifier"
+		    ptype="STRING32"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpSys", "system.sysContact", "${contact}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="sys-location" help="Set system location information.">
+	     <PARAM name="location"
+		    help="System location identifier"
+		    ptype="STRING32"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpSys", "system.sysLoc", "${location}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="sys-name" help="Set system name information.">
+	     <PARAM name="name"
+		    help="System name identifier"
+		    ptype="STRING32"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpSys", "system.name", "${name}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="system-snmpTrap-config" prompt="system-config[SNMP Trap]> "> 
+    <COMMAND name="save" help="Save SNMP trap configuration changes.">
+	     <ACTION>lua clishCfgObjExec("snmpTrap")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save SNMP trap configuration changes and exit current mode."
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("snmpTrap")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back snmp configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="agent" help="The IP address of the SNMP agent.">
+	     <PARAM name="ip_address"
+		    help="Trap agent IP Address"
+		    ptype="IP_ADDR"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpTrap", "snmpTrap.ipAddr", "${ip_address}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="snmp_version" help="Snmp Version v1/v2c/v3">
+         <PARAM name="Version"
+		    help="Snmp Version"
+		    ptype="SNMP_Version"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpTrap", "snmpTrap.snmpVersion", 
+		       "${Version}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="port" help="SNMP trap port the trap messages will be sent to.">
+	     <PARAM name="port"
+		    help="Port number"
+		    ptype="PORT"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpTrap", "snmpTrap.port", "${port}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="community" help="The community string to which the agent belongs. Most agents are configured to listen for traps in the Public community">
+	     <PARAM name="community"
+		    help="Community Name"
+		    ptype="STRING32"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpTrap", "snmpTrap.commName", 
+			 "${community}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="system-snmp-access-config" prompt="system-config[snmp-access]> "> 
+    <COMMAND name="save" help="Save SNMP access control configuration changes.">
+	     <ACTION>lua clishCfgObjExec("snmpAccess")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save SNMP access configuration changes and exit current mode."
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("snmpAccess")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back snmp configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="ip_address" help="The IP address of the SNMP agent.">
+	     <PARAM name="ip_address"
+		    help="Trap agent IP Address"
+		    ptype="IP_ADDR"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpAccess", "snmpAccessControl.ipAddr", "${ip_address}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="subnet_mask" help="The network mask used to determine the list of allowed SNMP               managers. To allow any IP on the network to manager the device enter 255.255.255.0.               For a specific host, enter 255.255.255.255. To allow global access, enter 0.0.0.0.">
+         <PARAM name="IPAddress"
+		    help="IP Address"
+		    ptype="IP_ADDR"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpAccess", "snmpAccessControl.subnetMask", 
+		       "${IPAddress}")
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="accessType" help="SNMP trap port the trap messages will be sent to.">
+	     <PARAM name="access"
+		    help="Access Type"
+		    ptype="SNMP_ACCESS_TYPE"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpAccess", "snmpAccessControl.accessType", "${access}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="community" help="The community string to which the agent belongs. Most agents are configured to listen for traps in the Public community">
+	     <PARAM name="community"
+		    help="Community Name"
+		    ptype="STRING32"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpAccess", "snmpAccessControl.commName", 
+			 "${community}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="system-snmpUsers-config" prompt="system-config[SNMP Users]> "> 
+    <COMMAND name="save" help="Save SNMP trap configuration changes.">
+	     <ACTION>lua clishCfgObjExec("snmpv3Users")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="save SNMP v3 Users configuration changes and exit current mode."
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("snmpv3Users")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back SNMP v3 Users configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="security_level" help="authentication and privacy settings .">
+	     <PARAM name="secure_level"
+		    help="security level"
+		    ptype="security_level"/>
+	         <ACTION>lua clishCfgObjAdd ("snmpv3Users","snmpv3Users.securityLevel","${secure_level}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="authentication_algo" help="choose between MD5 or SHA authentication">
+         <PARAM name="auth_algo"
+		    help="MD5 or SHA"
+		    ptype="auth_algo"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpv3Users", "snmpv3Users.authAlgo", "${auth_algo}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="privacy_algorithm" help="DES-56 privacy is available for the authentication negotiation">
+	     <PARAM name="priv_algo"
+		    help="privacy algorithm"
+		    ptype="priv_algo"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpv3Users", "snmpv3Users.privAlgo","${priv_algo}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="authentication_password" help="shared authentication password with the SNMPv3 user. ">
+	     <PARAM name="auth_passwd"
+		    help="authentication password "
+		    ptype="STRING"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpv3Users", "snmpv3Users.authPassword", "${auth_passwd}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="privacy_password" help="shared privacy password with the SNMPv3 user">
+	     <PARAM name="priv_passwd"
+		    help="privacy password"
+		    ptype="STRING"/>
+	     <ACTION>lua clishCfgObjAdd ("snmpv3Users", "snmpv3Users.privPassword", 
+			 "${priv_passwd}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="system snmp" 
+	     access="admin"
+	     help="System SNMP configuration."/>
+    <COMMAND name="system snmp trap" help="System SNMP trap configuration."/>
+    <COMMAND name="system snmp sys" help="System SNMP system configuration."/>
+    <COMMAND name="system snmp access" help="System SNMP Access Configuration."/>
+
+    <COMMAND name="system snmp users" help="System SNMP v3 User Configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="system snmp trap configure"
+             help="SNMP trap configuration mode."
+             view="system-snmpTrap-config" viewid="">
+	     <PARAM name="agent_ip" 
+		    help="Agent server IP address."
+		    ptype="IP_ADDR"/>		    
+             <ACTION>lua clishCfgObjNew ("snmpTrap", snmpTrapConfigInit, 
+		    snmpTrapConfigSave, snmpTrapConfigInputVal, "${agent_ip}")
+             </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system snmp trap delete"
+             help="Delete a SNMP trap configuration.">
+	     <PARAM name="agent_ip" 
+		    help="Agent server IP address."
+		    ptype="IP_ADDR"/>		    
+             <ACTION>lua clishCfgObjNew ("snmpTrapDel", snmpTrapConfigInit, 
+		    snmpTrapConfigDel, nil, "${agent_ip}")
+		    clishCfgObjExec("snmpTrapDel")
+             </ACTION>
+    </COMMAND>  
+     <!--=======================================================-->
+    <COMMAND name="system snmp users configure"
+             help="SNMP v3 User list configuration changes"
+             view="system-snmpUsers-config" viewid="">
+	     <PARAM name="user" 
+		    help="user type"
+		    ptype="snmp_user"/>		    
+            <ACTION>lua clishCfgObjNew ("snmpv3Users", snmpv3UsersConfigInit, 
+		    snmpv3UsersConfigSave, snmpv3UsersInputVal, "${user}")		    
+            </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="system snmp sys configure"
+             help="SNMP system configuration mode"
+             view="system-snmpSys-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("snmpSys", snmpSysConfigInit, 
+			 snmpSysConfigSave, snmpSysConfigInputVal)
+             </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system snmp access add"
+             help="snmp access configuration mode"
+             view="system-snmp-access-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("snmpAccess",
+                                       snmpACLConfigInit,
+                                       snmpACLConfigSave,
+                                       snmpACLConfigInputVal,
+                                       "-1")
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+ <COMMAND name="system snmp access edit"
+             help="snmp configuration mode"
+             view="system-snmp-access-config" viewid="">
+             <PARAM name="rowid"
+                 help="Enter the row id of the snmp access to be edited"
+                 ptype="UINT"/>
+            <ACTION>lua clishCfgObjNew ("snmpAccess",
+                                       snmpACLConfigInitEdit,
+                                       snmpACLConfigSave,
+                                       snmpACLConfigInputVal,
+                                       "${rowid}")
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system snmp access delete"
+             help="snmp access configuration mode">
+             <PARAM name="rowid"
+                 help="Enter the row id of the xauth user to be deleted"
+                 ptype="UINT"/>
+            <ACTION>lua snmpACLConfigDel("${rowid}")
+        </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

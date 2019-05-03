@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# pptpdInit - initialization script for pptpd-pptp server
+#
+# Copyright (c) 2009, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,25aug09, kyp written
+
+if [ "$INCLUDE_PPTPD" = "y" ]; then
+    echo "Copying necessary files for PPTP Server... "
+mkdir -p /etc/pptpd
+mkdir -p /usr/local/sbin
+
+cp -f /pfrm2.0/etc/options.pptpd /etc/pptpd/options.pptpd
+cp -f /pfrm2.0/bin/pptpctrl /usr/local/sbin/
+
+echo "Done"
+fi
+

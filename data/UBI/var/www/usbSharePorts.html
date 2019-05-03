@@ -1,0 +1,352 @@
+<?lua 
+require "teamf1lualib/usbSharePorts_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "maintenance"
+if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+	PAGE_HELP_SECTION = "usbSharePorts"
+else
+	PAGE_HELP_SECTION = "usbSharePorts_single"
+end
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+
+local usb = require("com.teamf1.bl.usb.printing")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag2, statusCode = usb.usbSharedEnabledInterfacesSectionSetAll (inputTable)
+    if (errorFlag2 == 0) then
+        errorFlag1, statusCode = usb.usbSharePortSetupSectionSetAll (inputTable)
+        if (errorFlag1 == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag1)
+        elseif (errorFlag1 ~= returnCodes.SUCCESS) then
+           statusErrorMessage = errorMap.errorStringGet (errorFlag1)
+        end
+    elseif (errorFlag2 ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag2)
+    end
+    web.goToPage (NextPage, true, true)
+else
+    returnCode, status, usb1active, usb2active, usbPort1Sharing, usbPort2Sharing = usb.usbSharePortSetupSectionGetAll()
+    returnCode, status, sharePortTable = usb.usbSharedEnabledInterfacesSectionGetAll ()
+    local errorCode, device1Status, device2Status = usb.isPrinterDeviceConnected ()
+    local errorCode1, usb1Status, usb2Status = usb.isUsbDeviceConnected ()
+    if (errorCode ~= returnCodes.SUCCESS  and errorCode1 ~= returnCodes.SUCCESS) then
+        statusInfoMessage = errorMap.errorStringGet (errorCode)
+    end
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+LANG_LOCALE = "13220,13217,13216,10910,10903,13221,12545,10899,11190,10905,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua 
+                    if (statusInfoMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                        <p>$| statusInfoMessage or ''  |$</p>
+                    </div>
+                    <?lua
+                    elseif (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage or ''  |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage or '' |$</p>
+                </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13217'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmUsbSharePorts"
+                                id="tf1_frmUsbSharePorts" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="usbSharePorts.html">
+                                 <?lua if ( PRODUCT_ID ~= "DSR-500AC_Ax" and PRODUCT_ID ~= "DSR-500_Bx") then?>
+                                 <?lua if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                <h2>$| LANG_LOCALE['13220'] |$</h2>
+                                <?lua else?>
+                                    <h2>$| LANG_LOCALE['13216'] |$</h2>
+                                    <?lua end?>
+                                <div class="configRow">
+                                    <?lua if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                    <label> $| LANG_LOCALE['10910'] |$ </label>
+                                    <?lua else?>
+                                    <label>$| LANG_LOCALE['10910'] |$ </label>
+                                    <?lua end?>
+                                    <?lua
+                                    if (usb1active == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              elseif(usb1active == "0") then
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                              ?>
+                                              <?lua if (device1Status) then ?>                                              
+                                              <a class="$| statusStr |$" alt=""></a>
+                                              <?lua elseif (statusVar == "1") then ?>
+                                               <a class="enable-disable-on-noclick" alt=""></a>
+                                              <?lua else ?>
+                                              <a class="enable-disable-off-noclick" alt=""></a>
+                                              <?lua end?>
+                                        <input type="hidden" value="$| statusVar
+                                        |$" name="usbSharePorts.usb1">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <?lua if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-1000AC_Ax") then ?>
+                                    <label>$| LANG_LOCALE['10903'] |$  </label>
+                                    <?lua else?>
+                                    <label>$| LANG_LOCALE['10903'] |$  </label>
+                                    <?lua end?>
+                                    <?lua
+                                    if (usbPort1Sharing == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              elseif(usbPort1Sharing == "0") then
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                              ?>
+                                              <?lua if (usb1Status) then ?>                                              
+                                              <a class="$| statusStr |$" alt=""></a>
+                                              <?lua elseif (statusVar == "1") then ?>
+                                               <a class="enable-disable-on-noclick" alt=""></a>
+                                              <?lua else ?>
+                                              <a class="enable-disable-off-noclick" alt=""></a>
+                                              <?lua end?>
+                                        <input type="hidden" value="$| statusVar
+                                        |$" name="usbSharePorts.usb1Sharing">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                    <?lua end?>
+                                <?lua if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then ?>
+                                    <?lua if ( PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then?>
+                                    <h2>USB Share Port Setup</h2>
+                                    <?lua else?>
+                                    <h2>$| LANG_LOCALE['13221'] |$</h2>
+                                    <?lua end?>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10910'] |$ </label>
+                                      <?lua
+                                              if (usb2active == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              elseif(usb2active == "0") then
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                              ?>
+                                              <?lua if (device2Status) then ?>       
+                                               <a class="$| statusStr |$" alt=""></a>
+                                               <?lua elseif (statusVar == "1") then ?>
+                                               <a class="enable-disable-on-noclick" alt=""></a>
+                                               <?lua else ?>
+                                              <a class="enable-disable-off-noclick" alt=""></a>
+                                              <?lua end?>
+                                        <input type="hidden" value="$| statusVar
+                                        |$" name="usbSharePorts.usb2">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10903'] |$ </label>
+                                      <?lua
+                                              if (usbPort2Sharing == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              elseif(usbPort2Sharing == "0") then
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                              ?>
+                                              <?lua if (usb2Status) then ?>       
+                                               <a class="$| statusStr |$" alt=""></a>
+                                               <?lua elseif (statusVar == "1") then ?>
+                                               <a class="enable-disable-on-noclick" alt=""></a>
+                                               <?lua else ?>
+                                              <a class="enable-disable-off-noclick" alt=""></a>
+                                              <?lua end?>
+                                        <input type="hidden" value="$| statusVar
+                                        |$" name="usbSharePorts.usb2Sharing">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <?lua end?>
+                                <h2>$| LANG_LOCALE['12545'] |$</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                            <thead>
+                                                <tr>
+                                                    <th>$| LANG_LOCALE['11190'] |$ </th>
+                                                    <th>$| LANG_LOCALE['10899'] |$ </th>
+                                                    <th>$| LANG_LOCALE['10905'] |$ </th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            local i = 0
+                                            for k,v in pairs(sharePortTable) do
+                                                i= i+1
+                                            ?>
+                                            <tr class="gradeA">
+                                                <td> $| v["SharePortVlan.vlanName"] or '' |$ </td>
+                                                <?lua 
+                                                
+                                                if
+                                                (v["SharePortVlan.printerSharing"] == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                               ?>
+                                               <td>
+                                               <?lua if (errorCode == returnCodes.SUCCESS) then ?>       
+                                               <a class="$| statusStr |$" alt=""></a>
+                                               <?lua elseif (statusVar == "1") then ?>
+                                               <a class="enable-disable-on-noclick" alt=""></a>
+                                               <?lua else ?>
+                                                <a class="enable-disable-off-noclick" alt=""></a>
+                                                <?lua end?>
+                                                    <input type="hidden" value="$| statusVar |$" name="SharePortVlan.sharing_$|v["SharePortVlan.vlanId"]|$">
+                                                </td>
+
+                                                <?lua 
+                                                
+                                                if
+                                                (v["SharePortVlan.storageSharing"] == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                               ?>
+                                               <td>
+                                               <?lua if (errorCode1 == returnCodes.SUCCESS) then ?>       
+                                               <a class="$| statusStr |$" alt=""></a>
+                                               <?lua elseif (statusVar == "1") then ?>
+                                               <a class="enable-disable-on-noclick" alt=""></a>
+                                               <?lua else ?>
+                                                <a class="enable-disable-off-noclick" alt=""></a>
+                                                <?lua end?>
+                                                    <input type="hidden" value="$| statusVar |$" name="SharePortVlan.storageSharing_$|v["SharePortVlan.vlanId"]|$">
+                                                </td>
+                                            </tr>
+                                            <?lua 
+                                              
+                                            end
+                                            ?>  
+                                        </table>
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                                    <div class="submitRow">
+                                        <input type="submit" name= "button.config.usbSharePorts" <?lua if(errorCode~=returnCodes.SUCCESS and errorCode1~=returnCodes.SUCCESS) then ?> disabled <?lua end ?> class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" onclick="setHiddenChks('tf1_frmUsbSharePorts');">
+                                        <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmUsbSharePorts');">
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+		
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+                onloadCall();
+            });
+        </script>
+    </body>
+
+</html>
+<?lua end ?>

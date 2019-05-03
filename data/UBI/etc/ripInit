@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# ripInit - initialization script for routed
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,17jun08,nrj written
+
+if [ "$INCLUDE_RIP" = "y" ]; then
+
+touch /etc/gateways
+chmod 600 /etc/gateways
+
+fi

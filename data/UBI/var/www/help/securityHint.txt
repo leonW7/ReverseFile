@@ -1,0 +1,199 @@
+:|noHelpSet|:
+The table lists all the available logs in the system.
+:|noHelpSetEnd|:
+
+:|getUserDb|:
+This page allows user to import a CSV formatted user database to the router. 
+:|getUserDbEnd|:
+
+:|groups|:
+This page shows the list of added groups to the router. The user can add, delete and edit the groups also. The Login policies, Browser Policies and IP Policies can only be configured for groups having admin and sslvpn privileges.<br>
+:|groupsEnd|:
+
+
+:|groups_econa|:
+This page shows the list of added groups to the router. The user can add, delete and edit the groups also. The Login policies, Browser Policies and IP Policies can only be configured for groups having admin and sslvpn privileges.<br>
+:|groups_econaEnd|:
+
+
+:|users|:
+This page shows a list of available users in the system. A user can add, delete and edit the users also. This page can also be used for setting policies on users. 
+:|usersEnd|:
+
+:|macAuthentication|:
+The Known Client Summary shows the wireless clients currently in the Known Client Database and allows you to add new clients or modify existing clients to the database.
+:|macAuthenticationEnd|:
+
+:|passwordRules|:
+The table lists all the available Password Rules in the system.
+:|passwordRulesEnd|:
+
+:|radiusServer|:
+This page configures the RADIUS servers to be used for authentication. A RADIUS server maintains a database of user accounts used in larger environments. If a RADIUS server is configured in the LAN, it can be used for authenticating users that want to connect to the IPSec,L2TP,PPTP,SSL VPN and wireless networks provided by this device. If the first/primary RADIUS server is not accessible at any time, then the device will attempt to contact the secondary RADIUS server for user authentication.
+:|radiusServerEnd|:
+
+:|radiusAccGlobalSettings|:
+This page is used to view and configure various  global parameters for the RADIUS Accounting server configured on the system.Use Accounting Mode to enable/disable accounting globally for congigured SSID's.
+:|radiusAccGlobalSettingsEnd|:
+
+:|radiusAcc|:
+This page allows to configure Radius Accounting Server parameter.Accounting Server Name given here will be used in SSID page to enable/Disable radius accounting on given SSID.
+:|radiusAccEnd|:
+
+:|pop3Server|:
+This page allow user to configure pop3 authentication servers.
+:|pop3ServerEnd|:
+
+:|pop3TrustedCa|:
+This page shows the list of POP3 CA Files. 
+:|pop3TrustedCaEnd|:
+
+:|ldapServer|:
+This page allows a user to configure authentication servers for LDAP authentication.
+:|ldapServerEnd|:
+ 
+:|adServer|:
+This page allow to configure Active Directory authentication servers. 
+:|adServerEnd|:
+
+:|ntDomain|:
+This page allow you to configure NT Domain servers. 
+:|ntDomainEnd|:
+
+:|loginProfiles|:
+This table lists all the login page profiles available in the system. These login page profiles are used for authenticating SSL VPN and Captive Portal (if available on the device) sessions. 
+:|loginProfilesEnd|:
+
+:|loginProfilesSla|:
+Service Level Agreement are the set of rules temporary Captive Portal user needs to accept before accessing internet or other services.This page is used to help admin to set SLA rules.
+:|loginProfilesSlaEnd|:
+
+:|servicesRouteMgmt|:
+This table lists all the service routes on which we are interested to send the
+traffic of particular service. 
+:|servicesRouteMgmtEnd|:
+
+:|billingProfile|:
+This page shows a list of available billing profiles for temporary CaptivePortal Users. We can add, delete and edit the profiles.
+:|billingProfileEnd|:
+
+:|staticFiltering|:
+This content filtering option allows the user to block access to certain Internet sites. Up to 32 key words in the site's name (web site URL) can be specified, which will block access to the site. To setup URLs, go to Approved URLs and Blocked URLs page.
+:|staticFilteringEnd|:
+
+:|approvedUrls|:
+This page displays the approved URLs. The list of websites here are always allowed to be accessed, and have higher priority than blocked keywords and lesser priority than any configured firewall rules.
+:|approvedUrlsEnd|:
+
+:|approvedUrlsAC|:
+This page displays the approved URLs. The list of websites here are always allowed to be accessed, and have higher priority than blocked keywords and lesser priority than any configured firewall rules.
+:|approvedUrlsACEnd|:
+
+:|blockedKeywords|:
+This page displays the blocked URLs. The list of websites here are always blocked. 
+:|blockedKeywordsEnd|:
+
+:|dynamicFiltering|:
+This page displays the list of categories to be blocked.
+:|dynamicFilteringEnd|:
+
+:|urlFilteringACL|:
+This page allows the user to enable or disable the URL Filtering Access
+Control feature and to configure the profiles for blacklisting or whitelisting 
+the LAN clients or users from the configured static or dynamic filtering rules.
+:|urlFilteringACLEnd|:
+
+:|firewallRules|:
+A firewall is a security mechanism to selectively block or allow certain types of traffic in accordance with rules specified by network administrators. You can use this page to manage the firewall rules that control traffic to and from your network. The List of Available Firewall Rules table includes all firewall rules for this device and allows several operations on the firewall rules. 
+:|firewallRulesEnd|:
+
+:|firewallRulesIpv6|:
+A firewall is a security mechanism to selectively block or allow certain types of traffic in accordance with rules specified by network administrators. You can use this page to manage the firewall rules that control traffic to and from your network. The List of Available Firewall Rules table includes all firewall rules for this device and allows several operations on the firewall rules. 
+:|firewallRulesIpv6End|:
+
+:|bridgeFirewallRules|:
+
+A firewall is a security mechanism to selectively block or allow certain types of traffic in accordance with rules specified by network administrators. You can use this page to manage the firewall rules that control traffic between interfaces of your Bridged network. The List of Bridge Firewall Rules table includes all firewall rules for the bridged network and allows several operations on the firewall rules.
+
+
+By default in bridge Mode, all access is allowed for Inbound and Outbound direction between the interfaces of the bridged network. Inbound Rules govern access from DMZ Port to the LAN Port1 interface. Oubound rules restrict access to traffic leaving your LAN Port1 interface. Firewall rules are applied in the order listed. As a general rule, you should move the strictest rules (those with the most specific services or addresses) to the top of the list.
+
+:|bridgeFirewallRulesEnd|:
+
+:|schedules|:
+When you create a firewall rule, you can specify a schedule when the rule applies. The table lists all the Available Schedules for this device and allows several operations on the Schedules.  
+:|schedulesEnd|:
+
+:|blockedClients|:
+This page shows a list of clients MAC addresses blocked by admin.
+:|blockedClientsEnd|:
+
+:|customServices|:
+When you create a firewall rule, you can specify a service that is controlled by the rule.. Common types of services are available for selection, and you can create your own custom services. This page allows creation of custom services against which firewall rules can be defined. Once defined, the new service will appear in the List of Available Custom Services table. 
+:|customServicesEnd|:
+
+:|algs|:
+Application Level Gateway allows customized NAT traversal filters to be plugged into the gateway to support address and port translation for certain application layer "control/data" protocols such as TFTP, SIP, RTSP etc. Each ALG provides special handling for a specific protocol or application. A number of ALGs for common applications are enabled by default. 
+:|algsEnd|:
+
+:|smtpAlg|:
+This page allows the user to enable the SMTP ALG.
+:|smtpAlgEnd|:
+
+:|approvedMailIds|:
+This table lists all the available Mail Ids that are supposed to be allowed in the system. 
+:|approvedMailIdsEnd|:
+
+:|blockedMailIds|:
+This table lists all the available Mail Ids that are supposed to be blocked in the system.
+:|blockedMailIdsEnd|:
+
+:|mailFiltering|:
+The table lists all the Subjects and Mail ids which are to allowed/blocked.
+:|mailFilteringEnd|:
+
+:|vpnPassthrough|:
+This page allows user to configure VPN (IPsec, PPTP and L2TP) passthrough on the router. Enabled passthrough checkboxes have higher priority than firewall rules based on the same service.
+:|vpnPassthroughEnd|:
+
+:|applicationRules|:
+The table lists all the available port triggering rules and allows several operations on the rules. 
+:|applicationRulesEnd|:
+
+:|applicationRulesAC|:
+The table lists all the available port triggering rules and allows several operations on the rules. 
+:|applicationRulesACEnd|:
+
+:|applicationRulesStatus|:
+This page lists the application rules containing status, open ports and expiry time for a particular rule.
+:|applicationRulesStatusEnd|:
+
+:|attackChecks|:
+This page allows you to specify whether or not to protect against common attacks from the LAN and WAN networks. 
+:|attackChecksEnd|:
+
+:|intelAmt|:
+The table lists all the available intelAmt in the system.
+:|intelAmtEnd|:
+
+:|ips|:
+This page allows user to configure Intrusion Detection System and Intrusion Preventions system on the router.
+:|ipsEnd|:
+:|ips_single|:
+This page allows user to configure Intrusion Detection System and Intrusion Preventions system on the router.
+:|ips_singleEnd|:
+
+:|radiusAccountingCfg|:
+This page allows user to enable or disable the Radius Accounting for a 
+feature and also to configure the Accounting Interim Interval in seconds at 
+which the device sends the traffic statistics of a session in 
+accounting messages to the Radius server configured.
+:|radiusAccountingCfgEnd|:
+
+:|radiusAccountingCfgServer|:
+This page allows user to configure the Radius Accounting Server configuration 
+on the router.If the first/primary Radius server is not accessible at any time, 
+then the device will attempt to contact the secondary Radius server for 
+sending accounting requests.
+:|radiusAccountingCfgServerEnd|:
+

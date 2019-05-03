@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="system-traffic-meter-config" prompt="system-config[traffic-meter]> "> 
+    <COMMAND name="save" help="Save traffic meter configuration changes.">
+	     <ACTION>lua clishCfgObjExec("FwTrafficMeter")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save traffic meter configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("FwTrafficMeter")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back traffic meter configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable"
+             help="Enable/Disable the traffic meter status">
+             <PARAM name="trafficMeterStatus"
+                    help="Enable/Disable the traffic meter status"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.TrafficMeterStatus", "${trafficMeterStatus}")                 </ACTION>
+    </COMMAND>
+    <COMMAND name="limit_type"
+             help="Set traffic Limit Type 0(No limit), 1(Download only), 2(Both Directions)">
+             <PARAM name="trfLimitType"
+                    help="Set traffic Limit Type 0(No limit), 1(Download only), 2(Both Directions)"
+                    ptype="TRAFFIC_T"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.TrafficLimitType", "${trfLimitType}")                         </ACTION>
+    </COMMAND>
+    <COMMAND name="monthly_limit"
+             help="Set the monthly limit value of the traffic meter">
+             <PARAM name="monthlyLimit"
+                    help="Set the monthly limit value of the traffic meter"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.TrafficMonthlyLimit", "${monthlyLimit}")                      </ACTION>
+    </COMMAND>
+    <COMMAND name="increase_limit_enable"
+             help="Enable/Disable status of increase limit of the traffic meter option">
+             <PARAM name="incrLimitEnable"
+                    help="Enable/Disable status of increase limit of the traffic meter option"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.IncreaseLimitStatus", "${incrLimitEnable}")                   </ACTION>
+    </COMMAND>
+    <COMMAND name="increase_limit_by"
+             help="Set the value to increase limit of the traffic meter">
+             <PARAM name="incrLimitBy"
+                    help="Set the value to increase limit of the traffic meter"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.IncreaseLimitBy", "${incrLimitBy}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="counter"
+             help="set traffic counter as either specific time or restart counter now">
+             <PARAM name="restartCounter"
+                    help="set restart counter either as 1-Specific Time or 0-Restart's counter now"
+                    ptype="TRAFFIC_COUNTER_T"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.RestartCounter", "${restartCounter}")                         </ACTION>
+    </COMMAND>
+    <COMMAND name="time_hour"
+             help="set hours for restart time">
+             <PARAM name="timeHrs"
+                    help="set hours for restart time"
+                    ptype="TIME_HH"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.TimeHH", "${timeHrs}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="time_minute"
+             help="set minutes for restart time">
+             <PARAM name="timeMins"
+                    help="set minutes for restart time"
+                    ptype="TIME_MM"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.TimeMM", "${timeMins}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="day_of_month"
+             help="set day of month">
+             <PARAM name="dayMonth"
+                    help="set day of month"
+                    ptype="DAY_MONTH"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.DayOfMonth", "${dayMonth}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="send_email_report"
+             help="Enable/Disable send email report">
+             <PARAM name="sendEmailReport"
+                    help="Enable/Disable send email report"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.SendEmailReport", "${sendEmailReport}")           
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="block_type"
+             help="Set block Traffic type 0(block all traffic) 1(block all traffic except email)">
+             <PARAM name="blockTraffic"
+                    help="Set block traffic type 0(block all traffic) 1(block all traffic except email)"
+                    ptype="BLOCK_TRAFFIC_T"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.BlockTraffic", "${blockTraffic}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="send_email_alert"
+             help="Enable/Disable send email alert">
+             <PARAM name="sendEmailAlert"
+                    help="Enable/Disable send email alert"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("FwTrafficMeter", "FwTrafficMeter.SendEmailAlert", "${sendEmailAlert}")                         </ACTION>
+    </COMMAND>                   
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="system traffic_meter" help="traffic meter Configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="system traffic_meter configure"
+             help="traffic meter configuration mode."
+             view="system-traffic-meter-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("FwTrafficMeter", 
+                              trafficMeterCfgInit, trafficMeterCfgSave, 
+				       trafficMeterCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show system traffic_meter" help="."/>
+    <COMMAND name="show system traffic_meter setup"
+            help="Display traffic meter configuration">
+	    <ACTION>lua clishCmdExec (trafficMeterSetupGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

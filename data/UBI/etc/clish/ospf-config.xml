@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="net-ospfv2-config" prompt="net-config[ospfv2]> "> 
+    <COMMAND name="save" help="Save OSPFv2 configuration changes.">
+	     <ACTION>lua clishCfgObjExec("ospf")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save OSPFv2 configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("ospf")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable"
+             help="Enable/Disable OSPFv2 for a particular interface.">
+             <PARAM name="status"
+                    help="Enable/Disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.ospfEnable", "${status}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="area"
+             help="Give the area to which the interface belongs">
+             <PARAM name="areaid"
+                    help="Enter the OSPFv2 Area ID from 0 to 200"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.areaId", "${areaid}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="priority"
+             help="Helps to determine the OSPFv2 designated router for a network.The router with the highest priority will                      be more eligible to become Designated Router. Setting the value to 0, makes the router ineligible to be                      come Designated Router. The default value is 1.">
+             <PARAM name="value"
+                    help="Enter OSPFv2 Priority from 0 to 255"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.priority", "${value}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="hello_interval"
+             help="The number of seconds for HelloInterval timer value.Setting this value, Hello packet will be sent every                      timer value seconds on the specified interface. This value must be the same for all routers attached to a                    common network. The default value is 10 seconds.">
+             <PARAM name="interval"
+                    help="Enter OSPFv2 hello interval in range from 1-65,535"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.helloInterval", "${interval}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="dead_interval"
+             help="The number of seconds that a device’s hello packets must not have been seen before its neighbors declare                     the OSPF router down.This value must be the same for all routers attached to a common network.The default                    value is 40 seconds.">
+             <PARAM name="interval"
+                    help="Enter OSPFv2 dead interval in range from 1-65,535"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.deadInterval", "${interval}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="cost"
+             help="The cost of sending a packet on an OSPFv2 interface">
+             <PARAM name="value"
+                    help="Enter OSPFv2 Cost of an interface in range from 1-65,535"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.cost", "${value}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="auth_type"
+             help="Give the authentication type used for OSPFv2.If Authentication type is none the interface does not
+                authenticate ospf packets.If Authentication Type is Simple then ospf packets are authenticated using                         simple text key.If Authentication Type is MD5 then the interface authenticates ospf packets with MD5                         authentication.">
+             <PARAM name="type"
+                    help="Enter OSPFv2 authentication type"
+                    ptype="OSPF_AUTH_T"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.authType", "${type}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="auth_key"
+             help="Text Key for Simple Authentication type">
+             <PARAM name="key"
+                    help="Enter OSPFv2 text key upto 8 character length"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.textAuthKey", "${key}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="md5_key_id"
+             help="Give MD5 Key id">
+             <PARAM name="keyid"
+                    help="Enter OSPFv2 Key ID in range form 1 to 255"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.md5KeyId", "${keyid}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="md5_auth_key"
+             help="Give MD5 text key">
+             <PARAM name="key"
+                    help="Enter OSPFv2 MD5 text key upto 16 character length"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.md5AuthKey", "${key}")              
+             </ACTION>
+    </COMMAND> 
+    <COMMAND name="lanEnable"
+             help="Enable/Disable lan Routes Exchange option for a particular WAN interface.">
+             <PARAM name="lanEnable"
+                    help="Enable/Disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf","ospf.lanEnable", "${lanEnable}")              
+             </ACTION>
+    </COMMAND> 
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-ospfv3-config" prompt="net-config[ospfv3]> "> 
+    <COMMAND name="save" help="Save OSPFv3 configuration changes.">
+	     <ACTION>lua clishCfgObjExec("ospf6")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save OSPFv3 configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("ospf6")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable"
+             help="Enable/Disable OSPFv3 for a particular interface.">
+             <PARAM name="status"
+                    help="Enable/Disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf6","ospf6.ospf6Enable", "${status}")              
+             </ACTION>
+    </COMMAND> 	
+	<COMMAND name="priority"
+             help="Helps to determine the OSPFv3 designated router for a network.The router with the highest priority will                      be more eligible to become Designated Router. Setting the value to 0, makes the router ineligible to beco                    me Designated Router. The default value is 1.">
+             <PARAM name="value"
+                    help="Enter OSPFv3 Priority from 1-255"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf6","ospf6.priority", "${value}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="hello_interval"
+             help="The number of seconds for HelloInterval timer value.Setting this value, Hello packet will be sent every                      timer value seconds on the specified interface. This value must be the same for all routers attached to a                    common network. The default value is 10 seconds.">
+             <PARAM name="interval"
+                    help="Enter OSPFv3 hello interval in range from 1-65,535"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf6","ospf6.helloInterval", "${interval}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="dead_interval"
+             help="The number of seconds that a device’s hello packets must not have been seen before its neighbors declare                     the OSPF router down.This value must be the same for all routers attached to a common network.The defaul                     t value is 40 seconds.">
+             <PARAM name="interval"
+                    help="Enter OSPFv3 dead interval in range from 1-65,535"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf6","ospf6.deadInterval", "${interval}")              
+             </ACTION>
+    </COMMAND> 
+	<COMMAND name="cost"
+             help="The cost of sending a packet on an OSPFv3 interface">
+             <PARAM name="value"
+                    help="Enter OSPFv3 Cost of an interface from 1-65,535"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("ospf6","ospf6.cost", "${value}")              
+             </ACTION>
+    </COMMAND> 
+	</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net routing ospfv2" check_supported="Y" license_support="Y" help="OSPF Configuration for IPV4"/>
+	!--=======================================================-->
+    <COMMAND name="net routing ospfv3" check_supported="Y" license_support="Y" help="OSPF Configuration for IPV6"/>
+    <!--=======================================================-->
+    <COMMAND name="net routing ospfv2 configure"
+             help="ospfv2 configuration mode."
+             view="net-ospfv2-config" viewid="">
+	         <PARAM name="interface" 
+	                help="Give the physical network interface on which OSPFv2 is Enabled/Disabled"
+	                ptype="OSPF_INTERFACE_T"/>
+                    <ACTION>lua clishCfgObjNew ("ospf",ospfCfgInit, ospfCfgSave,ospfCfgInputVal,"${interface}")
+                    </ACTION>
+    </COMMAND>
+	<!--=======================================================-->
+    <COMMAND name="net routing ospfv3 configure"
+             help="ospfv3 configuration mode."
+             view="net-ospfv3-config" viewid="">
+	         <PARAM name="interface" 
+	                help="Give the physical network interface on which OSPFv3 is Enabled/Disabled"
+	                ptype="OSPF6_INTERFACE_T"/>
+                    <ACTION>lua clishCfgObjNew ("ospf6",ospf6CfgInit, ospf6CfgSave,ospf6CfgInputVal,"${interface}")
+                    </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

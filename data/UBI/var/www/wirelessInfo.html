@@ -1,0 +1,436 @@
+<?lua 
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/deviceInfo_bl"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "wirelessInfo"
+
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local wirelessInfo = require ("com.teamf1.bl.system.deviceInfo")
+
+local returnCode, opFreq, mode, channel, opFreq1, mode1, channel1, portName
+
+local wlInfoTable = {}
+if(UNIT_NAME == "DSR-1000AC") then
+    returnCode, wlInfoTable, portName = wirelessInfo.radioInfoGet ()
+    for k,v in pairs(wlInfoTable) do
+        for kk,vv in pairs(wlInfoTable[k]) do
+            if(k == 1) then
+                opFreq = wlInfoTable[k]["opFreq"]
+                mode = wlInfoTable[k]["mode"]
+                channel = wlInfoTable[k]["channel"]
+            elseif(k == 2 ) then
+                opFreq1 = wlInfoTable[k]["opFreq"]
+                mode1 = wlInfoTable[k]["mode"]
+                channel1 = wlInfoTable[k]["channel"]
+            end
+        end
+    end
+else
+    returnCode, opFreq, mode, channel, portName = wirelessInfo.radioInfoGet ()
+end
+
+if(returnCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (returnCode)
+end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE =
+"30014,30015,30016,30017,13036,11515,30018,13446,30025,10702,13384,11829,11720,10477,30026,12918,12792,10916,13449,10777,10333"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                            <?lua 
+                                local wan1DispName
+                                local wan2DispName
+                                    wan1DispName = LANG_LOCALE['30015']
+                                    wan2DispName = LANG_LOCALE['30017']
+                            ?>
+                                <li><a href="?page=deviceInfo.html">$| LANG_LOCALE['13036'] |$</a></li>
+                                <li><a href="?page=lanInfo.html">$| LANG_LOCALE['11515'] |$</a> </li>
+                                <li><a href="?page=wan1Info.html">$|wan1DispName|$</a> </li>
+                                <?lua if ( UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+                                    if (portName ~= "DMZ") then
+                                ?>
+                                <li><a href="?page=wan2Info.html">$|wan2DispName|$</a></li>
+                                <?lua else ?>
+                                <li><a href="?page=dmzInfo.html">$| LANG_LOCALE['10777'] |$</a></li>
+                                <?lua end else ?>
+                               <?lua if (portName == "WAN2") then ?>
+                                <li><a href="?page=wan2Info.html">$|wan2DispName|$</a></li>
+				<?lua elseif (portName == "DMZ") then ?>
+                                <li><a href="?page=dmzInfo.html">$| LANG_LOCALE['10777'] |$</a></li>
+						        <?lua end end if( UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                <li><a href="?page=wan3Info.html">$| LANG_LOCALE['30018'] |$</a></li>
+                                <?lua end 
+                                    if (UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then
+                                ?>
+                                <li class="current"><a href="?page=wirelessInfo.html">$| LANG_LOCALE['13446'] |$</a></li>
+				<?lua end ?>
+                            </ul>
+                        </nav>
+		    </div>
+                    <div class="FL2">
+                        <p class="hint"> $| helpHintText |$</p>
+                    </div>			
+                        <h1>$| LANG_LOCALE['30025'] |$</h1>
+                            <div class="CLR">
+                                <div class="demo_jui">
+                                    <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                        <thead>
+                                            <tr>
+                                                <th>$| LANG_LOCALE['10702'] |$</th>
+                                                <th>$| LANG_LOCALE['13384'] |$</th>
+                                            </tr>
+                                        </thead>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['11829'] |$</td>
+                                                <td>$| opFreq |$</td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['11720'] |$</td>
+                                                <td>$| mode |$</td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['10477'] |$</td>
+                                                <td id="tdCurChan">$| channel |$</td>
+                                            </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="brake">&nbsp;</div>
+                            <?lua if (PRODUCT_ID == "DSR-1000AC_Ax") then ?>   
+                            <input type="hidden" id="hdWlanAutoChannelRadio2" value="$| channel1 |$">
+                            <h1>Wireless LAN Information for Radio-2</h1>
+                            <div class="CLR">
+                                <div class="demo_jui">
+                                    <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData3">
+                                        <thead>
+                                            <tr>
+                                                <th>Description </th>
+                                                <th>Wireless LAN </th>
+                                            </tr>
+                                        </thead>
+                                            <tr class="gradeA">
+                                                <td>Operating Frequency</td>
+                                                <td>$| opFreq1 |$</td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>Mode</td>
+                                                <td>$| mode1 |$</td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>Channel</td>
+                                                <td id="tdCurChanradio2">$| channel1 |$</td>
+                                            </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <?lua end?>
+                            <div class="break">&nbsp;</div>
+                            <h1>$| LANG_LOCALE['30026'] |$</h1>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData2">
+                                            <thead>
+                                                <tr>
+                                                    <th>$| LANG_LOCALE['12918'] |$</th>
+                                                    <th>$| LANG_LOCALE['12792'] |$</th>
+                                                    <?lua if(HIGH_SEC == "HIGH") then ?>
+                                                    <th>$| LANG_LOCALE['10916'] |$</th>
+                                                    <th>$| LANG_LOCALE['13449'] |$</th>
+                                                    <?lua end?>
+                                                </tr>
+                                            </thead>
+                                                <?lua 
+                                                local returnCode, accessPointInfo = 
+                                                            wirelessInfo.profileInfoGet ()
+                                                local i =0
+                                                for k,v in pairs(accessPointInfo) do
+                                                    i=i+1
+                                                    if(accessPointInfo[i]["vapEnabled"] == "1") then
+                                                ?> 
+                                                <tr class="gradeA">
+                                                    <td>$| accessPointInfo[i]["ssid"] or '' |$</td>
+                                                    <td>$| accessPointInfo[i]["security"] or '' |$</td>
+                                                    <?lua if(HIGH_SEC == "HIGH") then ?>
+                                                    <td>$| accessPointInfo[i]["encryption"] or '' |$</td>
+                                                    <td>$| accessPointInfo[i]["authentication"] or '' |$</td>
+                                                    <?lua end?>
+                                                </tr>
+                                                <?lua end?>
+                                               <?lua end ?>
+                                        </table>
+                                    </div>
+                                </div>
+                </div> <!-- midWidth end -->
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?lua web.includeMenu("footer.html")?>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" id="hdWlanAutoChannel" value="$| channel |$">
+        <input type="hidden" id="hdmodelId" value="$| UNIT_NAME |$">
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <?lua if (UNIT_NAME ~= "DSR-1000AC" and UNIT_NAME ~= "DSR-500AC") then ?>
+        <input type="hidden" id="hdhwVer" value="$| HW_SER |$">
+        <script type="text/javascript" language="javascript" src="js/wlNwData.js"></script>
+        <?lua else ?>
+        <script type="text/javascript" language="javascript" src="js/wlNwDataAC.js"></script>
+        <?lua end ?>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                var unitName = $('#hdmodelId').val ();
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+                oTable = $('#recordsData2').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+                if (unitName == "DSR-1000AC") {
+                    oTable = $('#recordsData3').dataTable({
+                        "bJQueryUI" : true,
+                        "bPaginate" : false,
+                        "bLengthChange" : false,
+                        "bFilter" : false,
+                        "bSort" : false,
+                        "bInfo" : false,
+                        "bAutoWidth" : false
+                    });
+                    channelModeDisplayRadio2 ();
+                } else if ( unitName == "DSR-500AC") {
+                    channelModeDisplayRadio1 ();
+                }
+                else {
+                    channelModeDisplay ();
+                }
+            });
+
+ /* This function should call while loading the page and display the channel
+     value in Wireless LAN Information table for radio1 starts  */
+    function channelModeDisplayRadio1 ()
+	    {	
+        //var channelNum = 0;
+        var hdCurrentChnObj = document.getElementById ('hdWlanAutoChannel');
+        var unitName = document.getElementById ('hdmodelId');        
+        var tdCurChanObj = document.getElementById ('tdCurChanradio1');        
+        if (hdCurrentChnObj)
+            {
+            var freq = parseInt(hdCurrentChnObj.value,10);
+            if(isNaN (freq))
+                {
+                tdCurChanObj.innerHTML = hdCurrentChnObj.value;
+                }
+            else if (freq == "-1" ){
+                    tdCurChanObj.innerHTML = "N/A";
+                }
+            else
+                {                
+                if(unitName.value != "DSR-250N") 
+            	    {
+	                if (freq >= 2412)
+	                    {
+	                    if (freq == 2484)
+	                	    {
+	                        var channelNum = 14;
+	                        tdCurChanObj.innerHTML = chLst[channelNum];
+	                        }
+	                    else if (freq < 2484)
+	                	    {
+	                        var channelNum =  (freq - 2407)/5;
+	                        tdCurChanObj.innerHTML = chLst[channelNum];
+	                        }
+	                    else if (freq < 5000)
+	                	    {
+	                        var channelNum = 15 + ((freq - 2512) / 20);
+	                        tdCurChanObj.innerHTML = chLst[channelNum];
+	                        }
+	                    else
+	                	    {
+	                        var channelNum = (freq - 5000) / 5;
+	                        tdCurChanObj.innerHTML = chLst[channelNum];
+	                        }
+	                    }
+            	    }
+           	        else
+           	            {           	            
+				        tdCurChanObj.innerHTML = chLst[freq];
+				        }
+				  }
+		    }            
+        }
+    /* This function should call while loading the page and display the channel
+     value in Wireless LAN Information table for radio1 ends  */
+
+    /* This function should call while loading the page and display the channel
+     value in Wireless LAN Information table for radio2 starts  */
+    function channelModeDisplayRadio2 ()
+        {   
+        //var channelNum = 0;
+        var hdCurrentChnObj = document.getElementById ('hdWlanAutoChannelRadio2');
+        var unitName = document.getElementById ('hdmodelId');        
+        var tdCurChanObj = document.getElementById ('tdCurChanradio2');        
+        if (hdCurrentChnObj)
+            {
+            var freq = parseInt(hdCurrentChnObj.value,10);
+            if(isNaN (freq))
+                {
+                tdCurChanObj.innerHTML = hdCurrentChnObj.value;
+                }
+            else if (freq == "-1" ){
+                    tdCurChanObj.innerHTML = "N/A";
+                }
+            else
+                {                
+                if(unitName.value != "DSR-250N") 
+                    {
+                    if (freq >= 2412)
+                        {
+                        if (freq == 2484)
+                            {
+                            var channelNum = 14;
+                            tdCurChanObj.innerHTML = chLst[channelNum];
+                            }
+                        else if (freq < 2484)
+                            {
+                            var channelNum =  (freq - 2407)/5;
+                            tdCurChanObj.innerHTML = chLst[channelNum];
+                            }
+                        else if (freq < 5000)
+                            {
+                            var channelNum = 15 + ((freq - 2512) / 20);
+                            tdCurChanObj.innerHTML = chLst[channelNum];
+                            }
+                        else
+                            {
+                            var channelNum = (freq - 5000) / 5;
+                            tdCurChanObj.innerHTML = chLst[channelNum];
+                            }
+                        }
+                    }
+                    else
+                        {                           
+                        tdCurChanObj.innerHTML = chLst[freq];
+                        }
+                  }
+            }            
+        }   
+    /* This function should call while loading the page and display the channel
+     value in Wireless LAN Information table for radio2 ends  */
+
+
+
+    /* This function should call while loading the page and display the channel
+     value in Wireless LAN Information table */
+    function channelModeDisplay ()
+	    {	
+        //var channelNum = 0;
+        var hdCurrentChnObj = document.getElementById ('hdWlanAutoChannel');
+        var unitName = document.getElementById ('hdmodelId');        
+        var tdCurChanObj = document.getElementById ('tdCurChan');        
+        var hwVersion = document.getElementById ('hdhwVer');  
+        if (hdCurrentChnObj)
+            {
+            var freq = parseInt(hdCurrentChnObj.value,10);
+            if(isNaN (freq))
+                {
+                tdCurChanObj.innerHTML = hdCurrentChnObj.value;
+                }
+            else if (freq == "-1" ){
+                    tdCurChanObj.innerHTML = "N/A";
+                }
+            else
+                {                
+                if(unitName.value == "DSR-250N" && (hwVersion.value == "Ax")) {
+                    tdCurChanObj.innerHTML = chLst[freq];
+                }
+                else
+                    {
+                    if (freq >= 2412)
+                        {
+                        if (freq == 2484)
+                            {
+                            var channelNum = 14;
+                            tdCurChanObj.innerHTML = chLst[channelNum];
+                            }
+                        else if (freq < 2484)
+                            {
+                            var channelNum =  (freq - 2407)/5;
+                            tdCurChanObj.innerHTML = chLst[channelNum];
+                            }
+                        else if (freq < 5000)
+                            {
+                            var channelNum = 15 + ((freq - 2512) / 20);
+                            tdCurChanObj.innerHTML = chLst[channelNum];
+                            }
+                        else
+                            {
+                            var channelNum = (freq - 5000) / 5;
+                            tdCurChanObj.innerHTML = chLst[channelNum];
+                            }
+                        }
+                    }
+                }
+		    }            
+        }
+        </script>
+    </body>
+</html>

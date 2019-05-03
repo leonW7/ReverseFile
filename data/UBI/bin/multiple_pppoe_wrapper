@@ -1,0 +1,27 @@
+#!/bin/sh
+# written by db
+
+# www.flets routing table
+route add -net 220.210.194.0 netmask 255.255.255.128 dev $1
+route add -net 220.210.195.0 netmask 255.255.255.192 dev $1
+route add -net 220.210.195.64 netmask 255.255.255.192 dev $1
+route add -net 220.210.197.0 netmask 255.255.255.128 dev $1
+route add -net 220.210.199.0 netmask 255.255.255.224 dev $1
+route add -net 220.210.199.32 netmask 255.255.255.224 dev $1
+route add -net 220.210.199.200 netmask 255.255.255.248 dev $1
+route add -net 220.210.199.64 netmask 255.255.255.240 dev $1
+route add -net 220.210.203.0 netmask 255.255.255.224 dev $1
+route add -net 220.210.198.0 netmask 255.255.255.192 dev $1
+
+
+
+
+# DNS Address
+#if [ "$1" = "ppp101" ]; then
+#   sqlite3 /tmp/system.db "update resolverConfig set nameserver3='$2', nameserver4='$3' where LogicalIfName = 'WAN1' and addressFamily=2"
+#elif [ "$1" = "ppp201" ]; then
+#    sqlite3 /tmp/system.db "update resolverConfig set nameserver3='$2', nameserver4='$3' where LogicalIfName = 'WAN2' and addressFamily=2"
+#fi
+
+
+

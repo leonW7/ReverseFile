@@ -1,0 +1,326 @@
+<?lua
+    require "teamf1lualib/header_bl"
+    require "teamf1lualib/system_productData"
+    local productData = require("com.teamf1.core.system.productdata")
+    local firmwareDetails = require("com.teamf1.bl.maintenance")
+	local returnCode, cookie, firmwareVersion, wlanModuleVersion, firmwareDate, currentLoginUserName, returnCode1, currentLoginGroupName
+	returnCode, cookie, firmwareVersion, wlanModuleVersion, firmwareDate, serialNum = firmwareDetails.headerContenetGet()
+
+	
+	local fileName = ""
+	if ( cgi["page"] ~= nil and cgi["page"] ~= "" ) then
+		fileName = cgi["page"]
+	elseif ( NextPage ~= nil and NextPage ~= "" ) then
+		fileName = NextPage..".html"
+	elseif ( Page ~= nil and Page ~= "" ) then
+		fileName = Page..".html"
+	elseif ( cgi["thispage"] ~= nil and cgi["thispage"] ~= "" ) then
+		fileName = cgi["thispage"]
+	end
+	
+   --Start HelpHint File paring
+    helpHintText = ""
+    local f = assert(io.open("help/"..PAGE_HELP.."Hint.txt", "r"))
+    local data = ""
+    while true do
+    	local line = f:read("*line")
+    	if line == nil then break end
+    	data = data .. line
+    end
+    assert(f:close())
+	local helpHintStart1,helpHintEnd1 = string.find(data,":|"..PAGE_HELP_SECTION.."|:")
+    local helpHintStart2,helpHintEnd2 = string.find(data,":|"..PAGE_HELP_SECTION.."End|:")
+    
+    if (helpHintStart1 ~= nil and helpHintEnd1 ~= nil and helpHintStart2 ~= nil and helpHintEnd2 ~= nil) then
+        helpHintText = string.sub(data, helpHintEnd1+1, helpHintStart2-1)
+    else
+    	helpHintText = ""
+    end
+   --End HelpHint File paring
+
+   -- get current login username
+   local inputTable = web.cgiToLuaTable (cgi)
+   returnCode1, currentLoginUserName, currentLoginGroupName = firmwareDetails.currentLoginUserNameGet (inputTable["Users.UserName"])
+   -- require system 
+
+   returnCode , cookie, countryCode = productData.countryCodeGet ()
+   COUNTRY_CODE = countryCode
+
+   -- Append Country code to Firmware Version
+	firmwareVersion = firmwareVersion .. "_" .. COUNTRY_CODE
+    -- remove M7 word from language id
+    local lang = util.split (langId, "-")
+    langVal = lang[1]
+        langDisplay = ""
+        if (langVal == "en_US") then
+            langDisplay = "English [US]"
+        elseif (langVal == "de") then
+            langDisplay = "Deutsch"
+        elseif (langVal == "es") then
+            langDisplay = "Español"
+        elseif (langVal == "fr") then
+            langDisplay = "French"
+        elseif (langVal == "it") then
+            langDisplay = "Italiano"
+        elseif (langVal == "ru") then
+            langDisplay = "Russian"
+        elseif (langVal == "tc") then
+            langDisplay = "中文"
+        end
+
+    curTitle = currentLoginUserName .. " ( "..currentLoginGroupName.." )"
+	local len = #currentLoginUserName
+	dispLoginUserName = ""
+	if (len > 16) then
+		dispLoginUserName = string.sub(currentLoginUserName,1,16) .. "..."
+	else
+		dispLoginUserName = currentLoginUserName
+	end
+	groupName = " ( "..currentLoginGroupName.." )"
+?>
+  
+<?lua if (UNIT_NAME ~= "DSR-1000N" and UNIT_NAME ~= "DSR-500N" and UNIT_NAME ~="DSR-250N" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-1000AC" and UNIT_NAME ~= "DSR-500AC") then ?> 
+<script language="JavaScript" type="text/javascript">
+
+$(document).ready(function() {
+ 
+               $("#mainMenu3").mouseover( function () {   
+                    $(".subMenu3List").css("width","800px");
+                    $(".subMenu3List").css("display","block");           
+                    $(".subMenu3List").css("left","-190px");
+                });
+                $("#mainMenu3").mouseout( function () {                   
+                    $(".subMenu3List").css("display","none");
+                }); 
+ 		$("#mainMenu4").mouseover( function () {   
+                    $(".subMenu4List").css("width","960px");
+                    $(".subMenu4List").css("display","block");           
+                    $(".subMenu4List").css("left","-490px");
+                });
+                $("#mainMenu4").mouseout( function () {                   
+                    $(".subMenu4List").css("display","none");
+                });          
+                    
+});
+</script>
+<?lua end ?> 
+
+<?lua if(COUNTRY_CODE == "RU") then ?>  
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+ 
+                $("#mainMenu4").mouseover( function () {   
+                    $(".subMenu4List").css("width","640px");
+                    $(".subMenu4List").css("display","block");           
+                    $(".subMenu4List").css("left","-178px");
+                });
+                $("#mainMenu4").mouseout( function () {                   
+                    $(".subMenu4List").css("display","none");
+                });          
+                    
+});
+</script>
+<?lua end ?>
+<?lua web.includeMenu ("dictionary.html")?>
+
+
+<?lua web.includeMenu ("/var/langFiles/headerMenu.html")?>
+
+<div id="tf1Wizard_dialogWizard" class="configDialogWizards"></div>
+
+<script language="JavaScript" type="text/javascript">
+	var fileName = '$| fileName |$';
+	/* Help default variable */
+	var helpSection = "$| PAGE_HELP_SECTION |$";
+	var helpConfigFile = "$| PAGE_HELP |$.txt";
+</script>
+<?lua web.includeMenu("/var/langFiles/jsOnlyStrings.html")?>
+<script language="JavaScript" src="js/menuSearchList_$|langVal|$.js" type="text/javascript">var msLoaded = true;</script>
+<?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then 
+    if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-500" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+?>
+    <script language="JavaScript" src="js/menuSearchListOcteon.js" type="text/javascript"></script>
+<?lua end
+    if (UNIT_NAME == "DSR-500" or PRODUCT_ID == "DSR-500_Bx") then
+    ?>
+    <script language="JavaScript" type="text/javascript">
+        delete menuSearchList["wan3Info"]
+        delete menuSearchList["wan3Settings"]
+        delete menuSearchList["dynamicDnsWan3Settings"]
+    </script>
+    <? end
+else
+    if (UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then
+?>
+    <script language="JavaScript" src="js/menuSearchListEconaWireless_$|langVal|$.js" type="text/javascript"></script>
+<?lua else ?>
+    <script language="JavaScript" src="js/menuSearchListEcona_$|langVal|$.js" type="text/javascript"></script>
+<?lua end
+    end 
+    if (UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-500AC_Ax") then ?>
+        <script language="JavaScript" src="js/menuSearchListCommon500.js" type="text/javascript"></script>
+<?lua end
+    if (PRODUCT_ID == "DSR-1000AC_Ax") then ?>
+        <script language="JavaScript" src="js/menuSearchListHideRadio.js" type="text/javascript"></script>
+<?lua end
+    if(COUNTRY_CODE == "RU") then ?>
+    <script language="JavaScript" src="js/menuSearchRU.js" type="text/javascript"></script>
+<?lua end 
+    if (UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150")  then ?>
+    <script language="JavaScript" type="text/javascript">
+        delete menuSearchList["ips"];
+        delete menuSearchList["igmpSnooping"];
+        delete menuSearchList["jumboFrame"];
+    </script>
+<?lua end 
+if ( PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then ?>
+<script language="JavaScript" type="text/javascript">
+        delete menuSearchList["igmpSnooping"];
+    </script>
+<?lua end
+    require "teamf1lualib/wan_configurablePort"
+    local wanConfigPort = require("com.teamf1.core.wan.configurableport")
+    -- get the portName either WAN2 or DMZ 
+    returnCode, cookie, portName = wanConfigPort.configPortUsageGet ()
+    if ( UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+    if (portName ~= "DMZ") then
+?>
+<script language="JavaScript" type="text/javascript">
+    delete menuSearchList["dmzInfo"];
+</script>
+<?lua else ?>
+<script language="JavaScript" type="text/javascript">
+    delete menuSearchList["wan2Info"];
+</script>
+<?lua end else 
+if (portName ~= "DMZ") then ?>
+<script language="JavaScript" type="text/javascript">
+    delete menuSearchList["dmzInfo"];
+</script>
+<?lua
+end end
+if (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+?>
+<script language="JavaScript" type="text/javascript">
+menuSearchList["teredoTunnel"] = {
+        'mainMenu': "Network",
+        'secondLevelMenu': "IPv6",
+        'thirdLevelMenu': "Tereod Tunnel",
+        'fourthLevelMenu': "",
+        'hrefAttrLink': "teredoTunnel"
+             };
+</script>
+<?lua end ?>
+<script language="JavaScript" src="js/menuSearch.js" type="text/javascript"></script>
+<script  language="JavaScript" type="text/javascript">
+    /***** For Main Menu Highlight. ****/
+	function mmSel(mmSelId){
+		var identity = document.getElementById(mmSelId);
+		identity.id = "Selected";
+	}
+	var divObj = document.getElementById('menuList');
+	var wizardLoaded = false;
+
+	$(document).ready(function() {
+		$(".mMenu").mouseover(function(e){
+			colsParentDiv = $(this).children().next().children();
+			colsParentDiv.children().css({"height":colsParentDiv.height()-6});
+		});
+		/* Activate the click event for help Button */	
+		$(".helpButton").live("click", function(e){			
+		/*Prevent the anchor action or donot append the # to URL */						
+			e.preventDefault();						
+			/*Open the help file */
+			helpPop (helpSection,helpConfigFile);
+		});
+	/* Activate the click event for wizard link */	
+		$(".wizard").live("click", function(e){			
+			/*Prevent the anchor action or donot append the # to URL */						
+			e.preventDefault();						
+			/*Open the Wizard popup*/
+			
+			var windowWidth = ($(window).width() - 900) / 2;
+	        $(".configDialogWizards").css("left", windowWidth);
+			
+			if (wizardLoaded == false) {
+
+				var link2 = $("<link>");
+				link2.attr({
+						type: 'text/css',
+						rel: 'stylesheet',
+						href:"css/table.css"
+				});
+				$("head").append( link2 );
+				
+				var link3 = $("<link>");
+				link3.attr({
+						type: 'text/css',
+						rel: 'stylesheet',
+						href:"css/dateTimePicker.css"
+				});
+				$("head").append( link3 );	
+		 
+				/* Load the required JS files for wizard popup */
+				$.ajaxSetup({async:false});
+                $.getScript("platform.cgi?page=wizardLanguageStringsJS.html");
+				$.ajaxSetup({async:true});
+				$.getScript("js/wizard.js");
+				$.getScript("js/ipv4AddrValidations.js");
+			    $.getScript("js/ipv6AddrValidations.js");
+				$.getScript("js/textValidations.js");
+				$.getScript("js/macValidations.js");
+				$.getScript("js/mgmt.js");				
+				$.getScript("js/jquery.dataTables.min.js");
+				$.getScript("js/dateTimePicker.js");
+					
+				
+					var wizardCloseStep = false;
+			   
+					$("#btnCloseWizard").live("click",function(e){
+														   
+					e.preventDefault();	
+					if ( wizardCloseStep == false ) {										   
+						var conf = confirm(LANG_LOCALE['10290']);
+						if (conf) {
+							HideDialog('tf1Wizard_dialogWizard', 'tf1_overlay');
+						}				
+					} else {
+					
+						HideDialog('tf1Wizard_dialogWizard', 'tf1_overlay');				
+					}
+					
+				});  
+			
+		}
+			
+openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wizardForm.html', 'tf1Wizard_dashboardWizardDailogContent','');
+	
+		
+		});
+		});		
+</script>
+<link rel="stylesheet" type="text/css" href="css/wizard.css" />
+
+<script  language="JavaScript" type="text/javascript">
+	$(document).ready(function() {
+	  $("#tf1_loginUserNameGroup").html("$|dispLoginUserName or ''|$ $| groupName |$");
+	  $("#tf1_loginUserNameGroup").attr("title", "$|curTitle|$");
+	  $("#tf1_langDisplay").html("$|langDisplay|$");
+	  $("#tf1_firmwareVersion").html("$|firmwareVersion|$");
+	  $("#tf1_serialNum").html("$|serialNum|$");
+		$("#tf1_refreshButton").click(function(){
+                     <?lua
+                          local pageName = fileName
+                          if (pageName == "dashboard.html") then 
+                              dofile("/pfrm2.0/share/lua/5.1/teamf1lualib/vpnHistoryScript.lua")
+                          end
+                      ?>
+		      window.location='platform.cgi?page=$| fileName |$'
+		});
+	});
+</script>
+
+
+
+
+

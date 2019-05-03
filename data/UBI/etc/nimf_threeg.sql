@@ -1,0 +1,11 @@
+insert into ipAddressTable values ('WAN3',2,0,'0.0.0.0','0.0.0.0',0,'255.255.255.0');
+insert into resolverConfig values ('WAN3', 10, '', '','',''); 
+insert into resolverConfig values ('WAN3', 2, '0.0.0.0', '0.0.0.0', '0.0.0.0', '0.0.0.0'); 
+insert into defaultRouters values ('WAN3', 2, '0.0.0.0', ''); 
+insert into defaultRouters values ('WAN3', 10, '', ''); 
+insert into networkInterface values ('ppp3', 'WAN3', 'ppp3', 'dhcpc', '','ethernet', 1500, '0.0.0.0', '0.0.0.0', '0.0.0.0', '0.0.0.0', '0.0.0.0', 0, 0, 5, 0,3,1,2); 
+insert into NimfStatus( LogicalIfName, AddressFamily, Nimfstatus, Linkstatus, WanUpTime)values('WAN3', 2,'Not Yet Available', 'LINK DOWN', 'Not Yet Available');
+insert into NimfStatus( LogicalIfName, AddressFamily, Nimfstatus, Linkstatus, WanUpTime)values('WAN3', 10,'Not Yet Available', 'LINK DOWN', 'Not Yet Available');
+insert into NimfTrigger values (5, 'WAN3',2, 0);
+insert into NimfTrigger values (6, 'WAN3',10, 0);
+insert into MacTable values ('WAN3', 0);

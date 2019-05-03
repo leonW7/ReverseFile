@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# LMInit - initialization script for LM
+#
+# Copyright (c) 2011, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,05May11,uk written
+
+
+KEY_STORE_FILE=/flash/tmp/lm/activation_keys
+TMP_STORE_FILE=/tmp/activation_keys
+CP=/bin/cp
+GREP=/bin/grep
+
+if [ "$INCLUDE_LM" = "y" ]; then
+echo -n "Starting the LM deamon..."
+
+mkdir -p /flash/tmp/lm
+mkdir -p /var/clish
+
+if [ ! -e $KEY_STORE_FILE ]; then
+    touch $KEY_STORE_FILE
+fi
+
+if [ -f $KEY_STORE_FILE ] 
+then
+    $CP $KEY_STORE_FILE $TMP_STORE_FILE
+    $GREP -v "^$" $TMP_STORE_FILE > $KEY_STORE_FILE
+fi
+    
+$LM_INSTALL_PATH/bin/licensed /tmp/system.db &
+
+echo "Done"
+fi

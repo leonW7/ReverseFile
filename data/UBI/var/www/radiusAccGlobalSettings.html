@@ -1,0 +1,191 @@
+<?lua 
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/radAccounting_bl"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "radiusAccGlobalSettings"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag, cookie
+
+if (ButtonType and ButtonType == "config") then
+local inputTable = web.cgiToLuaTable(cgi)
+
+if (inputTable["wlanRadAccGlobalMode.interimUpdateInterval"] == nil or inputTable["wlanRadAccGlobalMode.interimUpdateInterval"] == "") then
+local val = db.getAttribute("wlanRadAccGlobalMode", "_ROWID_", "1", "interimUpdateInterval")
+    if (val == nil or '') then
+        statusMessage = "Operation Failed"
+    end
+    inputTable["wlanRadAccGlobalMode.interimUpdateInterval"] = val
+end
+   	errorFlag, statusCode = radiusAccGlobalSetting (inputTable)
+    -- save db if no error
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+else
+        configRowId = "Default"
+        local errorFlag, radiusAccGlobalClientRows = radiusGlobalSettingGet (configRowId)
+        if (errorFlag ~= returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        end
+        configRow = radiusAccGlobalClientRows[1]
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=radiusServer.html">Radius Server</a>
+                                </li>
+                                <li>
+                                    <a href="?page=radiusAccounting.html">Radius Accounting</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=radiusAccGlobalSettings.html">Radius Accounting Global Setting</a>
+                                </li>
+                                <li>
+                                    <a href="?page=pop3Server.html">POP3 Server</a>
+                                </li>
+                                <li>
+                                    <a href="?page=pop3TrustedCa.html">POP3 Trusted CA</a> 
+                                </li>
+                                <li>
+                                    <a href="?page=ldapServer.html">LDAP Server</a>
+                                </li>
+                                <li>
+                                    <a href="?page=adServer.html">AD Server</a>
+                                </li>
+                                <li>
+                                    <a href="?page=ntDomain.html">NT Domain</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                   
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$                        </p>
+                    </div>
+                    <h1>Radius Accounting Global Configuration</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmRadiusAccGlobalConf" id="tf1_frmRadiusAccGlobalConf" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="radiusAccGlobalSettings.html">
+                                <div class="configRow">
+                                    <label> Accounting Mode </label>
+                                   <?lua if
+                                   (tonumber(configRow["wlanRadAccGlobalMode.radiusAccEnable"]) == 1) then
+                                               statusStr="enable-disable-on"
+                                               statusVar = 1
+                                          else
+                                               statusStr="enable-disable-off"
+                                               statusVar = 0
+                                          end
+                                        ?> 
+                                            <a class="$| statusStr |$" alt="" id="tf1_chkMode"></a>
+                        <input type="hidden"name="wlanRadAccGlobalMode.radiusAccEnable" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Accounting Interim Update Mode </label>
+                                    <?lua if
+                                    (tonumber(configRow["wlanRadAccGlobalMode.interimUpdateMode"]) == 1) then
+                                               statusStr="enable-disable-on"
+                                               statusVar = 1
+                                          else
+                                               statusStr="enable-disable-off"
+                                               statusVar = 0
+                                          end
+                                        ?>
+                         <a class="$| statusStr |$" alt="" id="tf1_chkInterim"></a> 
+                         <input type="hidden" name="wlanRadAccGlobalMode.interimUpdateMode" value="$|statusVar|$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_interimInterval_div">
+                                    <label> Radius Accounting Interim Interval </label>
+                                    <input type="text"
+                                    name="wlanRadAccGlobalMode.interimUpdateInterval"
+                                    value="$|configRow["wlanRadAccGlobalMode.interimUpdateInterval"]
+                                    or '0'|$" class="one" id="tf1_interimInterval" maxlength="4" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 300, 3600, true, 'Invalid Interim Interval.', 'Seconds');}">
+                                    <dl>
+                                        [Range: 300 - 3600] Seconds
+                                    </dl>
+                                </div>
+                                <div class="break" id="break_interimInterval_div">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" name="button.config.radiusAccGlobalSettings" title="Save" value="Save" id="btSave" onclick="return radiusConfValidate('tf1_frmRadiusAccGlobalConf');" >
+
+                                    <input type="reset" class="btnReset" title="Cancel" value="Cancel" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmRadiusAccGlobalConf'); return radiusAccOnreset();">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>        
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/radiusAccGlobalSettings.js"></script>
+    </body>
+</html>
+<?lua end ?>

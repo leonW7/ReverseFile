@@ -1,0 +1,357 @@
+<?lua 
+
+require "teamf1lualib/lanSettings_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "lanSettings"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag, cookie
+if (ButtonType and ButtonType == "config") then
+
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["lanSettings.cookie"]="1"
+    errorFlag, cookie = lanSettingsSet (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        -- Respond to ping is shifted to here.
+        errorFlag = respondToPingSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)    
+else
+    errorFlag, pingOnLanStatus = respondToPingGet ()
+    local lanSettingsTable
+    errorFlag, cookie, lanSettingsTable, dnsHostTable = lanSettingsGet()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    if (lanSettingsTable == nil) then
+        lanSettingsTable = {}
+    end
+    local routingModestatus = db.getAttribute ("NatTable", "_ROWID_", "1", "Enable")
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    LANG_LOCALE = "11541,30096,10219,11394,10739,10735,10738,10737,12977,10929,10685,10805,11564,13489,11126,10563,12537,12782,13374,11057,10795,11122,11535,10059,12392,12269,12041,12097,12016,11995,11244,11324,11346,11379,11266,11265,10740,12956,12979,10931,13490,10921,11393,30097,30098,30099,11387,13017,11789,12627,12758,10449,30626,30627,30628,30629,30630,30631,30632,30633,30634,30097,12028,12133,11251"
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                    <div class="FL">
+                        <p class="hint">
+                         $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11541'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmLanSettings" id="tf1_frmLanSettings"  action="platform.cgi" method="post">
+                                <input type="hidden" name="thispage" id="thispage" value="lanSettings.html">
+                                <h2>$| LANG_LOCALE['30096'] |$</h2>
+                                <div class="configRow" id="tf1_allowPing">
+                                    <label>$| LANG_LOCALE['10219'] |$</label>
+                                    <?lua                                                  
+                                    if (pingOnLanStatus == "1") then
+                                        statusStr="enable-disable-on"
+                                        statusVar = "1"
+                                    else
+                                        statusStr="enable-disable-off"
+                                        statusVar = "0"
+                                     end
+                                    ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                    <input type="hidden" value="$| statusVar |$" name="lanSettingsTable.pingOnLanStatus">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['11394'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['11387'] |$</label>
+                                    <input type="text" name="lanSettings.ipAddress" value="$| lanSettingsTable["lanSettings.ipAddress"] |$" id="tf1_ipAddr" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onblur="dhcpLANRangeAutoFill ();">
+                                </div>
+                                <div class="break" id="break1_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['13017'] |$</label>
+                                    <input type="text" name="lanSettings.subnetMask" value="$| lanSettingsTable["lanSettings.subnetMask"] |$" id="tf1_subnetmask" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onblur="dhcpLANRangeAutoFill ();">
+                                </div>
+                                <div class="break" id="break2_div">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['10739'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10735'] |$</label>
+                                    <select id="tf1_dhcpModel"  name="lanSettings.dhcpType" onchange="dhcpCheck();">
+                                        <option $| web.dropdownSelected(lanSettingsTable["lanSettings.dhcpType"] == "0") |$ value="0">$| LANG_LOCALE['11789'] |$</option>
+                                        <option $| web.dropdownSelected(lanSettingsTable["lanSettings.dhcpType"] == "1") |$ value="1">$| LANG_LOCALE['10738'] |$</option>
+					<?lua if (routingModestatus ~= "5") then ?>
+                                        <option $| web.dropdownSelected(lanSettingsTable["lanSettings.dhcpType"] == "3") |$ value="3">$| LANG_LOCALE['10737'] |$</option>
+					<?lua end ?>
+
+                                </select>
+                                </div>
+                                <div class="break" id="break3_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_dhcpStartIp_div">
+                                    <label>$| LANG_LOCALE['12977'] |$</label>
+                                    <input type="text" name="lanSettings.startIpAddr" value="$| lanSettingsTable["lanSettings.startIpAddr"] |$" id="tf1_dhcpStartIp" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break4_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_dhcpEndIp_div">
+                                    <label>$| LANG_LOCALE['10929'] |$</label>
+                                    <input type="text" name="lanSettings.endIpAddr" value="$| lanSettingsTable["lanSettings.endIpAddr"] |$" id="tf1_dhcpEndIp" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break5_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_defaultGateway_div">
+                                    <label>$| LANG_LOCALE['10685'] |$</label>
+                                    <input type="text" name="lanSettings.gateway" value="$| lanSettingsTable["lanSettings.gateway"] |$" id="tf1_defaultGateway" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break6_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_dhcpDomainName_div">
+                                    <label>$| LANG_LOCALE['10805'] |$</label>
+                                    <input type="text" name="lanSettings.domainName" value="$| lanSettingsTable["lanSettings.domainName"] |$" id="tf1_dhcpDomainName"  maxlength='256' >
+                                </div>
+                                <div class="break" id="break7_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_dhcpLeaseTime_div">
+                                    <label>$| LANG_LOCALE['11564'] |$</label>
+                                    <input class="one" name="lanSettings.leaseTime" value="$| lanSettingsTable["lanSettings.leaseTime"] |$" type="text" id="tf1_dhcpLeaseTime" maxlength="6" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 262800, true, LANG_LOCALE['13489']+': ', LANG_LOCALE['11126']);}">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 1 - 262800] $| LANG_LOCALE['11126'] |$
+                                    </dl>
+                                </div>
+                                <div class="break" id="break8_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_configuredns_div">
+                                    <label>$| LANG_LOCALE['10563'] |$</label>
+                                <?lua 
+                                      local statueStr
+                                     local statusVar
+                                     if (lanSettingsTable["lanSettings.ConfigureDns"] == "1") then
+                                       statusStr="enable-disable-on"
+                                       statusVar = "1"
+                                     else
+                                       statusStr="enable-disable-off"
+                                       statusVar = "0"
+                                     end
+                                           ?>
+                                           <a class="$| statusStr |$" alt="" id="tf1_configuredns"></a>
+                        <input type="hidden" name="lanSettings.ConfigureDns" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break9_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_priDnsServer_div">
+                                    <label>$| LANG_LOCALE['12537'] |$</label>
+                                    <input type="text" name="lanSettings.primaryDnsServer" value="$| lanSettingsTable["lanSettings.primaryDnsServer"] |$" id="tf1_priDnsServer" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11324']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break10_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_secDnsServer_div">
+                                    <label>$| LANG_LOCALE['12782'] |$</label>
+                                    <input type="text" name="lanSettings.secondaryDnsServer" value="$| lanSettingsTable["lanSettings.secondaryDnsServer"] |$" id="tf1_secDnsServer" size="20" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11346']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break11_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_dhcpWinsSer_div">
+                                    <label>$| LANG_LOCALE['13374'] |$</label>
+                                    <input type="text" name="lanSettings.winsServer" value="$| lanSettingsTable["lanSettings.winsServer"] |$" id="tf1_dhcpWinsSer" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11379']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break12_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_dhcpRelayGw_div">
+                                    <label>$| LANG_LOCALE['11057'] |$</label>
+                                    <input type="text" name="lanSettings.dhcpRelay" value="$| lanSettingsTable["lanSettings.dhcpRelay"] |$" id="tf1_dhcpRelayGw" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11266']+'.', LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break13_div">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['10795'] |$</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                            <thead>
+                                                <tr>
+                                                    <th># </th>
+                                                    <th>$| LANG_LOCALE['11122'] |$</th>
+                                                    <th>$| LANG_LOCALE['11387'] |$</th>
+                                                </tr>
+                                            </thead>
+					    <?lua
+						local i = 0;
+						if (dnsHostTable ~= nil) then
+							for k,v in pairs(dnsHostTable) do
+								i = i + 1
+								local hostRow = dnsHostTable[i]
+								local hostRowId = "row" .. i
+								local hostRowName = "lanSettingsDns.HostName" .. i
+								local hostId = "tf1_lanDnsHostMappingHost" .. i
+								local ipAddrName = "lanSettingsDns.IpAddress" .. i
+								local ipAddrId = "tf1_lanDnsHostMappingIp" .. i
+					    ?>
+                                            <tr class="gradeA" id="$| hostRowId |$">
+                                                <td>$| hostRow["DnsStaticHostsMapping._ROWID_"] |$</td>
+                                                <td>
+                                                    <input type="text" name="$| hostRowName |$" id="$| hostId |$" value="$| hostRow["DnsStaticHostsMapping.HostName"] or '' |$" maxlength="64">
+                                                </td>
+                                                <td>
+                                                <input type="text" name="$| ipAddrName |$" id="$| ipAddrId |$" value="$| hostRow["DnsStaticHostsMapping.IpAddress"] or '' |$" size="20" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                                </td>
+                                            </tr>
+					    <?lua
+							end
+						end
+					    ?>
+                                            
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['11535'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10059'] |$</label>
+                                <?lua 
+                                      local statueStr
+                                     local statusVar
+                                     if (lanSettingsTable["lanSettings.dnsProxy"] == "1") then
+                                       statusStr="enable-disable-on"
+                                       statusVar = "1"
+                                     else
+                                       statusStr="enable-disable-off"
+                                       statusVar = "0"
+                                     end
+                                           ?>
+                                           <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                        <input type="hidden" name="lanSettings.dnsProxy" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break16_div">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+
+                                    <input type="submit" name="button.config.lanSettings" onclick="return validateLansettings('tf1_frmLanSettings')" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+
+                                    <input type="button" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); validateLanOnReset('tf1_frmLanSettings');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td><?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+	<?lua
+            if (HIGH_SEC == "HIGH") then
+	    local returnCode, cookie, sslVpnStAddr = sslVpnBeginClient ()
+	    local returnCode, cookie, sslVpnEndAddr = sslVpnEndClient () 
+	?>
+        <input type="hidden" value="$| sslVpnStAddr |$" id="hdSslVpnStAddr">
+        <input type="hidden" value="$| sslVpnEndAddr |$" id="hdSslVpnEndAddr">
+	<?lua
+            end
+	    local idx = 0
+	    local resIPsTable = dhcpFixedIpAddress ()
+	    for k,v in pairs(resIPsTable) do		    
+	        idx = idx + 1
+	        local resIPAddrId = "hdResIPAddr" .. idx		        
+	?>
+	<input type="hidden" id="$| resIPAddrId |$" value="$| v["DhcpfixedIpAddress.IpAddr"] or '' |$">		
+	<?lua		    
+	    end
+	?>
+	<input type="hidden" id="hdNumFixedIpAddr" value="$| idx |$">
+	<input type="hidden" id="hdUnitName" value="$| UNIT_NAME or '' |$">     
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/lanSettings.js"></script>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+
+            });
+
+        </script>
+    </body>
+
+</html>
+<?lua end ?>

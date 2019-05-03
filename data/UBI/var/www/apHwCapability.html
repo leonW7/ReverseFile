@@ -1,0 +1,182 @@
+<?lua
+require "teamf1lualib/bl_apHwCapabilities"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"    
+
+    PAGE_HELP = "status"
+    PAGE_HELP_SECTION = "apHwCapability"
+
+local guiApHwSupport = require("com.teamf1.bl.wlan.aphwcapability")
+local errorMap     = require ("com.teamf1.core.errorMap")
+local returnCodes  = require ("com.teamf1.core.returnCodes")
+
+local apHwTypeTbl, errorCode
+errorCode, apHwTypeTbl = guiApHwSupport.apHwtypeSupported ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    apHwTypeTbl = {}
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	
+	</head>
+    <body>
+         <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_apHwCapabilityFrm" id="tf1_apHwCapabilityFrm">        
+            <input type="hidden" name="thispage" id="thispage" value="apHwCapability.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+			<ul>
+				<li id="details">
+					Radio Information
+				</li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				 <td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu1");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgInfo">
+					<p>Status Message Place Holder.</p>
+					</div>
+                    -->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=globalStatusAps.html">Global Status</a> 
+                                </li>
+                                <li>
+                                    <a href="?page=allAps.html">All APs</a>
+                                </li>
+                                <li>
+                                    <a href="?page=managedAps.html">Managed</a>
+                                </li>
+                                <li>
+                                    <a href="?page=peerControllerManagedAps.html">Peer Managed</a>
+                                </li>
+                                <li>
+                                    <a href="?page=authFailedAps.html">Authentication Failed</a>
+                                </li>
+                                <li>
+                                    <a href="?page=rfScanAps.html">RF Scan</a>
+                                </li>
+                                <li>
+                                    <a href="?page=deAuthAttacks.html">De-Authentication Attacks</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=apHwCapability.html">Hardware Capability</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+						<p class="hint">
+							$| helpHintText |$ 
+						</p>
+                    </div>
+					<h1>List of Hardware Capabilities Supported by APs</h1>
+					<div class="CLR">
+						<div class="demo_jui">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th>Hardware Type    </th>
+										<th> Hardware Type Description  </th>
+										<th> Radio Count </th>
+										<th> Image Type</th>
+									</tr>
+								</thead>
+                                    <?lua
+                                    if (apHwTypeTbl ~= returnCodes.NIL) then
+                                        for k, v in pairs (apHwTypeTbl) do
+                                            local row = apHwTypeTbl[k]
+                                            ?>
+                                            <tr class="gradeA" id="apHwCapability$|
+                                                row.hwType ..":" ..
+                                                row.description |$">
+                                                <td>$| row.hwType or '' |$</td>
+                                                <td>$| row.description or '' |$</td>
+                                                <td>$| row.radioCount or '' |$</td>
+                                                <td>$| row.imageType or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                        end
+                                    end
+                                 ?>
+							</table>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td><?lua web.includeMenu("footer.html")?></td>
+			</tr>
+        </table>
+        	<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+
+				$('.gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'detailsMenu' : function(t, e, rowId) {
+ 							 openForm('button.move.firewallRules.firewallRules',rowId,'tf1_dialog','apHwCapability','apHwCapabilityForm.html', 'tf1_apHwCapabilityDailogContent','');
+						} 
+					}
+				});
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+			  $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+
+			});
+		</script>
+	</body>
+</html>

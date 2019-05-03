@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="security-application-rules-config" prompt="security-config[application-rules]> "> 
+    <COMMAND name="save" help="Save application rules configuration changes.">
+	     <ACTION>lua clishCfgObjExec("PortTriggering")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save application rules rules configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("PortTriggering")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back application rules configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="name"
+             help="Name of the rule">
+             <PARAM name="name"
+                    help="Specify an easily identifiable name for this rule"
+                    ptype="STRING_ALPHA_NUM_32"/>
+             <ACTION>lua clishCfgObjAdd ("PortTriggering", "PortTriggering.RuleName", "${name}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="enable_rule"
+             help="specify whether to enable or disable the rule">
+             <PARAM name="status"
+                    help="specify whether to enable or disable the rule"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("PortTriggering", "PortTriggering.RuleStatus", "${status}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="protocol"
+             help="Specify whether the port uses the TCP or UDP protocol">
+             <PARAM name="protocol"
+                    help="Specify whether the port uses the TCP or UDP protocol"
+                    ptype="AR_PROTOCOL_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("PortTriggering", "PortTriggering.Protocol", "${protocol}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="interface"
+             help="Specify whether the port uses the TCP or UDP protocol">
+             <PARAM name="interface"
+                    help="Specify whether the port uses the TCP or UDP protocol"
+                    ptype="AR_INTERFACE_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("PortTriggering", "PortTriggering.Interface", "${interface}")              
+             </ACTION>
+    </COMMAND>
+	
+    <COMMAND name="outgoing_start_port"
+             help="start port number of the outgoing traffic">
+             <PARAM name="outPortStart"
+                    help="start port number of the outgoing traffic"
+                    ptype="PORT_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("PortTriggering", "PortTriggering.OutgoingPortStart", "${outPortStart}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="outgoing_end_port"
+             help="end port of the outgoing traffic">
+             <PARAM name="outPortEnd"
+                    help="end port of the outgoing traffic"
+                    ptype="PORT_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("PortTriggering", "PortTriggering.OutgoingPortEnd", "${outPortEnd}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="incoming_start_port"
+             help="start port number of the incoming traffic">
+             <PARAM name="inPortStart"
+                    help="start port number of the incoming traffic"
+                    ptype="PORT_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("PortTriggering", "PortTriggering.IncomingPortStart", "${inPortStart}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="incoming_end_port"
+             help="end port number of the incoming traffic">
+             <PARAM name="inPortEnd"
+                    help="end port number of the incoming traffic"
+                    ptype="PORT_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("PortTriggering", "PortTriggering.IncomingPortEnd", "${inPortEnd}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security application_rules" license_support="Y" help="Application Rules Configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security application_rules add"
+             help="application rules rules configuration mode."
+             view="security-application-rules-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("PortTriggering", 
+                              portTriggeringCfgInit, portTriggeringCfgSave, 
+				       portTriggeringCfgInputVal, nil)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security application_rules edit"
+             help="application rules rules configuration mode."
+             view="security-application-rules-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("PortTriggering", 
+                              portTriggeringCfgInit, portTriggeringCfgSave, 
+				       portTriggeringCfgInputVal, "${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security application_rules delete"
+             help="application rules rules configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be enabled"
+	       ptype="UINT"/>
+                   <ACTION>lua portTriggeringCfgDel("${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security application_rules" license_support="Y" help="."/>
+    <COMMAND name="show security application_rules setup"
+            help="Display application rules configuration">
+	    <ACTION>lua clishCmdExec (portTriggeringCfgGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security application_rules status"
+            help="Display application rules status">
+	    <ACTION>lua clishCmdExec (portTriggeringStatusGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+</CLISH_MODULE>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+          http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="system-config" prompt="system-config[system-admin]>"> 
+    <COMMAND name="save" help="Save system admin changes.">
+        <ACTION>lua clishCfgObjExec("admin")
+	  </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("admin")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back admin  configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="System_name" help="">
+	<PARAM name="name" 
+	       help="Change the system name"
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("admin", "system.name", "${name}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="system admin_setting"
+        help="System configuration."/>
+<!--=======================================================-->
+    <COMMAND name="system admin_setting configure"
+        help="System configuration mode."
+        view="system-config" viewid="">
+        <ACTION>lua clishCfgObjNew ("admin", sysCfgInit, 
+		    sysCfgSave, sysCfgVal)
+        </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

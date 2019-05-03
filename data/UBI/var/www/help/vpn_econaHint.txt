@@ -1,0 +1,104 @@
+:|noHelpSet|:
+The table lists all the available logs in the system.
+:|noHelpSetEnd|:
+
+:|policies|:
+This page shows the list of configured IPsec VPN policies on the router. A user can also add, delete, edit, enable, disable and export IPsec VPN policies from this page.
+:|policiesEnd|:
+
+:|tunnelMode|:
+This page allows you to define the IP address range for clients connecting using Mode Config. 
+:|tunnelModeEnd|:
+
+:|splitDnsNames|:
+The clients connected to this device use the DNS provided in Dynamic IP Range page to resolve this domain name.This is applicable only in case of split tunnel. 
+:|splitDnsNamesEnd|:
+
+:|dhcpRange|:
+This page allows you to define the IP address range for clients connecting using DHCP over IPsec. Note: To support DHCP over IPsec, enable DHCP server on the LAN. 
+:|dhcpRangeEnd|:
+
+:|trustedCertificates|:
+Trusted Certificates or CA certificates are used to verify the validity of certificates signed by them. When a certificate is generated, it is signed by a trusted organization or authority called the Certificate Authority. The table contains the certificates of each CA.
+When a remote VPN gateway or client presents a digital certificate, the authentication process verifies that the presented certificate is issued by one of the trusted authorities. The Trusted CA certificates are used in this authentication process.
+:|trustedCertificatesEnd|:
+
+:|activeSelfCertificates|:
+This table lists the certificates issued to you by trusted Certification Authorities (CAs), and available for presentation to remote IKE servers. The remote IKE server validates this router using these certificates. For each certificate, the following data is displayed: 
+:|activeSelfCertificatesEnd|:
+
+:|selfCertificateRequest|:
+The Self Certificate Requests table displays a list of all the certificate requests made. 
+:|selfCertificateRequestEnd|:
+
+:|easyVpnSetup|:
+This page will guide you through common and easy steps to configure IPSec VPN policies. 
+:|easyVpnSetupEnd|:
+
+:|pptpServer|:
+PPTP allows an external user to connect to your router through the internet. This section allows you to enable/disable PPTP server and define a range of IP addresses for clients connecting to your router. The connected clients can function as if they are on your LAN (they can communicate with LAN hosts, access any servers present etc.
+:|pptpServerEnd|:
+
+:|pptpClient|:
+PPTP VPN Client can be configured on this router. Using this client we can access remote network which is local to PPTP server.
+:|pptpClientEnd|:
+
+:|pptpActiveUsers|:
+Active PPTP tunnels connections are listed here, as LAN VPN clients are active PPTP users.
+:|pptpActiveUsersEnd|:
+
+:|l2tpServer|:
+L2TP allows an external user to connect to your router through the internet, forming a VPN. This section allows you to enable/disable L2TP server and define a range of IP addresses for clients connecting to your router. The connected clients can function as if they are on your LAN (they can communicate with LAN hosts, access any servers present etc.).
+:|l2tpServerEnd|:
+
+:|l2tpClient|:
+L2TP VPN Client can be configured on this router. Using this client we can access remote network which is local to L2TP server.
+:|l2tpClientEnd|:
+
+:|l2tpActiveUsers|:
+Active L2TP tunnels connections are listed here, as LAN VPN clients are active L2TP users. 
+:|l2tpActiveUsersEnd|:
+
+:|sslVpnServer|:
+This SSLVPN Enable feature enables Option users to use SSLVPN functionality.Policies are useful to permit or deny access to specific network resources, IP addresses, or IP networks. They may be defined at the user, group or global level. By Default, a global PERMIT policy (not displayed) was already configured over all addresses and over all services/ports
+:|sslVpnServerEnd|:
+
+:|sslVpnPortalLayouts|:
+The table lists the SSL portal layouts configured for this device and allows several operations on the portal layouts.The router allows you to create a custom page for remote SSL VPN users that is presented upon authentication. Login instructions, available services, and other usage details that are specific to a domain are useful to present on the authentication portal. Portals are assigned to the user domain. 
+:|sslVpnPortalLayoutsEnd|:
+
+:|sslVpnResources|:
+Network resources are services or groups of LAN IP addresses that are used to easily create and configure SSL VPN policies. This shortcut saves time when creating similar policies for multiple remote SSL VPN users. Port forwarding allows remote SSL users to access specified network applications or services after they login to the User Portal and launch the Port Forwarding service. Traffic from the remote user to the router is detected and re-routed based on configured port forwarding rules. Port forwarding requires the identification of the TCP application and local server IP address that is being made accessible to remote users.
+:|sslVpnResourcesEnd|:
+
+:|sslVpnClients|:
+An SSL VPN tunnel client provides a point-to-point connection between the browser-side machine and this device. When a SSL VPN client is launched from the user portal, a "network adapter" with an IP address, DNS and WINS settings is automatically created, which allows local applications to talk to services on the private network without any special network configuration on the remote SSL VPN client machine.
+:|sslVpnClientsEnd|:
+
+:|sslVpnClientsRoutes|:
+The Configured Client Routes entries are the routing entries which will be added by the SSL VPN Client such that only traffic to these destination addresses is redirected through the SSL VPN tunnels, and all other traffic is redirected using the hosts (SSL VPN Clients) native network interface. The table shows the destination routes that will be configured on the SSL VPN client. For example if the SSL VPN Client wishes to access the LAN network then in SPLIT Tunnel mode you should add the LAN subnet as the destination subnet on this device.
+:|sslVpnClientsRoutesEnd|:
+
+:|openVpnSettings|:
+OpenVPN configuration page allows the user to configure OpenVPN as a server or client. 
+:|openVpnSettingsEnd|:
+
+:|openVpnLocalNetworks|:
+This page shows the list of configured OpenVPN LAN networks. Clients have access to only these local networks. The user can also add, delete and edit networks from this page. 
+:|openVpnLocalNetworksEnd|:
+
+:|openVpnRemoteNetworks|:
+This page shows the list of remote VPN networks.The user can also add, delete and edit networks from this page. 
+:|openVpnRemoteNetworksEnd|:
+
+:|openVpnAuthentication|:
+Openvpn provides authentication using certificates. This page allows you to upload required certificates and keys which are in pem format. 
+:|openVpnAuthenticationEnd|:
+
+:|greTunnels|:
+This page allows user to add/edit GRE tunnel configuration. 
+:|greTunnelsEnd|:
+
+:|ips|:
+This page allows user to configure Intrusion Detection System and Intrusion Preventions System on the router.
+:|ipsEnd|:

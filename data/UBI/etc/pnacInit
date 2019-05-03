@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# pnacInit - initialization script for pnac
+#
+# Copyright (c) 2009, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,01jan09,sdk added echo messages
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_PNAC" = "y" ]; then
+
+MODULES_DIR=$PNAC_INSTALL_PATH/lib/modules/pnac/
+
+[ -e $MODULES_DIR/xcalibur.$MOD_SUFFIX ] && { insmod $MODULES_DIR/xcalibur.$MOD_SUFFIX; }
+
+echo -n "Starting pnac daemon..."
+$PNAC_INSTALL_PATH/bin/pnacd &
+echo "Done"
+
+fi

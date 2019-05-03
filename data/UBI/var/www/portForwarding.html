@@ -1,0 +1,199 @@
+<?lua 
+ require "teamf1lualib/portalInfo_bl"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+    local portalInfo = require ("com.teamf1.bl.portalInfo")
+    local cookiePortal = cgilua.cookies.get ("TeamF1PortalName")
+    local returnCode, isVPNEnabled, isPortFowrwardingEnabled = 
+                                portalInfo.portalInfoGet (cookiePortal)
+ ?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body onLoad="onloadCall ();">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center"><!--webbot bot="Include" U-Include="header.html" TAG="BODY" startspan -->
+		<div align="center">
+			<div class="midWidth">
+				<div class="logo FL">
+					Unified Services Router- $| UNIT_NAME |$
+				</div>
+				 <div class="FR headerRight">
+					 <table border="0" cellpadding="0" cellspacing="0">
+						 
+						<tr>
+                                                       <td valign="top">&nbsp;</td>
+                                                        <td rowspan="2" valign="top">
+							<a class="btnLogout" href="?page=portalLogin.html&portal=$| cookiePortal |$">
+							<div>
+								<div>
+									<icon>
+										Logout
+									</icon>
+								</div>
+							</div> </a></td>
+						</tr>
+						 
+					</table>
+				</div>
+				  <div class="midWidth menuBg">
+					<div>
+						<div>
+							<div align="center">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td>
+										<ul id="menu">
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu1">
+												<a href="?page=portalInformation.html">Portal Information</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+                                                                                        <?lua if(isVPNEnabled == "1") then?>
+											<li id="mainMenu2">
+							<a href="?page=vpnTunnels.html">VPN Tunnel</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+                                                                                        <?lua end?>
+											<li id="mainMenu3">
+												<a href="?page=portForwarding.html">Port Forwarding</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu4">
+												<a href="?page=changePassword.html">Change Password</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										</ul></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				 
+			</div>
+		</div>
+  </td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+										<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+					<div class="FL2">
+						<p class="hint">
+							 
+						</p>
+					</div>
+					<h1>PORT FORWARDING	</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name action="cgi-action.html" method="post">
+								<h2>Supported Features</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+								 <label>This page allows user to establish a Port Forwarding tunnel which is a light weight tunnel with port based encryption.</label>
+								</div>
+								<div class="break">&nbsp;</div>
+								 
+								 <h2>SSL VPN Port Forwarding Client Installer / Launcher</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+										  <label><a href="#" onclick="LaunchVTClient()"><img src="images/iconSslPfInstall.png" alt=""></a><br />
+                                          Click the Icon to connect to the remote servers.<br /><br />
+<strong>Note:</strong><br />
+
+* The active connections can still persist even when browser is closed without uninstalling the Port Forwarding client<br /><br />
+
+<strong>Recommendations :</strong><br />
+* Always follow this sequence: Uninstall any active clients, logout and close the browser. If recommended steps are followed, it will make the connection safer, easier to maintain and avoid possible errors.
+</label>
+								</div>
+								<div class="break">&nbsp;</div>
+                                
+                                 
+								                            
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td><!--webbot bot="Include" U-Include="footer.html" TAG="BODY" startspan -->
+		<div class="footer">
+			Copyright &#169; 2017 D-Link Corporation.
+		</div>
+	<!--webbot bot="Include" i-checksum="35774" endspan --></td>
+			</tr>
+		</table>
+<!-- Menu-close -->
+<!-- 
+// LaunchVTClient () routine definition now comes from cgi
+-->
+<script language="JavaScript" type="text/javascript">
+function LaunchVTClient()
+    {
+    var webagent = navigator.userAgent.toLowerCase();
+    if (webagent.indexOf("msie") != -1)
+        {
+	if ((webagent.indexOf("win64") != -1) || (webagent.indexOf("wow64") != -1))
+		{
+		if (webagent.indexOf("wow64") != -1)
+		{
+		alert('64bit Internet Explorer is required to install this application');
+		return ;
+		}
+		else
+		{
+        window.open('/scgi-bin/userPortal/portforwarding64?launch=true&is64bit=true', 'install',
+                    'width=420,height=300')
+
+		}
+		}
+	else
+		{
+            window.open('/scgi-bin/userPortal/portforwarding?launch=true&is32bit=true', 'install',
+                    'width=420,height=300')
+        }
+	}
+    else if ((webagent.indexOf("mozilla") != -1) || (webagent.indexOf("opera") != -1))
+        {
+        window.open('/scgi-bin/userPortal/portforwarding?jni_installer=connect', 'install',
+                    'width=420,height=300')
+        }
+    else
+        {
+        alert ("Port forwarding requires Internet Explorer 5.0 or higher.");
+        }
+    }
+</script>
+        <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+	</body>
+</html>

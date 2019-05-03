@@ -1,0 +1,222 @@
+<?lua
+require "teamf1lualib/servicesRouteMgmt_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "servicesRouteMgmt"
+
+
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local servicesMgmtBl = require ("com.teamf1.bl.servicesRouteMgmt")
+
+local configRowId
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if (RowId == "-1") then 
+        local returnCode, cookie =
+            servicesMgmtBl.servicesRoutingSectionCreate(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    else
+        inputTable["servicesRouteMgmt.cookie"] = RowId
+        local returnCode, cookie = 
+            servicesMgmtBl.servicesRoutingSectionSet(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if(type(cgi["servicesRouteMgmt.checkbox"]) == "string") then
+        inputTable["servicesRouteMgmt.cookie"] = 
+                    cgi["servicesRouteMgmt.checkbox"]
+        local returnCode, cookie = 
+            servicesMgmtBl.servicesRoutingSectionDelete(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    elseif(type(cgi["servicesRouteMgmt.checkbox"]) == "table") then
+        local returnCode = 
+             servicesMgmtBl.servicesRoutingSectionDeleteAll(cgi["servicesRouteMgmt.checkbox"])
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	    end
+        web.goToPage(NextPage, true, true)
+    end
+else    
+    local configRow = {}
+    local returnCode
+    returnCode, configRow = servicesMgmtBl.servicesRoutingSectionGetAll()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "12795,10862,10695,50080,50081,50082,12831,50083,50084,50085,50086,50087,12607,50088,50089,50090,50091,50092,50093,50094,13272,11419,13280,12458"
+?>
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form name action="platform.cgi" method="post" name="tf1_frmServiceRouteMgmt" id="tf1_frmServiceRouteMgmt">
+            <input type="hidden" name="thispage" id="thispage" value="servicesRouteMgmt.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+    <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['50082'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_servicesRouteMgmt">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['12831'] |$</th>
+                                        <th>$| LANG_LOCALE['50083'] |$</th>
+                                        <th>$| LANG_LOCALE['50084'] |$</th>
+                                    </tr>
+                                </thead>
+                                <?lua
+                                    for k, v in pairs(configRow) do
+                                        local outputTable = {}
+                                        outputTable = configRow[k]
+                                        local rowId = outputTable["_ROWID_"] or ''
+                                        local service = outputTable["serviceName"]
+                                        local serviceInterface = outputTable["serviceInterface"]
+                                        local routingInterface = outputTable["routingInterface"]
+                               ?>
+                                <tr class="gradeA" id="$| rowId |$">
+                                    <td> $| service or '' |$ </td>
+                                    <td> $| serviceInterface or '' |$</td>
+                                    <td> $| routingInterface or '' |$</td>
+                                </tr>
+                               <?lua end?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModal">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['50085'] |$" value="$| LANG_LOCALE['50085'] |$" name="button.add.servicesRouteMgmt.servicesRouteMgmt.-1" id="btSave" onclick="openForm('button.add.servicesRouteMgmt.servicesRouteMgmt',-1,'tf1_dialog','servicesRouteMgmt','servicesRouteMgmtForm.html', 'tf1_servicesRouteMgmtDailogContent','onLoadServicesRouteMgmtFn');">
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script language="JavaScript" src="js/macValidations.js" type="text/javascript"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/servicesRouteMgmt.js"></script>
+        <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            $('#tf1_servicesRouteMgmt .gradeA').contextMenu('contextMenu', {
+                bindings : {
+                    'editMenu' : function(t, e, rowId) {
+                        openForm('button.edit.servicesRouteMgmt.servicesRouteMgmt',rowId,'tf1_dialog','servicesRouteMgmt','servicesRouteMgmtForm.html', 'tf1_servicesRouteMgmtDailogContent','onLoadServicesRouteMgmtFn');                                    
+                    },
+                    'deleteMenu' : function(t, e, rowId) {
+                        deleteRows('button.delete.servicesRouteMgmt.servicesRouteMgmt', 'tf1_frmServiceRouteMgmt', rowId, 'optionSelectAll', 'tf1_dialog', 'servicesRouteMgmt', 'servicesRouteMgmt');
+                                        }
+                                    }
+                                });
+
+                   oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 2 }
+                    ]
+
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+    });
+
+        </script>
+    </body>
+</html>
+<?lua end ?>
+
+

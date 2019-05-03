@@ -1,0 +1,382 @@
+<?lua
+require "teamf1lualib/bl_validAps"
+require "teamf1lualib/bl_manageAp"
+require "teamf1lualib/bl_managedAps"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/wlan_returnCodes"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "validAps"
+
+local guiValidAp  = require("com.teamf1.bl.wlan.validap")
+local guiManageAp = require("com.teamf1.bl.wlan.manageap")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local guiManagedAps = require("com.teamf1.bl.wlan.managedaplist")
+local wlanReturnCodes = require ("com.teamf1.core.wlan.wlanReturnCodes")
+
+local errorCode, apProfileTbl
+
+errorCode, apProfileTbl = guiManageAp.apProfileChannelsGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)    
+end
+
+local validAps, errorCode
+errorCode, validAps = guiValidAp.validApsGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    if (errorCode == wlanReturnCodes.RADIUS_CONFIG_CHANGED_INFO) then
+        statusInfoMessage = errorMap.errorStringGet (errorCode) 
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+end
+
+if (ButtonType and ButtonType == "config") then
+    local configRow = web.cgiToLuaTable(cgi)
+    if(RowId ~= "-1") then
+        local page = "validAps"
+        local removePrefix = page .. "."
+        configRow = util.removePrefix (configRow, removePrefix)
+        configRow["page"] = 3
+        errorCode, promtMessage = guiManageAp.manageApAdd (configRow)
+        if (errorCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorCode)
+            globalMacaddress = configRow.macAddress
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorCode)
+        end
+        web.goToPage(NextPage, true, true)
+
+    else
+        local page = "validAps"
+        local removePrefix = page .. "."
+        configRow = util.removePrefix (configRow, removePrefix)
+        configRow["page"] = 3
+        local errorCode, promtMessage = guiManageAp.manageApAdd (configRow)
+        if (errorCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorCode)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorCode)
+        end
+        web.goToPage(NextPage, true, true)
+        
+    end
+    
+elseif (ButtonType and ButtonType == "delete") then
+    
+    local configRow = web.cgiToLuaTable(cgi)
+    local errorFlag
+    if (type(cgi["validAps.checkbox"]) == "string") then
+    
+        local cookieTbl = {}
+        cookieTbl.cookie =  configRow["validAps.checkbox"]
+        errorFlag = guiValidAp.validApDelete (cookieTbl)
+        if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        elseif (wlanReturnCodes.MANAGED_AP_DELETE == errorFlag) then
+            statusInfoMessage = errorMap.errorStringGet (errorFlag)     
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+    else
+        
+        errorFlag = guiValidAp.validApDeleteAll ()
+    	if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        elseif (wlanReturnCodes.MANAGED_AP_DELETE == errorFlag) then
+            statusInfoMessage = errorMap.errorStringGet (errorFlag)     
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+    end
+
+elseif (ButtonType and ButtonType == "reset") then
+    
+    local errorFlag
+    local configRow = {}
+    promtMessage = 0
+    configRow["managedAps.checkbox"] = cgi["validAps.glied"]
+    errorFlag = guiManagedAps.managedApReset (configRow)
+    if (errorFlag == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+  	end
+    web.goToPage(NextPage, true, true)
+
+else
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+
+	<body>
+
+		<!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>	
+        	<form action="platform.cgi" method="post"
+                name="tf1_frmValidApsReset" id="tf1_frmValidApsReset">		
+                <input type="hidden" name="thispage" id="thispage" value="validAps.html">
+                <input type="hidden" name="validAps.glied" value="$|
+                globalMacaddress or '' |$">
+                <input type="hidden" name="button.reset.validAps"
+                id="tf1_btresetAp" value="validAps.html">            
+		</form>	        
+		<form action="platform.cgi" method="post" name="tf1_frmValidAps" id="tf1_frmValidAps">		
+			<input type="hidden" name="thispage" id="thispage" value="validAps.html">			
+			<div id="tf1_dialog" class="configDialog"></div>		
+		</form>		
+		<!-- Section for Pop up dialog ends -->
+		
+		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');" />
+                    Select All
+                </li>
+				<li id="edit">
+					Edit
+				</li>
+				<li id="delete">
+					Delete
+				</li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu2");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes 
+                    -->
+                     <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua elseif (statusInfoMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li class="current">
+									<a href="platform.cgi?page=validAps.html"> Valid APs</a>
+								</li>
+								<li>
+									<a href="platform.cgi?page=manageValidAps.html"> Managed APs</a>
+								</li>
+
+								<li>
+									<a href="platform.cgi?page=apProvisioning.html">AP Provisioning</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+                         $| helpHintText |$
+						</p>
+					</div>
+					<h1>Valid APs List</h1>
+					<div class="CLR">
+						<div class="demo_jui" id="tf1_validAps">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th>MAC Address </th>
+
+										<th>Location </th>
+										<th>AP Mode </th>
+										<th>Profile </th>
+
+									</tr>
+								</thead>
+								<?lua
+                                    if (validAps ~= nil) then
+                                        for k, v in pairs (validAps) do
+                                            local row = validAps[k]
+                                            ?>
+                                            <tr class="gradeA"
+                                                id="validAps$| row.macAddress |$">
+                                                <td>$| row.macAddress or '' |$</td>
+                                                <td>$| row.location or '' |$</td>
+                                                <td>$| row.status or '' |$</td>
+                                                <?lua
+                                                if (row.profileId ~= 0) then 
+                                                ?>
+                                                <td>$| row.profileId .. "-" ..
+                                                    row.profileName or '' |$</td>
+                                                <?lua
+                                                else
+                                                ?>
+                                                <td>None</td>
+                                                <?lua end?>
+                                            </tr>
+                                            <?lua
+                                        end
+                                    end
+                                 ?>
+							</table>
+						</div>
+					</div>
+					<div class="buttonsRow">
+						<input type="button" id="tf1_btnShowModal" value="Add New Valid AP" title="Add New Valid AP" class="btnSubmit" onclick="openForm('button.add.validAps.validAps',-1,'tf1_dialog','validAps','validApsForm.html', 'tf1_validApsDailogContent','onloadCallValidApsFn');">
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/macValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/validAps.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+function deleteRows( buttonPrefix, frmId, rowId, selBoxId, dialogId, rowPrefix, checkBoxPrefix) {
+    $("#"+dialogId).html('');
+
+ if ( $("#"+selBoxId+"Menu").is(':checked') ) {
+var regex = new RegExp(":", "g");
+     rowId = rowId.replace(regex,"\\:");
+        var childrenRows = $("#"+rowId).parent().children('tr');
+       
+        for (var i = 0; i < childrenRows.length; i++) {
+            var thisElement = $(childrenRows[i]);
+            thisRowId = thisElement.attr('id');
+           
+            thisRowId = thisRowId.replace(rowPrefix,"");
+            $("#"+dialogId).append('<input type="hidden" name="'+checkBoxPrefix+'.checkbox" value="'+thisRowId+'">');
+        }
+    } else {
+        rowId = rowId.replace(rowPrefix,"");
+        $("#"+dialogId).append('<input type="hidden" name="'+checkBoxPrefix+'.checkbox" value="'+rowId+'">');
+    }
+   
+    $("#"+dialogId).append('<input type="hidden" name="'+buttonPrefix+'" value="delete">');
+   
+    $("#"+frmId).submit();
+}            
+			$(document).ready(function() {
+
+				$('#tf1_validAps .gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'editMenu' : function(t, e, rowId) {
+							openForm('button.edit.validAps.validAps',rowId,'tf1_dialog','validAps','validApsForm.html', 'tf1_validApsDailogContent','onloadCallValidApsFn');
+						},
+						'deleteMenu' : function(t, e, rowId) {
+							deleteRows('button.delete.validAps.validAps', 'tf1_frmValidAps', rowId, 'optionSelectAll', 'tf1_dialog', 'validAps', 'validAps');	
+						}
+					}
+
+				});
+
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+				$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+                    });
+                <?lua
+                if (promtMessage ~= nil) then
+                    if (tonumber(promtMessage) == 1) then 
+                    ?>
+                    var restApId=confirm("The AP is currently managed, configuration changes are not applied until the AP is reset and re-authenticates.\n\nDo you want to reset the AP?");
+                    if (restApId==true){
+                        document.getElementById("tf1_frmValidApsReset").submit();
+                    }
+                <?lua end end?>     
+            });
+
+          
+			function profileChange() {
+
+				var selObj = document.getElementById("tf1_profile");
+                var selValue = selObj.options[selObj.selectedIndex].value;
+                var chan1Obj = document.getElementById("tf1_radio1Channel");
+                var chan2Obj = document.getElementById("tf1_radio2Channel");
+                chan1Obj.options.length = 0;
+                chan2Obj.options.length = 0;
+
+			<?lua
+                			if (apProfileTbl ~= nil) then
+                				for k, v in pairs (apProfileTbl) do
+                					local row = apProfileTbl[k]
+                	?>
+			
+				if ( selValue == '$| row.profileId |$' ) {
+                    <?lua
+                        for l, m in pairs (row.radio1Channels) do 
+                     ?>
+                    chan1Obj.options[chan1Obj.options.length] = new  Option('$| m.name |$',
+                                                                            '$| m.value |$');
+                    <?lua end 
+                        for i, j in pairs (row.radio2Channels) do 
+                     ?>                        
+                    chan2Obj.options[chan2Obj.options.length] = new Option('$|j.name |$',
+                                                                           '$| j.value |$');
+                    <?lua end ?>
+				}
+			 <?lua
+                		end
+                		end
+                	?>	
+
+				
+            }
+
+
+    
+		</script>
+	</body>
+
+</html>
+<?lua end ?>

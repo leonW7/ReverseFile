@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+          http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=============================================================-->
+<VIEW name="system-groups-add" prompt="groups-config[userdb]> "> 
+    <COMMAND name="save" help="Save system group configuration changes.">
+	     <ACTION>lua clishCfgObjExec("UserGroups")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save system group configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("UserGroups")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back system group configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="groupname"
+             help="Enter the Group Name here">
+             <PARAM name="groupname"
+                    help="Enter the groupname here"
+                    ptype="STRING_ALPHA_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.GroupName", "${groupname}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="description"
+             help="Enter a brief description of the group here">
+             <PARAM name="desc"
+                    help="Enter a brief description of the group here"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.Description", "${desc}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="userType"
+             help="Select the user type for the group.">
+	     <PARAM name="userType"
+                    help="Adds user type to the group"
+                    ptype="USERTYPE"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.userType", "${userType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type"
+        help="Select the privilege type for the group."/>
+    <COMMAND name="Privilege_Type sslvpn" check_supported="Y"
+        help="Adds sslvpn privilege to the group">
+             <PARAM name="sslvpn"
+                    help="Adds sslvpn privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.sslvpn", "${sslvpn}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type L2TP"
+        help="Adds L2TP privilege to the group">
+             <PARAM name="L2TP"
+                    help="Adds L2TP privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.L2TP", "${L2TP}")              
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="Privilege_Type PPTP"
+        help="Adds PPTP privilege to the group">
+             <PARAM name="PPTP"
+                    help="Adds PPTP privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.Pptp", "${PPTP}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type Xauth"
+        help="Adds Xauth privilege to the group">
+             <PARAM name="Xauth"
+                    help="Adds Xauth privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.Xauth", "${Xauth}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type Captive_Portal"
+        help="Adds captive portal privilege to the group">
+             <PARAM name="Captive_Portal"
+                    help="Adds captive portal privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.RuntimeAuth", "${Captive_Portal}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type OpenVPN" check_supported="Y"
+        help="Adds open vpn privilege to the group">
+             <PARAM name="OpenVPN"
+                    help="Adds open vpn privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.openvpn", "${OpenVPN}")              
+             </ACTION>
+    </COMMAND>
+ <!--   <COMMAND name="Privilege_Type FrontDesk"
+        help="Adds FrontDesk privilege to the group">
+             <PARAM name="FrontDesk"
+                    help="Adds FrontDesk privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.FrontDesk", "${FrontDesk}")              
+             </ACTION>
+    </COMMAND> -->
+    <COMMAND name="grouptimeOut"
+             help="Enter the time out for the group">
+             <PARAM name="grptimeout"
+                    help="Enter the timeout for the group. Default is 10 minutes"
+                    ptype="IDLE_TIMEOUT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.GroupTimeOut", "${grptimeout}")              
+             </ACTION>
+    </COMMAND>
+
+</VIEW>
+<!--=============================================================-->
+<VIEW name="system-groups-edit" prompt="groups-config[userdb]> "> 
+    <COMMAND name="save" help="Save system group configuration changes.">
+	     <ACTION>lua clishCfgObjExec("UserGroups")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save system group configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("UserGroups")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back system group configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="description"
+             help="Enter a brief description of the group here">
+             <PARAM name="desc"
+                    help="Enter a brief description of the group here"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.Description", "${desc}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="grouptimeOut"
+             help="Enter the new time out for the group">
+             <PARAM name="grptimeout"
+                    help="Enter the new timeout for the group. Default is 10 minutes"
+                    ptype="IDLE_TIMEOUT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.GroupTimeOut", "${grptimeout}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="userType"
+             help="Select the user type for the group.">
+	     <PARAM name="userType"
+                    help="Adds user type to the group"
+                    ptype="USERTYPE"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.userType", "${userType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type"
+        help="Select the privilege type for the group."/>
+    <COMMAND name="Privilege_Type sslvpn" check_supported="Y"
+        help="Adds sslvpn privilege to the group">
+             <PARAM name="sslvpn"
+                    help="Adds sslvpn privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.sslvpn", "${sslvpn}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type L2TP"
+        help="Adds L2TP privilege to the group">
+             <PARAM name="L2TP"
+                    help="Adds L2TP privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.L2TP", "${L2TP}")              
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="Privilege_Type PPTP"
+        help="Adds PPTP privilege to the group">
+             <PARAM name="PPTP"
+                    help="Adds PPTP privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.Pptp", "${PPTP}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type Xauth"
+        help="Adds Xauth privilege to the group">
+             <PARAM name="Xauth"
+                    help="Adds Xauth privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.Xauth", "${Xauth}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type Captive_Portal"
+        help="Adds captive portal privilege to the group">
+             <PARAM name="Captive_Portal"
+                    help="Adds captive portal privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.RuntimeAuth", "${Captive_Portal}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Privilege_Type OpenVPN" check_supported="Y"
+        help="Adds open vpn privilege to the group">
+             <PARAM name="OpenVPN"
+                    help="Adds open vpn privilege to the group"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("UserGroups", "UserGroups.openvpn", "${OpenVPN}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=============================================================-->
+<VIEW name="system-users-add" prompt="users-config[userdb]> "> 
+    <COMMAND name="save" help="Save system user configuration changes.">
+	     <ACTION>lua clishCfgObjExec("Users")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save system user configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Users")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back system user configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="username"
+             help="Enter the username here">
+             <PARAM name="username"
+                    help="Enter the username here"
+                    ptype="STRING_ALPHA_NUM_24"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.UserName", "${username}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="FirstName"
+             help="Enter the user's first name here">
+             <PARAM name="first_name"
+                    help="Enter the user's first name here"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.FirstName", "${first_name}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="LastName"
+             help="Enter the user's last name here">
+             <PARAM name="last_name"
+                    help="Enter the user's lastname here"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.LastName", "${last_name}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="password"
+             help="Enter the password here">
+             <PARAM name="pass"
+                    help="Enter the password"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.Password", "${pass}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="password_confirm"
+             help="Re-Enter the password here">
+             <PARAM name="pass_cfm"
+                    help="Re-Enter the password to confirm"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.CfmPassword", "${pass_cfm}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="groupname"
+             help="Enter the groupname here">
+             <PARAM name="gname"
+                    help="Enter the group name here"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.GroupName", "${gname}")         
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="enable_change_password"
+             help="Enable/Disable change password for captive portal user">
+             <PARAM name="enable"
+                    help="Enable/Disable change password for captive portal user"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.enableChangePasswd", "${enable}")
+             </ACTION>
+    </COMMAND>
+
+</VIEW>
+
+<!--=============================================================-->
+<VIEW name="system-users-edit" prompt="users-config[userdb]> "> 
+    <COMMAND name="save" help="Save system user configuration changes.">
+	     <ACTION>lua clishCfgObjExec("Users")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save system user configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Users")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back system user configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="FirstName"
+             help="Enter the user's first name here">
+             <PARAM name="first_name"
+                    help="Enter the user's first name here"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.FirstName", "${first_name}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="LastName"
+             help="Enter the user's last name here">
+             <PARAM name="last_name"
+                    help="Enter the user's lastname here"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.LastName", "${last_name}")              
+             </ACTION>
+    </COMMAND>
+    
+    <COMMAND name="change_password" help="Change user's password">
+        <PARAM name="current_password"
+                    help="current password of user."
+                    ptype="STRING"/>
+        <PARAM name="new_password"
+                    help="Enter new password for user."
+                    ptype="STRING"/>
+        <PARAM name="new_password_confirm"
+                    help="Confirm new password for user."
+                    ptype="STRING"/>
+                <ACTION>lua clishCmdExec(changeUserPassword, "${current_password}", "${new_password}", "${new_password_confirm}")</ACTION>
+                
+    </COMMAND>
+<COMMAND name="enable_change_password"
+             help="Enable/Disable change password for captive portal user">
+             <PARAM name="enable"
+                    help="Enable/Disable change password for captive portal user"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.enableChangePasswd", "${enable}")
+             </ACTION>
+    </COMMAND>
+  <COMMAND name="groupname"
+             help="Enter the groupname here">
+             <PARAM name="gname"
+                    help="Enter the group name here"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("Users", "Users.GroupName", "${gname}")         
+             </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="group-access-control-configure" prompt="group-access-control-config> ">
+    <COMMAND name="save" help="Save group access control configuration changes.">
+	     <ACTION>lua clishCfgObjExec("GroupAccessControl")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save group access control configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("GroupAccessControl")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back group access control configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+	<COMMAND name="deny_login"
+             help="deny login">
+             <PARAM name="deny_login"
+                    help="deny login"
+                    ptype="BOOL"/>
+             <ACTION>lua clishCfgObjAdd ("GroupAccessControl", "GroupAccessControl.DenyLogin", "${deny_login}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="deny_login_wan"
+        help="deny login wan">
+        <PARAM name="deny_login_wan"
+            help="deny login wan"
+            ptype="BOOL"/>
+        <ACTION>lua clishCfgObjAdd ("GroupAccessControl", "GroupAccessControl.DenyLoginFromWan", "${deny_login_wan}")              
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="allow_login_from_defined_ips"
+        help="login from ip">
+        <PARAM name="allow_login_from_defined_ips"
+            help="login from ip"
+            ptype="BOOL"/>
+        <ACTION>lua clishCfgObjAdd ("GroupAccessControl", "GroupAccessControl.LoginFromIP", "${allow_login_from_defined_ips}")              
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="allow_login_from_defined_browsers"
+        help="login from browser">
+        <PARAM name="allow_login_from_defined_browsers"
+            help="login from browser"
+            ptype="BOOL"/>
+        <ACTION>lua clishCfgObjAdd ("GroupAccessControl", "GroupAccessControl.LoginFromBrowser", "${allow_login_from_defined_browsers}")              
+        </ACTION>
+    </COMMAND>
+
+</VIEW>
+<!--=======================================================-->
+<VIEW name="group-access-control-browser-configure" prompt="group-access-control[browser-config]> ">
+    <COMMAND name="save" help="Save group access control browser configuration changes.">
+	     <ACTION>lua clishCfgObjExec("AccessControlUserGroupPolicyBrowser")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save group access control browser configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("AccessControlUserGroupPolicyBrowser")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back group access control browser configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="group_id"
+             help="group id">
+             <PARAM name="group_id"
+                    help="group id"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("AccessControlUserGroupPolicyBrowser", "AccessControlUserGroupPolicyBrowser.GroupId", "${group_id}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="browser_name"
+             help="browser name">
+             <PARAM name="browser_name"
+                    help="browser name"
+                    ptype="BROWSER"/>
+             <ACTION>lua clishCfgObjAdd ("AccessControlUserGroupPolicyBrowser", "AccessControlUserGroupPolicyBrowser.ClientBrowserName", "${browser_name}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="group-access-control-ip-configure" prompt="group-access-control[ip-config]> ">
+    <COMMAND name="save" help="Save group access control ip configuration changes.">
+	     <ACTION>lua clishCfgObjExec("AccessControlUserGroupPolicyIPAddress")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save group access control ip configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("AccessControlUserGroupPolicyIPAddress")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back group access control ip configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="group_id"
+             help="group id">
+             <PARAM name="group_id"
+                    help="group id"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("AccessControlUserGroupPolicyIPAddress", "AccessControlUserGroupPolicyIPAddress.GroupId", "${group_id}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="address_type"
+             help="address type">
+             <PARAM name="address_type"
+                    help="address type"
+                    ptype="IPPOLICY_ADDRESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("AccessControlUserGroupPolicyIPAddress", "AccessControlUserGroupPolicyIPAddress.AddressType", "${address_type}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="source_address"
+             help="Set the source address ">
+             <PARAM name="source_address"
+                    help="Set the source address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("AccessControlUserGroupPolicyIPAddress", "AccessControlUserGroupPolicyIPAddress.Address", "${source_address}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="mask_length"
+             help="Set the source network mask length">
+             <PARAM name="mask_length"
+                    help="Set the source network mask length"
+                    ptype="MASK_LENGTH"/>
+             <ACTION>lua clishCfgObjAdd ("AccessControlUserGroupPolicyIPAddress", "AccessControlUserGroupPolicyIPAddress.MaskLength", "${mask_length}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+
+    <!--=======================================================-->
+    <COMMAND name="system users" 
+        help="System user configuration commands."/>
+
+    <!--=======================================================-->
+    <COMMAND name="system group" 
+        help="System group configuration commands."/>
+
+    <!--=======================================================-->
+    <COMMAND name="system group add"
+        help="system groups add mode."
+        view="system-groups-add" viewid="">
+        <ACTION>lua clishCfgObjNew ("UserGroups", 
+            userdbGroupsCfgInit, userdbGroupsCfgSave, 
+            userdbGroupsCfgInputVal)
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="system group edit"
+        help="system groups edit mode."
+        view="system-groups-edit" viewid="">
+        <PARAM name="row_id" 
+            help=" Row Id Of the group to be edited.Use command 'show system group all'  to dislay all groups on system"
+            ptype="UINT"/>
+        <ACTION>lua clishCfgObjNew ("UserGroups", 
+            userdbGroupsCfgInit, userdbGroupsCfgSave, 
+            userdbGroupsCfgInputVal,"${row_id}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="system group delete"
+        help="system groups delete mode.">
+        <PARAM name="row_id" 
+            help="Row Id Of the group to be deleted.Use command 'show system group all'  to dislay all groups on system"
+            ptype="UINT"/>
+        <ACTION>lua clishCmdExec (userdbGroupsCfgDel,"${row_id}")
+        </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="show system users" help="System group display mode"/>
+
+    <!--=======================================================-->
+    <COMMAND name="show system group" help="System user display mode"/>
+
+    <COMMAND name="show system group specific"
+        help="Display information for given group">
+        <PARAM name="row_id" 
+            help="Row Id Of the group to be displayed."
+            ptype="UINT"/>
+        <ACTION>lua clishCmdExec (userdbGroupsGet, "${row_id}") </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="show system group all"
+        help="Display all groups on system">
+        <ACTION>lua clishCmdExec (userdbGroupsGetAll) </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="system users add"
+        help="system users add mode."
+        view="system-users-add" viewid="">
+        <ACTION>lua clishCfgObjNew ("Users", 
+            userdbUsersCfgInit, userdbUsersCfgSave, 
+            userdbUsersCfgInputVal)
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="system users edit"
+        help="system users edit mode."
+        view="system-users-edit" viewid="">
+        <PARAM name="row_id" 
+            help="Row Id Of the user to be edited.Use command 'show system users all'  to dislay all users on system"
+            ptype="UINT"/>
+        <ACTION>lua clishCfgObjNew ("Users", 
+            userdbUsersCfgInit, userdbUsersCfgSave, 
+            userdbUsersCfgInputVal,"${row_id}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="system users delete"
+        help="system users delete mode.">
+        <PARAM name="row_id" 
+            help="Row Id Of the user to be deleted.Use command 'show system users all'  to dislay all users on system"
+            ptype="UINT"/>
+        <ACTION>lua clishCmdExec ( userdbUsersCfgDel,"${row_id}")
+        </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="show system users all"
+        help="Display all users on system">
+        <ACTION>lua clishCmdExec (userdbUsersGetAll) </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="show system users specific"
+        help="Display information for given user">
+        <PARAM name="row_id" 
+            help=" Row Id Of the user to be displayed"
+            ptype="UINT"/>
+        <ACTION>lua clishCmdExec (userdbUsersGet, "${row_id}") </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="system group groupaccesscontrol" check_supported="Y"
+        help="group access control"/>
+    <!--=======================================================-->
+    <COMMAND name="system group groupaccesscontrol configure"
+        help="group access control configuration"
+        view="group-access-control-configure" viewid="">
+        <PARAM name="group_id" 
+            help="Id of the group for which we want to configure group access control"
+            ptype="UINT"/>
+        <ACTION>lua clishCfgObjNew ("GroupAccessControl", 
+            groupAccessControlCfgInit, groupAccessControlCfgSave, 
+            groupAccessControlCfgVal,"${group_id}")
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show system group groupaccesscontrol" check_supported="Y"
+        help="Displays Group Access Control configuration for the selected group">
+        <PARAM name="group_id" 
+            help="Id of the group for which the configuratin has to be displayed"
+            ptype="UINT"/>
+        <ACTION>lua clishCmdExec(groupAccessControlShow,"${group_id}")</ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="system group access_control_browser" check_supported="Y"
+        help="List of browsers for which login policies can be applied"/>
+
+    <!--=======================================================-->
+    <COMMAND name="system group access_control_browser add"
+        help="Add a browser to Access Control browsers list"
+        view="group-access-control-browser-configure" viewid="">
+        <ACTION>lua clishCfgObjNew ("AccessControlUserGroupPolicyBrowser", 
+            groupAccessControlBrowserCfgInit, groupAccessControlBrowserCfgSave, 
+            groupAccessControlBrowserCfgVal,nil)
+        </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="system group access_control_browser delete"
+        help="Delete a browser from Access Control browsers list">
+        <PARAM name="row_id" 
+            help=" Row Id Of the browser to be deleted"
+            ptype="UINT"/>
+        <ACTION>lua clishCmdExec(groupAccessControlBrowserDelete,"${row_id}")</ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="show system group access_control_browser" check_supported="Y"
+        help="Displays Access Control browsers list">
+        <ACTION>lua clishCmdExec(groupAccessControlBrowserShow,nil)</ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="system group access_control_ip" check_supported="Y"
+        help="List of ips for which login policies can be applied"/>
+
+    <!--=======================================================-->
+    <COMMAND name="system group access_control_ip add"
+        help="Add an ip to Access Control ips list"
+        view="group-access-control-ip-configure" viewid="">
+        <ACTION>lua clishCfgObjNew ("AccessControlUserGroupPolicyIPAddress", 
+            groupAccessControlIPCfgInit, groupAccessControlIPCfgSave, 
+            groupAccessControlIPCfgVal,nil)
+        </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="system group access_control_ip delete"
+        help="Delete an ip from Access Control ips list">
+        <PARAM name="row_id" 
+            help=" Row Id Of the ip to be deleted"
+            ptype="UINT"/>
+        <ACTION>lua clishCmdExec(groupAccessControlIPDelete,"${row_id}")
+        </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="show system group access_control_ip" check_supported="Y"
+        help="Displays Access Control ips list">
+        <ACTION>lua clishCmdExec(groupAccessControlIPShow,nil)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

@@ -1,0 +1,51 @@
+#!/bin/sh
+#
+# pkgMgmtInit - initialization script for pkgMgmt
+#
+# Copyright (c) 2010, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01c,11may17,sac  added changes related to GobiNet driver
+# 01b,19jan15,avr  added changes after merge task
+# 01a,17jun10,rks  written
+
+
+if [ "$INCLUDE_PKGMGMT" = "y" ]; then
+    mkdir -p /tmp/pkgMgmt
+    PKGMGMT_DIR=/pkgMgmt/
+    PFRM_PKGMGMT_DIR=/pfrm2.0/pkgMgmt/
+    if [ ! -e $PKGMGMT_DIR/pkgMgmt.db -o ! -s $PKGMGMT_DIR/pkgMgmt.db ]; then
+        sqlite3 $PKGMGMT_DIR/pkgMgmt.db < $PFRM_PKGMGMT_DIR/pkgMgmt.sql
+        lua /pfrm2.0/bin/pkgMgmtInit.lua 
+        FIRMWARE_VER=`cat /pfrm2.0/var/releaseMilestone.txt`
+        if [ $MODEL_ID == "DSR-1000AC" ] || [ $PRODUCT_ID == "DSR-1000_Bx" ]; then
+           PACKAGE_NAME_OPTION="option-1000AC-v1-$FIRMWARE_VER"
+           PACKAGE_NAME_CDC_ACM="cdc-acm-1000AC-v1-$FIRMWARE_VER"
+           PACKAGE_NAME_GOBI_NET="GobiNet-1000AC-v1-$FIRMWARE_VER"
+        elif [ $MODEL_ID == "DSR-500AC" ] || [ $PRODUCT_ID == "DSR-500_Bx" ]; then
+           PACKAGE_NAME_OPTION="option-500AC-v1-$FIRMWARE_VER"
+           PACKAGE_NAME_CDC_ACM="cdc-acm-500AC-v1-$FIRMWARE_VER"
+           PACKAGE_NAME_GOBI_NET="GobiNet-500AC-v1-$FIRMWARE_VER"
+        elif [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-1000N" ]; then
+            PACKAGE_NAME_OPTION="option-v1-$FIRMWARE_VER"
+            PACKAGE_NAME_CDC_ACM="cdc-acm-v1-$FIRMWARE_VER"
+            PACKAGE_NAME_GOBI_NET="GobiNet-v1-$FIRMWARE_VER"
+        elif [ $MODEL_ID == "DSR-250" ] || [ $MODEL_ID == "DSR-250N" ]; then
+            PACKAGE_NAME_OPTION="option-250-$FIRMWARE_VER"
+            PACKAGE_NAME_CDC_ACM="cdc-acm-250-$FIRMWARE_VER"
+            PACKAGE_NAME_GOBI_NET="GobiNet-250-$FIRMWARE_VER"
+        else
+            PACKAGE_NAME_OPTION="option-150-$FIRMWARE_VER"
+            PACKAGE_NAME_CDC_ACM="cdc-acm-150-$FIRMWARE_VER"
+            PACKAGE_NAME_GOBI_NET="GobiNet-150-$FIRMWARE_VER"
+        fi
+        /pfrm2.0/bin/sqlite3 $PKGMGMT_DIR/pkgMgmt.db << SQL_ENTR_TAG_1
+        insert into pkgInstalled values ('','$PACKAGE_NAME_OPTION','','0.9','','','D-Link (DWM-152 A1, DWM-152 A2, DWM-152 A3, DWM-156 A1, DWM-156 A2, DWM-156 A3, DWM-156 A7, DWM-157 B1, DWM-158 D1), Huawei (E-1550, E-173, E-156, E-303, EC-306), ZTE (MF-710)','Installed','0');
+        insert into pkgInstalled values ('','$PACKAGE_NAME_CDC_ACM','','0.9','','','D-Link (DWM-156 A5, DWM-156 A6, DWM-157 A1)','Installed','0');
+        insert into pkgInstalled values ('','$PACKAGE_NAME_GOBI_NET','','0.9','','','D-Link (DWM-221 & 222)','Installed','0');
+        COMMIT;
+SQL_ENTR_TAG_1
+    fi
+        /pfrm2.0/bin/sqlite3 $PKGMGMT_DIR/pkgMgmt.db  "select LanguageId from Languages where Status=1" > /flash/tmp/lang.txt
+fi

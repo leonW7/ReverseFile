@@ -1,0 +1,295 @@
+<?lua
+require "teamf1lualib/macFilter_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "wireless"
+    PAGE_HELP_SECTION = "accessPointMacFilters"
+
+local selAPName, errorFlag
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local MAC_FILTER = require("com.teamf1.bl.wireless.macF")
+
+if (PRODUCT_ID ~= "DSR-1000AC_Ax" and PRODUCT_ID ~= "DSR-500AC_Ax" and PRODUCT_ID ~= "DSR-1000_Bx" and PRODUCT_ID ~= "DSR-500_Bx") then
+    if ( cgi["accessPoints.checkbox"] ~= nil ) then
+        selAPName = cgi["accessPoints.checkbox"] 
+    else
+        selAPName = cgi["accessPointMacFilters.selAPName"] 
+    end
+else
+    if ( cgi["accessPoints.checkbox"] ~= nil ) then
+        selAPName = cgi["accessPoints.checkbox"] 
+    else
+        selAPName = cgi["dot11VapName"]
+    end
+end
+-- If vapName is nil then we will get the default vapName from the table.
+if (selAPName == nil) then
+    selAPName = MAC_FILTER.wirelessStoredAccessPointsGet()
+end
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local defACLPolicy = inputTable["dot11VAP.defACLPolicy"]
+    errorFlag = MAC_FILTER.wirelessAccessPolicyModify (selAPName, defACLPolicy)
+
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+       
+elseif (ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local cookieTbl = {}
+    local tempVar   = 1
+    if (type(cgi["accessPointMacFilters.checkbox"]) == "string") then
+        cookieTbl[tempVar] = inputTable["accessPointMacFilters.checkbox"]
+    else
+        for k, v in pairs(cgi["accessPointMacFilters.checkbox"]) do
+            cookieTbl[tempVar] = v
+            tempVar = tempVar + 1
+        end
+    end
+
+    -- call the BL logic
+    errorFlag = MAC_FILTER.wirelessAccessListDel (selAPName, cookieTbl)
+    
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end         
+	web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "add") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local macAddress = inputTable["accessPointMacFilters.macAddress"]
+    errorFlag = MAC_FILTER.wirelessAccessListAdd (selAPName, macAddress)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local accessPointsTbl = {}
+    local MACListTbl = {}
+    local countMacList
+    local returnCode
+    if (selAPName ~= nil) then
+        returnCode, accessPointsTbl = MAC_FILTER.wirelessAccessPointsGet(selAPName)
+        if(returnCode ~= returnCodes.SUCCESS) then
+           statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+    
+        returnCode, MACListTbl = MAC_FILTER.wirelessAccessListGet(selAPName)
+        if(returnCode ~= returnCodes.SUCCESS) then
+           statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+
+        -- Store the count of the available MAC List
+        countMacList = #MACListTbl
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    LANG_LOCALE = "30031,30044,10244,30045,14086,10214,10699,30046,11636,30047,30049,30048,12049"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+(Subsidiary of D-Link India)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmAccessPointMacFilters" id="tf1_frmAccessPointMacFilters">        
+            <input type="hidden" name="thispage" id="thispage" value="accessPointMacFilters.html">
+	        <input type="hidden" name="accessPointMacFilters.selAPName" value="$| selAPName or '' |$">       
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit move');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>               
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+             
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$            </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['30031'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_dot11VapNameRefresh" id="tf1_dot11VapNameRefresh" action="platform.cgi?page=accessPointMacFilters.html" method="post">
+                                <input type="hidden" name="thispage" id="thispage" value="accessPointMacFilters.html">
+                                <input type="hidden" name="dot11VapName" id="tf1_dot11VapName" value="1">
+                            </form>
+                            <form action="platform.cgi" method="post" name="tf1_frmFirewallRules2" id="tf1_frmFirewallRules2">        
+            <input type="hidden" name="thispage" id="thispage" value="accessPointMacFilters.html">
+<input type="hidden" name="accessPointMacFilters.selAPName" value="$| selAPName or '' |$">
+                                <h2>$| LANG_LOCALE['30044'] |$</h2>
+                          <div class="configRow">
+                                  <label>$| LANG_LOCALE['10244'] |$</label>
+                                  <?lua 
+                                    if (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then
+                                    local accessPointNameTbl = MAC_FILTER.wirelessAccessPointGetAll() 
+                                  ?>
+                                  <select size="1" name="dot11VapName">
+                                    <?lua for u,v in pairs(accessPointNameTbl) do ?>
+    			                    <option onclick="document.getElementById('tf1_dot11VapName').value='$| v["dot11VAP.vapName"] |$';document.tf1_dot11VapNameRefresh.submit()" $| web.dropdownSelected(v["dot11VAP.vapName"] == selAPName ) |$ value="$| v["dot11VAP.vapName"] |$">$| v["dot11VAP.vapName"] |$</option> 
+				                    <?lua end?>
+				                  </select>
+                                  <?lua else ?>
+                                    <p>$| accessPointsTbl["dot11VAP.vapName"] or '' |$</p>
+                                  <?lua end ?>
+                          </div>
+                         <div class="break">&nbsp;</div>
+                           <div class="configRow">
+                                <label>$| LANG_LOCALE['30045'] |$</label>
+                                <select size="1" name="dot11VAP.defACLPolicy" id="tf1_selSecurityOpt">
+								<option $| web.dropdownSelected(accessPointsTbl["dot11VAP.defACLPolicy"] == "Open") |$ value="Open">$| LANG_LOCALE['14086'] |$</option>
+								<option $| web.dropdownSelected(accessPointsTbl["dot11VAP.defACLPolicy"] == "Allow") |$ value="Allow">$| LANG_LOCALE['10214'] |$</option>
+								<option $| web.dropdownSelected(accessPointsTbl["dot11VAP.defACLPolicy"] == "Deny") |$ value="Deny">$| LANG_LOCALE['10699'] |$</option>
+							</select>
+                          </div>
+                         <div class="break">&nbsp;</div>
+
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.accessPointMacFilters" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                            <h1>$| LANG_LOCALE['30046'] |$</h1>
+                            <div class="CLR">
+                            <div class="demo_jui" id="tf1_accessPointMacFilters">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                            <thead>
+                            <tr>
+                               <th>$| LANG_LOCALE['11636'] |$</th>                                               
+                            </tr>
+                            </thead>
+					        <?lua
+					         local i = 0
+					         for k,v in pairs(MACListTbl) do
+                 				 i = i + 1
+						         local row = MACListTbl[i]
+         					?>                                              
+                            <tr class="gradeA" id="$| row["dot11ACL.macAddress"] |$">
+                               <td>$| row["dot11ACL.macAddress"] or '' |$</td>
+                            </tr>                                                 
+                            <?lua end ?>
+                            </table>
+                            </div>
+                            </div>
+                            <div class="buttonsRow" id="tf1_btnShowModal">
+                            <?lua 
+			    			if (tonumber(countMacList) < 512) then
+                                if (accessPointsTbl["dot11VAP.defACLPolicy"] ~= "Open") then
+                            ?> 
+                            <input type="button" class="btnSubmit" title="$| LANG_LOCALE['30047'] |$" value="$| LANG_LOCALE['30047'] |$" id="btSave" onclick="openForm('button.add.accessPointMacFilters.accessPointMacFilters',-1,'tf1_dialog','accessPointMacFilters','accessPointMacFiltersForm.html', 'tf1_accessPointMacFiltersDailogContent','');">
+                            <?lua else ?>
+                            <input type="button" class="btnSubmit" title="$| LANG_LOCALE['30047'] |$" value="$| LANG_LOCALE['30047'] |$" id="btSave" onclick="alert(LANG_LOCALE['30048'])">
+                            <?lua end end ?>
+                            </div>
+                            <div class="break">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/accessPointMacFilters.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+	<script language="JavaScript" src="js/macValidations.js" type="text/javascript"></script>
+        <script type="text/javascript" charset="utf-8">
+
+            $(document).ready(function() {
+               <?lua 
+               if (accessPointsTbl["dot11VAP.defACLPolicy"] ~= "Open") then
+               ?> 
+                $('#tf1_accessPointMacFilters .gradeA').contextMenu('contextMenu', {
+                    bindings : {                        
+                        'deleteMenu' : function(t, e, rowId) {
+                        deleteRowsNew('button.delete.accessPointMacFilters.accessPointMacFilters', 'tf1_frmAccessPointMacFilters', rowId, 'optionSelectAll', 'tf1_dialog', 'accessPointMacFilters', 'accessPointMacFilters','recordsData');                        
+                            }
+                    }
+                });
+
+                <?lua end ?>
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+            });
+
+ 
+        </script>
+    </body>
+</html>
+<?lua end ?>

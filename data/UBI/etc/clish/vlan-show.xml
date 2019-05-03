@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <COMMAND name="show net vlan" help=""/>
+<!--=======================================================-->
+     <COMMAND name="show net vlan configuration"
+             help="">
+                   <ACTION>lua clishCmdExec (vlanShow)
+                   </ACTION>
+    </COMMAND>
+ <!--=======================================================-->
+    <COMMAND name="show net multivlan" help ="show vlan server status"/>
+<!--=======================================================-->
+    <COMMAND name="show net multivlan subnet" help ="show vlan server status"/>
+<!--=======================================================-->
+    <COMMAND name="show net multivlan subnet status"
+	     help="Display vlan server status.">
+	     <ACTION>lua clishCmdExec (MultiVlanSubGet)
+             </ACTION>
+    </COMMAND>    
+<!--=======================================================-->
+    <COMMAND name="show net port-vlan" help ="show Port vlan status"/>
+<!--=======================================================-->
+    <COMMAND name="show net port-vlan status"
+	     help="Display Port vlan status.">
+	     <ACTION>lua clishCmdExec (PortvlanCfgGet)
+             </ACTION>
+    </COMMAND>    
+<!--=======================================================-->
+    <COMMAND name="show net wireless_vlan" help ="show Port vlan status"/>
+<!--=======================================================-->
+    <COMMAND name="show net wireless_vlan status"
+	     help="Display Port vlan status.">
+	     <ACTION>lua clishCmdExec (PortWvlanCfgGet)
+             </ACTION>
+    </COMMAND>    
+<!--=======================================================-->
+</CLISH_MODULE>

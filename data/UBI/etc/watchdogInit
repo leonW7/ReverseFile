@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# watchdogInit - initialization script for watchdog
+#
+# Copyright (c) 2009, TeamF1, Inc.
+#
+# modification history
+# --------------------
+#01b,10sep09,mnj Modified for Marvell CPU
+#01a,24jun09,anp  written.
+#
+# DESCRIPTION
+# This script is the initialization script for watchdog component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_WATCHDOG" = "y" ]; then
+    echo -n "setting up hardware watchdog timer... "
+    MODULES_DIR=$WATCHDOG_INSTALL_PATH/lib/modules/watchdog/
+    BIN_DIR=$WATCHDOG_INSTALL_PATH/bin/
+    if [ -f $MODULES_DIR/$MODNAME.$MOD_SUFFIX ]; then
+        insmod $MODULES_DIR/$MODNAME.$MOD_SUFFIX;
+        sleep 1;
+        mknod /dev/watchdog c `awk '$ 2=="watchdog" {print $ 1}' /proc/devices` 0;
+        [ -f $BIN_DIR/watchDogd ] && { nice -n -20 $BIN_DIR/watchDogd $DEF_POL_VAL & }
+    fi
+    echo "Done"
+fi

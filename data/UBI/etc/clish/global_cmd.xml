@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+                     http://clish.sourceforge.net/XMLSchema/clish.xsd">
+    <!--=======================================================-->
+        <COMMAND name=".exit"
+                 help="Exit this session">
+            <ACTION builtin="clish_close"/>
+        </COMMAND>
+        <!--===================================================-->
+    <COMMAND name=".help"
+             help="Display an overview of the CLI syntax">
+        <ACTION builtin="clish_overview"/>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name=".top"
+             help="Return to the default mode"
+             view="root-view"
+             viewid=""/>
+    <!--=======================================================-->
+    <COMMAND name=".reboot"
+             access="admin"
+             help="Reboot the system.">
+	<ACTION>lua utilCLIReboot()</ACTION>
+    </COMMAND>   
+    <!--=======================================================-->
+    <COMMAND name=".history"
+             help="Display the current session's command line history">
+        <PARAM name="limit"
+               help="Set the size of history list (zero means unbounded)"
+              ptype="UINT"
+            default=""/>
+        <ACTION builtin="clish_history">${limit}</ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="show" help="Display system components' configuration"/>
+    <!--===================================================-->
+    <COMMAND name="show system" help="General system configuration"/>
+    <!--===================================================-->
+    <COMMAND name="show net" help="Display networking information."/>
+    <!--===================================================-->
+    <COMMAND name="show security" help="Display security information."/>
+    <!--===================================================-->
+    <COMMAND name="show vpn" help="Display vpn information."/>
+	<!--===================================================-->
+    <COMMAND name="show wlan" 
+			 check_supported="Y"	
+			 help="Display wlan information."/>
+	<!--===================================================-->
+    <COMMAND name="system"
+             access="admin" 
+	     help="[System configuration mode]"/>
+    <!--===================================================-->
+    <COMMAND name="net" 
+             access="admin"
+	     help="[Networking configuration mode]"/>
+     <!--===================================================-->
+    <COMMAND name="security"
+             access="admin" 
+             check_supported="Y"
+	     help="[Security configuration mode]"/>
+    <!--===================================================-->
+    <COMMAND name="util" 
+             help="[Utilities Mode]"/>
+    <!--===================================================-->
+    <COMMAND name="vpn"
+        access="admin" 
+        check_supported="Y"
+	    help="[VPN configuration Mode]"/>
+    <!--===================================================-->
+    <COMMAND name="dot11" 
+        access="admin"
+        check_supported="Y"
+        help="[Wireless configuration Mode]"/>
+    <!--===================================================-->
+    <COMMAND name="license"
+        access="admin"
+        check_supported="Y"
+        help="[License configuration Mode]"/>
+    <!--===================================================-->
+    <COMMAND name="qos"
+        access="admin"
+        check_supported="Y"
+        help="[QoS configuration Mode]"/>
+	<!--===================================================-->
+	<COMMAND name="wlan" 
+        	 access="admin"
+			 check_supported="Y"	
+	         help="[WLAN configuration Mode]"/>
+	<!--===================================================-->
+	
+</CLISH_MODULE>

@@ -1,0 +1,72 @@
+<?lua
+require "teamf1lualib/blockedKeywords_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local keywords = require("com.teamf1.bl.filter.blockedKeywords")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap    = require ("com.teamf1.core.errorMap")
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, keyword, status
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, keyword, status = 
+                keywords.blockedKeywordsSectionGetCur(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+    else
+        configRowId = "-1"
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+            <div id="tf1_blockedKeywordsDailogContent">
+                <div class="topBg">
+                    <h1 data-localize="10402">Blocked URLs Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label data-localize="13207">URL</label>
+                        <select size="1" class="newTwo"><option value="0">HTTP</option></select>
+                        <input type="text" id="tf1_blockedKeyword" onKeyDown="if (event.keyCode == 9 ) { return validateUrl (this); }" name="blockedKeywords.word" maxlength="255" value="$| keyword or '' |$" >
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input data-localize="12758" type="submit" name="button.config.blockedKeywords.blockedKeywords.$| configRowId |$" onclick="return blockedKeywordsValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                </div>
+            </div>
+<?lua end ?>
+        <!-- Section for Pop up dialog ends -->
+        
+<!-- Section for Pop up dialog starts -->
+            <div id="tf1_blockedKeywordsUploadDailogContent">
+                <div class="topBg">
+                    <h1 data-localize="10403">Blocked URLs List Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label data-localize="10400"> Blocked URLs List </label>
+                        <input type="file" id="tf1_txtUploadFile" name="txtUploadFile" size="25" maxlength="64">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input data-localize="13194" type="submit" name="button.import.blockedKeywords" onclick="return checkFileTypeValid('tf1_txtUploadFile','csv');" class="btnSubmit" title="Upload" value="Upload" id="btSave">
+                </div>
+            </div>
+        <!-- Section for Pop up dialog ends -->

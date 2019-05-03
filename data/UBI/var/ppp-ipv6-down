@@ -1,0 +1,24 @@
+#!/bin/sh
+# ppp-ipv6-down script
+# modified by adi
+# further modified by nis for PPTP and L2TP IPv6 support
+
+# remove the wan up time file
+
+rm -f "/var/wan"$(($LINKNAME))"Ip"
+
+export LD_LIBARY_PATH=$LD_LIBARY_PATH:/pfrm2.0/lib
+
+if [ "x$LINKNAME" != x ]  
+then
+    # update the networkInterface table
+    /pfrm2.0/bin/ppp6StatsUpdate -d /tmp/system.db -a ::                      \
+                                               -g ::                      \
+                                               -i $LINKNAME
+else
+    # Pass local LL Address for PPTP and L2TP case to help delete the 
+    # entry from 'pppV6Interfaces' table as interface has gone down
+    /pfrm2.0/bin/ppp6StatsUpdate -d /tmp/system.db -a $LLLOCAL                 \
+                                                   -g ::                      \
+                                                   -i ::
+fi                                                

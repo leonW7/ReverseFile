@@ -1,0 +1,593 @@
+<?lua
+local RCV_BYTES,TR_BYTES,RCV_PACKETS,TR_PACKETS
+local RCV_DROP_BYTES,TR_DROP_BYTES,RCV_DROP_PACKETS,TR_DROP_PACKETS
+--require "teamf1lualib/lmUtils"
+--require "teamf1lualib/wsDashboard"
+require "teamf1lualib/dashboardWanInfoCore"
+--require "teamf1lualib/apcount_web"
+require "teamf1lualib/bl_dashboard"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/deviceInfo_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/vpn_dashboard"
+
+local deviceInfo = require("com.teamf1.bl.system.deviceInfo")
+local trafficStats = require ("com.teamf1.bl.statistics.traffic")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+cgilua.header("Content-Type","applicatgion/json; charset=UTF-8")
+?>
+<?lua
+-- Case1: Bandwidth Chart.
+local bwCounters = {}
+local chartType = cgi["chartType"]
+if( chartType == "bandwidthUsage" ) then
+	local intName1 = cgi['Interface.Name1']
+	local intName2 = "ALL"
+
+	-- Getting Bandwidth Counters.
+    local appNames = db.getDistinctValues("BwMonStat", "AppName")
+   
+    local usedAppsCounter = {}
+    local idx = 1
+    for k,v in pairs (appNames) do
+        local counterSum = nil
+        bwCounters[idx] = {}
+        usedAppsCounter[idx] = {}
+        bwCounters[idx]["BwMonStat.AppName"] = v["BwMonStat.AppName"] or ''
+        usedAppsCounter[idx]["BwMonStat.AppName"] = v["BwMonStat.AppName"] or ''
+
+        if (intName1 == "ALL") then
+            counterSum = db.getTable("BwMonStat", false, "SELECT sum(Counter) Counter FROM BwMonStat where AppName='" .. v["BwMonStat.AppName"] .. "' group by AppName")
+		else
+            counterSum = db.getTable("BwMonStat", false, "SELECT sum(Counter) Counter FROM BwMonStat where LogicalIfName='" .. intName1 .. "' and AppName='" .. v["BwMonStat.AppName"] .. "' group by AppName")
+        end
+
+        if (counterSum ~= nil and #counterSum == 1) then
+            bwCounters[idx]["BwMonStat.Counter"] = counterSum[1]["Counter"] or '0'
+        else
+            bwCounters[idx]["BwMonStat.Counter"] = '0'
+        end
+
+        if (intName2 == "ALL") then
+            counterSum = db.getTable("BwMonStat", false, "SELECT sum(Counter) Counter FROM BwMonStat where AppName='" .. v["BwMonStat.AppName"] .. "'")
+		else
+            counterSum = db.getTable("BwMonStat", false, "SELECT sum(Counter) Counter FROM BwMonStat where LogicalIfName='" .. intName2 .. "' and AppName='" .. v["BwMonStat.AppName"] .. "'")
+        end
+
+        if (counterSum ~= nil and #counterSum == 1) then
+            usedAppsCounter[idx]["BwMonStat.Counter"] = counterSum[1]["Counter"] or '0'
+        else
+            usedAppsCounter[idx]["BwMonStat.Counter"] = '0'
+        end
+
+        idx = idx + 1
+    end
+?>{
+	"data": [
+	<?lua
+		local httpFlag = false
+		local httpsFlag = false
+		local snmpFlag = false
+		local dnsFlag = false
+		local otherFlag = false
+		local otherCounter = 0
+	
+		for m,n in pairs(bwCounters) do	
+	?>
+		<?lua if( n["BwMonStat.AppName"] == "HTTP" ) then	
+			httpFlag =true?>
+			{"label" : "HTTP", "value" : "$|n["BwMonStat.Counter"] or '0'|$", "background" : "#698555", "borderouter" : "#698555", "borderinner" : "#ffffff", "toplabel" : "$|n["BwMonStat.Counter"] or '0'|$"},
+		<?lua elseif( n["BwMonStat.AppName"] == "HTTPS" ) then	
+			httpsFlag =true?>
+			{"label" : "HTTPS", "value" : "$|n["BwMonStat.Counter"] or '0'|$", "background" : "#b23398", "borderouter" : "#b23398", "borderinner" : "#ffffff", "toplabel" : "$|n["BwMonStat.Counter"] or '0'|$"},
+		<?lua elseif( n["BwMonStat.AppName"] == "DNS" ) then	
+			dnsFlag =true?>
+			{"label" : "DNS", "value" : "$|n["BwMonStat.Counter"] or '0'|$", "background" : "#a05d56", "borderouter" : "#a05d56", "borderinner" : "#ffffff", "toplabel" : "$|n["BwMonStat.Counter"] or '0'|$"},
+		<?lua elseif( n["BwMonStat.AppName"] == "SNMP" ) then	
+			snmpFlag =true?>
+			{"label" : "SNMP", "value" : "$|n["BwMonStat.Counter"] or '0'|$", "background" : "#6997da", "borderouter" : "#6997da", "borderinner" : "#ffffff", "toplabel" : "$|n["BwMonStat.Counter"] or '0'|$"},
+		<?lua else
+			otherCounter = otherCounter + n["BwMonStat.Counter"]
+		end ?>
+	<?lua end ?>
+	<?lua 
+		if( httpFlag == false) then 
+		httpFlag = true
+	?>
+		{"label" : "HTTP", "value" : "0", "background" : "#698555", "borderouter" : "#698555", "borderinner" : "#ffffff", "toplabel" : "0"},
+	<?lua end 
+		if( httpsFlag == false) then 
+		httpsFlag = true
+		?>
+			{"label" : "HTTPS", "value" : "0", "background" : "#b23398", "borderouter" : "#b23398", "borderinner" : "#ffffff" : "#ffffff", "toplabel" : "0"},
+		<?lua end 
+	
+			if( snmpFlag == false) then 
+				snmpFlag = true
+		?>
+			{"label" : "SNMP", "value" : "0", "background" : "#6997da", "borderouter" : "#6997da", "borderinner" : "#ffffff", "toplabel" : "0"},
+		<?lua end 
+			if( dnsFlag == false) then 
+				dnsFlag = true
+		?>
+			{"label" : "DNS", "value" : "0", "background" : "#a05d56", "borderouter" : "#a05d56", "borderinner" : "#ffffff", "toplabel" : "0"}, 
+		<?lua end 
+
+		if( otherFlag == false) then 
+			otherFlag = true
+		?>
+			{"label" : "OTHER", "value" : "$| otherCounter |$", "background" : "#fb8957", "borderouter" : "#fb8957", "borderinner" : "#ffffff", "toplabel" : "$| otherCounter |$"}
+		<?lua end ?>
+	]}<?lua end ?><?lua
+-- Case2: Traffic Overview pie chart
+
+function round(num,idp)
+	local mult =10^(idp or 0)
+	return math.floor(num * mult + 0.5)/mult
+end
+
+if( chartType == "trafficOverview" ) then
+
+        local intName1 = "ALL"
+        if (cgi['Interface.name1'] ~= NIL) then
+           intName1=cgi['Interface.name1']
+        end
+        local intName2 = "ALL"
+	-- Getting Bandwidth Counters.
+        local appNames = db.getDistinctValues("BwMonStat", "AppName")
+        local usedAppsCounter = {}
+        local idx = 1
+        for k,v in pairs (appNames) do
+        local counterSum = nil
+        bwCounters[idx] = {}
+        usedAppsCounter[idx] = {}
+        bwCounters[idx]["BwMonStat.AppName"] = v["BwMonStat.AppName"] or ''
+        usedAppsCounter[idx]["BwMonStat.AppName"] = v["BwMonStat.AppName"] or ''
+
+        if (intName1 == "ALL") then
+            counterSum = db.getTable("BwMonStat", false, "SELECT sum(Counter) Counter FROM BwMonStat where AppName='" .. v["BwMonStat.AppName"] .. "' group by AppName")
+		else
+            counterSum = db.getTable("BwMonStat", false, "SELECT sum(Counter) Counter FROM BwMonStat where LogicalIfName='" .. intName1 .. "' and AppName='" .. v["BwMonStat.AppName"] .. "' group by AppName")
+        end
+
+        if (counterSum ~= nil and #counterSum == 1) then
+            bwCounters[idx]["BwMonStat.Counter"] = counterSum[1]["Counter"] or '0'
+        else
+            bwCounters[idx]["BwMonStat.Counter"] = '0'
+        end
+
+        if (intName2 == "ALL") then
+            counterSum = db.getTable("BwMonStat", false, "SELECT sum(Counter) Counter FROM BwMonStat where AppName='" .. v["BwMonStat.AppName"] .. "'")
+		else
+            counterSum = db.getTable("BwMonStat", false, "SELECT sum(Counter) Counter FROM BwMonStat where LogicalIfName='" .. intName2 .. "' and AppName='" .. v["BwMonStat.AppName"] .. "'")
+        end
+
+        if (counterSum ~= nil and #counterSum == 1) then
+            usedAppsCounter[idx]["BwMonStat.Counter"] = counterSum[1]["Counter"] or '0'
+        else
+            usedAppsCounter[idx]["BwMonStat.Counter"] = '0'
+        end
+
+        idx = idx + 1
+    end
+
+	local httpValue = 0
+	local httpsValue = 0
+	local emailValue = 0
+	local dnsValue = 0
+	local totalValue = 0;
+
+	local index = 0
+    local colorIdx = 0;
+    for m,n in pairs(bwCounters) do
+	    if (n["BwMonStat.Counter"] ~= nil and n["BwMonStat.Counter"] ~= "" and tonumber(n["BwMonStat.Counter"]) ~= 0) then 
+			if(n["BwMonStat.AppName"] == "HTTP") then
+				httpValue = n["BwMonStat.Counter"] 
+			elseif(n["BwMonStat.AppName"] == "HTTPS") then 
+				httpsValue = n["BwMonStat.Counter"]
+			elseif(n["BwMonStat.AppName"] == "SMTP" or n["BwMonStat.AppName"] == "POP3" or n["BwMonStat.AppName"] == "IMAP2" or n["BwMonStat.AppName"] == "IMAP3") then 
+				emailValue = n["BwMonStat.Counter"]
+			elseif(n["BwMonStat.AppName"] == "DNS") then
+				dnsValue = n["BwMonStat.Counter"]
+		 	end 
+        end
+	end
+	totalValue = httpValue + httpsValue + emailValue + dnsValue
+        if (totalValue == 0) then
+           httpValue = 0
+           httpsValue = 0
+           emailValue = 0
+           dnsValue = 0
+        else
+     	   httpValue = (httpValue/totalValue)*100
+	   httpsValue = (httpsValue/totalValue)*100
+	   emailValue = (emailValue/totalValue)*100
+	   dnsValue = (dnsValue/totalValue)*100
+        end
+	?>{"HTTP":"$| round(httpValue, 2) |$%","HTTPS":"$| round(httpsValue,2) |$%","Email":"$| round(emailValue,2) |$%","DNS":"$| round(dnsValue,2) |$%"}
+<?lua end?><?lua
+-- Case3: wlan statistics
+
+if( chartType == "wlanStatistics") then
+	licenseStatus_dwc = vpnLicenseStatusGet ()
+	require "wirelessCtrlLuaLib"
+ 	local cmd = "show wireless statistics"
+	RCV_BYTES,TR_BYTES,RCV_PACKETS,TR_PACKETS,RCV_DROP_BYTES,TR_DROP_BYTES,RCV_DROP_PACKETS,TR_DROP_PACKETS	=wirelessCtrlLuaLib.execCommandGui (cmd)
+	
+	--Default is Packets type 	
+	local tSent = TR_PACKETS
+	local rSent = RCV_PACKETS
+ 	local tDropped = TR_DROP_PACKETS
+	local rDropped = RCV_DROP_PACKETS
+
+	--Set if request type is Bytes type
+	if (cgi['Interface.Name1'] == "2") then
+		tSent = TR_BYTES
+		rSent = RCV_BYTES
+		tDropped = TR_DROP_BYTES
+		rDropped = RCV_DROP_BYTES
+	end
+
+	local vGoal = tsent
+	--[[
+	if (vGoal < rSent ) then
+		vGoal = rSent
+	end
+
+	if (vGoal < tDropped ) then
+		vGoal = tDropped
+	end
+
+	if (vGoal < rDropped ) then
+		vGoal = rDropped
+	end
+	
+	if ( vGoal == "0" ) then
+		vGoal = 10000
+	end
+
+	vGoal = 10000 + 200
+	--]]
+
+
+	?>
+
+{
+ "data": [
+	{"label" : "$| tSent |$", "value" : "$| tSent |$", "background" : "#fb8935", "borderouter" : "#a96c3f", "borderinner" : "#ffffff", "toplabel" : ""},
+	{"label" : "$| rSent |$", "value" : "$| rSent |$", "background" : "#ab3383", "borderouter" : "#893b62", "borderinner" : "#ffffff", "toplabel" : ""	}, 
+	{"label" : "$| tDropped |$", "value" : "$| tDropped |$", "background" : "#d3bf5b", "borderouter" : "#ab975b", "borderinner" : "#ffffff", "toplabel" : ""}, 
+ {"label" : "$| rDropped |$", "value" : "$| rDropped |$", "background" : "#5b97d3", "borderouter" : "#3c769f", "borderinner" : "#ffffff", "toplabel" : ""}
+
+	]
+}
+
+<?lua end ?><?lua
+-- Case4: CPUUtilizationData 
+
+local userValue = 0
+local kernelValue = 0
+local idleValue = 0
+local waitValue = 0
+local totalValue = 0;
+local STATS_DB_FILE_NAME = "/tmp/stats.db"
+
+if( chartType == "CPUUtilizationData") then
+	-- run program to resource utility update binary to update DB
+	local prog = db.getAttribute("environment", "name", "RESOURCE_UTILITY_PROGRAM", "value")
+	if (prog ~= nil) then
+		util.appendDebugOut("Exec = " .. os.execute(prog .. " " .. DB_FILE_NAME))
+	end
+   
+    -- run program to read the stats and update DB
+    	local prog = db.getAttribute("environment", "name", "IFDEVSTATS_PROGRAM", "value")
+    	if (prog ~= nil) then
+	    util.appendDebugOut("Exec = " .. os.execute(prog .. " " .. STATS_DB_FILE_NAME) .. "<br>")
+	end
+    
+  	-- run program to band width usage update binary to update DB
+	util.appendDebugOut("Exec = " .. os.execute("/pfrm2.0/bin/fwBwMon /tmp/system.db update"))
+	
+	stats = db.getRow("SystemStatistics","_ROWID_","1") or {}
+	lanInterface=db.getRow("interfaceStats","interfaceName","bdg1") or {}
+	
+	totalValue = stats["SystemStatistics.CpuUsedByUser"] + stats["SystemStatistics.CpuUsedByKernel"] + stats["SystemStatistics.CpuIdle"] + stats["SystemStatistics.CpuWaitingForIO"]
+
+	userValue = (stats["SystemStatistics.CpuUsedByUser"]/totalValue)*100
+	kernelValue = (stats["SystemStatistics.CpuUsedByKernel"]/totalValue)*100
+	idleValue = (stats["SystemStatistics.CpuIdle"]/totalValue)*100
+	waitValue = (stats["SystemStatistics.CpuWaitingForIO"]/totalValue)*100
+	?>{"User":"$| round(userValue,2) |$%","Kernal":"$| round(kernelValue,2) |$%","IdleTime":"$| round(idleValue,2) |$%","IOs":"$| round(waitValue,2) |$%"}<?lua end ?><?lua
+-- Case5:  MemoryUtilizationData
+
+function findMaxDataValue(a)
+	local mi =1
+	local m = a[mi]
+	for i, val in ipairs(a)do
+		if val > m then
+			mi = i
+			m = val
+		end
+	end
+	return m,mi
+end
+	
+
+if( chartType == "MemoryUtilizationData") then
+	
+    -- run program to resource utility update binary to update DB
+	local prog = db.getAttribute("environment", "name", "RESOURCE_UTILITY_PROGRAM", "value")
+	if (prog ~= nil) then
+		util.appendDebugOut("Exec = " .. os.execute(prog .. " " .. DB_FILE_NAME))
+	end
+    
+    -- run program to read the stats and update DB
+    	local prog = db.getAttribute("environment", "name", "IFDEVSTATS_PROGRAM", "value")
+    	if (prog ~= nil) then
+	    util.appendDebugOut("Exec = " .. os.execute(prog .. " " .. STATS_DB_FILE_NAME) .. "<br>")
+	end
+    
+    -- run program to band width usage update binary to update DB
+	util.appendDebugOut("Exec = " .. os.execute("/pfrm2.0/bin/fwBwMon /tmp/system.db update"))
+	
+	stats = db.getRow("SystemStatistics","_ROWID_","1") or {}
+	lanInterface=db.getRow("interfaceStats","interfaceName","bdg1") or {}
+
+	graphMaxValue = findMaxDataValue({tonumber(stats["SystemStatistics.MemoryUsed"]), tonumber(stats["SystemStatistics.MemoryFree"]), tonumber(stats["SystemStatistics.MemoryCached"]), tonumber(stats["SystemStatistics.MemoryBuffers"])})
+	graphgridLine = graphMaxValue/4
+	?>{
+ "data": [
+	{"label" : "$| stats["SystemStatistics.MemoryUsed"] |$", "value" : "$| stats["SystemStatistics.MemoryUsed"] |$", "background" : "#fb8935", "borderouter" : "#a96c3f", "borderinner" : "#ffffff", "toplabel" : ""},
+	{"label" : "$| stats["SystemStatistics.MemoryFree"] |$", "value" : "$| stats["SystemStatistics.MemoryFree"] |$", "background" : "#ab3383", "borderouter" : "#893b62", "borderinner" : "#ffffff", "toplabel" : ""	}, 
+	{"label" : "$| stats["SystemStatistics.MemoryCached"] |$", "value" : "$| stats["SystemStatistics.MemoryCached"] |$", "background" : "#d3bf5b", "borderouter" : "#ab975b", "borderinner" : "#ffffff", "toplabel" : ""}, 
+	{"label" : "$| stats["SystemStatistics.MemoryBuffers"] |$", "value" : "$| stats["SystemStatistics.MemoryBuffers"] |$", "background" : "#5b97d3", "borderouter" : "#3c769f", "borderinner" : "#ffffff", "toplabel" : ""}
+	],
+"maxValue":$| graphMaxValue |$,
+"gridLineIncrement": $| graphgridLine |$
+}<?lua end ?><?lua
+-- Case6:  VPNs
+
+if( chartType == "vpnData") then
+file = io.open("/tmp/nan.txt","w")
+local SUCCESS = 0
+local returnCode
+local vpnConnectionTable = {}
+local sslvpnUserTable = {}
+local activeSslvpnUserTable = {}
+local clientTunnelsTable = {}
+local gatewayTunnelsTable = {}
+local activeClientTunnelsTable = {}
+local activeGatewayTunnelsTable = {}
+local currentValues = {}
+local vpnConnectionString = ''
+local sslvpnUserString = ''
+local activeSslvpnUserString = ''
+local clientTunnelsString = ''
+local gatewayTunnelsString = ''
+local activeClientTunnelsString = ''
+local activeGatewayTunnelsString = ''
+local header
+local headerString  = ''
+local currentGatewayTunnels = ''
+local currentClientTunnels = ''
+local currentSslvpnTunnels = ''
+returnCode, activeSslvpnUserTable, 
+    activeClientTunnelsTable, activeGatewayTunnelsTable, header, currentValues =
+                                    vpnRecordsGet ()
+file:write(returnCode)
+
+if (returnCode == SUCCESS) then
+    local comma= ""
+    for k,v in pairs (activeSslvpnUserTable) do
+        activeSslvpnUserString = activeSslvpnUserString..comma..v
+        comma = ","
+    end
+end
+
+if (returnCode == SUCCESS) then
+    local comma= ""
+    for k,v in pairs (activeClientTunnelsTable) do
+        activeClientTunnelsString = activeClientTunnelsString..comma..v
+        comma = ","
+    end
+end
+if (returnCode == SUCCESS) then
+    local comma= ""
+    for k,v in pairs (activeGatewayTunnelsTable) do
+        activeGatewayTunnelsString = activeGatewayTunnelsString..comma..v
+        comma = ","
+    end
+end
+if (returnCode == SUCCESS) then
+    local comma= ""
+    for k,v in pairs (header) do
+        headerString = headerString..comma..v
+        comma = ","
+    end
+end
+currentGatewayTunnels = currentValues["activeGatewayTunnelsTable"].."/"..
+                    currentValues["gatewayTunnels"].."  Tunnels Connected"
+currentClientTunnels = currentValues["activeClientTunnels"].."/"..
+                    currentValues["clientTunnels"].."  Tunnels Connected"
+currentSslvpnTunnels = currentValues["activeSslvpnUser"].."/"..
+                    currentValues["sslvpnUser"].."  Tunnels Connected"
+local totalSamples = #header
+file:write(activeSslvpnUserString)
+file:write(activeClientTunnelsString)
+file:write(totalSamples)
+file:write(headerString)
+file:write(returnCode)
+?>{
+ "vpn1":"$|activeGatewayTunnelsString|$",
+ "vpn2":"$|activeSslvpnUserString|$",
+ "vpn3":"$|activeClientTunnelsString|$",
+ "numSamples":$|totalSamples|$,
+ "maxVal":10,
+ "minVal":0,
+ "header":"$|headerString|$",
+ "ipsecGateway":"$|currentGatewayTunnels|$",
+ "ipsecClient":"$|currentClientTunnels|$",
+ "sslVpn":"$|currentSslvpnTunnels|$"
+ }<?lua end ?><?lua
+-- Case7:  activeInfoData
+
+if( chartType == "activeInfoData") then
+	
+    local groups = db.getDistinctValues("UserGroups", "GroupId")
+    local adminCount, networkCount, frontDeskCount, guestCount, sslUser,
+    pptpUser, l2tpUser = 0, 0, 0, 0, 0, 0, 0
+    errorCode, adminCount, guestCount, networkCount, frontDeskCount, sslUser,
+    pptpUser, l2tpUser = trafficStats.loggedUserGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+        adminCount, networkCount, frontDeskCount, guestCount = 0, 0, 0, 0
+    else
+        networkCount = networkCount + sslUser + l2tpUser + pptpUser
+    end
+        
+	?>
+	{
+ "data": [
+	{"label" : "$| adminCount |$", "value" : "$| adminCount |$", "background" : "#fb8935", "borderouter" : "#a96c3f", "borderinner" : "#ffffff", "toplabel" : ""},
+	{"label" : "$| networkCount |$", "value" : "$| networkCount |$", "background" : "#ab3383", "borderouter" : "#893b62", "borderinner" : "#ffffff", "toplabel" : ""	}, 
+	{"label" : "$| frontDeskCount |$", "value" : "$| frontDeskCount |$", "background" : "#d3bf5b", "borderouter" : "#ab975b", "borderinner" : "#ffffff", "toplabel" : ""}, 
+	{"label" : "$| guestCount |$", "value" : "$| guestCount |$", "background" : "#5b97d3", "borderouter" : "#3c769f", "borderinner" : "#ffffff", "toplabel" : ""}
+	]
+}<?lua	 
+end
+?><?lua
+-- Case8:  discoveredAPsData
+
+if( chartType == "discoveredAPsData") then
+local status, datatable = apcountGet()
+local errorCatch = 0
+local discoveredAPsDataErrorCatch = status
+if (status == 0) then
+ standaloneAPsCountGet = datatable[1]
+ managedAPCountGet = datatable[2]
+ rougeAPsCountGet = datatable[3]
+ authFailedAPsCountGet = datatable[4]
+ unknownAPsCountGet = datatable[5]
+end
+?>{
+ "data": [
+	{"label" : "$|standaloneAPsCountGet|$", "value" : "$|standaloneAPsCountGet|$", "background" : "#fb8935", "borderouter" : "#a96c3f", "borderinner" : "#ffffff", "toplabel" : ""},
+	{"label" : "$|rougeAPsCountGet|$", "value" : "$|rougeAPsCountGet|$", "background" : "#ab3383", "borderouter" : "#893b62", "borderinner" : "#ffffff", "toplabel" : ""	}, 
+	{"label" : "$|authFailedAPsCountGet|$", "value" : "$|authFailedAPsCountGet|$", "background" : "#d3bf5b", "borderouter" : "#ab975b", "borderinner" : "#ffffff", "toplabel" : ""}, 
+    {"label" : "$|unknownAPsCountGet|$", "value" :
+    "$|unknownAPsCountGet|$", "background" : "#5b97d3",
+    "borderouter" : "#3c769f", "borderinner" : "#ffffff", "toplabel" : ""},
+	{"label" : "$|managedAPCountGet|$", "value" : "$|managedAPCountGet|$", "background" : "#5C8533", "borderouter" : "#81ab58", "borderinner" : "#ffffff", "toplabel" : ""}
+
+	]
+}<?lua end ?><?lua
+-- Case6:  Option Ports
+
+if( chartType == "optionPorts") then
+local SUCCESS = 0
+local optionPortsErrorCatch = 1
+
+local val1, val2, val3, option1, option2,option3, header
+local option1String = ""
+local option2String = ""
+local option3String = ""
+local headerString  = ""
+local lanInfo = {}
+local option1Info = {}
+local option2Info = {}
+local option3Info = {}
+local portInfoRerurnCode = 0
+local port = " " 
+local option1Status = " "
+local option2Status = " "
+local option3Status = " "
+local OPTION_STATUS = 4
+local wan1Status, wan2Status, wan3Status
+local currentOption1data
+local currentOption2data
+local currentOption3data
+errorCode,wan1Status, wan2Status, wan3Status = deviceInfo.dashBoardWanStatusGet()
+
+
+portInfoRerurnCode, lanInfo, option1Info, option2Info, option3Info, port =  deviceInfo.portInformationGet ()
+if (port ~= "DMZ") then
+    port = "Option-2"
+  end
+
+    if (portInfoRerurnCode == SUCCESS) then
+    	option1Status = option1Info[OPTION_STATUS]
+    	option2Status = option2Info[OPTION_STATUS]
+		option3Status = option3Info[OPTION_STATUS]
+    end
+    
+
+val1, option1 = option1HistoricalBWUsageGet()
+if (val1 == SUCCESS) then
+local comma= ""
+for k,v in pairs (option1) do
+currentOption1data = v
+option1String = option1String..comma..v
+comma = ","
+end
+end
+
+val3, option3 = option3HistoricalBWUsageGet()
+if (val3 == SUCCESS) then
+local comma= ""
+for k,v in pairs (option3) do
+currentOption3data = v
+option3String = option3String..comma..v
+comma = ","
+end
+end
+
+val2, option2,header = option2HistoricalBWUsageGet()
+if (val2 == SUCCESS) then
+	local comma= ""
+	numofElements = #header
+	for k,v in pairs (option2) do
+		currentOption2data = v
+		option2String = option2String..comma..v
+		comma = ","
+	end
+	local comma= ""
+	for k,v in pairs (header) do
+		headerString = headerString..comma..v
+		comma = ","
+	end
+end
+if(wan1Status == "UP")then
+    currentOption1data = currentOption1data/900
+else
+    currentOption1data = "0.00"
+end
+if(wan2Status == "UP")then
+    currentOption2data = currentOption2data/900
+else
+    currentOption2data = "0.00"
+end
+
+if(wan3Status == "UP")then
+    currentOption3data = currentOption3data/900
+else
+    currentOption3data = "0.00"
+end
+
+if (val1 == SUCCESS and val2 == SUCCESS and val3 == SUCCESS and portInfoRerurnCode == SUCCESS) then
+optionPortsErrorCatch = SUCCESS
+end
+?>{
+ "option1":"$|option1String|$",
+ "option2":"$|option2String|$",
+ "option3":"$|option3String|$",
+ "numSamples":$|numofElements|$,
+ "maxVal":50,
+ "minVal":0,
+ "header":"$|headerString|$",
+ "wan1status":"$|wan1Status|$",
+ "wan2status":"$|wan2Status|$",
+ "wan3status":"$|wan3Status|$",
+ "currentOption1data":"$|currentOption1data|$",
+ "currentOption2data":"$|currentOption2data|$",
+ "currentOption3data":"$|currentOption3data|$"
+ }<?lua end ?>
+

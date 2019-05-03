@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# sslvpnInit - initialization script for openvpn
+#
+# Copyright (c) 2011, TeamF1, Inc.
+#
+# @copyright (c) 2015, TeamF1 Networks Pvt. Ltd.
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01c,3feb16,har   Added support for omnissl offload
+# 01b,16nov15,ss   ported OmniSSL changes to M8.
+# 01a, 18jan11, gmv written
+#
+
+
+mkdir -p /dev/net
+mkdir -p /var/certs/openvpn
+mkdir -p /var/openvpn
+mkdir -p /var/openvpn/gateway
+
+# creating empty openvpnpolicy file
+    echo 0 > /var/openvpn/policy
+
+# ssl vpn initialization
+echo -n "OPENVPN Intialization ......."
+if [ "$MODEL_ID" = "DSR-1000AC" ] || [ "$MODEL_ID" = "DSR-500AC" ] || [ "$MODEL_ID" = "DSR-1000N" ] || [ "$MODEL_ID" = "DSR-1000" ] || [ "$MODEL_ID" = "DSR-500N" ] || [ "$MODEL_ID" = "DSR-500" ]; then
+MODULES_DIR=$PFRM_OPENVPN_MODULES_DIR/omnissl
+
+[ -f $MODULES_DIR/omnissl.ko ] && { insmod $MODULES_DIR/omnissl.ko; }
+
+major=`cat  /proc/devices | grep  omnissl  | awk ' {print $1 }'`
+mknod /dev/omnissl c $major 0
+fi
+
+
+# crypto device
+if [ ! -e /dev/net/tun ]; then
+    mknod /dev/net/tun c 10 200
+fi
+
+# inserting modules
+OPENVPN_TUN_MODULE=`lsmod| grep tun | awk '{print $1}'`
+# inserting modules
+if [ -z $OPENVPN_TUN_MODULE ]; then
+    [ -f $PFRM_OPENVPN_MODULES_DIR/tun.ko ]&&{ insmod $PFRM_OPENVPN_MODULES_DIR/tun.ko; }
+fi
+
+cp -f $PFRM_DIR/bin/checkUserCred /var/openvpn/
+chmod +x /var/openvpn/checkUserCred
+cp -rf $PFRM_DIR/bin/easy-rsa /var/openvpn/
+cp /var/certs/openvpn/ca.crt /var/openvpn/easy-rsa/keys/
+if [ -d /flash/easy-rsa ];then
+rm -rf /var/openvpn/easy-rsa
+cp -rf /flash/easy-rsa /var/openvpn/
+chmod -R 777 /var/openvpn/easy-rsa
+fi

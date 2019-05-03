@@ -1,0 +1,1397 @@
+:|noHelpSet|:
+No Help Set configured or not available.
+:|noHelpSetEnd|:
+
+:|systemSetting|:
+                <p><b>System Setting:<br>
+				New Name for System :</b> This is the router identifier, and is displayed 
+				in the status summary pages.<br>
+				<br>
+                Click <b>Save</b> to save your changes.<br>
+				<br>
+				Click <b>Cancel</b> to revert to the previous settings.</p>
+:|systemSettingEnd|:
+
+:|languageSettings|:
+languageSettings Help Starts.
+:|languageSettingsEnd|:
+
+:|dateTime|:
+                <p><b>Date and Time:</b> If the router has access to the
+                internet, the most accurate mechanism to set the router time is
+                to enable NTP server communication. Otherwise use the router's
+                RTC and configure the time and time zone manually. Accurate date
+                and time on the router is critical for firewall schedules, Wi-Fi
+                power saving support to disable APs at certain times of the day,
+                and accurate logging.<br>
+                <br>
+				<b>Date and Time</b><br>
+				<b>Current Device Time:</b> this displays the current date and time 
+				set on the router.<br>
+				<br>
+				<b>Time Zone:</b> Select the local time zone. This is required in 
+				order for the firewall schedules to work correctly. <br>
+				<br>
+				If supported by the NTP servers for your region, you can
+                configure <b>Daylight Saving</b> by clicking ON/OFF button.<br>
+				<br>
+				<b>Configure NTP Servers:</b> Click ON button to enable NTP servers 
+				configuration.<br>
+				<br>
+				<b>Set Date and Time Manually:</b> Click ON button to enable 
+				configuring set Date and Time manually.<br>
+				<br>
+				<b>NTP Servers Configuration</b><br>
+				<b>Default NTP Server:</b> Choose this option if you want the RTC 
+				(Real-Time Clock) to be updated regularly by contacting the default 
+				NTP servers (0.us.pool.ntp.org, 1.us.pool.ntp.org) on the Internet.
+				<br>
+				<br>
+				<b>Custom NTP Server:</b> Choose this option to update the RTC from 
+				a server or servers that you specify. Then enter the IP addresses 
+				of the Custom NTP server in the <b>Primary and Secondary NTP Server</b> 
+				field. <br>
+				<br>
+				<b>Time to re-synchronize</b><br>
+				Choose this option for re-synchronize computer clock time in
+				a network of computers. <br>
+				<br>
+				<b>Set Date and Time</b><br>
+				With this option you need to enter Date and Time for manual configuration, 
+				and this will be set on the router&#39;s Real Time Clock (RTC). <br>
+				<br>
+                Click <b>Save</b> to save your changes.<br>
+				<br>
+				Click <b>Cancel</b> to revert to the previous settings.</p>
+:|dateTimeEnd|:
+
+:|sessionSettings|:
+<p><b>Administrator:</b>Session timeout value for administrator users.<br>
+<b>Guest:</b> Session timeout value for guest users.<br><br>
+Click <b>Save</b> to save your changes.<br>
+                                Click <b>Cancel</b> to revert to the previous settings.</p>
+
+:|sessionSettingsEnd|:
+
+:|licenseUpdate|:
+                <p><b>Free WCF Trial for 90 Days : </b> On clicking Enable Free Trial, we can use dynamic filtering feature free for 90 days. This option can be used for once only. <br>
+                <br>
+                <b>License List : </b> There are mainly three things related to License. <br>
+                    <b>1&#45;</b>License Model <br>
+                    <b>2&#45;</b>Activation Code <br>
+                    <b>3&#45;</b>Expires <br>
+                <br>
+                <br>
+                <b>License Model : </b><br> Type of license that is activated.WCF license enables contoller to perform category filtering.<br>
+                <br>
+                <b>Activation Code : </b><br>
+                Activation code used for activating the license.<br>
+                <br>
+                <b>Expires : </b><br>
+                Date on which the license expires. Perpetual licenses never expires.<br>
+                <br>
+		<b>Activation Setup</b><br>
+		<b>License Activation Code:</b> With this option you need to enter New
+		Activation code used for activating the license.<br>
+		<br>
+		Click <b>Activate</b> to activate the Entered Activation Code.</p>
+:|licenseUpdateEnd|:
+
+:|usbSharePorts|:
+                <p><b>USB Share Ports :</b> The USB storage devices and USB
+                printers connected to this router can be shared accross the
+                network and can be accessed from any host connected to the
+                network.<br>
+                <br>
+                <b>USB Share Port Setup</b><br>
+                <br>
+                <b>USB Port 1 Printer </b><br>
+				<b>Enable USB Printer:</b> Select this option to allow 
+				the USB printer connected to the router to be shared across 
+                the network.<br>
+                <br>
+                The USB printer can be accessed on any LAN
+                host (with appropriate printer driver installed) connected to the router 
+                by using the following command in the host's add printers window<br>
+                http://&#60;Router's IP:631&#62;/printers/&#60;Device Model&#62; (Device Model
+                can be found in the USB settings page).<br>
+                <br>
+				<b>Enable Sharing:</b> Select this option to allow 
+				the USB storage device connected to the router to be shared across 
+				the network.<br><br>
+                <b>USB Port 2 Printer </b><br>
+				<b>Enable USB Printer:</b> Select this option to allow 
+				the USB printer connected to the router to be shared across 
+                the network.<br>
+                <br>
+                The USB printer can be accessed on any LAN
+                host (with appropriate printer driver installed) connected to the router 
+                by using the following command in the host's add printers window<br>
+                http://&#60;Router's IP:631&#62;/printers/&#60;Device Model&#62; (Device Model
+                can be found in the USB settings page).<br>
+                <br>
+				<b>Enable Sharing:</b> Select this option to allow 
+				the USB storage device connected to the router to be shared across 
+				the network.<br><br>
+                <b>Printing Enabled interfaces List:</b><br>
+                The LAN interfaces on which usb sharing is enabled, atleast one
+                interface must be selected to begin sharing.<br>
+                <br>
+                <b>Enable Printer:</b> Enables printer sharing on the selected
+                interface.<br>
+                <br>
+                <b>Enable Storage:</b> Enables storage device sharing on the selected
+                interface.<br>
+                <br>
+                Click <b>Save</b> to save the settings.<br>
+				<br>
+                Click <b>Cancel</b> to revert to previous settings.<br>
+				<br></p>
+:|usbSharePortsEnd|:
+
+:|usbSharePorts_single|:
+                <p><b>USB Share Ports :</b> The USB storage devices and USB
+                printers connected to this router can be shared accross the
+                network and can be accessed from any host connected to the
+                network.<br>
+                <br>
+                <b>USB Share Port Setup</b><br>
+                <br>
+                <b>USB Port Printer </b><br>
+				<b>Enable USB Printer:</b> Select this option to allow 
+				the USB printer connected to the router to be shared across 
+                the network.<br>
+                <br>
+                The USB printer can be accessed on any LAN
+                host (with appropriate printer driver installed) connected to the router 
+                by using the following command in the host's add printers window<br>
+                http://&#60;Router's IP:631&#62;/printers/&#60;Device Model&#62; (Device Model
+                can be found in the USB settings page).<br>
+                <br>
+				<b>Enable Sharing:</b> Select this option to allow 
+				the USB storage device connected to the router to be shared across 
+				the network.<br><br>
+                                <b>Printing Enabled interfaces List:</b><br>
+                The LAN interfaces on which usb sharing is enabled, atleast one
+                interface must be selected to begin sharing.<br>
+                <br>
+                <b>Enable Printer:</b> Enables printer sharing on the selected
+                interface.<br>
+                <br>
+                <b>Enable Storage:</b> Enables storage device sharing on the selected
+                interface.<br>
+                <br>
+                Click <b>Save</b> to save the settings.<br>
+				<br>
+                Click <b>Cancel</b> to revert to previous settings.<br>
+				<br></p>
+:|usbSharePorts_singleEnd|:
+
+:|inbox|:
+<p>
+<b>INBOX:</b><br><br>
+All the received messages appear here<br><br>
+<b>Sno:</b> Displays the serial number of message in the inbox.<br><br>
+<b>Sender:</b>Displays the sender of  the particular message.<br><br>
+<b>Time Stamp:</b> Displays the time when the message was sent.<br><br>
+<b>Text:</b> Displays the content of the particular Message.<br><br></p>
+:|inboxEnd|:
+
+:|createSms|:
+<p>
+<b>Create SMS</b><br><br>
+<b>Receiver:</b> Enter the phone number of the intended receiver of the message.<br><br>
+<b>Text Message:</b> Enter the body of the message here.<br><br>
+Click <b>Send Message</b> to sending the message.<br><br>
+Click <b>Cancel</b> to revert to previous settings.<br>
+<br>
+</p>
+:|createSmsEnd|:
+
+:|packageManager|:
+<p>
+	<b>Package Manager</b><br><br>
+	<b>Device Drivers:</b><br><br>
+		User can install drivers manually or he can install from the listed drivers.<br><br>
+		<b>List of Device Drivers:</b> It will allow user to install or uninstall the available drivers.<br><br>
+		<b>Manual Install:</b> User can upload the provided driver package for installation.<br><br>
+		<b>Browse:</b>The package which user wants to upload.<br><br>
+		Click <b>Install</b> to install newly selected driver.<br><br>
+		<b>Install History:</b> It will show list of installed and uninstalled packages.
+</p>
+:|packageManagerEnd|:
+
+:|webAccessFilter|:
+		<p>
+			<b>Web GUI Management:</b><br><br>
+			Click <b> Enable </b> in order to enable or disable the Web GUI Management.<br><br>
+			Click <b>Save</b> to save changes. <br><br>
+			Click <b>Cancel</b> to cancel the changes.<br><br>
+
+			<b>List of Allowed IP Address/Vlan Network</b><br><br>
+			<b>Name:</b>Displays the name of profile configured.<br><br>
+			<b>Access Type:</b> This has two values 1.VLAN Network   2.Single IP 
+			Address, shows gui access to either single VLAN host or entire VLAN 
+			network.<br><br>
+			<b>IP Address/Vlan Network:</b>Displays IP address of single VLAN host 
+			or the name of VLAN network.<br><br>
+			<b>Select all:</b> Selects all the allowed IP address / Vlan network list in the table.<br><br>
+			<b>Edit :</b> The Edit button will link to the modify fields of the configured profile.<br><br>
+			<b>Delete :</b> Deletes selected profile from the list.<br><br>
+			<b>Add New Configurations:</b> Clicking this button will link to the
+         		 Web Gui management Configuration page inorder to create new profile.<br><br>
+			<b>Name:</b>The unique identifier for the new configuration profile.<br><br>
+	     		<b>Access Type:</b> Choose either Single IP Address or VLAN Network
+			 from Drop Down list to specify type of access for the profile.<br><br>
+			<b>Single IP address:</b> This field is highlighted when Access Type 
+			 is Single IP address, then enter IP address of VLAN Host.<br><br>
+			<b>Vlan Network:</b> This field is highlighted when Access Type is VLAN 
+			Network, then enter name of vlan network from configured VLAN list.<br><br>
+			Click <b>Save </b> to save configurations.<br><br>
+		</p>
+:|webAccessFilterEnd|:
+
+
+:|remoteManagement|:
+                <p ><b>Remote Management:</b> HTTP/HTTPS and SSH access can be
+                restricted to a subset of IP addresses. Administrator and Guest
+                users are permitted to login to the GUI, and User Login Policies
+                will allow remote management over HTTP/HTTPS to take place as
+                configured.<br>
+                <br>
+				<b>Enable Remote Management</b>: By default, Remote management over 
+				the internet is disabled. Click ON/OFF button to enable authorized users 
+				to access this GUI over the internet.<br>
+                <br>
+                <b>HTTPS Port Number:</b> You can set the port number for remote management 
+				over HTTPS; the default is 443. This option is not
+                supported in RU firmware.<br>
+				<br>
+                <b>HTTP Port Number:</b> You can set the port number for remote
+                management over HTTP; the default is 8080. This option is not
+                supported in WW firmware.<br>
+                <br>
+                <b> NOTE:</b> Port numbers that are currently in use by the
+                device cannot be configured. Access to some of the reserved
+                ports is restricted and will not be accessible through Remote Management. Port 80 is not
+                allowed to be configured in WW firmware.<br>
+                <br>
+                <b>SSH</b>: By default, Remote SSH over 
+				the internet is disabled. Click ON/OFF button to enable authorized users 
+				to access this CLI over the internet. This option is not
+                supported in RU firmware.<br>
+				<br>
+                <b>Enable Remote SNMP</b>: Check this option,to access the device through
+                SNMP remotely.<br>
+                <br>
+				<b>IMPORTANT:</b> When remote management is enabled, the router 
+				is accessible to anyone who knows its IP address. Since a malicious 
+				WAN user can reconfigure the router and misuse it in many ways, 
+				it is HIGHLY RECOMMENDED that you change the default administrator 
+				and guest passwords before continuing. <br>
+				<br>
+				<b>Access Type:</b> Permission for Remote Management can be given 
+				to a single PC, a range of IP addresses, or anyone on the WAN or 
+				LAN.<br>
+				<br>
+				<b>From:</b> The starting IP address for the allowed range if IP 
+				address range is the access type. <br>
+				<br>
+				<b>To:</b> the ending IP address for the allowed range if IP address 
+				range is the access type.<br>
+				<br>
+				<b>Selected PC IP Address:</b> IP Address of the PC given remote management 
+				permissions if only this PC is the access type.<br>
+				<br>
+                <b>Respond to Ping:</b> To configure the router to respond to an
+                ICMP Echo (ping) packet coming in from the WAN side, check
+                this box. This setting is usually used as a diagnostic tool for
+                connectivity problems. It is recommended that the option be
+                disabled at other times to prevent hackers from easily
+                discovering the router via a ping.<br>
+                <br>
+                <b>Note:</b> When using NAT routing mode, a firewall rule that
+                directs ping requests to a particular computer on the LAN will
+                override this option.<br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+				Click <b>Cancel</b> to revert to the previous settings.</p>
+:|remoteManagementEnd|:
+
+:|snmp|:
+                <p><b>SNMP:</b> SNMP is useful when multiple routers in a
+                network are being managed by a central Master system. When an
+                external SNMP manager is provided with this router's Management
+                Information Base (MIB) file, the manager can update the router's
+                hierarchal variables to view or update configuration parameters.<br>
+                <br>
+				<b>SNMPv3 Users List<br>
+				</b><br>
+				<b>Name:</b> the username of this SNMPv3 manager<br>
+				<br>
+				<b>Privilege:</b> the user can be assigned read-only (ROUSER) or 
+				read-write (RWUSER) access to this router.<br>
+				<br>
+				<b>Security Level:</b> the authentication and privacy settings for 
+				this user are summarized here.<br>
+				<br>
+                The actions that can be taken on SNMPv3 users are:<br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the SNMPv3 User Configuration 
+				page, allowing you to make changes to the selected SNMP user.
+				<br>
+				<br></p>
+				<p ><b>SNMP User:</b><br>
+				<b>Username:</b> the username of this SNMPv3 manager<br>
+				<br>
+				<b>Access Privilege:</b> the user can be assigned read-only (ROUSER) 
+				or read-write (RWUSER) access to this router.<br>
+				<br>
+				<b>Security Level:</b> the authentication and privacy settings for 
+				this user are defined here. <br>
+				<br>
+				- <b>noAuthnoPriv:</b> only requires a username match for authentication<br>
+				<br>
+				<b>- authNoPriv:</b> Provides authentication based on the MD5 or 
+				SHA algorithms.<br>
+				<br>
+				<b>- authPriv:</b> Provides authentication based on the MD5 or SHA 
+				algorithms as well as DES or AES privacy encryptions.<br>
+				<br>
+				<b>Authentication Algorithm:</b> choose between MD5 or SHA authentication 
+				if you choose to enable authentication security for this use.
+				<br>
+				<br>
+				<b>Authentication Password:</b> the shared authentication password 
+				with the SNMPv3 user.<br>
+				<br>
+				<b>Privacy Algorithm:</b> choose between DES or AES privacy encryption 
+				<br>
+				<b>Privacy Password:</b> the shared privacy password with the SNMPv3 
+				user.<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+                </p>
+:|snmpEnd|:
+
+:|snmpTrap|:
+            <p><b>SNMP Trap<br>
+            <br>
+            AP Failure Traps :</b> If you enable this field, the SNMP agent
+            sends a trap if an AP fails to associate or authenticate with the
+            controller.<br>
+			<br>
+			<b>AP State Change Traps :</b> If you enable this field, the SNMP
+            agent sends a trap for one of the following reasons:<br>
+            <br>
+			<b>1&#45;</b>Managed AP Discovered <br>
+			<b>2&#45;</b>Managed AP Failed <br>	
+			<b>3&#45;</b>Managed AP Unknown Protocol Discovered. <br>	
+			<b>4&#45;</b>Managed AP Load Balancing Utilization Exceeded. <br>
+			<br>
+			<b>Client Failure Traps:</b> If you enable this field, the SNMP
+            agent sends a trap if a wireless client fails to associate or
+            authenticate with an AP that is managed by the controller.<br>
+			<br>
+			<b>Client State Change Traps :</b> If you enable this field, the
+            SNMP agent sends a trap for one of the following reasons associated
+            with the wireless client:<br>
+			<br>	
+			<b>1&#45;</b>Client Association Detected. <br>	
+			<b>2&#45;</b>Client Disassociation Detected. <br>
+			<b>3&#45;</b>Client Roam Detected. <br>
+			<br>
+			<b>Peer Controller Traps :</b> If you enable this field, the SNMP
+            agent sends a trap for one of the following reasons associated with
+            a peer controller. <br>
+            <br>
+			<b>1&#45;</b>Peer Controller Discovered  <br>	
+			<b>2&#45;</b>Peer Controller Failed  <br>	
+			<b>3&#45;</b>Peer Controller Unknown Protocol Discovered. <br>	
+			<b>4&#45;</b>Configuration command received from peer controller. (The
+            controller need not be Cluster Controller for generating this
+            trap.<br>
+			<br>
+			<b>RF Scan Traps :</b> If you enable this field, the SNMP agent
+            sends a trap when the RF scan detects a new AP, wireless client, or
+            ad&#45;hoc client.<br>
+			<br>
+			<b>Rogue AP Traps :</b> If you enable this field, the SNMP agent
+            sends a trap when the controller discovers a rogue AP. The agent
+            also sends a trap every Rogue Detected Trap Interval seconds if any
+            rogue AP continues to be present in the network.<br>
+            <br>
+            <b>WIDS Status Traps :</b>If you enable this field, the SNMP agent
+            sends a trap for one of the following reasons:<br>
+            <br>
+            <b>1&#45;</b>This controller has become Cluster Controller<br>
+            <b>2&#45;</b>Rogue Client detected<br>
+            <b>3&#45;</b>Rogue Client(s) continue to exist, after every Rogue Detected Trap
+            Interval seconds.<br>
+            <b>4&#45;</b>Maximum number of Managed APs in the peer group exceeded<br>
+            <br>
+			<b>Wireless Status Traps :</b> If you enable this field, the SNMP
+            agent sends a trap if the operational status of the Unified Wireless
+            controller (it need not be Cluster Controller for this trap)
+            changes. It sends a trap if the Channel Algorithm is complete or the
+            Power Algorithm is complete. It also sends a trap if any of the
+            following databases or lists has reached the maximum number of
+            entries:<br>
+            <br>
+			<b>1&#45;</b> Managed AP database.<br>	
+			<b>2&#45;</b> AP Neighbor List.<br>	
+			<b>3&#45;</b> Client Neighbor List.<br>	
+			<b>4&#45;</b> AP Authentication Failure List.<br>
+			<b>5&#45;</b> RF Scan AP List.<br>	
+			<b>6&#45;</b> Client Association Database.<br>	
+			<b>7&#45;</b> Ad Hoc Clients List.<br>
+            <b>8&#45;</b> Detected Clients List.<br>
+            <br>
+            <b>Command buttons</b><br>
+            <br>
+            Click <b>Save</b> To Updates the controller with the values you enter.<br>
+			<br>
+			Click <b>Cancel</b> To revert back to previous settings
+            only.</p>
+:|snmpTrapEnd|:
+
+:|snmpTrapList|:
+                <p><b>SNMP Trap List: </b>
+				The table lists IP addresses of SNMP agents to which the router 
+				will send trap messages.<br>
+				<br>
+				<b>IP Address:</b> The IP Address of the SNMP trap agent. <br>
+				<br>
+				<b>Port:</b> The SNMP trap port of the IP address to which the trap 
+				messages will be sent. <br>
+				<br>
+				<b>Community:</b> The community string to which the agent belongs. 
+				Most agents are configured to listen for traps in the Public community.
+				<br>
+				<br>
+				<b>SNMP version:</b> the SNMP version used by the trap agent.
+				<br>
+				<br>
+				The actions that can be taken on SNMP agents are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the SNMP 
+				agents in the table. <br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the SNMP Trap Configuration 
+				page, allowing you to make changes to the selected SNMP trap.
+				<br>
+				<br>
+				<b>Delete:</b> Deletes the selected SNMP Trap(s) <br>
+				<br>
+				<b>Add SNMP Trap:</b> Clicking this button will link to the SNMP Trap Configuration 
+				page. <br>
+				<br> </p>
+				<p ><b>SNMP Trap Configuration:</b><br>
+				<b>IP Address:</b> The IP address of the SNMP agent. <br>
+                <br>
+				<b>Port:</b> The SNMP trap port to which the trap messages will 
+				be sent. <br>
+				<br>
+				<b>Community:</b> The community string to which the agent belongs 
+				to. Most agents are configured to listen for traps in the public 
+				community.<br>
+				<br>
+				<b>Authentication Type:</b> Choose one of the supported SNMP versions: 
+				v1, v2c, v3.<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br></p>
+:|snmpTrapListEnd|:
+
+:|accessControlList|:
+                <p><b>Access Control List</b><br>
+				<br>
+				<b>IP Address:</b> The IP Address of the SNMP manager. <br>
+				<br>
+				<b>Subnet Mask:</b> The network mask used to determine the list 
+				of allowed SNMP managers. <br>
+				<br>
+				<b>Community:</b> The community string to which the agent belongs.
+				<br>
+				<br>
+				<b>Access Type:</b> Access will be either read only (ROcommunity) 
+				or read-write (RWcommunity).<br>
+				<br>
+				The actions that can be taken on SNMP Access controls list are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the SNMP 
+				agents in the table. <br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the SNMP ACL Configuration 
+				page, allowing you to make changes to the selected SNMP ACL entry.
+				<br>
+				<br>
+				<b>Delete:</b> Deletes the selected SNMP ACL entry. <br>
+				<br>
+				<b>Add Access Control:</b> Clicking this button will link to the SNMP ACL Configuration 
+				page.
+				</p>
+                <p ><b>Access Control List:<br>
+				IP Address:</b> The IP address of the SNMP manager. <br>
+				<br>
+                <b>Subnet Mask:</b> The network mask used by the SNMP manager.
+				<br>
+				<br>	
+				<b>Note:</b> For a specific host, enter that IP and subnet mask 255.255.255.255.To allow Global access enter ip address 0.0.0.0 and subnet mask 0.0.0.0 </br>
+                <br>
+				<b>Community:</b> The community string to which the agent belongs 
+				to. Most agents are configured to listen for traps in the public 
+                community.<br>
+                <br>
+				<b>Access Type:</b> Access can be either read only (ROcommunity) 
+				or read-write (RWcommunity).<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br></p>
+:|accessControlListEnd|:
+
+:|snmpSystemInfo|:
+                <p><b>SNMP Sytem Info:</b> <br>
+                <br>
+				<b>SysContact:</b> The name of the contact person for this router. 
+				Examples: admin, John Doe. <br>
+				<br>
+				<b>SysLocation:</b> The physical location of the router: Example: 
+				Rack #2, 4th Floor. <br>
+				<br>
+				<b>SysName:</b> A name given for easy identification of the router.<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+				Click <b>Cancel</b> to revert to the previous settings.</p>
+:|snmpSystemInfoEnd|:
+
+:|networkTools|:
+                <p><b>Network Tools :</b> The router has built in tools to allow
+                an administrator to evaluate the communication status and
+                overall network health. Ping and Trace Route are two of the most
+                frequently used tools to evaluate internet speed and
+                connectivity.<br>
+                <br>
+				<b>Ping or Trace an IP Address </b><br>
+				These utilities can be used to test connectivity between this router 
+				and another device on the network connected to this router. <br>
+				<br>
+				<b>IP Address / Domain Name:</b> Enter an IP address or domain name 
+				and click <b>Ping</b> to send an ICMP echo request packet to the 
+				destination. If the destination IP address is active, you can see 
+				a response similar to &quot;64 bytes from IP_Address: icmp&quot;. A &quot;response 
+				timed out&quot; message indicates that the destination is either not 
+				active or is blocking ping requests. <br>
+				<br>
+				Click <b>Traceroute</b> to display all the routers present between 
+				the destination IP address and this router. Up to 30 &quot;hops&quot; (intermediate 
+				routers) between this router and the destination will be displayed. 
+				An asterisk (*) is displayed for each intermediate device where 
+				there was no response.<br>
+				<br>
+				The results of the ping or traceroute operations will be
+                displayed on Command Output Box.<br>
+				<br>
+				<b>DNS Lookup</b><br>
+                <br>
+				To retrieve the IP address of a Web, FTP, Mail or any other Server 
+				on the Internet, type the <b>Internet</b> <b>Name</b> in the text 
+				box and click Lookup. If the host or domain entry exists, you will 
+				see a response with the IP address. A message stating &quot;Unknown Host&quot; 
+				indicates that the specified Internet Name does not exist.<br>
+				<br>
+				The results of the DNS lookup operations will be displayed on Command 
+				Output box.<br>
+				<br></p>
+:|networkToolsEnd|:
+
+:|capturePackets|:
+                <p><b>Capture Packets:</b> Allows you to capture all packets that pass 
+				through the selected interface (LAN, WAN1, WAN2 or DMZ).
+                To capture packets, select the interface and click <b>Start
+                Trace</b>. To stop the packet capture click <b>Stop Trace</b>. 
+                You have the option to <b>Download</b> the packet capture to the host 
+                machine managing the router as well. <br>
+				<br>
+				<b>Note:</b> The packet trace is limited to 1MB of data per capture 
+				session. When the capture file size exceeds 1MB, it will be deleted 
+				automatically and a new capture file will be created.<br>
+				<br></p>
+:|capturePacketsEnd|:
+
+:|systemCheck|:
+                <p><b>System Check </b><br>
+				To display the router&#39;s static and dynamic routes, use the
+                <b>Display IPv4 / IPv6 Table </b> button. The static and dynamic
+                routes will be displaying in the command output box.<br><br>
+                <b>Kernel IP routing table</b><br>
+                Kernel IP routing table displays routes configured in the device by kernel or administrator or routing protocols(such as Rip etc).<br><br>
+                <b>Private Routes table</b><br>
+                Private Routes table displays the private routes configured in the device.
+                Display format of the private routes is as follows,<br>
+                &#60;Destination Address/Netmask&#62; via &#60;Gateway Address&#62; dev &#60;interface name&#62; metric &#60;metric value&#62;<br>
+                Ex :<br>
+                176.16.0.0/16 via 192.168.10.155 dev bdg1  metric 6<br>
+                Destination Address/Netmask = 176.16.0.0/16<br>
+                Gateway Address = 192.168.10.155<br>
+                Interface Name = bdg1<br>
+                Metric Value = 6<br></p>
+:|systemCheckEnd|:
+
+:|powerSaving|:
+                <p><b>Power Saving:</b> There are two options available to
+                support power efficiency on the router. With Length Detection
+                State enabled, the Ethernet cable link length will be detected
+                by the router and power to the port will be modified
+                accordingly.<br>
+                <br>
+				<b>By Link Status :</b> When enabled, the total power to the LAN 
+				Switch is dependent on the number of connected ports. The overall 
+				current draw when a single port is connected is less than when all 
+				of the available LAN ports have an active Ethernet connection.
+				<br>
+				<br>
+				<b>By Cable Length Detection :</b> When enabled the LAN Switch will reduce 
+				the overall current supplied to the LAN port when a small cable 
+				length is connected to that port. Longer cables have higher resistance 
+				than shorter cables and require more power to transmit packets over 
+				that distance. This option will reduce the power to a LAN port if 
+				an Ethernet cable of less than 10 ft is detected as being connected 
+				to that port. <br>
+				<br>
+                Click <b>Save</b> to save your changes.<br>
+				<br>
+				Click <b>Cancel</b> to revert to the previous settings.</p>
+:|powerSavingEnd|:
+
+:|systemPc|:
+                <p><b>Using System (PC): </b> The router's firmware can be
+                upgraded here, and the current version is displayed on this page. <br>
+                <br>
+                <b>Current</b> <b>Firmware</b> <b>Information</b><br>
+				<b>Firmware Version:</b> The current version of this router&#39;s firmware<br>
+				<br>
+				<b>Firmware Date:</b> This is the date on which the current firmware 
+				version was installed on the router<br>
+				<b><br>
+				Firmware</b> <b>Upgrade</b><br>
+				D-Link occasionally makes available new versions of firmware which 
+				include bugs fixes and updates. <br>
+				<br>
+				<b>IMPORTANT! <br>
+				</b>See the Release Notes which are included with the downloaded 
+				firmware file or go to the download page of the website for more 
+				information. Read the Release Notes for any information related 
+				to the upgrade before performing the upgrade operation. <br>
+				<br>
+				<b>Browse</b> <b>Firware:</b> To upgrade the router firmware,
+				<b>Browse</b> firmware on your computer, locate and select the 
+				firmware file from D-Link. Click <b>Upgrade</b> to upload the new 
+				firmware file to the router. A progress bar will appear displaying 
+				the status of the upload to the router.<br>
+				<br>
+				The router will take several minutes to complete the upgrade. While 
+				the upgrade is in progress, the Test LED on the front panel of the 
+				router will be lit. Wait until the light goes off before accessing 
+				the router. Once the firmware upload is complete, the router will 
+				automatically restart.<br>
+				<br>
+				After a successful upgrade, the Login page will display. After logging 
+				in the top right Firmware version field and Device Info page will 
+				both be updated with the new firmware version. <br>
+				<br>
+                </p>
+:|systemPcEnd|:
+
+:|usb|:
+                <p><b>Using USB: </b> The router's firmware can be
+                upgraded here. <br>
+                <br>
+                <b>USB</b> <br>
+				<b>USB Device Status :</b> The connection status of USB device<br>
+				<br>
+				D-Link occasionally makes available new versions of firmware which 
+				include bugs fixes and updates. <br>
+				<br>
+				<b>IMPORTANT!</b><br>
+				See the Release Notes which are included with the downloaded 
+				firmware file or go to the download page of the website for more 
+				information. Read the Release Notes for any information related 
+				to the upgrade before performing the upgrade operation. <br>
+				<br>
+				<b>Select Firmware :</b> The Files, stored in the USB device are listed here.
+				To upgrade the router firmware, select firmware file from the list.
+				Click <b>Upgrade</b> to upload the new 
+				firmware file to the router.<br>
+				
+				<br> A progress bar will appear displaying the status of the upload to the router.<br>
+				<br>
+				The router will take several minutes to complete the upgrade. While 
+				the upgrade is in progress, the Test LED on the front panel of the 
+				router will be lit. Wait until the light goes off before accessing 
+				the router. Once the firmware upload is complete, the router will 
+				automatically restart.<br>
+				<br>
+				After a successful upgrade, the Login page will display. After logging 
+				in the top right Firmware version field and Device Info page will 
+				both be updated with the new firmware version. <br>
+				<br>
+                </p>
+:|usbEnd|:
+
+:|usb_double|:
+                <p><b>Using USB: </b> The router's firmware can be
+                upgraded here. <br>
+                <br>
+                <b>USB Port 1</b> <b>Information</b><br>
+				<b>USB Device Status :</b> The connection status of USB device<br>
+				<br>
+				<b>Select Firmware :</b> The Files , stored in the USB device.<br>
+				<b><br>
+				Firmware</b> <b>Upgrade</b><br>
+				D-Link occasionally makes available new versions of firmware which 
+				include bugs fixes and updates. <br>
+				<br>
+		<b>USB Port 2</b> <b>Information</b><br>
+				<b>USB Device Status :</b> The connection status of USB device<br>
+				<br>
+				<b>Select Firmware :</b> The Files , stored in the USB device.<br>
+				<b><br>
+				Firmware</b> <b>Upgrade</b><br>
+				D-Link occasionally makes available new versions of firmware which 
+				include bugs fixes and updates. <br>
+				<br>
+				<b>IMPORTANT! <br>
+				</b>See the Release Notes which are included with the downloaded 
+				firmware file or go to the download page of the website for more 
+				information. Read the Release Notes for any information related 
+				to the upgrade before performing the upgrade operation. <br>
+				<br>
+				<b>Select the upgrade file:</b> To upgrade the router firmware,
+				<b>Select</b> firmware file from the list. Click <b>Upgrade</b> to upload the new 
+				firmware file to the router. A progress bar will appear displaying 
+				the status of the upload to the router.<br>
+				<br>
+				The router will take several minutes to complete the upgrade. While 
+				the upgrade is in progress, the Test LED on the front panel of the 
+				router will be lit. Wait until the light goes off before accessing 
+				the router. Once the firmware upload is complete, the router will 
+				automatically restart.<br>
+				<br>
+				After a successful upgrade, the Login page will display. After logging 
+				in the top right Firmware version field and Device Info page will 
+				both be updated with the new firmware version. <br>
+				<br>
+                </p>
+:|usb_doubleEnd|:
+
+:|backupRestore|:
+                <p><b>Backup / Restore:</b> You can back up the router's custom
+                configuration settings to restore them to a different device or
+                the same router after some other changes. <br>
+                <br>
+				<b>IMPORTANT!</b> <br>
+				Restoring a saved configuration will remove your current
+                settings. Firewall rules, VPN policies, LAN/WAN settings 
+				and all other settings will be lost. Please backup your settings. 
+				Settings cannot be retrieved unless they have been backed up.<br>
+				<br>
+				When the settings restore operation or the firmware upgrade is in 
+				progress:<br>
+				<br>
+				1. Do NOT close the browser window.<br>
+				<br>
+				2. Do NOT go online.<br>
+				<br>
+				3. Do NOT turn off or power-cycle the router.<br>
+				<br>
+				4. Do NOT shutdown the computer.<br>
+				<br>
+				<b>Backup/Restore Settings</b> <br>
+                                To <b>Download Debug Logs</b> click <b>Download</b>.You will be prompted 
+                		to save a file with the extension &quot;.tgz&quot;. Select 
+				a safe location on your computer and save the file. The settings 
+				will be saved in this file in the Tar archieve Form.<br>
+				<br>
+				To take a backup of the current settings, click <b>Save to
+                System(PC), Save to USB Port 1 or Save to USB Port 2</b>. You will be prompted 
+                to save a file with the extension &quot;.cfg&quot;. Select 
+				a safe location on your computer or USB device and save the file. The settings 
+				will be saved in this file.<br>
+				<br>
+                <b>NOTE :</b> Save to USB Port 1 or Save to USB Port 2 Buttons
+                will only works, while USB is connected to the Device.<br>
+                <br>
+				To <b>Restore Config File From System (PC)</b> click <b>Choose</b> <b>File</b>. On your computer, locate and select 
+				the backup file you saved previously. Click Restore to upload the 
+				saved settings. A progress bar indicating the status of the restore 
+				operation will appear. The router will automatically restart after 
+				the restore settings operation has completed. <br>
+				<br>
+                To <b>Restore Config File From USB Device</b> select the backup file you saved previously,
+                displaying in "Select Firmware box" stored in USB device, Click Restore to upload the 
+				saved settings. A progress bar indicating the status of the restore 
+				operation will appear. The router will automatically restart after 
+				the restore settings operation has completed. <br>
+				<br>
+                </p>
+:|backupRestoreEnd|:
+
+:|softReboot|:
+                <p><b>Soft Reboot</b>
+                <br>
+                <br>
+                To reboot the router, click on the <b>Soft Reboot</b> button. The Login 
+				page is displayed after the devices reboots.<br>
+                <br>
+                To revert to the <b>Factory</b> <b>Default</b> <b>Settings</b>, 
+				click <b>Default</b>. The router will restart automatically after 
+				resetting to the factory default settings. The factory default settings 
+				are as follows:<br>
+&nbsp;<br>
+				<b>User Name:</b> admin<br>
+				<br>
+				<b>Password:</b> admin<br>
+				<br>
+				<b>LAN Port IP address:</b> 192.168.10.1<br>
+				<br>
+				<b>DHCP server on LAN:</b> Enabled<br>
+				<br>
+				<b>WAN Port Configuration:</b> Get configuration via DHCP<br>
+                </p>
+:|softRebootEnd|:
+
+:|apSoftwareDownload|:
+                <p ><b>AP Firmware Download</b><br>
+                <br>
+                <b>Server Address :</b>	Enter the IP address of the host where
+                the upgrade file is located. The 			host must have a
+                TFTP server installed and running.<br>
+                <br>
+                <b>File Path :</b> Enter the file path on the TFTP server where
+                the software is located. You may enter up to 96
+                characters.<br>
+                <br>
+                <b>File Name:</b> Enter the name of the upgrade file. You may
+                enter up to 32 characters, and the file extension
+                .tar must be included.<br>
+                <br>
+	    		<b>Group Size</b> When you upgrade multiple APs, each AP
+                contacts the TFTP server to download the upgrade
+                file. To prevent the TFTP server from being overloaded, you can
+                limit the number of APs to be upgraded at a time.
+                In the Group Size field, enter the number of APs that can be
+                upgraded at the same time. When one group completes the upgrade,
+                the next group begins the process.<br>
+                <br>
+	    		<b>Image Download Type :</b> Type of the image to be downloaded,
+                which can be one of the following.<br>
+    			All images (img_dwl8600 and img_dwl3600/6600)<br>
+	    		img_dwl8600<br>	
+                img_dwl3600/6600<br>
+	    		img_dwl2600<br>	
+                <br>
+                <b>Note:</b> To download all images, make sure you specify the
+                file path and file name for both images in the appropriate File
+                Path and File Name fields.<br>
+                <br>
+	    		<b>Managed AP : </b>The list shows all the APs that the controller
+                manages. If the controller is the Cluster Controller, then the list
+                shows the APs managed by all controllers in the cluster.
+                Each AP is identified by its MAC address, IP address, and
+                Location in the <MAC - IP - Location> format. To upgrade a
+                single AP, select the AP MAC address from the drop down list. To
+                upgrade all APs, select All from the top of the list. If All is
+                selected, the Group Size field will limit the number of
+                simultaneous AP upgrades in order not to overwhelm the TFTP
+                server. To select multiple APs to upgrade, CTRL + click the APs
+                to upgrade.<br>
+                <br></p>
+                <p>
+	    		<b>Note:</b> D-Link recommends that you upgrade all managed APs at the same time.<br>
+                <br>
+                Click <b>Save </b>to Updates the controller with the values you enter. To
+                retain the new values across a power cycle, you must perform a save.<br>
+				<br>
+                Click <b>Refresh </b>to Updates the page with the latest information.<br>	
+                <br>
+                Click <b>Start </b>to Initiate the software download.<br>
+                <br>
+                Click on <b>Abort:</b> After clicking the Start Button, Abort will be
+                there to abort the upgrading the firmware<br>
+		    	<br>
+                </p>
+:|apSoftwareDownloadEnd|:
+
+:|apFirmwareStatus|:               
+                <p><b>AP Firmware Status</b><br>
+                <b>Status (Global)</b> The status of the upgrade process for all APs.<br>
+                <br>    
+    			<b>Not Started:</b> The Unified Wireless Controller has not started the download process.</br>	
+	    		<b>Requested:</b> A request to download AP software has been made, but the controller has not done any downloads.<br>
+		    	<b>Code Transfer in Progress:</b> A download is in progress.<br>	
+    			<b>Failure:</b> Download failed on all APs.<br>
+	    		<b>Aborted:</b> Download was aborted before the AP loaded code from the TFTP server.</br>	
+		    	<b>NVRAM-Update-in-Progress:</b> Download completed successfully. The reset command has been sent to the AP.<br>	
+    			<b>Success:</b> All APs are connected to the Unified Wireless Controller.<br>
+	    		<br>
+                <b>Status (per-AP)</b> <br> A table also appears and lists each
+                AP, its download status, and the software version it is
+                downloading. The status for an individual AP can have one of the
+                following values<br>
+                <br>
+	    		<b>Requested:</b> A download is planned for this AP, but the AP
+                is not in the current download group, so it hasnt been told to
+                start the download yet.<br>
+                 <br>
+                 <b>Code-Transfer-In-Progress:</b> The AP has been told to download the code.<br>
+                 <br>
+                 <b>Failure:</b> The AP reported a failing code download.<br>	
+                 <br>
+                 <b>Aborted:</b> The download was aborted before the AP loaded code from the TFTP server.<br>
+                 <br>    
+                 <b>Waiting-For-APs-To-Download:</b> A download finished on this
+                 AP, and it is waiting for other AP's to finish
+                 download. Reset command is not sent to the AP in this
+                 state.<br>
+                 <br>
+	    		<b>NVRAM-Update-In-Progress:</b> Download completed successfully. The reset command sent to the AP.<br>	
+	    		<b>Timed-Out:</b> The AP did not reconnect to the Unified Wireless Controller in the fixed time interval.<br>
+		    	<br>
+    			<b>Download Count</b> <br>
+                The number of managed APs to download software in the current
+                download request. If you selected All for the managed APs to
+                upgrade, the download count shows the number of managed APs at
+                the time the download request was started. The value is 1 if
+                only one AP is being updated.<br>
+                <br>
+	    		<b>Success Count</b> <br>
+                The number of APs that have successfully downloaded the new
+                code. This value starts with 0 at the beginning of the download
+                and increases by one for every AP that successfully downloaded
+                the code.<br>
+                <br>
+	    		<b>Failure Count</b> <br>
+		    	The number of APs that failed to download the new code starting at 0
+                and incrementing with each 	failure.<br> <br>
+    			<b>Abort Count </b> <br>	
+	    		The number of APs for which the download was aborted, starting
+                at 0 and incrementing each aborted download.</p>
+:|apFirmwareStatusEnd|:
+
+:|facilityLogs|:
+                <p><b>Log Facilities<br></b>
+                <br>
+				<b>Facilities:</b> There are five core components to the router&#39;s firmware 
+				and the granularity of logging within each can be set independently. 
+				Choose between System, Network, VPN, WCF, Firewall
+                based on availability through dropdown list <b>Select Facility
+                </b>.<br>
+				<br>
+				<b>Kernel:</b> This covers all the logs related to kernel .<br>
+				<br>
+				<b>System</b>: This covers application and management level features 
+				or administrator changes for managing the unit .<br>
+				<br>
+				<b>Network:</b> This covers log messages that correspond to
+                network protocols .<br>
+				<br>
+				<b>VPN:</b> This covers log messages that corresponds to SSLPN,
+                OPENVPN, IPSEC etc .<br>
+				<br>
+				<b>WCF:</b> This covers all content filtering related logs like
+                dynamic content filtering logs, static content filtering logs,
+                ( this facility is available only when WCF licence is
+                enabled in the device ).<br><br>
+				<b>Firewall:</b> This covers all logs related to firewall .<br><br>
+                <b>Configuration Options </b><br><br>For the facility that we
+                have selected, we have options to configure severity levels here.<br><br>
+				<b>Send to Event Log :</b><br><br>
+				When a particular severity level is selected, all events with severity 
+				equal to and greater than the chosen severity are captured and
+                stored in device and those will display in current logs
+                page. <br>
+				<br>
+				<b>Send to Syslog :</b><br><br>
+				When a particular severity level is selected, all events with severity 
+				equal to and greater than the chosen severity are captured and
+                these logs will be transfered to syslog server .<br>
+				<br>
+                The 
+				severity levels available for logging are :<br><br>
+				<b>Emergency:</b> System is unusable.<br>
+				<b>Alert:</b> Action must be taken immediately.<br>
+				<b>Critical:</b> Critical conditions.<br>
+				<b>Error:</b> Error conditions.<br>
+				<b>Warning:</b> Warning conditions.<br>
+				<b>Notification:</b> Normal but significant condition.<br>
+				<b>Information:</b> Informational . <br>
+				<b>Debugging:</b> Debug-level messages .<br>
+				<br>
+				Click <b>Save</b> to save your changes .<br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings .</p>
+:|facilityLogsEnd|:
+
+:|facilityLogs_wireless|:<p><b>Log Facilities<br></b>
+                <br>
+				<b>Facilities:</b> There are six core components to the router&#39;s firmware 
+				and the granularity of logging within each can be set independently. 
+				Choose between System, Wireless, Network, VPN, WCF, Firewall
+                based on availability through dropdown list <b>Select Facility
+                </b>.<br>
+				<br>
+				<b>Kernel:</b> This covers all the logs related to kernel .<br>
+				<br>
+				<b>System</b>: This covers application and management level features 
+				or administrator changes for managing the unit .<br>
+				<br>
+				<b>Wireless:</b> This covers all AP related configuration and
+                behavior logging related to wireless .<br><br>
+				<b>Network:</b> This covers log messages that correspond to
+                network protocols .<br>
+				<br>
+				<b>VPN:</b> This covers log messages that corresponds to sslvpn,
+                openvpn,ipsec etc .<br>
+				<br>
+				<b>WCF:</b> This covers all content filtering related logs like
+                dynamic content filtering logs, static content filtering logs,
+                ( this facility is available only when WCF licence is
+                enabled in the device ) .<br><br>
+				<b>Firewall:</b> This covers all logs related to firewall .<br><br>
+                <b>Configuration Options </b><br><br>For the facility that we
+                have selected, we have options to configure severity levels here .<br><br>
+				<b>Send to Event Log :</b><br><br>
+				When a particular severity level is selected, all events with severity 
+				equal to and greater than the chosen severity are captured and
+                will be stored in device and those will display in current logs
+                page.
+                <br><br>
+				<b>Send to Syslog :</b><br><br>
+				When a particular severity level is selected, all events with severity 
+				equal to and greater than the chosen severity are captured and
+                these logs will be transfered to syslog server .<br>
+				<br>
+                The severity levels available for logging are :<br>
+				<br>
+				<b>Emergency:</b> System is unusable .<br>
+				<b>Alert:</b> Action must be taken immediately .<br>
+				<b>Critical:</b> Critical conditions .<br>
+				<b>Error:</b> Error conditions .<br>
+				<b>Warning:</b> Warning conditions .<br>
+				<b>Notification:</b> Normal but significant condition .<br>
+				<b>Information:</b> Informational .<br>
+				<b>Debugging:</b> Debug-level messages .<br>
+				<br>
+				Click <b>Save</b> to save your changes .<br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|facilityLogs_wirelessEnd|:
+
+:|routingLogs|:
+                <p><b>Routing Logs:</b> Traffic through each network segment
+                (LAN, WAN, DMZ) can be tracked based on whether the packet
+                was accepted or dropped by the firewall. Denial of service
+                attacks, general attack information, login attempts, dropped
+                packets, and similar events can be captured for review by the IT
+                administrator.<br><br>
+				This section is used to configure the logging options for each network 
+				segment (for example, LAN-WAN). <br>
+				<br>
+				<b>Note</b>: Enabling logging options may generate a significant 
+				volume of log messages and is recommended for debugging purposes 
+				only. <br>
+				<br>
+				<b>Accepted Packets:</b> This logs packets that were successfully 
+				transferred through the segment. This option is useful when the 
+				Default Outbound Policy is &quot;Block Always&quot; (see the Firewall Rules 
+				page under the Firewall menu).<br>
+				<br>
+				<b>Example:</b> If Accept Packets from LAN to WAN is enabled and 
+				there is a firewall rule to allow SSH traffic from LAN, then whenever 
+				a LAN machine tries to make an SSH connection, those packets will 
+				be accepted and a message will be logged. (Make sure the log option 
+				is set to allow for this firewall rule.) <br>
+				<br>
+				<b>Dropped Packets:</b> Logs packets that were blocked from being 
+				transferred through the segment. This option is useful when the 
+				Default Outbound Policy is &quot;Allow Always&quot; (see the Firewall Rules 
+				page under the Firewall menu).<br>
+				<br>
+				<b>Example:</b> If Drop Packets from LAN to WAN is enabled and there is 
+				a firewall rule to block SSH traffic from LAN, then whenever a LAN 
+				machine tries to make an SSH connection, those packets will be dropped 
+				and a message will be logged. (Make sure the log option is set to 
+				allow for this firewall rule.) <br>
+				<br>
+                Click <b>Save</b> to save your changes. <br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|routingLogsEnd|:
+
+:|systemLogs|:
+                
+				<p><b>System Logs </b><br>
+				Click ON/OFF button type of system events to be logged. The following system 
+				events can be recorded: <br>
+				<br>
+				<b>All Unicast Traffic:</b> All unicast packets directed to the 
+				router are logged. <br>
+				<br>
+				<b>All Broadcast/Multicast Traffic:</b> All broadcast or multicast 
+				packets directed to the router are logged. <br>
+                <br>
+                <b>FTP Logs:</b> This logs the mode(active/passive) of FTP
+                connections transferred through the router.<br>
+                <br>
+                <b>Redirected ICMP Packets:</b> Logs redirected ICMP packets.<br>
+                <br>
+                <b>Invalid Packets:</b> All invalid packets dropped by the router
+                are logged.<br><br>
+                <b>Remote Classification Server Logs:</b> By enabling this
+                option, the logs related to WCF classification will be logged,
+                this option is available only when the WCF licence is enabled in
+                device.<br>
+                <br>
+                Click <b>Save</b> to save your changes. <br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|systemLogsEnd|:
+
+:|remoteLoging|:
+                <p><b>Remote Logs:</b> Configured logs can be sent an E-Mail
+                address. For remote logging a key configuration field is the
+                Remote Log Identifier, which is the prefix for every remote
+                logged message. <br>
+                <br>
+				<b>Remote Logging :</b><br>
+                <br>
+				<b>Remote Log Identifier:</b> Every logged message will contain a prefix 
+				for easier identification of the source of the message. The log 
+				identifier will be prefixed to both e-mail and SysLog messages.<br>
+				<br>
+				<b>E-Mail Logs:</b>	E-Mail Logs is disabled by default. Select the corresponding
+                ON/OFF button to enable/disable e-mail logs.<br>
+				<br>
+				<b>E-mail Server Address:</b> Enter the IP address or Internet Name 
+				of an SMTP server. The router will connect to this server to send 
+				e-mail logs when required.<br>
+				<br>
+				<b>SMTP Port:</b> The SMTP port of the e-mail server<br>
+				<br>
+				<b>Return E-mail Address:</b> Type the e-mail address where the 
+				replies from the SMTP server are to be sent (required for failure 
+				messages). <br>
+				<br>
+				<b>Send To E-mail Address:</b> Type the e-mail address where the 
+				logs and alerts are to be sent. Up to three recipients can be defined.
+				<br>
+				<br>
+				<b>Authentication with SMTP server:</b> If the SMTP server requires 
+				authentication before accepting connections, select either Login 
+				Plain or CRAM-MD5 and enter the User Name and Password to be used 
+				for authentication. To disable authentication, select the No Authentication 
+				radio box. <br>
+				<br>
+                <b>Enable Tls:</b> If the SMTP server requires Tls support to sent
+                logs through emails, then this option should be enable and is
+                availbale only for authentication methods Plain Login or CRAM-MD5. <br>
+                <br>
+				<b>Respond to Identd from SMTP Server:</b> Check this radio box 
+				to configure the router to respond to an IDENT request from the 
+				SMTP server. <br>
+				<br>
+				<b>Send E-mail logs by Schedule </b><br>
+				To receive e-mail logs according to a schedule, configure the appropriate 
+				schedule settings. The scheduling options are enabled when the Enable 
+				E-Mail Logs option is enabled in the prior section. To disable sending 
+				logs, select Never. <br>
+				<br>
+				<b>Unit:</b> Select the period of time that you need to send the 
+				log: Hourly, Daily, or Weekly. To disable sending of logs, select 
+				Never. This option is useful when you do not want to receive logs 
+				by e-mail, but want to keep e-mail options configured so that you 
+				can use the Send Log function Event Log viewer pages. <br>
+				<br>
+				<b>Day:</b> If logs are to be sent on a weekly basis, choose the 
+				day of the week. <br>
+				<br>
+				<b>Time:</b> Select the time of day when logs should be sent.
+				<br>
+				<br>
+                Click <b>Save</b> to save your changes. <br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|remoteLogingEnd|:
+
+:|remoteLoging_RU|:
+ <p><b>Remote Logs:</b> Configured logs can be sent an E-Mail
+                address. For remote logging a key configuration field is the
+                Remote Log Identifier, which is the prefix for every remote
+                logged message. <br>
+                <br>
+				<b>Remote Logging :</b><br>
+                <br>
+				<b>Remote Log Identifier:</b> Every logged message will contain a prefix 
+				for easier identification of the source of the message. The log 
+				identifier will be prefixed to both e-mail and SysLog messages.<br>
+				<br>
+				<b>E-Mail Logs:</b>	E-Mail Logs is disabled by default. Select the corresponding
+                ON/OFF button to enable/disable e-mail logs.<br>
+				<br>
+				<b>E-mail Server Address:</b> Enter the IP address or Internet Name 
+				of an SMTP server. The router will connect to this server to send 
+				e-mail logs when required.<br>
+				<br>
+				<b>SMTP Port:</b> The SMTP port of the e-mail server<br>
+				<br>
+				<b>Return E-mail Address:</b> Type the e-mail address where the 
+				replies from the SMTP server are to be sent (required for failure 
+				messages). <br>
+				<br>
+				<b>Send To E-mail Address:</b> Type the e-mail address where the 
+				logs and alerts are to be sent. Up to three recipients can be defined.
+				<br>
+				<br>
+				<b>Authentication with SMTP server:</b> If the SMTP server requires 
+				authentication before accepting connections, select either Login 
+				Plain or CRAM-MD5 and enter the User Name and Password to be used 
+				for authentication. To disable authentication, select the No Authentication 
+				radio box. <br>
+				<br>
+				<b>Respond to Identd from SMTP Server:</b> Check this radio box 
+				to configure the router to respond to an IDENT request from the 
+				SMTP server. <br>
+				<br>
+				<b>Send E-mail logs by Schedule </b><br>
+				To receive e-mail logs according to a schedule, configure the appropriate 
+				schedule settings. The scheduling options are enabled when the Enable 
+				E-Mail Logs option is enabled in the prior section. To disable sending 
+				logs, select Never. <br>
+				<br>
+				<b>Unit:</b> Select the period of time that you need to send the 
+				log: Hourly, Daily, or Weekly. To disable sending of logs, select 
+				Never. This option is useful when you do not want to receive logs 
+				by e-mail, but want to keep e-mail options configured so that you 
+				can use the Send Log function Event Log viewer pages. <br>
+				<br>
+				<b>Day:</b> If logs are to be sent on a weekly basis, choose the 
+				day of the week. <br>
+				<br>
+				<b>Time:</b> Select the time of day when logs should be sent.
+				<br>
+				<br>
+                Click <b>Save</b> to save your changes. <br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+
+:|remoteLoging_RUEnd|:
+:|sysLogServer|:
+                <p><b>Syslog Server:</b> Configured logs can be sent to Syslog server address. <br>
+                <br>
+                <b>Syslog Server Configuration</b> <br>
+				If you want the router to send logs to a SysLog server, enable
+                the facility by clicking ON/OFF button, Multiple Syslog servers can be configured and if needed 
+				used concurrently.<br>
+				<br>
+				<b>SysLog Server Name:</b> Enter the IP address or Internet Name 
+				of the SysLog server. <br>
+				<br>
+				<b>Syslog Facility:</b> Each syslog server can be assigned a unique 
+				facility for logging. <br>
+				<br>
+				<b>Syslog Severity:</b> Select the appropriate SysLog severity. 
+				When a particular severity is selected, all the SysLogs with severity 
+				equal to and greater than the chosen severity are logged on the 
+				configured SysLog Server.<br>
+				<br>
+                Click <b>Save</b> to save your changes. <br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|sysLogServerEnd|:
+
+:|eventLogs|:
+                <p><b>Event Logs </b><br>
+                <br>
+				<b>Bandwidth Limit:</b> If event logs is ON, gives logs related to packets dropped 
+				due to Bandwidth Limiting.<br>
+				<br>
+                Click <b>Save</b> to save your changes. <br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|eventLogsEnd|:
+
+:|ipv6Logs|:
+	<p><b>IPv6 Logs </b><br><br>
+
+	This section is used to configure the logging options for each network segment (for example, LAN-WAN).<br><br>
+
+	<b>Note:</b> Enabling logging options may generate a significant volume of log messages and is recommended for debugging purposes only.<br><br>
+
+	<b>Accepted Packets:</b> This logs packets that were successfully transferred through the segment. This option is useful when the Default Outbound Policy is "Block Always" (see the Firewall Rules page under the Firewall menu).<br><br>
+
+	<b>Example:</b> If Accept Packets from LAN to WAN is enabled and there is a firewall rule to allow SSH traffic from LAN, then whenever a LAN machine tries to make an SSH connection, those packets will be accepted and a message will be logged. (Make sure the log option is set to allow for this firewall rule.)<br><br>
+
+	<b>Dropped Packets:</b> Logs packets that were blocked from being transferred through the segment. This option is useful when the Default Outbound Policy is "Allow Always" (see the Firewall Rules page under the Firewall menu).<br><br>
+	<b>Example:</b> If Drop Packets from LAN to WAN is enabled and there is a firewall rule to block SSH traffic from LAN, then whenever a LAN machine tries to make an SSH connection, those packets will be dropped and a message will be logged. (Make sure the log option is set to allow for this firewall rule.)<br><br>
+                Click <b>Save</b> to save your changes. <br>
+		<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|ipv6LogsEnd|:
+
+:|smsEvent|:
+     <p><b>SMS Logging Configuration</b><br><br>
+         
+     This page is used to get SMS on configured mobile number for WAN, VPN and CPU/Memory based events.<br><br>
+
+     <b>Receiver:</b> Information of the receiver.<br><br>
+             <b>Mobile Number:</b> Enter a valid mobile phone number on which SMS will be sent.<br><br>
+     <b>Events:</b> Following are the available events for which SMS will be sent.<br><br>
+             <b>WAN UP/Down:</b> Enable/Disable the button to receive SMS based on WAN UP/Down event.<br><br>
+             <b>VPN Connect/Disconnect:</b> Enable/Disable the button to receive SMS whenever VPN tunnel connects or disconnects.<br><br>
+             <b>CPU/Memory usage reaches Max limit:</b> Enable/Disable the button to receive SMS whenever CPU and Memory utilization reaches to 50% and 80% respectively.<br><br>
+     	Click <b>Save</b> to save your changes.<br>
+				<br>
+			Click <b>Cancel</b> to revert to the previous settings.</p>            
+:|smsEventEnd|:
+
+:|setLanguage|:
+	<p><b>Language Settings</b><br><br>
+			<b>Set Language:</b> To choose from English and other languages. <b><br>
+				</b><br>
+			Click <b>Save</b> to save your changes.<br>
+				<br>
+			Click <b>Cancel</b> to revert to the previous settings.</p>
+:|setLanguageEnd|:
+
+:|backupConfigurations|:
+	<p><b>Backup / Restore Configuration Settings</b><br><br>
+		<b>Backup Configuration to USB Automatically:</b> Enable this option to take auto backup of current settings in currently pluged-in storage device. <b><br>
+				</b><br>
+		<b>Encrypt Configuration File:</b> Enable this option to take backup of current settings in encrypted form by clicking Backup button.If a storage device is plugged-in then encrypted backup of current settings will be stored in storage device, which can be restore during reboot. <b><br>
+				</b><br>
+		Click <b>Save</b> to save your changes.<br>
+				<br>
+		Click <b>Cancel</b> to revert to the previous settings.</p>
+:|backupConfigurationsEnd|:
+
+:|checkUpdate|:
+		<p><b>Check Update:</b>This Option is Used to check and show status of Firmware Upgrade Notification.<br><br>
+		<b>Check Now:</b>Click the <b>Check Now</b> button to connect the router to a D-Link server to determine if a more recent version of firmware for this router is available.<b><br>
+				</b><br>
+		<b>Status:</b>The firmware check results will be displayed here.</p>
+:|checkUpdateEnd|:
+
+

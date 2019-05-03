@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# nimfInit - initialization script for nimf.
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,8jun11,nih  written.
+#
+# DESCRIPTION
+# This script is the initialization script for linkDetect component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_LINKDETECT" = "y" ]; then
+    echo -n "Starting linkmonitor daemon"
+    $LINKDETECT_INSTALL_PATH/bin/linkStatusDetect  $DB_FILENAME WAN1 5 &
+    $LINKDETECT_INSTALL_PATH/bin/linkStatusDetect  $DB_FILENAME LAN 5 &
+    echo "Done"
+fi

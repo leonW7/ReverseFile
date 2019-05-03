@@ -1,0 +1,266 @@
+<?lua
+require "teamf1lualib/bl_apProfiles"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bl_manageAp"
+
+local guiApProfile = require("com.teamf1.bl.wlan.approfile")
+local errorMap     = require ("com.teamf1.core.errorMap")
+local returnCodes  = require ("com.teamf1.core.returnCodes")
+local radioChannel = require ("com.teamf1.bl.wlan.manageap")
+
+local validApInfo = {}
+local apProfileTbl
+local radioChannels = {}
+local standAloneChannels = {}
+local errorCode
+local DEFAULT_PROFILE = 1
+local MANAGE_MODE = 0
+
+errorCode, apProfileTbl = guiApProfile.apProfileGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (cgi["configRowId"] == "-1" ) then
+errorCode, radioChannels, standAloneChannels = radioChannel.apProfileChannelsCurGet(DEFAULT_PROFILE)
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+end
+
+
+if (cgi["configRowId"] ~= "-1" ) then
+    
+ 
+
+require "teamf1lualib/bl_manageAp"
+local page = "validAps"
+local cookie = page .. ".cookie"
+local guiManageAp = require("com.teamf1.bl.wlan.manageap")
+local configRow = cgi
+local cookieTbl = {}
+local errorCode
+local ENABLED = 1
+local DISABLED = 0
+cookieTbl[cookie] = configRow.configRowId
+errorCode, validApInfo = guiManageAp.manageApGet (cookieTbl)
+
+validApInfo.macAddress = configRow.configRowId
+
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+
+if (validApInfo.apMode == MANAGE_MODE) then
+    errorCode, radioChannels, standAloneChannels = radioChannel.apProfileChannelsCurGet(validApInfo.profile)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+else
+errorCode, radioChannels, standAloneChannels =
+    radioChannel.apProfileChannelsCurGet(DEFAULT_PROFILE)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+end
+end
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+
+?>
+<!-- Section for Pop up dialog starts -->
+<?lua if (standAloneChannels == nil) then
+?>
+<p>nul </P>
+<?lua end?>
+<div id="tf1_validApsDailogContent">
+    <div class="topBg">
+        <h1>Valid APs Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>MAC Address </label>
+            <input type="text" id="tf1_macAddr" name="validAps.macAddress" value="$| validApInfo.macAddress or '' |$" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="if (event.keyCode == 9) {return macAddrVerify(event, this, true, 'Invalid MAC address:', '');}">
+        </div>
+        <div class="break" id="break1_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_apMode_div">
+            <label>AP Mode </label>
+            <p>
+            <input type="radio" $| web.radioSelected(validApInfo.apMode == 0) |$
+            value="0" name="validAps.apMode" checked="checked" id="tf1_apMode2" onclick="changeAPMode('tf1_apMode2')"> 
+            Managed </p>
+            <p>
+            <input type="radio" $| web.radioSelected(validApInfo.apMode == 1) |$
+            value="1" name="validAps.apMode" id="tf1_apMode1" onclick="changeAPMode('tf1_apMode1')"> 
+            Standalone </p>
+            <p>
+            <input type="radio" $| web.radioSelected(validApInfo.apMode == 2) |$ value="2" name="validAps.apMode" id="tf1_apMode3" onclick="changeAPMode('tf1_apMode3')"> 
+            Rogue </p>
+        </div>
+        <div class="break" id="break2_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_location_div">
+            <label>Location </label><input type="text" id="tf1_location" name="validAps.location" value="$| validApInfo.location or '' |$" maxlength="32" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_location',0,32,'Location Length Must be below 32'); }"><dl>Optional</dl> </div>
+        <div class="break" id="break3_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_enableAuthPassword_div">
+            <label>Authentication Password </label>
+             <?lua if (validApInfo.authPasswordEnable == 1) then
+                       statusStr="enable-disable-on"
+                       statusVar = "1"
+			      else
+			           statusStr="enable-disable-off"
+                       statusVar = 0
+			      end
+			?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableAuthPassword" onclick="enableAuthenticationPassword()"></a>
+            <input type="hidden" name="validAps.authPasswordEnable" value="$| statusVar |$">
+            <div class="configRow" id="tf1_authPassword_div">
+                <input type="password" name="validAps.authPassword" value="$|
+                validApInfo.authPassword or '' |$" id="tf1_authPassword" maxlength="64" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_authPassword',8,64,'Authentication Password Length Must be between 8 and 64'); }"> </div>
+        </div>
+        <div class="break" id="break4_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_profile_div">
+            <label>Profile </label><select id="tf1_profile" name="validAps.profile" onchange="profileChange()">
+                <?lua
+                if (apProfileTbl ~= nil) then
+                for k, v in pairs (apProfileTbl) do
+                local row = apProfileTbl[k]
+                ?>
+                <option value="$| row.profileId |$" $| web.dropdownSelected( validApInfo.profile == row.profileId) |$>$| row.profileId .."-" .. row.profileName or '' |$</option>
+                <?lua
+                end
+                end
+                ?>
+            </select> </div>
+        <div class="break" id="break5_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_expectedSSID_div">
+            <label>Expected SSID </label> 
+            <input type="text" name="validAps.expectedSsid" value="$| validApInfo.expectedSsid or '' |$" id="tf1_expectedSSID" maxlength="32" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_expectedSSID',0,32,'Expected SSID Length Must be below 32'); }"> </div>
+        <div class="break" id="break6_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_expectedChannel_div">
+            <label>Expected Channel </label>
+            <select class="txt1" id="tf1_expectedChannel" name="validAps.expectedChannel" size="1">
+                <?lua
+                for k, v in pairs (standAloneChannels) do
+                ?>
+                <option class="selectfield" $|
+                web.dropdownSelected(validApInfo.expectedChannel ==
+                tonumber(v.value)) |$
+                value="$| v.value |$" >$| v.name |$</option>
+                <?lua end?>
+            </select> </div>
+        <div class="break" id="break7_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_expectedWidsMode_div">
+            <label>Expected WDS Mode </label>
+            <p>
+			<input type="radio" $| web.radioSelected(validApInfo.wdsMode == 0)
+            |$ value="0" checked="checked" name="validAps.wdsMode"> Any
+			</p>
+			<p><input type="radio" $| web.radioSelected(validApInfo.wdsMode == 1) |$ value="1" name="validAps.wdsMode"> Normal
+			</p>
+			<p><input type="radio" $| web.radioSelected(validApInfo.wdsMode == 2) |$ value="2" name="validAps.wdsMode"> Bridge
+            </p>
+        </div>
+        <div class="break" id="break8_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_expectedSecurityMode_div">
+            <label>Expected Security Mode </label>
+            <select size="1" name="validAps.security" id="tf1_expectedSecurityMode">
+			<option $| web.dropdownSelected(validApInfo.security == 0) |$ value="0">Any</option>
+			<option $| web.dropdownSelected(validApInfo.security == 1) |$ value="1">Open</option>
+			<option $| web.dropdownSelected(validApInfo.security == 2) |$ value="2">WEP</option>
+            <option $| web.dropdownSelected(validApInfo.security == 3) |$ value="3">WPA/WPA2</option>
+            </select> </div>
+        <div class="break" id="break9_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_expectedWiredNetworkMode_div">
+            <label>Expected Wired Network Mode </label>
+            <p>
+			<input type="radio" $| web.radioSelected(validApInfo.networkMode ==
+            0) |$ value="0" checked name="validAps.networkMode"> 
+			Allowed </p>
+			<p>
+			<input type="radio" $| web.radioSelected(validApInfo.networkMode ==
+            1) |$ value="1" name="validAps.networkMode"> Not Allowed </p>
+        </div>
+        <div class="break" id="break10_div">
+&nbsp; </div>
+        <div id="tf1_radio1_div">
+            <h2>Radio 802.11a/n</h2>
+            <div class="configRow" id="tf1_radio1Channel_div">
+                <label>Channel </label>
+                <select size="1" name="validAps.radio1Channel" id="tf1_radio1Channel">
+                <?lua for k, v in pairs (radioChannels.radio1Channels) do
+                ?>
+				<option $| web.dropdownSelected(validApInfo.radio1Channel ==
+                tonumber(v.value)) |$ value=$| v.value |$ >$| v.name |$</option>
+                <?lua end?>
+                </select> </div>
+            <div class="break" id="break11_div">
+&nbsp; </div>
+            <div class="configRow" id="tf1_radio1Power_div">
+                <label>Power </label>
+                <select size="1" name="validAps.radio1Power" id="tf1_radio1Power">
+				<option $| web.dropdownSelected(validApInfo.radio1Power == 0) |$
+                value="0" selected>Profile</option>
+				<option $| web.dropdownSelected(validApInfo.radio1Power == 1) |$
+                value="1">12.5% (Max-9db)</option>
+				<option $| web.dropdownSelected(validApInfo.radio1Power == 2) |$
+                value="2">25% (Max-6db)</option>
+				<option $| web.dropdownSelected(validApInfo.radio1Power == 3) |$
+                value="3">50% (Max-3db)</option>
+                <option $| web.dropdownSelected(validApInfo.radio1Power == 4) |$
+                value="4">100% (Max)</option>
+                </select> </div>
+        </div>
+        <div class="break" id="break12_div">
+&nbsp; </div>
+        <div id="tf1_radio2_div">
+            <h2>Radio 802.11b/g/n</h2>
+            <div class="configRow" id="tf1_radio2Channel_div">
+                <label>Channel </label>
+                <select class="txt1" name="validAps.radio2Channel" id="tf1_radio2Channel" size="1">
+                <?lua for k, v in pairs (radioChannels.radio2Channels) do
+                ?>
+				<option $| web.dropdownSelected(validApInfo.radio2Channel ==
+                tonumber(v.value)) |$ value=$| v.value |$ >$| v.name |$</option>
+                <?lua end?>    
+                </select> </div>
+            <div class="break" id="break13_div">
+&nbsp; </div>
+            <div class="configRow" id="tf1_radio2Power_div">
+                <label>Power </label>
+                <select size="1" id="tf1_radio2Power" name="validAps.radio2Power">
+				<option $| web.dropdownSelected(validApInfo.radio2Power == 0) |$
+                value="0" selected>Profile</option>
+				<option $| web.dropdownSelected(validApInfo.radio2Power == 1) |$
+                value="1">12.5% (Max-9db)</option>
+				<option $| web.dropdownSelected(validApInfo.radio2Power == 2) |$
+                value="2">25% (Max-6db)</option>
+				<option $| web.dropdownSelected(validApInfo.radio2Power == 3) |$
+                value="3">50% (Max-3db)</option>
+                <option $| web.dropdownSelected(validApInfo.radio2Power == 4) |$
+                value="4">100% (Max)</option>
+                </select> </div>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" name="button.config.validAps.validAps.$|
+        cgi["configRowId"] |$" id="tf1_btnShowModal" value="Save " title="Save "
+        class="btnSubmit" onclick="return validateValidApsForm('tf1_frmValidAps')">
+        </div>
+</div>
+<!-- Section for Pop up dialog ends -->

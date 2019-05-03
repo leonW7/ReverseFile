@@ -1,0 +1,230 @@
+<?lua     
+    require "teamf1lualib/omniSslClientConfig_bl"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "vpn"
+    PAGE_HELP_SECTION = "omniSslConfiguration"
+
+    local omniSslClientConfig  = require("com.teamf1.bl.vpn.omniSslClientConfig")
+    local errorMap    = require ("com.teamf1.core.errorMap")
+    local returnCodes = require ("com.teamf1.core.returnCodes")
+
+    local fileName = cgilua.cookies.get("TeamF1Login")
+
+    if (ButtonType and ButtonType == "config") then
+
+          local inputTable = web.cgiToLuaTable(cgi)
+          local returnCode = 
+            omniSslClientConfig.uploadSectionSet(fileName)
+
+            if (returnCode == returnCodes.SUCCESS) then
+              statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+              statusErrorMessage = errorMap.errorStringGet (returnCode)
+            end
+
+         if (returnCode == returnCodes.SUCCESS) then
+          local returnCode = 
+            omniSslClientConfig.omniSSLClientConfigSet(inputTable)
+            if (returnCode == returnCodes.SUCCESS) then
+              statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+              statusErrorMessage = errorMap.errorStringGet (returnCode)
+            end
+          end
+          web.goToPage(NextPage, true, true)    
+
+    elseif(ButtonType and ButtonType == "delete") then
+       local inputTable = web.cgiToLuaTable (cgi)
+        if(type(cgi["omniSslConfiguration.checkbox"]) == "string") then
+              inputTable["omniSslConfiguration.cookie"] = 
+              cgi["omniSslConfiguration.checkbox"]
+           local returnCode, cookie = 
+              omniSslClientConfig.omniSslConfigurationDelete(inputTable)
+           if (returnCode == returnCodes.SUCCESS) then
+               statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+               statusErrorMessage = errorMap.errorStringGet (returnCode)
+            end
+            web.goToPage(NextPage, true, true)
+        elseif(type(cgi["omniSslConfiguration.checkbox"]) == "table") then
+            local returnCode = omniSslClientConfig.omniSslConfigurationDeleteAll()
+            if (returnCode == returnCodes.SUCCESS) then
+                statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+                statusErrorMessage = errorMap.errorStringGet (returnCode)
+            end
+            web.goToPage(NextPage, true, true)
+        end
+
+    else
+        local configRow = {}
+        local returnCode, configRow = 
+              omniSslClientConfig.omniSSLClientConfigGet()
+        if(returnCode ~= returnCodes.SUCCESS) then 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+    LANG_LOCALE = "12795,13999,10695,50002,11748,50003,50004,50005,50006,10522,50007,50008"
+    
+    cgilua.header("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<!--
+		Copyright (c) 2015 TeamF1, Inc. (www.TeamF1.com)
+		All rights reserved.
+		-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+	</head>
+
+	<body>
+		<!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>
+		<form action="platform.cgi" method="post"  enctype="multipart/form-data" name="tf1_frmOmniSslConfiguration" id="tf1_frmOmniSslConfiguration">
+			<input type="hidden" name="thispage" id="thispage" value="omniSslConfiguration.html">
+			<div id="tf1_dialog" class="configDialog"></div>
+		</form>
+		<!-- Section for Pop up dialog ends -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+			    <td class="header" valign="top" align="center">
+				    <?lua web.includeMenu("header.html")?>
+                </td>
+            </tr>
+            <!-- Right click Div Start -->
+		    <div class="contextMenu" id="contextMenu">
+			    <ul>
+				    <li>
+					    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'details download');" />
+					    $| LANG_LOCALE['12795'] |$
+				    </li>
+				    <li id="details">
+					    $| LANG_LOCALE['13999'] |$
+				    </li>
+				    <li id="delete">
+					    $| LANG_LOCALE['10695'] |$
+				    </li>
+			    </ul>
+		    </div>
+		    <!-- Right click Div End -->
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu4");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					-->
+                                        <?lua if(statusErrorMessage ~= returnCodes.NIL) then?>
+                                          <div class="msgError">
+                                          <p>$| statusErrorMessage |$</p>
+                                           </div>
+                                          <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                                         <div class="msgSuccess">
+                                         <p>$| statusSuccessMessage |$</p>
+                                          </div>
+                                        <?lua end ?>
+				 <div class="FL2">
+				        <p class="hint">
+				        $| helpHintText |$            </p>
+				    </div>
+					<h1>$| LANG_LOCALE['50002'] |$</h1>
+					<div class="CLR">
+						<div class="demo_jui" id="tf1_omniSslCertificates">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData2">
+								<thead>
+									<tr>
+										<th>$| LANG_LOCALE['11748'] |$</th>
+									</tr>
+								</thead>
+                                    <?lua
+                                    for k, v in pairs(configRow) do
+                                        local outputTable = {}
+                                        outputTable = configRow[k]
+                                        local rowId = outputTable["_ROWID_"]
+                                        local clientname = outputTable["clientName"]
+ 
+                                    ?>
+								<tr class="gradeA" id="omniSslConfiguration$| rowId |$">
+									<td>$| clientname |$</td>
+								</tr>
+				     <?lua end ?>				
+							</table>
+						</div>
+					</div>
+
+					<div class="buttonsRow" id="tf1_btnShowModal">
+						<input type="button" class="btnSubmit" title="$| LANG_LOCALE['50003'] |$" value="$| LANG_LOCALE['50003'] |$" id="btSave" name="button.add.omniSslConfiguration.omniSslConfiguration.-1" onclick="openForm('button.add.omniSslConfiguration.omniSslConfiguration',-1,'tf1_dialog','omniSslConfiguration','omniSslConfigurationForm.html', 'tf1_omniSslConfigurationDailogContent','');">
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#tf1_omniSslCertificates .gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'deleteMenu' : function(t, e, rowId) {
+						deleteRows('button.delete.omniSslConfiguration.omniSslConfiguration', 'tf1_frmOmniSslConfiguration', rowId, 'optionSelectAll', 'tf1_dialog', 'omniSslConfiguration', 'omniSslConfiguration');
+						},
+						'detailsMenu' : function(t, e, rowId) {
+							openForm('button.view.omniSslConfiguration.omniSslConfiguration', rowId, 'tf1_dialog', 'omniSslConfiguration', 'omniSslConfigurationForm.html', 'tf1_omniSslConfigurationViewDailogContent', '');
+						}
+					}
+				});
+				oTable = $('#recordsData2').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+				$("#btnClose").live("click", function(e) {
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+				});
+			});
+
+			/* function for validate form when user clicks on submit button
+			 * OnSubmit event
+			 * @method pageValidate
+			 */
+			function pageValidate() {
+				var txtFieldIdArr = new Array();
+				txtFieldIdArr[0] = "tf1_clientName,"+LANG_LOCALE['50004'];
+				txtFieldIdArr[1] = "tf1_trustedCAFile,"+LANG_LOCALE['50005'];
+
+				if (txtFieldArrayCheck(txtFieldIdArr) == false)
+					return false;
+
+                if (alphaNumericValueCheck ("tf1_clientName", '', '') == false)    
+                    return false;
+
+				return true;
+			}
+		</script>
+	</body>
+</html>
+<?lua end ?>

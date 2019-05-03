@@ -1,0 +1,275 @@
+<?lua 
+require "teamf1lualib/voiceVlan_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "voiceVlan"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag, cookie
+
+if (ButtonType and ButtonType == "delete") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["voiceVlan.checkbox"]) == "string") then
+                inputTable["voiceVlan.cookie"] = cgi["voiceVlan.checkbox"]
+                errorFlag = voiceDelete (inputTable)
+        elseif (type(cgi["voiceVlan.checkbox"]) == "table") then
+                errorFlag = voiceDeleteAll ()
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "add") then
+        local inputTable = web.cgiToLuaTable (cgi)
+        errorFlag, cookie = voiceCreate (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+         web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "edit") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        inputTable["voiceVlan.cookie"] = cgi["configRowId"]
+        errorFlag, cookie = voiceSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+
+
+elseif (ButtonType and ButtonType=="config") then
+        local inputTable = web.cgiToLuaTable (cgi)
+        errorFlag, cookie = featureStatusSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+else
+    local status, voiceVlanInfo
+     errorFlag, status        = featureStatusGet ()
+     errorFlag, voiceVlanInfo = voiceGetAll ()
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+    <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmVoiceVlan" id="tf1_frmVoiceVlan">        
+            <input type="hidden" name="thispage" id="thispage" value="voiceVlan.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        
+        <!-- Section for Pop up dialog ends -->    
+
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'edit');"/>
+                    &nbsp;Select All
+                </li>
+                <li id="edit">
+                    Edit
+                </li>
+                <li id="delete">
+                    Delete
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=macBasedVlan.html">MAC Based VLAN</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=voiceVlan.html">Voice VLAN</a>
+                                </li>
+                                <li>
+                                    <a href="?page=protocolVlan.html">Protocol Based VLAN</a>
+                                </li>
+                                <li>
+                                    <a href="?page=doubleVLAN.html">Double VLAN</a>
+                                </li>
+                                <li>
+                                    <a href="?page=gvrp.html">GVRP</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>Voice VLAN</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form action="platform.cgi" method="post" name="tf1_frmVoiceVlan2" id="tf1_frmVoiceVlan2">        
+                                <input type="hidden" name="thispage" id="thispage" value="voiceVlan.html">
+                                <h2>Voice VLAN Setup</h2>
+                                <div class="configRow">
+                                    <label> Activate Voice VLAN </label>
+                                    <?lua if (status== "1") then
+                                               statusStr="enable-disable-on"
+                                               statusVar = "1"
+                                         else
+                                               statusStr="enable-disable-off"
+                                               statusVar = "0"
+                                         end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" ></a>
+                                        <input type="hidden" name="voiceVlan.status" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.voiceVlan" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="setHiddenChks('tf1_frmVoiceVlan2')">
+
+                                    <input type="reset" class="btnReset" title="Cancel" value="Cancel" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmVoiceVlan2')">
+
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>Voice VLAN List</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui" id="tf1_voiceVlan">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                            <thead>
+                                                <tr>
+                                                    <th> Port </th>
+                                                    <th> Mode </th>
+                                                    <th> VLAN ID </th>
+                                                    <th> Custom Dot1q </th>
+                                                </tr>
+                                            </thead>
+                                             <?lua 
+                                                    local i = 0
+                                                    for k, v in pairs (voiceVlanInfo) do
+                                                    i=i+1
+                                                    local row = voiceVlanInfo[i]
+                                              ?>
+                                            <tr class="gradeA" id="voiceVlan$| row["_ROWID_"] |$">
+                                                <td>$| "Port"..row["portNum"] or '' |$</td>
+                                                <td>$| row["voiceVlanMode"] or '' |$</td>
+                                                <td>$| row["voiceVlan"] or '' |$</td>
+                                                <td>$| row["customDot1p"] or '' |$</td>
+                                            </tr>
+                                             <?lua 
+                                                    end 
+                                             ?>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="buttonsRow" id="tf1_btnShowModal">
+                                    <input type="button" class="btnSubmit" title="Add New Voice VLAN" value="Add New Voice VLAN" id="btSave" onclick="openForm('button.add.voiceVlan.voiceVlan',-1,'tf1_dialog','voiceVlan','voiceVlanForm.html', 'tf1_voiceVlanDailogContent','onLoadVocieVlanFn');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/voiceVlanConfig.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#tf1_voiceVlan .gradeA').contextMenu('contextMenu', {
+                                    bindings : {
+                                        'editMenu' : function(t, e, rowId) {
+                                            openForm('button.edit.voiceVlan.voiceVlan',rowId,'tf1_dialog','voiceVlan','voiceVlanForm.html', 'tf1_voiceVlanDailogContent','onLoadVocieVlanFn');                                    
+                                        },
+                                        'deleteMenu' : function(t, e, rowId) {
+                                             
+                                            deleteRows('button.delete.voiceVlan.voiceVlan', 'tf1_frmVoiceVlan', rowId, 'optionSelectAll', 'tf1_dialog', 'voiceVlan', 'voiceVlan');
+                                        }
+                                    }
+                                });
+
+                 
+
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                onloadCall();
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

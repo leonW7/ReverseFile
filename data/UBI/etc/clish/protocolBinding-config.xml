@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="net-routing-protocol-config" prompt="net-config[protocol-binding]> "> 
+    <COMMAND name="save" help="Save Protocol-Binding rules configuration changes.">
+	     <ACTION>lua clishCfgObjExec("protocolBinding")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Protocol Binding rules configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("protocolBinding")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="Service"
+             help="Available Service ">
+             <PARAM name="service"
+                    help="derv"
+                    ptype="SERVICE"/>
+             <ACTION>lua clishCfgObjAdd ("protocolBinding","ProtocolBinding.ServiceName", "${service}")              
+             </ACTION>
+    </COMMAND> 
+    <COMMAND name="Local_Gateway"
+             help="local gateway type">
+             <PARAM name="local_gateway"
+                    help="local"
+                    ptype="EXT_INTERFACE_TYPE_FOR_FIREWALL"/>
+             <ACTION>lua clishCfgObjAdd ("protocolBinding","ProtocolBinding.LocalGatewayType", "${local_gateway}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Source_Network"
+             help="source network type">
+             <PARAM name="source_network"
+                    help="sourc"
+                    ptype="USER_ADDRESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("protocolBinding","ProtocolBinding.SourceNetworkType", "${source_network}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Destination_Network"
+             help="destination network type">
+             <PARAM name="destination_network"
+                    help="destination network type"
+                    ptype="USER_ADDRESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("protocolBinding","ProtocolBinding.DestinationNetworkType", "${destination_network}")            
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_address_start"
+             help="starting IP of the Source Network">
+             <PARAM name="srcAddrStart"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("protocolBinding", "ProtocolBinding.SourceNetworkStart", "${srcAddrStart}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_address_end"
+             help="ending IP of the Source user">
+             <PARAM name="srcAddrEnd"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("protocolBinding", "ProtocolBinding.SourceNetworkEnd", "${srcAddrEnd}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address_start"
+             help="start IP of the Destination user">
+             <PARAM name="dstAddrStart"
+                    help="IP of the Destination User"
+                    ptype="IP_ADDR"/>
+            <ACTION>lua clishCfgObjAdd ("protocolBinding", "ProtocolBinding.DestinationNetworkStart", "${dstAddrStart}") 
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address_end"
+             help="ending IP of the Destiation user">
+             <PARAM name="dstAddrEnd"
+                    help="IP of the Destination User"
+                    ptype="IP_ADDR"/>
+            <ACTION>lua clishCfgObjAdd ("protocolBinding", "ProtocolBinding.DestinationNetworkEnd", "${dstAddrEnd}")                        
+            </ACTION>
+    </COMMAND>
+</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net routing protocol_binding" license_support="Y" help="protocol_binding rules"/>
+    <!--=======================================================-->
+    <COMMAND name="net routing protocol_binding add"
+             help="protocol_binding rules configuration mode."
+             view="net-routing-protocol-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("protocolBinding",protocolBindingCfgInit, protocolBindingCfgSave, protocolBindingCfgInputVal,"-1")
+             </ACTION>
+    </COMMAND>
+     <!--=======================================================-->
+    <COMMAND name="net routing protocol_binding edit"
+             help="protocol_binding rules configuration mode."
+             view="net-routing-protocol-config" viewid="">
+	         <PARAM name="row_id" 
+	                help=" Row Id Of the rule to be edited"
+	                ptype="UINT"/>
+                    <ACTION>lua clishCfgObjNew ("protocolBinding",protocolBindingCfgInit, protocolBindingCfgSave,protocolBindingCfgInputVal,"${row_id}")
+                    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net routing protocol_binding enable"
+             help="protocol_binding rules configuration mode."
+             view="net-routing-protocol-config" viewid="">
+	         <PARAM name="row_id" 
+	       help=" Row Id Of the rule to be enabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(protocolBindingModify, "${row_id}", "enable")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net routing protocol_binding disable"
+             help="protocol_binding rules configuration mode."
+             view="net-routing-protocol-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be disabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(protocolBindingModify, "${row_id}", "disable")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net routing protocol_binding delete"
+             help="protocol_binding rules configuration mode."
+             view="net-routing-protocol-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(protocolBindingModify, "${row_id}", "delete")
+                   </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

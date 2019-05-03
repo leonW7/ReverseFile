@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# pppoeInit - initialization script for pppoe
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,31jan08,ss written
+

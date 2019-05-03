@@ -1,0 +1,1289 @@
+<?lua
+--require "teamf1lualib/bl_globalStatusAps"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bl_dashboard"
+require "teamf1lualib/vpn_dashboard"
+
+
+--local guiGlobalStatusAps = require("com.teamf1.bl.wlan.apglobalstatus")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+local trafficStats = require ("com.teamf1.bl.statistics.traffic")
+
+local apStatus = {}
+local memoryUsage = {}
+local cpuUsage = {}
+local wan1InterfaceStats = {}
+local wan2InterfaceStats = {}
+local errorCode
+
+    local wan1DispName
+    local wan2DispName
+    local localizeWan1
+    local localizeWan2
+    local spanLocalizeWan1
+    local spanLocalizeWan2
+	wan1DispName = "WAN1"
+    localizeWan1 = "data-localize='30015'"
+    spanLocalizeWan1 = "<span data-localize='30015'>WAN1</span>"
+	wan2DispName = "WAN2"
+    localizeWan2 = "data-localize='30017'"
+    spanLocalizeWan2 = "<span data-localize='30017'>WAN2</span>"
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Traffic Overview Details Popup Starts -->
+<div id="tf1_dashboardTrafficDetailsDailogContent">
+    <?lua 
+    local bwUsageLan, bwUsageOption1, bwUsageOption2, bwUsageOption3
+    errorCode, bwUsageLan, bwUsageOption1, bwUsageOption2, bwUsageOption3= trafficStats.bwUsageGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+        bwUsageLan = {}
+        bwUsageOption1 = {}
+        bwUsageOption2 = {}
+        bwUsageOption3 = {}
+    end
+    ?>
+
+	<div class="topBg">
+	  <h1 data-localize="13126">Traffic Overview Details</h1>
+    <close>
+      <a href="#" id="btnClose" title="Close">X</a>
+     </close>
+	</div>
+    <div class="dialogMidArea">
+            <h1 data-localize="11515"> LAN </h1>
+            <div class="break">
+                &nbsp;
+            </div>       
+                                <div class="configRow">
+                                    <label data-localize="11127"> HTTP </label>
+                                    <p>
+                                        $| bwUsageLan.appHttp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+		                        <div class="configRow">
+                                    <label data-localize="11129"> HTTPS </label>
+                                    <p>
+                                        $| bwUsageLan.appHttps or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10794"> DNS </label>
+                                    <p>
+                                        $| bwUsageLan.appDns or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>2 </label>
+                                    <p>
+                                        $| bwUsageLan.appImap2 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>3 </label>
+                                    <p>
+                                        $| bwUsageLan.appImap3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11780"> NFS </label>
+                                    <p>
+                                        $| bwUsageLan.appNfs or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12462"> POP3 </label>
+                                    <p>
+                                        $| bwUsageLan.appPop3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12874"> SMTP </label>
+                                    <p>
+                                        $| bwUsageLan.appSmtp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12879"> SNMP </label>
+                                    <p>
+                                        $| bwUsageLan.appSnmp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12917"> SSH </label>
+                                    <p>
+                                        $| bwUsageLan.appSsh or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13049"> TELNET </label>
+                                    <p>
+                                        $| bwUsageLan.appTelnet or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+			
+        <h1 $| localizeWan1 |$> $|wan1DispName|$ </h1>
+            <div class="break">
+                &nbsp;
+            </div>              
+                                <div class="configRow">
+                                    <label data-localize="11127"> HTTP </label>
+                                    <p>
+                                        $| bwUsageOption1.appHttp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div> 
+		                        <div class="configRow">
+                                    <label data-localize="11129"> HTTPs </label>
+                                    <p>
+                                        $| bwUsageOption1.appHttps or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10794"> DNS </label>
+                                    <p>
+                                        $| bwUsageOption1.appDns or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>2 </label>
+                                    <p>
+                                        $| bwUsageOption1.appImap2 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>3 </label>
+                                    <p>
+                                        $| bwUsageOption1.appImap3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11780"> NFS </label>
+                                    <p>
+                                        $| bwUsageOption1.appNfs or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12462"> POP3 </label>
+                                    <p>
+                                        $| bwUsageOption1.appPop3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12874"> SMTP </label>
+                                    <p>
+                                        $| bwUsageOption1.appSmtp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12879"> SNMP </label>
+                                    <p>
+                                        $| bwUsageOption1.appSnmp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12917"> SSH </label>
+                                    <p>
+                                        $| bwUsageOption1.appSsh or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13049"> TELNET </label>
+                                    <p>
+                                        $| bwUsageOption1.appTelnet or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+        <h1 $| localizeWan2 |$> $|wan2DispName|$ </h1>
+            <div class="break">
+                &nbsp;
+            </div>          
+                                <div class="configRow">
+                                    <label data-localize="11127"> HTTP </label>
+                                    <p>
+                                        $| bwUsageOption2.appHttp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+		                        <div class="configRow">
+                                    <label data-localize="11129"> HTTPs </label>
+                                    <p>
+                                        $| bwUsageOption2.appHttps or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10794"> DNS </label>
+                                    <p>
+                                        $| bwUsageOption2.appDns or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>2 </label>
+                                    <p>
+                                        $| bwUsageOption2.appImap2 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>3 </label>
+                                    <p>
+                                        $| bwUsageOption2.appImap3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11780"> NFS </label>
+                                    <p>
+                                        $| bwUsageOption2.appNfs or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12462"> POP3 </label>
+                                    <p>
+                                        $| bwUsageOption2.appPop3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12874"> SMTP </label>
+                                    <p>
+                                        $| bwUsageOption2.appSmtp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12879"> SNMP </label>
+                                    <p>
+                                        $| bwUsageOption2.appSnmp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12917"> SSH </label>
+                                    <p>
+                                        $| bwUsageOption2.appSsh or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13049"> TELNET </label>
+                                    <p>
+                                        $| bwUsageOption2.appTelnet or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+	<?lua if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+        <h1 data-localize="30018"> WAN3 </h1>
+            <div class="break">
+                &nbsp;
+            </div>              
+                                <div class="configRow">
+                                    <label data-localize="11127"> HTTP </label>
+                                    <p>
+                                        $| bwUsageOption3.appHttp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div> 
+		                        <div class="configRow">
+                                    <label data-localize="11129"> HTTPs </label>
+                                    <p>
+                                        $| bwUsageOption3.appHttps or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10794"> DNS </label>
+                                    <p>
+                                        $| bwUsageOption3.appDns or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>2 </label>
+                                    <p>
+                                        $| bwUsageOption3.appImap2 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>3 </label>
+                                    <p>
+                                        $| bwUsageOption3.appImap3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11780"> NFS </label>
+                                    <p>
+                                        $| bwUsageOption3.appNfs or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12462"> POP3 </label>
+                                    <p>
+                                        $| bwUsageOption3.appPop3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12874"> SMTP </label>
+                                    <p>
+                                        $| bwUsageOption3.appSmtp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12879"> SNMP </label>
+                                    <p>
+                                        $| bwUsageOption3.appSnmp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12917"> SSH </label>
+                                    <p>
+                                        $| bwUsageOption3.appSsh or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13049"> TELNET </label>
+                                    <p>
+                                        $| bwUsageOption3.appTelnet or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+	<?lua end ?>                                
+  </div>  
+</div>
+<!-- Traffic Overview Details Popup Ends -->
+
+<!-- WAN Ports Details Popup Starts -->
+<div id="tf1_dashboardOptionPortsDetailsDailogContent">
+    <?lua 
+    errorCode, wan1InterfaceStats = trafficStats.wan1TrafficStatsGet ()
+    if (wan1InterfaceStats == returnCodes.NIL) then
+        wan1InterfaceStats = {}
+    end
+
+    errorCode, wan2InterfaceStats = trafficStats.wan2TrafficStatsGet ()
+    if (wan2InterfaceStats == returnCodes.NIL) then
+        wan2InterfaceStats = {}
+    end
+
+    if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+    	errorCode, wan3InterfaceStats = trafficStats.wan3TrafficStatsGet ()
+    	if (wan3InterfaceStats == returnCodes.NIL) then
+        	wan3InterfaceStats = {}
+    	end
+    end
+    ?>
+	<div class="topBg">
+	  <h1>WAN Ports Details</h1>
+    <close>
+      <a href="#" id="btnClose" title="Close">X</a>
+     </close>
+	</div>
+    <div class="dialogMidArea">      
+        <h1> <span data-localize="11187">Interface</span> ($|spanLocalizeWan1|$) </h1>
+            <div class="break">
+                &nbsp;
+            </div>       
+                                <div class="configRow">
+                                    <label data-localize="11175"> Incoming Packets </label>
+                                    <p>
+                                        $| wan1InterfaceStats.rx_packets or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11880"> Outgoing Packets </label>
+                                    <p>
+                                        $| wan1InterfaceStats.tx_packets or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10823"> Dropped In Packets </label>
+                                    <p>
+                                        $| wan1InterfaceStats.rx_dropped or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10827"> Dropped Out Packets </label>
+                                    <p>
+                                        $| wan1InterfaceStats.tx_dropped or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+        <h1> <span data-localize="11187">Interface</span> ($|spanLocalizeWan2|$) </h1>
+            <div class="break">
+                &nbsp;
+            </div>       
+                                <div class="configRow">
+                                    <label data-localize="11175"> Incoming Packets </label>
+                                    <p>
+                                        $| wan2InterfaceStats.rx_packets or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11880"> Outgoing Packets </label>
+                                    <p>
+                                        $| wan2InterfaceStats.tx_packets or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10823"> Dropped In Packets </label>
+                                    <p>
+                                        $| wan2InterfaceStats.rx_dropped or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10827"> Dropped Out Packets </label>
+                                    <p>
+                                        $| wan2InterfaceStats.tx_dropped or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>          
+			<?lua if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+				<h1> <span data-localize="11187">Interface</span> (<span data-localize="30018">WAN3</span>) </h1>
+            			<div class="break">
+			                &nbsp;
+			        </div>       
+                                <div class="configRow">
+                                    <label data-localize="11175"> Incoming Packets </label>
+                                    <p>
+                                        $| wan3InterfaceStats.rx_packets or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11880"> Outgoing Packets </label>
+                                    <p>
+                                        $| wan3InterfaceStats.tx_packets or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10823"> Dropped In Packets </label>
+                                    <p>
+                                        $| wan3InterfaceStats.rx_dropped or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10827"> Dropped Out Packets </label>
+                                    <p>
+                                        $| wan3InterfaceStats.tx_dropped or '0' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+			<?lua end ?>                      
+  </div>  
+</div>
+<!-- Option Ports Details Popup Ends -->
+
+<!-- Bandwidth Usage Details Popup Starts -->
+<div id="tf1_dashboardBandwidthUsageDetailsDailogContent">
+    <?lua
+    local bwUsageLan, bwUsageOption1, bwUsageOption2, bwUsageOption3
+    errorCode, bwUsageLan, bwUsageOption1, bwUsageOption2, bwUsageOption3 = trafficStats.bwUsageGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+        bwUsageLan = {}
+        bwUsageOption1 = {}
+        bwUsageOption2 = {}
+        bwUsageOption3 = {}
+    end
+    ?>
+
+	<div class="topBg">
+	  <h1 data-localize="10362">Bandwidth Usage Details</h1>
+    <close>
+      <a href="#" id="btnClose" title="Close">X</a>
+     </close>
+	</div>
+    <div class="dialogMidArea">
+            <h1 data-localize="11515"> LAN </h1>
+            <div class="break">
+                &nbsp;
+            </div>       
+                                <div class="configRow">
+                                    <label data-localize="11127"> HTTP </label>
+                                    <p>
+                                        $| bwUsageLan.appHttp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                    <div class="configRow">
+                                    <label data-localize="11129"> HTTPs </label>
+                                    <p>
+                                        $| bwUsageLan.appHttps or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10794"> DNS </label>
+                                    <p>
+                                        $| bwUsageLan.appDns or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>2 </label>
+                                    <p>
+                                        $| bwUsageLan.appImap2 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>3 </label>
+                                    <p>
+                                        $| bwUsageLan.appImap3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11780"> NFS </label>
+                                    <p>
+                                        $| bwUsageLan.appNfs or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12462"> POP3 </label>
+                                    <p>
+                                        $| bwUsageLan.appPop3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12874"> SMTP </label>
+                                    <p>
+                                        $| bwUsageLan.appSmtp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12879"> SNMP </label>
+                                    <p>
+                                        $| bwUsageLan.appSnmp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12917"> SSH </label>
+                                    <p>
+                                        $| bwUsageLan.appSsh or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13049"> TELNET </label>
+                                    <p>
+                                        $| bwUsageLan.appTelnet or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+        <h1 $| localizeWan1 |$> $|wan1DispName|$ </h1>
+            <div class="break">
+                &nbsp;
+            </div>       
+                                <div class="configRow">
+                                    <label data-localize="11127"> HTTP </label>
+                                    <p>
+                                        $| bwUsageOption1.appHttp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+		                        <div class="configRow">
+                                    <label data-localize="11129"> HTTPs </label>
+                                    <p>
+                                        $| bwUsageOption1.appHttps or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10794"> DNS </label>
+                                    <p>
+                                        $| bwUsageOption1.appDns or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>2 </label>
+                                    <p>
+                                        $| bwUsageOption1.appImap2 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>3 </label>
+                                    <p>
+                                        $| bwUsageOption1.appImap3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11780"> NFS </label>
+                                    <p>
+                                        $| bwUsageOption1.appNfs or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12462"> POP3 </label>
+                                    <p>
+                                        $| bwUsageOption1.appPop3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12874"> SMTP </label>
+                                    <p>
+                                        $| bwUsageOption1.appSmtp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12879"> SNMP </label>
+                                    <p>
+                                        $| bwUsageOption1.appSnmp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12917"> SSH </label>
+                                    <p>
+                                        $| bwUsageOption1.appSsh or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13049"> TELNET </label>
+                                    <p>
+                                        $| bwUsageOption1.appTelnet or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+        <h1 $| localizeWan2 |$> $|wan2DispName|$ </h1>
+            <div class="break">
+                &nbsp;
+            </div>       
+                                <div class="configRow">
+                                    <label data-localize="11127"> HTTP </label>
+                                    <p>
+                                        $| bwUsageOption2.appHttp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+		                        <div class="configRow">
+                                    <label data-localize="11129"> HTTPs </label>
+                                    <p>
+                                        $| bwUsageOption2.appHttps or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10794"> DNS </label>
+                                    <p>
+                                        $| bwUsageOption2.appDns or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>2 </label>
+                                    <p>
+                                        $| bwUsageOption2.appImap2 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>3 </label>
+                                    <p>
+                                        $| bwUsageOption2.appImap3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11780"> NFS </label>
+                                    <p>
+                                        $| bwUsageOption2.appNfs or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12462"> POP3 </label>
+                                    <p>
+                                        $| bwUsageOption2.appPop3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12874"> SMTP </label>
+                                    <p>
+                                        $| bwUsageOption2.appSmtp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12879"> SNMP </label>
+                                    <p>
+                                        $| bwUsageOption2.appSnmp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12917"> SSH </label>
+                                    <p>
+                                        $| bwUsageOption2.appSsh or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13049"> TELNET </label>
+                                    <p>
+                                        $| bwUsageOption2.appTelnet or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+	<?lua if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+		<h1 data-localize="30018"> WAN3 </h1>
+            	<div class="break">
+                	&nbsp;
+            	</div>       
+                                <div class="configRow">
+                                    <label data-localize="11127"> HTTP </label>
+                                    <p>
+                                        $| bwUsageOption3.appHttp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+		                        <div class="configRow">
+                                    <label data-localize="11129"> HTTPs </label>
+                                    <p>
+                                        $| bwUsageOption3.appHttps or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10794"> DNS </label>
+                                    <p>
+                                        $| bwUsageOption3.appDns or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>2 </label>
+                                    <p>
+                                        $| bwUsageOption3.appImap2 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> <span data-localize="11164">IMAP</span>3 </label>
+                                    <p>
+                                        $| bwUsageOption3.appImap3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11780"> NFS </label>
+                                    <p>
+                                        $| bwUsageOption3.appNfs or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12462"> POP3 </label>
+                                    <p>
+                                        $| bwUsageOption3.appPop3 or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12874"> SMTP </label>
+                                    <p>
+                                        $| bwUsageOption3.appSmtp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12879"> SNMP </label>
+                                    <p>
+                                        $| bwUsageOption3.appSnmp or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12917"> SSH </label>
+                                    <p>
+                                        $| bwUsageOption3.appSsh or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13049"> TELNET </label>
+                                    <p>
+                                        $| bwUsageOption3.appTelnet or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+	<?lua end ?>
+  </div>  
+</div>
+<!-- Bandwidth Usage Details Popup Ends -->
+
+<!-- VPNs Details Popup Starts -->
+<div id="tf1_dashboardVPNsDetailsDailogContent">
+    <?lua 
+    local returnCode
+    local activeSslvpnUserTable = {}
+    local activeClientTunnelsTable = {}
+    local activeClientTunnelsTable = {}
+    local activeGatewayTunnelsTable = {}
+    local header = {}
+    local currentValues = {}
+    returnCode, activeSslvpnUserTable, 
+    activeClientTunnelsTable, activeGatewayTunnelsTable, header, currentValues =
+                                    vpnRecordsGet ()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+        currentValues = {}
+    end
+?>
+	<div class="topBg">
+	  <h1 data-localize="13300">VPNs Details</h1>
+    <close>
+      <a href="#" id="btnClose" title="Close">X</a>
+     </close>
+	</div>
+  <div class="dialogMidArea">       
+                               <div class="configRow">
+                                    <label data-localize="11059"> Gateway Policies configured  </label>
+                                    <p>
+                                        $| currentValues["gatewayTunnels"] |$ 
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="11060"> Gateway tunnels connected </label>
+                                    <p>
+                                        $| currentValues["activeGatewayTunnelsTable"] |$ 
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10523"> Client policies configured </label>
+                                    <p>
+                                        $| currentValues["clientTunnels"] |$ 
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10532"> Client tunnels connected </label>
+                                    <p>
+                                        $| currentValues["activeClientTunnels"] |$ 
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <?lua if (HIGH_SEC == "HIGH") then ?>
+                                <div class="configRow">
+                                    <label data-localize="12958"> SSLVPN users configured </label>
+                                    <p>
+                                        $| currentValues["sslvpnUser"] |$ 
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="12959"> SSLVPN users connected </label>
+                                    <p>
+                                        $| currentValues["activeSslvpnUser"] |$ 
+                                    </p>
+                                </div>
+                            
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <?lua end ?>
+                                
+  </div> 
+</div>
+<!-- VPNs Details Popup Ends -->
+
+<!-- CPU Utilization Details Popup Starts -->
+<div id="tf1_dashboardCPUUtilizationDetailsDailogContent">
+    <?lua errorCode, cpuUsage = trafficStats.systemUtilizationGet ()
+
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+        cpuUsage = {}
+    end
+    ?>
+	<div class="topBg">
+	  <h1 data-localize="10611">CPU Utilization Details</h1>
+    <close>
+      <a href="#" id="btnClose" title="Close">X</a>
+     </close>
+	</div>
+  <div class="dialogMidArea">       
+		                        <div class="configRow">
+                                    <label data-localize="10609"> CPU usage by user </label>
+                                    <p>
+                                        $| cpuUsage.CpuUsedByUser or '0' |$ %
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="14261"> CPU usage by kernel </label>
+                                    <p>
+                                        $| cpuUsage.CpuUsedByKernel or '0' |$ %
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>      
+                                <div class="configRow">
+                                    <label data-localize="10608"> CPU idle </label>
+                                    <p>
+                                        $| cpuUsage.CpuIdle or '0' |$ %
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10612"> CPU waiting for IO </label>
+                                    <p>
+                                        $| cpuUsage.CpuWaitingForIO or '0' |$ %
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+  </div>  
+</div>
+<!-- CPU Utilization Details Popup Ends -->
+
+<!-- Memory Utilization Details Popup Starts -->
+<div id="tf1_dashboardMemoryUtilizationDetailsDailogContent">
+    <?lua errorCode, memoryUsage = trafficStats.systemUtilizationGet ()
+
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+        memoryUsage = {}
+    end
+    ?>
+	<div class="topBg">
+	  <h1 data-localize="11707">Memory Utilization Details</h1>
+    <close>
+      <a href="#" id="btnClose" title="Close">X</a>
+     </close>
+	</div>
+    <div class="dialogMidArea">     
+                                <div class="configRow">
+                                    <label data-localize="13114"> Total Memory </label>
+                                    <p>
+                                        $| memoryUsage.MemoryTotal or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="13233"> Used Memory </label>
+                                    <p>
+                                        $| memoryUsage.MemoryUsed or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>      
+                                <div class="configRow">
+                                    <label data-localize="11040"> Free Memory </label>
+                                    <p>
+                                        $| memoryUsage.MemoryFree or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10447"> Cached Memory </label>
+                                    <p>
+                                        $| memoryUsage.MemoryCached or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label data-localize="10428"> Buffer Memory </label>
+                                    <p>
+                                        $| memoryUsage.MemoryBuffers or '0' |$ KB
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+  </div>  
+</div>
+<!-- Memory Utilization Details Popup Ends -->
+

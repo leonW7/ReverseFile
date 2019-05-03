@@ -1,0 +1,163 @@
+#!/bin/sh
+
+#@copyright (c) 2016, TeamF1 Networks Pvt. Ltd. 
+#(Subsidiary of D-Link India)
+
+#Modification history
+#--------------------
+#01a,22apr16,ss   fix for spr 55773.
+
+DB_FILENAME=/tmp/system.db
+USER_TABLE=Users
+GROUP_TABLE=Users
+
+#check number of arguments
+if [ $# -le 0 ];  then
+    echo $0":File Name Not Provided" >>/var/openvpn/openvpn.log
+    exit 1;
+fi
+#check file exist and is readable or not
+if [ ! -r $1 ]; then
+    echo $0": File Not Readable" >>/var/openvpn/openvpn.log
+    exit 1;
+fi
+
+#get username and password
+
+userName=`sed -n 1p $1`
+passWord=`sed -n 2p $1`
+ipAndPort=`sed -n 3p $1`
+ipAndPort=`echo $ipAndPort | cut -d "/" -f 2`
+
+#verify username, password and ipPort
+if [ -z $userName ]; then 
+    echo $0": Empty User Name " >>/var/openvpn/openvpn.log
+    exit 1;
+fi
+
+if [ -z $passWord ]; then 
+    echo $0": Empty User Password " >>/var/openvpn/openvpn.log
+    exit 1;
+fi
+
+if [ -z $ipAndPort ]; then 
+    echo $0": Empty IpAddress:port " >>/var/openvpn/openvpn.log
+    exit 1;
+fi
+
+#Get duplicateCN value for openvpn server settings.
+retries=1
+duplicateCn="0"
+while [ $retries -lt 5 ];
+do
+duplicateCn=`sqlite3 /tmp/system.db "select duplicateCN from OpenVpn where ServerEnable='1'" 2>/dev/null`
+       #check if last bash operation succeeded, if not retry
+       if [ $? == 0 ]; then
+           break
+       else
+           #echo "DB lock retrying again"
+           retries=`expr $retries + 1`
+           sleep 1
+       fi
+done ### while database update is successful
+#check whether OpenVPN session is already established with $userName for
+#duplicate CN.
+
+if [ "$duplicateCn" = "1" ];then
+retries=1
+CommonNameExists="0"
+CommonNameAndIPExists="0"
+
+while [ $retries -lt 5 ];
+do
+CommonNameAndIPExists=`sqlite3 /tmp/system.db "select rowid from openVPNActiveClients where ipAddrPortNum='$ipAndPort'" 2>/dev/null`
+       #check if last bash operation succeeded, if not retry
+       if [ $? == 0 ]; then
+           break
+       else
+           #echo "DB lock retrying again"
+           retries=`expr $retries + 1`
+           sleep 1
+       fi
+done ### while database update is successful
+if [ ! -z "$CommonNameAndIPExists" -a "$CommonNameAndIPExists" != " " ];then
+#Entry exists means request is coming from same system. So need to allow. For
+#that deleting existing entry.
+while [ $retries -lt 5 ];
+do
+result=`sqlite3 /tmp/system.db "delete from openVPNActiveClients where ipAddrPortNum='$ipAndPort'" 2>/dev/null`
+       #check if last bash operation succeeded, if not retry
+       if [ $? == 0 ]; then
+           break
+       else
+           #echo "DB lock retrying again"
+           retries=`expr $retries + 1`
+           sleep 1
+       fi
+done ### while database update is successful
+fi
+while [ $retries -lt 5 ];
+do
+CommonNameExists=`sqlite3 /tmp/system.db "select rowid from openVPNActiveClients where cnName='$userName'" 2>/dev/null`
+       #check if last bash operation succeeded, if not retry
+       if [ $? == 0 ]; then
+           break
+       else
+           #echo "DB lock retrying again"
+           retries=`expr $retries + 1`
+           sleep 1
+       fi
+done ### while database update is successful
+if [ ! -z "$CommonNameExists" -a "$CommonNameExists" != " " ];then
+#Entry already exists, so return from here.
+    exit 1
+fi
+fi
+#check user credentials
+#tempPassword=`sqlite3 /tmp/system.db "select password from Users where UserName='"$userName"'" 2>/dev/null`
+retries=1
+while [ $retries -lt 5 ];
+do
+tempPassword=`sqlite3 /tmp/system.db "select password from Users,UserGroups where UserName='"$userName"' and 
+UserGroups.GroupId=Users.GroupId and UserGroups.Capabilities LIKE '%13%'" 2>/dev/null`
+       #check if last bash operation succeded, if not retry
+       if [ $? == 0 ]; then
+           break
+       else
+           #echo "DB lock retrying again"
+           retries=`expr $retries + 1`
+           sleep 1
+       fi
+done ### while database update is successful
+
+if [ -z $tempPassword ]; then
+    echo $0": User does not exit " >>/var/openvpn/openvpn.log
+    exit 1;
+fi
+
+if [ $passWord != $tempPassword ]; then
+    echo $0": Wrong Password " >>/var/openvpn/openvpn.log
+    exit 1;
+fi
+
+#Insert the user into data base.
+
+if [ "$duplicateCn" = "1" ];then
+retries=1
+while [ $retries -lt 5 ];
+do
+result=`sqlite3 /tmp/system.db "insert into openVPNActiveClients(cnName, ipAddrPortNum) VALUES('$userName', '$ipAndPort')" 2>/dev/null`
+       #check if last bash operation succeeded, if not retry
+       if [ $? == 0 ]; then
+           break
+       else
+           #echo "DB lock retrying again"
+           retries=`expr $retries + 1`
+           sleep 1
+       fi
+done ### while database update is successful
+fi
+
+#check group capabilties
+
+exit 0;

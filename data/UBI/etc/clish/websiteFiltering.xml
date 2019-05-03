@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="security-content-filtering-config" prompt="security-config[content-filtering]> "> 
+    <COMMAND name="save" help="Save contentFiltering configuration changes.">
+	     <ACTION>lua clishCfgObjExec("contentFiltering")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save content Filtering configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("contentFiltering")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back content filtering configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="content_filtering"
+             help="Enable/Disable content Filtering">
+             <PARAM name="status"
+                    help="Enable/Disable content Filtering"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("contentFiltering", "ContentFiltering.Status", "${status}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="proxy_enable"
+             help="enable/disable proxy">
+             <PARAM name="proxy"
+                    help="enable/disable proxy"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("contentFiltering", "WebComponents.ProxyEnable", "${proxy}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="java_enable"
+             help="enable/disable java">
+             <PARAM name="java"
+                    help="enable/disable java"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("contentFiltering", "WebComponents.JavaComponentEnable", "${java}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="activex_enable"
+             help="enable/disable activex">
+             <PARAM name="activex"
+                    help="enable/disable activex"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("contentFiltering", "WebComponents.ActivexControlEnable", "${activex}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="cookies_enable"
+             help="enable/disable cookies">
+             <PARAM name="cookies"
+                    help="enable/disable cookies"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("contentFiltering", "WebComponents.CookiesEnable", "${cookies}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-approved-urls-config" prompt="security-config[approved-urls]> "> 
+    <COMMAND name="save" help="Save trusted domains configuration changes.">
+	     <ACTION>lua clishCfgObjExec("trustedDomains")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save trusted domains configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("trustedDomains")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back trusted domains configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="url"
+             help="trusted domain name">
+             <PARAM name="domain"
+                    help="trusted domain name"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("trustedDomains", "TrustedDomains.KeywordToAllow", "${domain}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="protocol"
+             help="protocol speciifcation for trusted URL">
+             <PARAM name="trusted_protocol"
+                    help="protocol specification for trusted URL"
+                    ptype="TRUSTED_PROTOCOL"/>
+             <ACTION>lua clishCfgObjAdd ("trustedDomains", "TrustedDomains.Protocol", "${protocol}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-url-filtering-ACL-config" prompt="security-config[url-filtering-ACL]> "> 
+    <COMMAND name="save" help="Save url filtering ACL configuration changes.">
+	     <ACTION>lua clishCfgObjExec("urlFilteringACL")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save url filtering ACL configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("urlFilteringACL")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back url filtering ACL configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="url_Filtering_ACL"
+             help="Enable/Disable url_Filtering_ACL">
+             <PARAM name="enable"
+                    help="Enable/Disable url_Filtering_ACL"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("urlFilteringACL", "urlFilteringAccessControl.enable", "${enable}")              
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="action"
+             help="White or Black list url_Filtering_ACL">
+             <PARAM name="action"
+                    help="White or Black list url_Filtering_ACL"
+                    ptype="URL_Filtering_ACL_ACTION_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("urlFilteringACL", "urlFilteringAccessControl.action", "${action}")              
+             </ACTION>
+         </COMMAND>     
+   </VIEW> 
+<!--=======================================================-->
+
+<VIEW name="security-url-filtering-ACL-config-profile" prompt="security-config[url-filtering-ACL-profile]> "> 
+    <COMMAND name="save" help="Save url filtering ACL configuration changes.">
+	     <ACTION>lua clishCfgObjExec("urlFilteringACLProfile")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save url filtering ACL configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("urlFilteringACLProfile")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back url filtering ACL configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+<COMMAND name="policy_name"
+             help="url filtering acl profile name">
+             <PARAM name="policyName"
+                    help="url filtering acl profile name"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("urlFilteringACLProfile", "urlFilteringACLPolicy.policyName", "${policyName}")              
+             </ACTION>
+    </COMMAND>     
+    <COMMAND name="policy_type"
+             help="Type of the url filtering acl">
+             <PARAM name="policyType"
+                    help="Select url filtering acl type Single Address/Address Range/Interface"
+                    ptype="URL_Filtering_ACL_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("urlFilteringACLProfile", "urlFilteringACLPolicy.policyType", "${policyType}")              
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="ip_address"
+             help="IP of the Source user">
+             <PARAM name="ipAddress"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("urlFilteringACLProfile", "urlFilteringACLPolicy.ipAddress", "${ipAddress}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="start_address"
+             help="IP of the Source user">
+             <PARAM name="startIpAddress"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("urlFilteringACLProfile", "urlFilteringACLPolicy.startIpAddress", "${startIpAddress}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="end_address"
+             help="IP of the Source user">
+             <PARAM name="endIpAddress"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("urlFilteringACLProfile", "urlFilteringACLPolicy.endIpAddress", "${endIpAddress}")              
+             </ACTION>
+    </COMMAND>
+<COMMAND name="interface_name"
+             help="show net vlan configuration for available lan interfaces">
+             <PARAM name="interfaceName"
+                    help="show net vlan configuration for available lan interfaces"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("urlFilteringACLProfile", "urlFilteringACLPolicy.interfaceName", "${interfaceName}")              
+             </ACTION>
+    </COMMAND> 
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-blocked-urls-config" prompt="security-config[blocked-urls]> "> 
+    <COMMAND name="save" help="Save blocked URL configuration changes.">
+	     <ACTION>lua clishCfgObjExec("blockedKeywords")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save blocked URL configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("blockedKeywords")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back blocked URL configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="blocked_url"
+             help="enter url to be blocked">
+             <PARAM name="keyword"
+                    help="blocked url"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("blockedKeywords", "BlockSites.KeywordToBlock", "${keyword}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-blocked-all-urls-config" prompt="security-config[blocked-all-urls]> "> 
+    <COMMAND name="save" help="Save blocked all URL configuration changes.">
+	     <ACTION>lua clishCfgObjExec("blockedallKeywords")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save blocked all URL configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("blockedallKeywords")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back blocked all URL configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+    <COMMAND name="blocked_all_url"
+             help="Enable/Disable blocked all URL">
+             <PARAM name="status"
+                    help="Enable/Disable blocked all URL"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("blockedallKeywords", "BlockSites.KeywordToBlock", "${status}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security website_filter" license_support="Y" help="website filtering configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="security website_filter content_filtering" help="content filtering configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="security website_filter approved_urls" help="trusted domains configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="security website_filter blocked_URLs" help="blocked URL configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security website_filter url_Filtering_ACL" help="url filtering ACL configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security website_filter content_filtering configure"
+             help="content filtering configuration mode."
+             view="security-content-filtering-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("contentFiltering", 
+                              contentFilteringCfgInit, contentFilteringCfgSave, 
+				       contentFilteringCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security website_filter url_Filtering_ACL configure"
+             help="url filtering ACL configuration mode."
+             view="security-url-filtering-ACL-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("urlFilteringACL", 
+                              urlFilteringACLCfgInit, urlFilteringACLCfgSave, 
+				       urlFilteringACLCfgInputVal)
+                   </ACTION>
+               </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="security website_filter url_Filtering_ACL add"
+             help="url filtering ACL profile configuration mode."
+             view="security-url-filtering-ACL-config-profile" viewid="">
+                   <ACTION>lua clishCfgObjNew ("urlFilteringACLProfile", 
+                              urlFilteringACLProfileCfgInit, urlFilteringACLProfileCfgSave, 
+				       urlFilteringACLProfileCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter url_Filtering_ACL edit"
+             help="url filtering ACL profile configuration mode."
+             view="security-url-filtering-ACL-config-profile" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the domain to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("urlFilteringACLProfile", 
+                              urlFilteringACLProfileCfgInit, urlFilteringACLProfileCfgSave, 
+				       urlFilteringACLProfileCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter url_Filtering_ACL delete"
+             help="url filtering ACL profile configuration mode.">
+	<PARAM name="row_id" 
+	       help="Row Id Of the domain to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(urlFilteringACLProfileCfgDel,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter url_Filtering_ACL deleteAll"
+        help="Delete all the url Filtering ACL profiles.">
+        <ACTION>lua clishCmdExec(urlFilteringACLProfileCfgDelall)
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="security website_filter approved_urls add"
+             help="trusted domains configuration mode."
+             view="security-approved-urls-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("trustedDomains", 
+                              trustedDomainsCfgInit, trustedDomainsCfgSave, 
+				       trustedDomainsCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter approved_urls edit"
+             help="trusted domains configuration mode."
+             view="security-approved-urls-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the domain to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("trustedDomains", 
+                              trustedDomainsCfgInit, trustedDomainsCfgSave, 
+				       trustedDomainsCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter approved_urls delete"
+             help="trusted Domains configuration mode.">
+	<PARAM name="row_id" 
+	       help="Row Id Of the domain to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(trustedDomainsCfgDel,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="security website_filter blocked_URLs add"
+             help="blocked URL configuration mode."
+             view="security-blocked-urls-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("blockedKeywords", 
+                              blockedKeywordsCfgInit, blockedKeywordsCfgSave, 
+				       blockedKeywordsCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter blocked_URLs edit"
+             help="blocked URL configuration mode."
+             view="security-blocked-urls-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the blocked URL to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("blockedKeywords", 
+                              blockedKeywordsCfgInit, blockedKeywordsCfgSave, 
+				       blockedKeywordsCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter blocked_URLs delete"
+             help="blocked URL configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the blocked URL to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(blockedKeywordsCfgDel,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter blocked_URLs enable"
+             help="blocked URL configuration mode.">
+	<PARAM name="row_id" 
+	       help="Row Id Of the blocked URL to be enabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(blockedKeywordsStatusModify, "${row_id}", "enable")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security website_filter blocked_URLs disable"
+             help="blocked URL configuration mode.">
+	<PARAM name="row_id" 
+	       help="Row Id Of the blocked URL to be disabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(blockedKeywordsStatusModify, "${row_id}", "disable")
+                   </ACTION>
+               </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security website_filter blocked_URLs block_all_Urls"
+             help="blocked all URL configuration mode."
+             view="security-blocked-all-urls-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("blockedallKeywords", 
+                              blockedallKeywordsCfgInit, blockedallKeywordsCfgSave, 
+				       blockedallKeywordsCfgInputVal)
+                   </ACTION>
+    </COMMAND>           
+    <!--=======================================================-->
+    <COMMAND name="show security website_filter" license_support="Y" help="."/>
+    <!--=======================================================-->
+    <COMMAND name="show security website_filter content_filtering"
+            help="Display content filtering configuration">
+	    <ACTION>lua clishCmdExec (contentFilteringCfgGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security website_filter approved_urls"
+            help="Display trusted domains configuration">
+	    <ACTION>lua clishCmdExec (trustedDomainsCfgGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security website_filter url_Filtering_ACL"
+            help="Display url Filtering ACL configuration">
+	    <ACTION>lua clishCmdExec (urlFilteringACLProfileCfgGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security website_filter blocked_URLs"
+            help="Display blocked URLs configuration">
+	    <ACTION>lua clishCmdExec (blockedKeywordsCfgGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

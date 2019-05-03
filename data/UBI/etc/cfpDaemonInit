@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# cfpDaemonInit - initialization script for cfp Daemon
+#
+# Copyright (c) 2011, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,19Sep11,uk  written.
+#
+# DESCRIPTION
+# This script is the initialization script for cfp daemon component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_CFP_DAEMON" = "y" ]; then
+    echo -n "Starting CFP daemon... "
+    exec $CFP_DAEMON_INSTALL_PATH/bin/cfpDaemonMain $DB_FILENAME &
+    echo "Done"
+fi
+

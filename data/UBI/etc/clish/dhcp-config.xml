@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+    <!--===================================================-->
+    <VIEW name="net-dhcp-reserved-ip-config" prompt="net-config[dhcp-reserved-ip]> "> 
+    <COMMAND name="save" help="Save DHCP Reserved IPs configuration changes.">
+	<ACTION>lua clishCfgObjExec("DhcpfixedIpAddress")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save DHCP Reserved IPs configuration changes and exit current mode."
+	     view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("DhcpfixedIpAddress")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back DHCP Reserved IPs configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="ip_address" help="Set IP Address to be reserved">
+	<PARAM name="dhcp_reserved_ip" 
+        help="IP Address to be reserved"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DhcpfixedIpAddress", "DhcpfixedIpAddress.IpAddr",
+                                   "${dhcp_reserved_ip}")
+	</ACTION>
+    </COMMAND>
+<COMMAND name="mac_address" help="Reserved Mac address you want to add/edit.">
+	<PARAM name="mac_address" 
+        help="Reserved Mac address you want to add/edit."
+	       ptype="MAC_ADDR_T"/>
+	<ACTION>lua clishCfgObjAdd ("DhcpfixedIpAddress", "DhcpfixedIpAddress.MacAddr",
+                                   "${mac_address}")
+    </ACTION>
+   </COMMAND>
+ <COMMAND name="Association" help="Select to Associate with IP / MAC Binding">
+	<PARAM name="association" 
+        help="Select to Associate with IP / MAC Binding"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("DhcpfixedIpAddress", "DhcpfixedIpAddress.AssociatingEnabled",
+                                   "${association}")
+	</ACTION>
+   </COMMAND>
+ <COMMAND name="Log_Dropped_Packets" help="Displays logging option for the dropped packets.">
+	<PARAM name="LogStatus" 
+        help="Displays logging option for the dropped packets."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("DhcpfixedIpAddress", "DhcpfixedIpAddress.LogStatus",
+                                   "${LogStatus}")
+	</ACTION>
+   </COMMAND>
+ 
+    </VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net lan dhcp" help="DHCP setup."/>
+    <COMMAND name="net lan dhcp reserved_ip" help="DHCP Reserved IPs setup."/>
+    <!--=======================================================-->
+    <COMMAND name="net lan dhcp reserved_ip configure"
+             help="DHCP Reserved IPs add/edit mode."
+             view="net-dhcp-reserved-ip-config" viewid="">
+            <PARAM name="name" 
+             help="Specify a unique host name"
+	         ptype="STRING32"/>
+            <ACTION>lua clishCfgObjNew ("DhcpfixedIpAddress", 
+                                       dhcpReservedIPsCfgInit, 
+                                       dhcpReservedIPsCfgSave,
+                                       dhcpReservedIPsCfgInputVal,
+                                       "${name}")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net lan dhcp reserved_ip deleteAll"
+        help="Delete all specific dhcp reserved ip entries.">
+        <ACTION>lua clishCmdExec(dhcpReservedIPsCfgDelall)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net lan dhcp reserved_ip delete"
+             help="Delete a specific reserved ip entry.">
+	<PARAM name="name" 
+             help="Specify a unique host name"
+	         ptype="STRING32"/>
+            <ACTION>lua dhcpReservedIPsCfgDel("${name}") 
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    
+</CLISH_MODULE>

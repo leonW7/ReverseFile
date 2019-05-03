@@ -1,0 +1,53 @@
+<?lua
+
+local dbtable  = db.getTable ("fbwifi", false)[1]
+local facebookURL = ""
+local facebookMsg = ""
+local cookieName = ""
+local cookieVal = ""
+if (tonumber(dbtable.enabled) == 1) then
+require "teamf1lualib/captivePortal"
+    require "teamf1lualib/fbwifi"
+
+    if (cgi.token) then
+        -- validate token 
+     facebookURL, facebookMsg = fbwifi.authenticate (cgi)
+    elseif (cgi.c) then
+    -- redirect to original urll
+       facebookURL, facebookMsg = fbwifi.redirectorigurl (cgi.c)
+    else 
+        -- redirect user the facebook merchant portal 
+        facebookURL, facebookMsg, cookieName, cookieVal = fbwifi.user_checkin (cgi)
+    end
+end
+if (facebookURL ~= "") then
+?>
+<!doctype html>
+<html>
+<input type="hidden" value="$| cookieName or ''|$" id="hdcname">
+<input type="hidden" value="$| cookieVal or ''|$" id="hdcval">
+<body>
+$|facebookMsg|$
+<script>
+function setCookie(cname, cvalue) {
+    var d = new Date();
+    d.setTime(d.getTime() + (12*60*60*1000));
+    var expires = "expires="+d.toGMTString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+var cnameObj =  document.getElementById ("hdcname");
+var cvalObj =  document.getElementById ("hdcval");
+if (cnameObj && cvalObj)
+{
+    if (cnameObj.value != '' && cvalObj.value != '')
+    {
+        cvalObj.value = encodeURIComponent (cvalObj.value);
+        setCookie (cnameObj.value, cvalObj.value);
+    }
+}
+window.location="$|facebookURL or ''|$";
+</script>
+</body>
+</html>
+<?lua end?>
+

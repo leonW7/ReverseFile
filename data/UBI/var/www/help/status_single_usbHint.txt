@@ -1,0 +1,195 @@
+:|noHelpSet|:
+The table lists all the available logs in the system.
+:|noHelpSetEnd|:
+
+:|dashboard|:
+The Traffic Overview, WAN Ports, Bandwidth Usage, VPNs and packet traffic through the router is displayed for each interface.
+:|dashboardEnd|:
+
+:|device|:
+All of your Internet and network connection details are displayed on the Device Status page. The firmware version and hardware serial number is also displayed here.
+:|deviceEnd|:
+
+:|allLogs|:
+This page displays the captured log messages of the router activities.
+:|allLogsEnd|:
+
+:|wlanLogs|:
+This page displays the captured log messages of the router activities on WLAN interface.
+:|wlanLogsEnd|:
+
+:|firewallLogs|:
+This page displays the captured log messages of the router activities for  Firewall events.
+:|firewallLogsEnd|:
+
+:|ipsecVpnLogs|:
+This page displays the captured log messages specifically for IPsec events. 
+:|ipsecVpnLogsEnd|:
+
+:|sslVpnLogs|:
+This page displays the captured log messages specifically for SSLVPN events. 
+:|sslVpnLogsEnd|:
+
+:|logsWcf|:
+This page displays the captured log messages specifically for WCF events. 
+:|logsWcfEnd|:
+
+
+:|captivePortalLogs|:
+This page displays the captured log messages specifically for CAPTIVEPORTAL events. 
+:|captivePortalLogsEnd|:
+
+
+:|usbStatus|:
+This page displays information about the USB devices connected to the USB port(s).this page will update dynamically to show the status of the USB devices connected to the router.
+:|usbStatusEnd|:
+
+:|lanLeasedClients|:
+This table displays the list of DHCP clients connected to the LAN DHCP Server and to whom DHCP Server has given leases.If the LAN is serving DHCP addresses, this table will show the list of DHCP clients for the router's LAN DHCP server.
+:|lanLeasedClientsEnd|:
+
+:|ipv6LeasedClients|:
+This table displays the list of DHCPv6 clients connected to the LAN DHCPv6 Server and to whom DHCPv6 Server has given leases.If the LAN is serving DHCPV6 addresses, this table will show the list of DHCPv6 clients for the router's LAN DHCPv6 server.
+:|ipv6LeasedClientsEnd|:
+
+:|dmzLeasedClients|:
+This table displays the list of DHCP clients connected to the DMZ DHCP Server and to whom DHCP Server has given leases.If the LAN is serving DHCP addresses, this table will show the list of DHCP clients for the router's DMZ DHCP server.
+:|dmzLeasedClientsEnd|:
+
+:|captivePortalSessions|:
+Use this page to monitor the runtime authentication sessions that are active on your router. 
+:|captivePortalSessionsEnd|:
+
+:|activeSessions|:
+Use this page to monitor the sessions that are active on your router. 
+:|activeSessionsEnd|:
+
+:|activeIPsecSAs|:
+This page lists current established IPsec Security Associations. 
+:|activeIPsecSAsEnd|:
+
+:|activeSslVpnConnections|:
+This page lists current established SSL VPN tunnels. 
+:|activeSslVpnConnectionsEnd|:
+
+:|activePptpVpnConnections|:
+This page lists current established PPTP VPN tunnels. 
+:|activePptpVpnConnectionsEnd|:
+
+:|activeOpenVpnConnections|:
+The table lists all the available Active OpenVPN Connections in the system.
+:|activeOpenVpnConnectionsEnd|:
+
+:|activeL2tpVpnConnections|:
+This page lists current established L2TP VPN tunnels. 
+:|activeL2tpVpnConnectionsEnd|:
+
+:|greTunnelStatus|:
+This page lists current GRE tunnels.
+:|greTunnelStatusEnd|:
+
+:|interfaces|:
+The profiled  and packet traffic through the router is displayed for each interface..
+:|interfacesEnd|:
+
+:|lanClients|:
+This page displays a list of LAN clients connected to the router.
+:|lanClientsEnd|:
+
+:|controllerStatus|:
+The information on the Global page shows status and statistics about the
+ Controller .
+:|controllerStatusEnd|:
+
+:|controllerAssociatedClients|:
+The table lists all the available Controller Associated Clients in the system.
+:|controllerAssociatedClientsEnd|:
+
+:|distributedTunnel|:
+This page shows information about all the distributed tunnel clients.
+:|distributedTunnelEnd|:
+
+:|peerControllerReceiveStatus|:
+The Peer Controller receive Status page displays information about the configuration sent by a peer Controller in the cluster.
+:|peerControllerReceiveStatusEnd|:
+
+:|peerControllerConfigurationStatus|:
+The Peer Controller Configuration Status page displays information about the configuration sent by a peer Controller in the cluster.
+:|peerControllerConfigurationStatusEnd|:
+
+:|globalStatus|:
+The information on the Global page shows status and statistics about the Controller and all of the objects associated with it.The Unified Wireless Controller periodically collects information from the APs it manages and from associated peer controllers
+:|globalStatusEnd|:
+
+:|allAps|:
+The All AP Summary page shows summary information about managed, failed, and rogue access points the controller has discovered or detected.
+:|allApsEnd|:
+
+:|managed|:
+We can see all the details related to a managed AP here. We can perform actions like reset, disassociate clients connected with selected AP.
+:|managedEnd|:
+
+:|peerManaged|:
+The Peer Controller Managed AP Status page displays information about the APs that each peer Controller in the cluster manages.Use the menu above the table to select the peer Controller with the AP information to display. Each peer Controller is identified by its IP address.
+:|peerManagedEnd|:
+
+:|authenticationFailed|:
+The AP authentication failure list shows information about APs that failed to establish communication with the Unified Wireless Controller.An AP might fail to associate to the controller due to errors such as invalid packet format or vendor ID, or because the AP is not configured as a valid AP with the correct local or RADIUS authentication information.
+:|authenticationFailedEnd|:
+
+:|rfScan|:
+Through AP RF Scan Status page, you can view information about all APs detected via RF scan, including those reported as Rogues.The radios on each AP can periodically scan the radio frequency to collect information about other APs and wireless clients that are within range. In normal operating mode the AP always scans on the operational channel for the radio.
+:|rfScanEnd|:
+
+:|deAuthenticationAttacks|:
+The AP De-Authentication Attack Status page contains information about rogue APs that the Cluster Controller has attacked by using the de-authentication attack feature.This feature is disabled by default.The wireless controller can protect against rogue APs by sending de-authentication messages to the rogue AP. The de-authentication attack feature must be globally enabled in order for the wireless system to do this function. Make sure that no legitimate APs are classified as rogues before enabling the attack feature. 
+:|deAuthenticationAttacksEnd|:
+
+:|apHwCapability|:
+From the AP Hardware Capability page, you can access summary information about the AP Hardware support, the radios and IEEE modes supported by the hardware, and the software images that are available for download to the APs.
+:|apHwCapabilityEnd|:
+
+:|associatedClients|:
+This page shows information about all the clients which are connected through our managed AP. 
+:|associatedClientsEnd|:
+
+:|wlanAssociatedClients|:
+You can view a variety of information about the wireless clients that are associated with the APs the controller manages.
+:|wlanAssociatedClientsEnd|:
+
+:|adHocClients|:
+This page shows information of AD-HOC clients.
+:|adHocClientsEnd|:
+
+:|detectedClients|:
+The Detected Client Status page contains information about clients that have authenticated with an AP as well information about clients that disassociate and are no longer connected to the system.
+:|detectedClientsEnd|:
+
+:|clustering|:
+This page provides information about other Unified Wireless Controllers in the network. Peer wireless Controllers within the same cluster exchange data about themselves, their managed APs, and clients. The Controller maintains a database with this data so you can view information about a peer, such  as its IP address and software version. If the Controller loses contact with a peer, all of the data for that peer is deleted.
+:|clusteringEnd|:
+
+:|wdsGroupsStatus|:
+This page displays summary information about configured WDS links.
+:|wdsGroupsStatusEnd|:
+
+:|wdsGroupApStatus|:
+This page displays detailed information about the configured APs and links in the WDS Group.
+:|wdsGroupApStatusEnd|:
+
+:|wdsApStatus|:
+This page displays summary information about the APs in a configured WDS Group.
+:|wdsApStatusEnd|:
+
+:|wdsLinkStatus|:
+This page displays summary information about the link configuration and link state in a WDS Group.
+:|wdsLinkStatusEnd|:
+
+:|wdsLinkStatistics|:
+This Page displays summary information about the packets sent and received on the WDS links.
+:|wdsLinkStatisticsEnd|:
+
+:|radiusAccountingStatistics|:
+Use the RADIUS Accounting Statistics page to view statistical information for each RADIUS Accounting server configured on the system.
+:|radiusAccountingStatisticsEnd|:
+

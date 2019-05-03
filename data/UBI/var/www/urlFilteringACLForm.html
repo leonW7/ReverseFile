@@ -1,0 +1,100 @@
+<?lua 
+    require "teamf1lualib/urlFilteringAccessControl_bl"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+    
+    local acl = require("com.teamf1.bl.filter.accessControl")
+    local returnCodes = require ("com.teamf1.core.returnCodes")
+    local errorMap = require("com.teamf1.core.errorMap")
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, policyName, policyType, ipAddress, startIpAddress, 
+          endIpAddress, interfaceName
+    local vlanTbl = {}
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, policyName, policyType, ipAddress, startIpAddress, 
+        endIpAddress, interfaceName = acl.urlFilteringACLPolicySectionGetCur (configRowId) 
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	    end
+    else
+        configRowId = "-1"
+    end
+    vlanTbl = acl.urlFilteringACLPolicySectionGet () 
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_urlFilteringACLDailogContent">
+    <div class="topBg">
+        <h1 data-localize="50061">URL Filtering ACL Configuration</h1>
+        <close>
+            <a href="#" id="btnClose" title="Close">X</a>
+        </close>
+    </div>
+    <div class="dialogMidArea">
+        <div align="left">
+            <div class="configRow" id="tf1_profileName_div">
+                <label data-localize="12560">Profile Name</label>
+                <?lua if (configRowId == "-1") then ?>
+                <input type="text" size="30" name="urlFilteringACLPolicy.policyName" value="$| policyName or '' |$" id="tf1_profileName" onkeypress="return alphaNumericCheck (event, '')">
+                <?lua else ?>
+                <p>$| policyName or '' |$</p>
+                <input type="hidden" name="urlFilteringACLPolicy.policyName" value="$| policyName or '' |$" >
+                <?lua end ?>
+            </div>
+            <div class="break" id="break_profileName">&nbsp;</div>
+            <div class="configRow" id="tf1_type_div">
+                <label data-localize="13173">Type</label>
+                <select size="1" name="urlFilteringACLPolicy.policyType" id="tf1_type" onChange="changePolicyType('tf1_type')">                    
+                    <option data-localize="50062" $| web.dropdownSelected(policyType == "0") |$ value = "0">Single IP</option>
+                    <option data-localize="12627" $| web.dropdownSelected(policyType == "1") |$ value = "1">Range</option>
+                    <option data-localize="11187" $| web.dropdownSelected(policyType == "2") |$ value = "2">Interface</option>
+                </select>
+            </div>
+            <div class="break" id="break_type">&nbsp;</div>
+            <div class="configRow" id="tf1_IP_div">
+                <label data-localize="11387">IP Address</label>
+                <input type="text" name="urlFilteringACLPolicy.ipAddress" value="$| ipAddress or '' |$" id="tf1_IP" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281']+'. ', LANG_LOCALE['11031']+' ', true); }">
+            </div>
+            <div class="break" id="break_IP_div">
+                &nbsp;
+            </div>
+            <div class="configRow" id="tf1_startIP_div">
+                <label data-localize="12965">Start Address</label>
+                <input type="text" name="urlFilteringACLPolicy.startIpAddress" value="$| startIpAddress or '' |$" id="tf1_startIP" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281']+'. ', LANG_LOCALE['11031']+' ', true); }">
+            </div>
+            <div class="break" id="break_startIP_div">
+                &nbsp;
+            </div>
+            <div class="configRow" id="tf1_endIP_div">
+                <label data-localize="10920">End Address</label>
+                <input type="text" name="urlFilteringACLPolicy.endIpAddress" value="$| endIpAddress or '' |$" id="tf1_endIP" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281']+'. ', LANG_LOCALE['11031']+' ', true); }">
+            </div>
+            <div class="break" id="break_endIP_div">
+                &nbsp;
+            </div>
+            <div class="configRow" id="tf1_lanInterface_div">
+                <label data-localize="11187">Interface</label>
+                <select size="1" name="urlFilteringACLPolicy.interfaceName" id="tf1_lanInterface">
+                    <?lua
+                        local keyval = ""
+                        for k,v in pairs(vlanTbl) do
+                            keyval = v["Zones.ZoneLogicalIfName"]
+                    ?>
+                    <option $| web.dropdownSelected(interfaceName == keyval) |$ value = "$| keyval or ''|$">$| keyval or ''|$</option>
+                    <?lua
+                        end
+                    ?>								
+                </select>
+            </div>
+            <div class="break" id="break_lanInterface_div">&nbsp;</div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.configForm.urlFilteringACL.urlFilteringACL.$|configRowId|$" onclick="return pageValidation()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->
+<?lua end ?>

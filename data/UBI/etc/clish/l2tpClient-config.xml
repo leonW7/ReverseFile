@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="l2tp-client-config" prompt="l2tp-client-config[policy]> "> 
+    <COMMAND name="save" help="Save l2tp client configuration changes.">
+        <ACTION>lua clishCfgObjExec("l2tpClient")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back l2tp client configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+             help="Save l2tp client configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("l2tpClient")</ACTION>
+    </COMMAND>
+    <COMMAND name="enable"
+             help="enable/disable L2TP client.">
+     <PARAM name="l2tpclient_enable" 
+            help="enable/disable L2TP client."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.l2tpClientEnable","${l2tpclient_enable}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="server_address"
+             help="L2TP server IP address.">
+     <PARAM name="l2tpserver_address" 
+            help="L2TP server IP address."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.l2tpServerIp","${l2tpserver_address}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="remote_network"
+             help="Remote Network Address">
+     <PARAM name="l2tpclient_remotenetwork" 
+            help="Remote Network Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.RemoteNetwork","${l2tpclient_remotenetwork}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="remote_subnet"
+             help="Remote Network Subnet Mask ">
+     <PARAM name="l2tpclient_remotesubnet" 
+            help="Remote Network Subnet Mask"
+            ptype="MASK_LENGTH"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.RemoteNetmask","${l2tpclient_remotesubnet}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="username"
+             help="Username allocated to client ">
+     <PARAM name="l2tpclient_username" 
+            help="Username allocated to client "
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.UserName","${l2tpclient_username}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="password"
+             help="Password allocated to client ">
+     <PARAM name="l2tpclient_password" 
+            help="Password allocated to client "
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.Password","${l2tpclient_password}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="mppe_enable"
+             help="Enable mppe encryption ">
+     <PARAM name="l2tpclient_enablemppe" 
+            help="Enable mppe encryption "
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.EnableMppe","${l2tpclient_enablemppe}")
+         </ACTION>
+     </COMMAND>
+      <COMMAND name="reconnect_mode"
+             help="Select reconnect mode ">
+     <PARAM name="rc_mode" 
+            help="Select reconnect mode "
+            ptype="RECONNECT_MODE"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.DemandFlag","${rc_mode}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="time_out"
+             help="Time Out">
+     <PARAM name="l2tpclient_timeout" 
+            help="Time Out"
+            ptype="PPTP_USER_TIMEOUT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.IdleTimeOut","${l2tpclient_timeout}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_dial"
+             help="Auto Dial">
+     <PARAM name="l2tpclient_autodial" 
+            help="Auto Dial"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.AutoDial","${l2tpclient_autodial}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="time"
+             help="Client will try to connet to server after user specified time.">
+     <PARAM name="l2tpclient_time" 
+            help="Client auto dial time in minutes"
+            ptype="AUTO_DIAL_TIMEOUT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpClient", "l2tpVPNClient.Time","${l2tpclient_time}")
+         </ACTION>
+    </COMMAND>
+	
+</VIEW>
+<!--=======================================================-->
+<COMMAND name="vpn l2tp client" help="vpn policy mode."/>
+    <COMMAND name="vpn l2tp client configure"
+             help="l2tp client configuration mode"
+             view="l2tp-client-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("l2tpClient", 
+                                       l2tpClientCfgInit, 
+                                       l2tpClientCfgSave,
+                                       l2tpClientInputVal)
+	    </ACTION>
+    </COMMAND>
+
+<!--=======================================================-->
+<COMMAND name="vpn l2tp client_action"
+            help="vpn l2tp client action set.">
+    <PARAM name="action"
+            help="vpn l2tp client action"
+            ptype="L2TP_ACTION_TYPE"/>
+        <ACTION>lua clishCmdExec (l2tpClientActionSet,"${action}")
+	    </ACTION>
+    </COMMAND>
+
+<COMMAND name="show vpn l2tp client" help="show l2tp client details"/>
+<!--=======================================================-->
+    <COMMAND name="show vpn l2tp client setup"
+	     help="Display l2tp client setup.">
+	     <ACTION>lua clishCmdExec (l2tpClientGet)
+             </ACTION>
+         </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show vpn l2tp client status"
+	     help="Display l2tp client status setup.">
+	     <ACTION>lua clishCmdExec (l2tpClientStatusGet)
+             </ACTION>
+    </COMMAND>         
+</CLISH_MODULE>

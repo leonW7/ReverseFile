@@ -1,0 +1,290 @@
+<?lua
+require "teamf1lualib/ipv6_lan_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/ipv6_mode_bl"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "ipv6LanSettings"
+	
+local lanDetails = require("com.teamf1.bl.ipv6.lan")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require("com.teamf1.core.returnCodes")
+local mode6 = require("com.teamf1.bl.ipv6.mode")
+
+ENABLE = 3
+
+local errMsg, cookie, ipMode = mode6.ipModeSectionGet()
+
+if (tonumber(ipMode) ~= ENABLE) then
+   statusInfoMessage = errorMap.errorStringGet (13605)
+end
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errMsg, cookie = lanDetails.ipv6LanSectionSet(inputTable)
+    if (errMsg ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errMsg)
+    elseif(errMsg == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errMsg)
+    end
+   
+    web.goToPage(NextPage, true, true)
+else
+    errMsg, cookie, lanTable = lanDetails.ipv6LanSectionGet ()
+    if (errMsg ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errMsg)
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE = "11455,11445,12529,12727,10192,11542,13569,11463,11286,10741,11720,12989,12986,10805,11251,12829,11350,10799,13600,13601,13602,12537,12782,11562,11290,12732,12524,12034,12036,12002,12119,12091,12108,12040,12627,13004,12758,10449"
+?>
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+
+	<body>
+
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu3");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+                                        <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li class="current">
+									<a href="?page=ipv6LanSettings.html">$| LANG_LOCALE['11455'] |$</a>
+								</li>
+								<li>
+									<a href="?page=ipv6AddressPools.html">$| LANG_LOCALE['11445'] |$</a>
+								</li>
+								<li>
+									<a href="?page=ipv6PrefixLength.html">$| LANG_LOCALE['12529'] |$</a>
+								</li>
+								<li>
+									<a href="?page=routerAdvertisement.html">$| LANG_LOCALE['12727'] |$</a>
+								</li>
+								<li>
+                                    <?lua 
+                                    if (langVal == "ru") then
+                                        local advPrefix = LANG_LOCALE['10192']
+                                        local advPrefixTitle = LANG_LOCALE['10192']
+                                        local advPrefixLen = #LANG_LOCALE['10192']
+                                        if (advPrefixLen > 12) then
+                                            advPrefix = string.sub(advPrefix, 1, 12) .. "..."
+                                        end
+                                    ?>
+									<a title="$| advPrefixTitle |$" href="?page=advertisementPrefixes.html">$| advPrefix |$</a>
+                                    <?lua else ?>
+									<a href="?page=advertisementPrefixes.html">$| LANG_LOCALE['10192'] |$</a>
+                                    <?lua end ?>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+							$| helpHintText |$						</p>
+					</div>
+					<h1>$| LANG_LOCALE['11455'] |$</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmIpv6LanSettings" id="tf1_frmIpv6LanSettings" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="ipv6LanSettings.html">
+								<h2>$| LANG_LOCALE['11542'] |$</h2>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['13569'] |$</label>
+									<input type="text" name="ipv6LanSettings.prefix" id="tf1_ipv6_addr" value="$|lanTable["ipv6LanSettings.prefix"]|$" maxlength="40" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['11463'] |$</label>
+									<input type="text" class="one" maxlength="3" name="ipv6LanSettings.prefixLength" value="$|lanTable["ipv6LanSettings.prefixLength"]|$" id="tf1_ipv6_maxlength" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 128, true, LANG_LOCALE['11286']+': ', ''); }">
+									<dl>
+										[$| LANG_LOCALE['12627'] |$: 1 - 128]
+									</dl>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<h2>$| LANG_LOCALE['10741'] |$</h2>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['13004'] |$</label>
+                                                                           <?lua if (lanTable["ipv6LanSettings.dhcpServer"] == "1") then
+                                                                                      statusStr="enable-disable-on"
+                                                                                      statusVar = "1"
+                                                                                    else
+                                                                                       statusStr="enable-disable-off"
+                                                                                       statusVar = "0"
+                                                                                    end
+                                                                            ?>
+										<a class="$| statusStr |$" alt="" id="tf1_dhcpState" ></a>
+										<input type="hidden" name="ipv6LanSettings.dhcpServer" value="$| statusVar |$">
+								</div>
+								<div class="break" id="break1_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_stateless_div">
+									<label>$| LANG_LOCALE['11720'] |$</label>
+									<p>
+                                                                                <input type="radio" name="ipv6LanSettings.dhcpServerMode" id="tf1_stateless" $| web.radioSelected(lanTable["ipv6LanSettings.dhcpServerMode"] == "1" ) |$ value="1" onclick="modeChange('tf1_stateless');">
+										$| LANG_LOCALE['12989'] |$
+									</p>
+									<p>
+                                                                                <input type="radio" name="ipv6LanSettings.dhcpServerMode" id="tf1_stateful" $| web.radioSelected(lanTable["ipv6LanSettings.dhcpServerMode"] == "0" ) |$ value="0" onclick="modeChange('tf1_stateful');">
+										$| LANG_LOCALE['12986'] |$
+									</p>
+								</div>
+								<div class="break" id="break2_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_ipv6_DomName_div">
+									<label>$| LANG_LOCALE['10805'] |$</label>
+									<input type="text" name="ipv6LanSettings.dhcpDomainName" id="tf1_ipv6_DomName" value="$|lanTable["ipv6LanSettings.dhcpDomainName"]|$" maxlength="32" onkeydown="if (event.keyCode == 9) { return checkHostName ('tf1_ipv6_DomName', true, LANG_LOCALE['11251'], false); }">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_serpre_div">
+									<label>$| LANG_LOCALE['12829'] |$</label>
+									<input type="text" maxlength="3" name="ipv6LanSettings.dhcpServerPreference" value="$|lanTable["ipv6LanSettings.dhcpServerPreference"]|$" id="tf1_serpre" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 255, true, LANG_LOCALE['11350']+': ', '');}" class="one">
+									<dl>
+										[$| LANG_LOCALE['12627'] |$: 0 - 255]
+									</dl>
+								</div>
+								<div class="break" id="break3_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_DnsSvrs_div">
+									<label>$| LANG_LOCALE['10799'] |$</label>
+									<select size="1" name="ipv6LanSettings.dhcpServerDnsType" id="tf1_DnsSvrs" onchange="dnsServerChange();">
+										<option value="1" $| web.dropdownSelected(lanTable["ipv6LanSettings.dhcpServerDnsType"] == "1" ) |$>$| LANG_LOCALE['13600'] |$</option>
+										<option value="3" $|web.dropdownSelected(lanTable["ipv6LanSettings.dhcpServerDnsType"] == "3" ) |$>$| LANG_LOCALE['13601'] |$</option>
+										<option value="2" $|web.dropdownSelected(lanTable["ipv6LanSettings.dhcpServerDnsType"] == "2" ) |$>$| LANG_LOCALE['13602'] |$</option>
+									</select>
+								</div>
+								<div class="break" id="break4_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_ipv6_PriDnsServer_div">
+									<label>$| LANG_LOCALE['12537'] |$</label>
+									<input type="text" name="ipv6LanSettings.primaryDnsServer" id="tf1_ipv6_PriDnsServer" value="$|lanTable["ipv6LanSettings.primaryDnsServer"]|$" maxlength="40" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+								</div>
+								<div class="break" id="break5_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_ipv6_SecDnsServer_div">
+									<label>$| LANG_LOCALE['12782'] |$</label>
+									<input type="text" name="ipv6LanSettings.secondaryDnsServer" id="tf1_ipv6_SecDnsServer" value="$|lanTable["ipv6LanSettings.secondaryDnsServer"]|$" maxlength="40" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+								</div>
+								<div class="break" id="break6_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_ipv6_leasetime_div">
+									<label>$| LANG_LOCALE['11562'] |$</label>
+									<input class="one" type="text" name="ipv6LanSettings.leaseTime" id="tf1_ipv6_leasetime" maxlength="6" value="$|lanTable["ipv6LanSettings.leaseTime"]|$" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 604800, true, LANG_LOCALE['11290']+': ', LANG_LOCALE['12732']);}">
+									<dl>
+										[$| LANG_LOCALE['12627'] |$: 0 - 604800] $| LANG_LOCALE['12732'] |$
+									</dl>
+								</div>
+								<div class="break" id="break7_div">
+									&nbsp;
+								</div>
+                                <div class="configRow" id="tf1_prefix_del_div">
+                                <label>$| LANG_LOCALE['12524'] |$</label>
+                                <p>
+                                <?lua if (lanTable["ipv6LanSettings.prefixDelegation"] == "1") then
+                                           statusStr="images/button_on.png"
+                                           statusVar = "1"
+                                      else
+                                           statusStr="images/button_off.png"
+                                           statusVar = "0"
+                                      end
+                                ?>
+                                <img class="enable-disable" alt="" src="$| statusStr |$" id="tf1_prefix_del" />
+                                <input type="hidden" name="ipv6LanSettings.prefixDelegation" value="$| statusVar |$">
+                             </p>
+                          </div>
+                                                        
+								<div class="break" id="break8_div">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit" onclick="return lanSetupValidate ('tf1_frmIpv6LanSettings')" class="btnSubmit" name="button.config.ipv6LanSettings" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+									<input type="button" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); lanSetupOnReset('tf1_frmIpv6LanSettings');">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td><?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script language="JavaScript" src="js/textValidations.js" type="text/javascript"></script>
+		<script language="JavaScript" src="js/ipv4AddrValidations.js" type="text/javascript"></script>
+		<script language="JavaScript" src="js/ipv6AddrValidations.js" type="text/javascript"></script>
+		<script type="text/javascript" language="JavaScript" src="js/ipv6LanSettings.js"></script>
+	</body>
+
+</html>
+<?lua end ?>

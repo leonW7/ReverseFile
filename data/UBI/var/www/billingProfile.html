@@ -1,0 +1,280 @@
+<?lua 
+require "teamf1lualib/billingProfile_bl"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "billingProfile"
+
+local errorMap     = require ("com.teamf1.core.errorMap")
+local gui_billing  = require ("com.teamf1.bl.captiveportal.billing")
+
+
+if (ButtonType and ButtonType == "delete") then
+    local errorFlag
+    local inputTable = web.cgiToLuaTable(cgi)
+    if(type(cgi["billingProfile.checkbox"]) == "string") then
+        inputTable["profileTable.cookie"] = cgi["billingProfile.checkbox"]
+        errorFlag, cookie = gui_billing.profileDelete (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    elseif (type(cgi["billingProfile.checkbox"]) == "table") then
+        errorFlag, cookie = gui_billing.profileDeleteAll ()
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    end
+    web.goToPage(NextPage, true, true)
+    
+elseif (ButtonType and ButtonType == "add") then
+local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["profileTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_billing.profileCreate (inputTable)
+    if (errorFlag == 0) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "edit") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["profileTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_billing.profileSet (inputTable)
+    if (errorFlag == 0) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+else
+    local returnCode, billingTable = gui_billing.profileGetAll ()
+    if (returnCode ~= 0) then
+        errorString = "There is some issue"
+    end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <link rel="stylesheet" type="text/css" href="css/dateTimePicker.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+    <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form name action="platform.cgi" method="post" name="tf1_frmBillingProfile" id="tf1_frmBillingProfile">    
+            <input type="hidden" name="thispage" id="thispage" value="billingProfile.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+    <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'edit');"/>
+                    &nbsp;Select All
+                </li>
+                <li id="edit">
+                    Edit
+                </li>
+                <li id="delete">
+                    Delete
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li class="current">
+                                    <a href="?page=billingProfile.html">Billing Profile</a>
+                                </li>
+                               <!--
+                                <li>
+                                    <a href="?page=paymentGateway.html">Payment Gateway</a>
+                                </li>
+                              -->                                
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                           $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>Billing Profile List</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_billingProfile">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th> Profile Name </th>
+                                        <th> Billing Status </th>
+                                        <th> Description </th>
+                                    </tr>
+                                </thead>
+                                <?lua 
+                                local i = 0
+                                if (returnCode == 0) then
+                            for k, v in pairs (billingTable) do
+                                i=i+1
+                                local row = billingTable[k]
+                                local thisProfileDesc = row["tempCPUserProfiles.ProfileDesc"] or ''
+                                local tmpProfileDesc = thisProfileDesc
+                                if (string.len(thisProfileDesc) > 20) then
+                                    thisProfileDesc = string.sub(thisProfileDesc, 1,17) .."..."
+                                end
+                            ?>
+
+                                <tr class="gradeA" id="billingProfile$|row["tempCPUserProfiles._ROWID_"] |$">
+                                    <td>$|row["tempCPUserProfiles.ProfileName"] or ''|$</td>
+                                    <?lua local statusString = "" 
+                                    if (row["tempCPUserProfiles.MaxUsageTimeCheck"]== "1")then
+                                        statusString = "Time Usage"
+                                    end
+                                    if
+                                    (row["tempCPUserProfiles.MaxUsageTrafficCheck"]=="1")then
+                                        if (statusString ~= "") then
+                                            statusString = statusString .. " + Traffic Usage"
+                                        else
+                                            statusString = " Traffic Usage"
+                                        end
+                                    end
+
+                                    if
+                                    (row["tempCPUserProfiles.ValidDurationCheck"]=="1")
+                                    then
+                                         if (statusString ~= "") then
+                                            statusString = statusString .. " + Begin/End Duration"
+                                        else
+                                            statusString = " Begin/End Duration"
+                                        end
+                                    end
+                                    ?>
+                                    <td>$|statusString or ''|$</td>
+                                    <td <?lua if (string.len(tmpProfileDesc) > 20) then ?> alt="$|tmpProfileDesc |$" title="$|tmpProfileDesc|$" <?lua end ?>>$| thisProfileDesc |$</td>
+                                </tr>
+                                    <?lua 
+                                    end 
+                                    end
+                                ?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModal">
+                        <input type="submit" class="btnSubmit" title="Add New Billing Profile" value="Add New Billing Profile" id="btSave" onClick="openForm('button.add.billingProfile.billingProfile',-1,'tf1_dialog','billingProfile','billingProfileForm.html', 'tf1_billingProfileDailogContent','onloadCallBillingPfogileFn');">
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/billingProfile.js"></script>
+        <script language="JavaScript" src="js/dateTimePicker.js" type="text/javascript"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#tf1_billingProfile .gradeA').contextMenu('contextMenu', {
+                bindings : {
+                'editMenu' : function(t, e, rowId) {
+                    openForm('button.edit.billingProfile.billingProfile',rowId,'tf1_dialog','billingProfile','billingProfileForm.html', 'tf1_billingProfileDailogContent','onloadCallBillingPfogileFn');                                    
+                },
+                'deleteMenu' : function(t, e, rowId) {
+                    deleteRows('button.delete.billingProfile.billingProfile', 'tf1_frmBillingProfile', rowId, 'optionSelectAll', 'tf1_dialog', 'billingProfile', 'billingProfile');
+                }
+            }
+            });
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+            });
+
+function onloadCallBillingPfogileFn () {	
+	onloadCall (enableDisableFieldsByImageClick, {imageId:'', disableIndividual:'', disableGrp:'', enableIndividual:'', enableGrp:'', hideClass:'hide', showClass:'configRow', breakDivs:'', breakClass:'break', imagesInfo:{disableImages:'', enableImages:'', disableClass:'', enableClass:''}});	
+	
+	enableTextFieldByAnchorClick('tf1_validBeginEndTime','tf1_validBeginSelect tf1_startWhileAccCreated tf1_startWhileAccCreatedSelect tf1_startWhileAccLogin tf1_startWhileAccLoginSelect tf1_beginFromValue tf1_beginFrom tf1_allowfrontDesk','break8 break9 break10 break11 break12');
+	enableTextFieldByAnchorClick('tf1_maxUsageTime','tf1_maxUsageTimeText tf1_maxUsageTimeSelect tf1_allowFrontDesktoModify', ''); 
+	enableTextFieldByAnchorClick('tf1_maxUsageTraffic','tf1_maxUsageTrafficText tf1_maxUsageTrafficSelect tf1_allowFrontDesktoModify','');
+
+    enableTextFieldByAnchorClick('tf1_setPrice','tf1_price tf1_monetaryUnit','break_price break_monetaryUnit');
+
+	changeValidBeginLimit('tf1_validBeginSelect');
+	
+	var curr = new Date().getFullYear();
+			var opt = {}			
+			opt.datetime = {preset: 'datetime',minDate: new Date(2000,3,10,9,22),maxDate: new Date(2099,7,30,15,44),stepMinute: 1};
+			$('#tf1_beginFrom').val('$| os.date("%m/%d/%Y %I:%M %p") |$');
+			$('#tf1_beginFrom').scroller('destroy').scroller(
+				$.extend(
+					opt["datetime"], { 					
+						mode: "scroller", 
+						display: "inline" 
+					}
+				)			
+			);
+}
+        </script>
+    </body>
+</html>
+<?lua end ?>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+    <!--===================================================-->
+<VIEW name="net-dmz-config" prompt="net-config[dmz]>"> 
+    <COMMAND name="save" help="Save van configuration mode.">
+	     <ACTION>lua clishCfgObjExec("DmzConf")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll Back dmz configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Save dmz configuration changes and current mode."
+    	     view="root-view" viewid="">
+             <ACTION>lua clishCfgObjExec("DmzConf")</ACTION>
+    </COMMAND>
+    <COMMAND name="enable_dmz" check_supported="Y"
+       help="Enable/Disable DMZ.">
+	<PARAM name="enable" help="Setup DMZ configuration."
+	      ptype="DMZ_ENABLE"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "ConfigPort.LogicalIfName", "${enable}")
+       </ACTION>
+    </COMMAND>
+    <COMMAND name="ip_address"
+        help="Static IP address.">
+	<PARAM name="ip_address" help="Setup DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "ifStatic.StaticIp", "${ip_address}")
+        </ACTION>
+    </COMMAND>
+ <COMMAND name="subnet_mask"
+        help="Subnet Mask.">
+	<PARAM name="ip_address" help="Set DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "ifStatic.NetMask", "${ip_address}")
+        </ACTION>
+    </COMMAND>
+ <COMMAND name="dhcp_mode"
+        help="Set DHCP mode.">
+	<PARAM name="dhcp_mode" help="Set DMZ configuration."
+	       ptype="DHCPV4_MODE"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.dhcpEnabled", "${dhcp_mode}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="domain_name"
+        help="DHCP Domain Name.">
+	<PARAM name="domain_name" help="Set DMZ configuration."
+	       ptype="DHCP_DOMAIN"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.domainName", "${domain_name}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="starting_ip_address"
+        help="DHCP Starting IP address.">
+	<PARAM name="ip_address" help="Setup DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.startAddress", "${ip_address}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="ending_ip_address"
+        help="DHCP ending IP address.">
+	<PARAM name="ip_address" help="Setup DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.endAddress", "${ip_address}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="primary_dns_server"
+        help="Primary DNS address.">
+	<PARAM name="ip_address" help="Setup DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.primaryDnsServer", "${ip_address}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary_dns_server"
+        help="Secondary DNS server address.">
+	<PARAM name="ip_address" help="Setup DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.secondaryDnsServer", "${ip_address}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="default_gw" help="Setup default gateway.">
+	<PARAM name="defaultgw" help="Default Gateway."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.defaultGw", "${defaultgw}")
+        </ACTION>
+    </COMMAND>    
+ <COMMAND name="wins_server"
+        help="Set DHCP WINS server.">
+	<PARAM name="ip_address" help="Setup DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.winsServer", "${ip_address}")
+        </ACTION>
+    </COMMAND>
+ <COMMAND name="lease_time"
+        help="Set DHCP lease time.">
+	<PARAM name="time" help="Setup DMZ configuration."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.leaseTime", "${time}")
+        </ACTION>
+    </COMMAND>
+ <COMMAND name="relay_gateway"
+        help="Set DHCP Relay gateway server.">
+	<PARAM name="ip_address" help="Setup DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "DhcpRelay.RelayGateway", "${ip_address}")
+        </ACTION>
+    </COMMAND>
+ <COMMAND name="dns_proxy_enable"
+        help="Set DNS proxy Enable/Disable.">
+	<PARAM name="dns_proxy" help="Setup DMZ configuration."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "dhcp.enableDnsProxy", "${dns_proxy}")
+        </ACTION>
+    </COMMAND>
+     <COMMAND name="enable_ldap"
+         help="Enable/Disable LDAP Server Info.">
+	<PARAM name="ldap_ip_address" help="Setup DMZ configuration."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("DmzConf", "DhcpLdapServerInfo.DhcpLdapStatus", "${ldap_ip_address}")
+        </ACTION>
+    </COMMAND>
+
+</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net dmz" license_support="Y" help="dmz configuration mode"/>
+    <!--=======================================================-->
+    <COMMAND name="net dmz configure"
+             help="dmz configuration mode"
+           view="net-dmz-config" viewid="">
+         <ACTION>lua clishCfgObjNew ("DmzConf", dmzCfgInit, dmzCfgSave, dmzCfgInputVal)
+       </ACTION>
+ </COMMAND>
+</CLISH_MODULE>

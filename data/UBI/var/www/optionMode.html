@@ -1,0 +1,383 @@
+<?lua
+require "teamf1lualib/optionMode_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "optionMode"
+	
+	
+local wan_multiwan  = require("com.teamf1.bl.wan.multiwan")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local errorCode = wan_multiwan.optionModeSectionPortCheck()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusInfoMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local rowId = "1"
+    if (inputTable["optionMode.multiWanMode"] == '1' or inputTable["optionMode.multiWanMode"] == '2' ) then
+    disableFlag = wan_multiwan.optionIpModeGet ()
+    if (disableFlag == "1") then
+    statusErrorMessage = "Load balancing and Auto Rollover using Option Port is not supported for IPv4 & IPv6 dual mode."
+    end
+    end
+    inputTable["optionMode.cookie"] = rowId
+
+    local returnCode, cookie = wan_multiwan.optionModeSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end    
+
+    
+   
+    web.goToPage(NextPage, true, true)
+
+else
+    local returnCode, cookie, primaryWanPort, failureDetectionMethod, 
+           ipAddress, retryInterval, maxFailures, multiWanMode, wan1IpAddress, 
+           wan2IpAddress, defaultWanPort, loadbalanceMode, loadTolerance, maxBandwidth
+                         = wan_multiwan.optionModeSectionGet()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                    <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                                    $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>Option Mode</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmOptionMode" id="tf1_frmOptionMode" method="post" action="platform.cgi">
+                            <input type="hidden" name="thispage" id="thispage" value="optionMode.html">
+                                <h2>Option Mode Setup</h2>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Option Mode </label>
+                                    <select name="optionMode.multiWanMode" id="tf1_optionMode" onchange="changeOptionMode('tf1_optionMode')">
+                                        <option $| web.dropdownSelected(multiWanMode == "1") |$ value="1">Auto-Rollover Using Option Port</option>
+                                        <option $| web.dropdownSelected(multiWanMode == "2") |$ value="2">Load Balancing</option>
+                                        <option $| web.dropdownSelected(multiWanMode == "3") |$ value="3">Single Option Port</option>
+                                    </select>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <!-- Load balancing setup -->
+                                <div id="tf1_loadBalancing_div">
+                                    <h2>Load Balancing Setup</h2>
+                                    <div class="configRow">
+                                        <label> Load Balancing </label>
+                                        <p>
+                                            <?lua 
+                                                if (loadbalanceMode == nil) then
+                                                    loadbalanceMode = "1"
+                                                end
+                                            ?>
+                                            <input type="radio" $| web.radioSelected(loadbalanceMode == "1") |$ value="1" name="optionMode.loadbalanceMode" id="tf1_loadingBalSetupRoundRobin" onclick="changeLoadBalancing('tf1_loadingBalSetupRoundRobin')">
+                                            Round Robin
+                                        </p>
+                                        <p>
+                                            <input type="radio" $| web.radioSelected(loadbalanceMode == "2") |$ value="2" name="optionMode.loadbalanceMode" id="tf1_loadingBalSetupSpilloverMode" onclick="changeLoadBalancing('tf1_loadingBalSetupSpilloverMode')">
+                                            Spillover Mode
+                                        </p>
+                                    </div>
+                                    <div class="break" id="break1_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow">
+                                        <label> DNS Lookup Method </label>
+                                        <p>
+                                            <input type="radio" value="1" $| web.radioSelected(failureDetectionMethod == "1") |$ name="optionMode.loadBalance_failureDetectionMethod" id="tf1_dnsoptionNone" onClick="lookLoadDnsOptions('tf1_dnsoptionNone');">
+                                            None
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="2" $| web.radioSelected(failureDetectionMethod == "2") |$ name="optionMode.loadBalance_failureDetectionMethod" id="tf1_dnsoptionOptionDNSServers" onClick="lookLoadDnsOptions('tf1_dnsoptionOptionDNSServers');">
+                                            Option DNS Servers
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="3" $| web.radioSelected(failureDetectionMethod == "3") |$ name="optionMode.loadBalance_failureDetectionMethod" id="tf1_dnsoptionDNSServers" onClick="lookLoadDnsOptions('tf1_dnsoptionDNSServers');">
+                                            DNS Servers
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="4" $| web.radioSelected(failureDetectionMethod == "4") |$ name="optionMode.loadBalance_failureDetectionMethod" id="tf1_dnsoptionPing" onClick="lookLoadDnsOptions('tf1_dnsoptionPing');">
+                                            Ping These IP Addresses
+                                        </p>
+                                    </div>
+                                    <div class="break" id="break3_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_loadOption1_div">
+                                        <label> Option 1 </label>
+                                        <input type="text" name="optionMode.loadBalance_dns_wan1IpAddress" value="$|wan1IpAddress or ''|$" id="tf1_loadOption1" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                                    </div>
+                                    <div class="break" id="break4_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_loadOption2_div">
+                                        <label> Option 2 </label>
+                                        <input type="text" name="optionMode.loadBalance_dns_wan2IpAddress" value="$|wan2IpAddress or ''|$" id="tf1_loadOption2" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                                    </div>
+                                    <div class="break" id="break5_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_loadPingOption1_div">
+                                        <label> Option 1 </label>
+                                        <input type="text" name="optionMode.loadBalance_ping_wan1IpAddress" value="$|wan1IpAddress or ''|$" id="tf1_loadPingOption1" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                                    </div>
+                                    <div class="break" id="break6_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_loadPingOption2_div">
+                                        <label> Option 2 </label>
+                                        <input type="text" name="optionMode.loadBalance_ping_wan2IpAddress" value="$|wan2IpAddress or ''|$" id="tf1_loadPingOption2" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                                    </div>
+                                    <div class="break" id="break7_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_loadRetryInterval_div">
+                                        <label> Retry Interval is </label>
+                                        <input class="one" type="text" name="optionMode.loadBalance_retryInterval" value="$|retryInterval or ''|$" maxlength="3" id="tf1_loadRetryInterval" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 5, 999, true, 'Invalid Retry Interval:', '');}">
+                                        <dl>
+                                            [Default: 30,  Range: 5 - 999] Seconds
+                                        </dl>
+                                    </div>
+                                    <div class="break" id="break8_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_loadFailOverAfter_div">
+                                        <label> Failover After </label>
+                                        <input class="one" type="text" name="optionMode.loadBalance_maxFailures" value="$|maxFailures or ''|$" maxlength="3" id="tf1_loadFailOverAfter" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 2, 999, true, 'Invalid Failover After:', '');}">
+                                        <dl>
+                                            [Default: 4,  Range: 2 - 999] Failures
+                                        </dl>
+                                    </div>
+                                    <div class="break" id="break9_div">
+                                        &nbsp;
+                                    </div>
+                                    <div id="tf1_spilloverConfigSetupBlock_div">
+                                        <h2>Spillover Configuration Setup</h2>
+                                        <div class="configRow" id="tf1_loadTolerance_div">
+                                            <label> Load Tolerance </label>
+                                            <input class="one" type="text" name="optionMode.loadBalance_loadTolerance" value="$|loadTolerance or ''|$" maxlength="2" id="tf1_loadTolerance" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 20, 80, true, 'Invalid Load Tolerance:', '');}">
+                                            <dl>
+                                                [Default: 80,  Range: 20 - 80] 
+                                            </dl>
+                                        </div>
+                                        <div class="break" id="break10_div">
+                                            &nbsp;
+                                        </div>
+                                        <div class="configRow" id="tf1_maxBandwidth_div">
+                                            <label> Max Bandwidth </label>
+                                            <input class="one" type="text" name="optionMode.loadBalance_maxBanwidth" value="$|maxBandwidth or ''|$" maxlength="4" id="tf1_maxBandwidth" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 512, 8192, true, 'Invalid Max Bandwidth:', '');}">
+                                            <dl>
+                                                [Default: 8192,  Range: 512 - 8192] 
+                                            </dl>
+                                        </div>
+                                        <div class="break" id="break11_div">
+                                            &nbsp;
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- Load balancing ends --><!--Auto-Rollover using Option port Starts here -->
+                                <div id="tf1_autoRollOver_div">
+                                    <h2>Auto-Rollover using Option Port</h2>
+                                    <div class="configRow">
+                                        <label> Use Primary Option Port </label>
+                                        <p>
+                                            <input type="radio" value="1" $| web.radioSelected(primaryWanPort == "1") |$ name="optionMode.autoRollover_primaryWanPort"  id="tf1_rolloveroption1" onClick="lookRollDnsOptions ('tf1_rolloveroption1');">
+                                            Option 1
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="2" $| web.radioSelected(primaryWanPort == "2") |$ name="optionMode.autoRollover_primaryWanPort" id="tf1_rolloveroption2" onClick="lookRollDnsOptions ('tf1_rolloveroption2');">
+                                            Option 2
+                                        </p>
+                                    </div>
+                                    <div class="break" id="break10_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow">
+                                        <label> DNS Lookup Method </label>
+                                        <p>
+                                            <?lua 
+                                                if (failureDetectionMethod == nil or failureDetectionMethod == "1") then
+                                                    failureDetectionMethod = "2"
+                                                end
+                                            ?>
+                                            <input type="radio" value="2" $| web.radioSelected(failureDetectionMethod == "2") |$ name="optionMode.autoRollover_failureDetectionMethod" id="tf1_rolldnsoption2" onClick="lookRollDnsOptions ('tf1_rolldnsoption2');">
+                                            Option DNS Servers
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="3" $| web.radioSelected(failureDetectionMethod == "3") |$ name="optionMode.autoRollover_failureDetectionMethod" id="tf1_rolldnsoption3" onClick="lookRollDnsOptions ('tf1_rolldnsoption3');">
+                                            DNS Servers
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="4" $| web.radioSelected(failureDetectionMethod == "4") |$ name="optionMode.autoRollover_failureDetectionMethod" id="tf1_rolldnsoption4" onClick="lookRollDnsOptions ('tf1_rolldnsoption4');">
+                                            Ping    These IP Addresses
+                                        </p>
+                                    </div>
+                                    <div class="break" id="break11_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_AutoDnsOption1_div">
+                                        <label> Option 1 </label>
+                                        <input type="text" name="optionMode.autoRollover_dns_ipAddress1" value="$|ipAddress or ''|$" id="tf1_AutoDnsOption1" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                                    </div>
+                                    <div class="break" id="break12_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_AutoDnsOption2_div">
+                                        <label> Option 2 </label>
+                                        <input type="text" name="optionMode.autoRollover_dns_ipAddress2" value="$|ipAddress or ''|$" id="tf1_AutoDnsOption2" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                                    </div>
+                                    <div class="break" id="break13_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_AutoPingOption1_div">
+                                        <label> Option 1 </label>
+                                        <input type="text" name="optionMode.autoRollover_ping_ipAddress1" value="$|ipAddress or ''|$" id="tf1_AutoPingOption1" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                                    </div>
+                                    <div class="break" id="break14_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_AutoPingOption2_div">
+                                        <label> Option 2 </label>
+                                        <input type="text" name="optionMode.autoRollover_ping_ipAddress2" value="$|ipAddress or ''|$" id="tf1_AutoPingOption2" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                                    </div>
+                                    <div class="break" id="break15_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_AutoRetryInterval_div">
+                                        <label> Retry Interval is </label>
+                                        <input class="one" type="text" name="optionMode.autoRollover_retryInterval" value="$|retryInterval or ''|$" maxlength="3" id="tf1_AutoRetryInterval" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 5, 999, true, 'Invalid Retry Interval:', '');}">
+                                        <dl>
+                                            [Default: 30,  Range: 5 - 999] Seconds
+                                        </dl>
+                                    </div>
+                                    <div class="break" id="break16_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_AutoFailoverAfter_div">
+                                        <label> Failover After </label>
+                                        <input class="one" type="text" name="optionMode.autoRollover_maxFailures" value="$|maxFailures or ''|$" maxlength="3" id="tf1_AutoFailoverAfter" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 2, 999, true, 'Invalid Failover After:', '');}">
+                                        <dl>
+                                            [Default: 4,  Range: 2 - 999] Failures
+                                        </dl>
+                                    </div>
+                                    <div class="break" id="break17_div">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                                <!--Auto-Rollover using Option port Ends here --><!-- Single Option port Starts here -->
+                                <div id="tf1_singleOption_div">
+                                    <h2>Single Option Port</h2>
+                                    <div class="configRow">
+                                        <label> Use only single Option Port </label>
+                                        <p>
+                                            <input type="radio" $| web.radioSelected(defaultWanPort == "1") |$ name="optionMode.defaultWanPort" value="1" name="channe2">
+                                            Option
+                                            1
+                                        </p>
+                                        <p>
+                                            <input type="radio" $| web.radioSelected(defaultWanPort == "2") |$ name="optionMode.defaultWanPort" value="2" name="channe2">
+                                            Option    2
+                                        </p>
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                                <!--Single Option port Ends here -->
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.optionMode" onclick="setHiddenChks('tf1_frmOptionMode'); return modeValidate ()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                                    <input type="button" class="btnReset" title="Cancel" value="Cancel" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmOptionMode'); changeOptionMode('tf1_optionMode');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/optionMode.js"></script>
+    </body>
+</html>
+<?lua end ?>

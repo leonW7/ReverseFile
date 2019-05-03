@@ -1,0 +1,147 @@
+<?lua
+require "teamf1lualib/bl_queueScheduler"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "queueScheduler"
+	
+local guiQueueScheduler = require("com.teamf1.bl.lanqos.schedule")
+local errorMap          = require ("com.teamf1.core.errorMap")
+local returnCodes       = require ("com.teamf1.core.returnCodes")
+
+local errorFlag
+
+local errorCode, cookie, queueSchedulingAlgo = guiQueueScheduler.queueSchedulerGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "config") then
+	local configRow = web.cgiToLuaTable(cgi)
+	errorFlag, statusCode = guiQueueScheduler.queueSchedulerSet (configRow)
+	if (errorFlag == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+	end
+	web.goToPage(NextPage, true, true)
+    
+else
+	cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu3");
+					</script>
+					<!-- Status message place holder... [ 1. for error use
+                    "msgError" 2. for information use "msgInfo" 3. for sucess
+                    use "msgSuccess" CSS classes ]-->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=policyBasedQos.html">Policy Based QoS</a>
+								</li>
+								<li>
+									<a href="?page=flowControl.html">Flow Control</a>
+								</li>
+								<li>
+									<a href="?page=autoVoip.html">Auto VoIP</a>
+								</li>
+								<li class="current">
+									<a href="?page=queueScheduler.html">Queue Scheduler</a>
+								</li>
+								<li>
+									<a href="?page=queueManagement.html">Queue Management</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+                        <p class="hint"> 
+                        $| helpHintText |$ 
+						</p>
+					</div>
+					<h1>Queue Scheduler</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmQueueScheduler" id="tf1_frmQueueScheduler" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="queueScheduler.html">
+								<div class="configRow">
+									<label> Scheduling Algorithm </label>
+                                    <p>
+										<input type="radio"
+                                        name="queueScheduler.algorithm" $|
+                                        web.radioSelected(queueSchedulingAlgo ==
+                                        "0") |$ value="0" id="tf1_STRICT"
+                                        checked="checked">
+										Strict
+									</p>
+									<p>
+										<input type="radio"
+                                        name="queueScheduler.algorithm" $|
+                                        web.radioSelected(queueSchedulingAlgo ==
+                                        "1") |$ value="1" id="tf1_WEIGHT">
+										Weighted Round Robin
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit" class="btnSubmit" name="button.config.queueScheduler" title="Save" value="Save" id="btSave">
+									<input type="reset" class="btnReset" title="Cancel" value="Cancel" id="btSave">
+
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td><?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+	</body>
+</html>
+<?lua end ?>

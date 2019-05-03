@@ -1,0 +1,249 @@
+<?lua
+require "teamf1lualib/wan3Settings_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	if(UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+        PAGE_HELP_SECTION = "wan3Settings_econa" 
+	else
+	PAGE_HELP_SECTION = "wan3Settings"
+	end
+
+local ipv4_wan3 = require("com.teamf1.bl.wan.ipv4_wan3")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local rowId = "1"
+    inputTable["wan3Settings.cookie"] = rowId
+
+    local returnCode, cookie = ipv4_wan3.wan3settingsSectionSet (inputTable)    
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end    
+
+    web.goToPage(NextPage, true, true)
+else
+    local returnCode, wan3SettingsRow =  
+        ipv4_wan3.wan3settingsSectionGet ()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+		cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE =
+    "13327,12640,13983,13984,11697,11301,10009,13239,11861,11899,10745,10324,11898,10490,10268,10267,10806,10798,11066,13230,12537,12782,11734,10648,10652,11239,10433,12053,12256,12217,12091,12108,30128,30130,30131,30132,12478,12627,11789,10683,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu3");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$ </p>
+                    </div>
+                    <?lua end ?>
+					<div class="FL2">
+						<p class="hint">
+							            $| helpHintText |$						</p>
+					</div>
+					<?lua
+					    local wan1DispName
+					    local wanDispName
+					    local russianWanDisp
+					    if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+						wan3DispName = LANG_LOCALE['30128']
+						wanDispName =  LANG_LOCALE['13327']
+					    else
+						wan3DispName = LANG_LOCALE['30130']
+						wanDispName = LANG_LOCALE['30131'] .. " (" .. LANG_LOCALE['30132'] .. ")"
+					    end
+					 ?>
+					<h1>$| wan3DispName |$</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmWan3Settings" id="tf1_frmWan3Settings" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="wan3Settings.html">
+								<h2>$|wanDispName|$</h2>
+								<div class="configRow" id="tf1_reconnectMode_div">
+									<label>$| LANG_LOCALE['12640'] |$</label>
+									<p><input type="radio" $| web.radioSelected(wan3SettingsRow["reconnectMode"] == "1") |$ name="wan3Settings.reconnectMode" id="tf1_reconnectModeAlwaysOn" onclick="changeReconnectModeType('tf1_reconnectModeAlwaysOn')" value="1">$| LANG_LOCALE['13983'] |$</p>
+									<p><input type="radio" $| web.radioSelected(wan3SettingsRow["reconnectMode"] == "2") |$ name="wan3Settings.reconnectMode" id="tf1_reconnectModeOnDemand" onclick="changeReconnectModeType('tf1_reconnectModeOnDemand')" value="2">$| LANG_LOCALE['13984'] |$</p>
+								</div>
+								<div class="break" id="break_reconnectMode_div">&nbsp;</div>
+								
+								<div class="configRow" id="tf1_maxIdleTime_div">
+									<label>$| LANG_LOCALE['11697'] |$</label>
+									<input type="text" name="wan3Settings.idleTime" id="tf1_maxIdleTime" value ="$| wan3SettingsRow["idleTime"]  or '' |$" onKeyPress="return numericValueCheck (event)" maxlength="3" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 999, true, LANG_LOCALE['11301']+': ', '');}" class="one">
+									<dl>[$| LANG_LOCALE['12627'] |$: 1 - 999]</dl>
+								</div>
+								<div class="break" id="break_maxIdleTime_div">&nbsp;</div>
+								
+								<h2>$| LANG_LOCALE['10009'] |$</h2>
+								
+								<div class="configRow" id="tf1_userName3G_div">
+									<label>$| LANG_LOCALE['13239'] |$</label> 
+									<input type="text" name="wan3Settings.userName"  value ="$| wan3SettingsRow["userName"]  or '' |$" maxlength="256" id="tf1_userName3G"> <dl>$| LANG_LOCALE['11861'] |$</dl>
+								</div>
+								<div class="break" id="break_userName3G_div">&nbsp;</div>
+								
+								<div class="configRow" id="tf1_password3G_div">
+									<label>$| LANG_LOCALE['11899'] |$</label> 
+									<input type="password" name="wan3Settings.password"  value ="$| wan3SettingsRow["password"]  or '' |$" maxlength="256" id="tf1_password3G"> <dl>$| LANG_LOCALE['11861'] |$</dl>
+								</div>
+								<div class="break" id="break_password3G_div">&nbsp;</div>
+								
+								<div class="configRow" id="tf1_dailInNumber_div">
+									<label>$| LANG_LOCALE['10745'] |$</label> 
+									<input type="text" name="wan3Settings.dialNumber" id="tf1_dailInNumber" value ="$| wan3SettingsRow["dialNumber"]  or '' |$" >
+								</div>
+								<div class="break" id="break_dailInNumber_div">&nbsp;</div>
+								
+								<div class="configRow" id="tf1_authProtocol_div">
+									<label>$| LANG_LOCALE['10324'] |$</label> 
+									<select id="tf1_authProtocol" name="wan3Settings.authProtocol">
+		<option $| web.dropdownSelected(wan3SettingsRow["authProtocol"] == "0") |$ value="0">$| LANG_LOCALE['11789'] |$</option>
+		<option $| web.dropdownSelected(wan3SettingsRow["authProtocol"] == "1") |$ value="1">$| LANG_LOCALE['11898'] |$</option>
+		<option $| web.dropdownSelected(wan3SettingsRow["authProtocol"] == "2") |$ value="2">$| LANG_LOCALE['10490'] |$</option>
+									</select> </div>
+								<div class="break" id="break_authProtocol_div">&nbsp;</div>
+								
+								<div class="configRow" id="tf1_MPPEEncryption_div">
+									<label>$| LANG_LOCALE['10268'] |$</label>
+									 
+				<?lua 
+                                        if (wan3SettingsRow["enableAPN"] == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar = "0"
+                                        end
+                                        ?>
+											<a class="$| statusStr |$" alt=""  id="tf1_APN3GRequired" ></a>
+											<input type="hidden" name="wan3Settings.enableAPN" value="$| statusVar |$">
+									
+								</div>
+								<div class="break" id="break_MPPEEncryption_div">&nbsp;</div>
+								
+								<div class="configRow" id="tf1_APN3G_div">
+									<label>$| LANG_LOCALE['10267'] |$</label> 
+									<input type="text" name="wan3Settings.apn" value ="$| wan3SettingsRow["apn"]  or '' |$" id="tf1_APN3G" maxlength="64"> 
+								</div>
+								<div class="break" id="break_APN3G_div">&nbsp;</div>
+								
+								<h2>$| LANG_LOCALE['10806'] |$</h2>
+								
+								<div class="configRow" id="tf1_dnsServerSrc_div">
+									<label>$| LANG_LOCALE['10798'] |$</label> 
+									<p>
+										<input type="radio" $| web.radioSelected(wan3SettingsRow["dnsType"] == "1") |$ name="wan3Settings.dnsType" value="1" id="tf1_dnsServerSrc" onchange="changeDNSServerSource('tf1_dnsServerSrc')">$| LANG_LOCALE['11066'] |$
+									</p>
+									<p>
+										<input type="radio" $| web.radioSelected(wan3SettingsRow["dnsType"] == "2") |$ name="wan3Settings.dnsType" value="2" id="tf1_dnsServerSrc" onchange="changeDNSServerSource('tf1_dnsServerSrc')">$| LANG_LOCALE['13230'] |$
+									</p>
+								</div>
+								
+								<div class="break" id="break_dnsServerSrc_div">&nbsp;</div>
+								
+								<div class="configRow" id="tf1_primaryDNSServer_div">
+									<label>$| LANG_LOCALE['12537'] |$</label> 
+									<input type="text" name="wan3Settings.primaryDns" value ="$| wan3SettingsRow["primaryDns"]  or '' |$"  id="tf1_primaryDNSServer" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+								</div>
+								<div class="break" id="break_primaryDNSServer_div">&nbsp;</div>
+								
+								<div class="configRow" id="tf1_secondaryDNSServer_div">
+									<label>$| LANG_LOCALE['12782'] |$</label>
+									<input type="text" name="wan3Settings.secondaryDns"  value ="$| wan3SettingsRow["secondaryDns"]  or '' |$" id="tf1_secondaryDNSServer" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }"> 
+								</div>
+								<div class="break" id="break_secondaryDNSServer_div">&nbsp;</div>
+								
+									<div class="break">
+										&nbsp;
+									</div>
+									<h2>$| LANG_LOCALE['12478'] |$</h2>
+									<div class="configRow">
+										<label>$| LANG_LOCALE['11734'] |$</label>
+										<p>
+											<input type="radio" $| web.radioSelected(wan3SettingsRow["mtuType"] == "1") |$ name="wan3Settings.mtuType" id="dynamicPortSetup" value="1" onclick="portSetupChangeMode('dynamicPortSetup','','tf1_dynamicCustomMTU1');">
+											$| LANG_LOCALE['10683'] |$
+										</p>
+										<p>
+											<input type="radio" $| web.radioSelected(wan3SettingsRow["mtuType"] == "2") |$ name="wan3Settings.mtuType" id="dynamicPortSetup" value="2" onclick="portSetupChangeMode('dynamicPortSetup','tf1_dynamicCustomMTU1','');">
+											$| LANG_LOCALE['10648'] |$
+										</p>
+									</div>
+									<div class="break">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_dynamicCustomMTU1_div">
+										<label>$| LANG_LOCALE['10652'] |$</label>
+										<input type="text" name="wan3Settings.customMTU" value ="$| wan3SettingsRow["customMTU"]  or '' |$" id="tf1_dynamicCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, LANG_LOCALE['11239']+': ', LANG_LOCALE['10433']);}">
+										<dl>
+											[$| LANG_LOCALE['12627'] |$: 1200 - 1500] $| LANG_LOCALE['10433'] |$
+										</dl>
+									</div>
+									<div class="break">
+											&nbsp;
+									</div>						
+									<div class="submitRow">
+										<input type="submit" name="button.config.wan3Settings" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" onclick="return wan3SettingsValidate();">
+										<input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); wan3SettingsOnReset('tf1_frmWan3Settings')">
+									</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/macValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/wan3Settings.js"></script>
+	</body>
+</html>
+<?lua end ?>

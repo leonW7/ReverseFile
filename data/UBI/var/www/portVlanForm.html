@@ -1,0 +1,105 @@
+<?lua 
+
+require "teamf1lualib/portVlan_bl"
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie, port, modeVal, pvid,participationVlanIds, vlanIdTable
+        
+    if (ButtonType and ButtonType == "edit") then
+       returnCode, cookie, port, modeVal, pvid, participationVlanIds, vlanIdTable, wVlan, portName =  portVlanGet (inputCookie) 
+    end  
+cgilua.header ("Content-Type","text/html; charset=UTF-8")  
+?>
+<div id="tf1_portVlanDailogContent">
+                <div class="topBg">
+                        <?lua 
+                        if (wVlan == "1") then
+                        ?>
+                        <h1 data-localize="30114">Wireless VLAN Configuration</h1>
+                        <?lua else ?>
+                        <h1 data-localize="12485">Port VLAN Configuration</h1>
+                        <?lua end ?>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <?lua 
+                        if (wVlan == "1") then
+                        ?>
+                        <label data-localize="12918"> SSID </label>
+                        <?lua else ?>
+                        <label data-localize="12474"> Port Name </label>
+                        <?lua end ?>                        
+                        <?lua 
+                        if (wVlan == "1") then
+                            portName = port or ''
+                        end
+                        ?>
+                        <p>
+                        $| portName  or ''|$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label data-localize="11720"> Mode </label>
+                        <select size="1" id="tf1_mode" name="portVlan.mode" value="$| modeVal or ''|$" name="tf1_mode" onchange="changeModeType('tf1_mode')">
+                            <option data-localize="13709" value="1" $| web.dropdownSelected(modeVal == "1") |$ >Access</option>
+                          	<?lua  if (UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                            <option data-localize="11061" value="2" $| web.dropdownSelected(modeVal == "2") |$ >General</option>
+                            <?lua end?>
+                            <option data-localize="13710" value="3" $| web.dropdownSelected(modeVal == "3") |$ >Trunk</option>
+                        </select>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_pvid_div">
+                        <?lua if (cgi["modeVal"] ~= "3") then ?>
+                        <label data-localize="12576"> PVID </label>
+                        <?lua if (UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N") then ?>
+                        <input type="text" name="portVlan.pvid" value="$| pvid or ''|$" class="one" id="tf1_pvid" value="1" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 15, true, LANG_LOCALE['11327']+': ', '');}">
+                        <dl>
+                            [<span data-localize="10683">Default</span>: 1,  <span data-localize="12627">Range</span>: 1 - 15]
+                        </dl>
+                        <?lua else ?>
+                        <input type="text" name="portVlan.pvid" value="$| pvid or ''|$" class="one" id="tf1_pvid" value="1" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 4093, true, LANG_LOCALE['11327']+': ', '');}">
+                        <dl>
+                            [<span data-localize="10683">Default</span>: 1,  <span data-localize="12627">Range</span>: 1 - 4093]
+                        </dl>
+                        <?lua end end?>
+                    </div>
+                    <div class="break" id="break_pvid_div">
+                        &nbsp;
+                    </div>
+                    <div id="tf1_membershipBlock_div">
+                        <?lua 
+                        if (wVlan == "1") then
+                        ?>
+                        <h1 data-localize="30115">Wireless VLAN Membership Configuration</h1>
+                        <?lua else ?>
+                        <h1 data-localize="13279">VLAN Membership Configuration</h1>
+                        <?lua end ?>                        
+                        <div class="configRow" id="tf1_vlanMembers_div">
+                            <label data-localize="13278"> VLAN Membership </label>
+                            <select name="tf1_vlanMembers" id="tf1_vlanMembers" multiple class="multiTwo">
+                            <?lua 
+
+                            for u,v in pairs(vlanIdTable) do
+                            ?>
+                                <option $| web.multiDropDownSelected(participationVlanIds, v["vlanId"]) |$ value="$| v["vlanId"] |$">$| v["vlanId"] |$</option>
+                            <?lua end ?>
+                            </select>
+                        </div>
+                        <div class="break" id="break_vlanMembers_div">
+                            &nbsp;
+                        </div>
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                <input data-localize="12758" type="submit" name="button.edit.portVlan" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="return pageValidate()">
+                </div>
+            </div>

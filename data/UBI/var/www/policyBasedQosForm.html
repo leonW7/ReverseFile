@@ -1,0 +1,151 @@
+<?lua
+require "teamf1lualib/bl_trafficSelectors"
+require "teamf1lualib/util"
+local gui_trafficSelector = require("com.teamf1.bl.wanqos.trafficselector")
+local advQosInfo = {}
+local vlanTbl
+errorCode, vlanTbl = gui_trafficSelector.vlanGetAll ()
+if (errorCode ~= 0) then
+    errorString = "There is some issue"
+end
+
+if (cgi["configRowId"] ~= "-1" ) then
+    
+ 
+
+require "teamf1lualib/bl_policyBasedQos"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local guiAdvQosPolicy = require("com.teamf1.bl.lanqos.priority")
+local errorMap        = require ("com.teamf1.core.errorMap")
+local returnCodes     = require ("com.teamf1.core.returnCodes")
+
+local configRow = cgi
+local cookie = {}
+local errorCode
+cookie["policyBasedQos.cookie"] = configRow["configRowId"]
+
+errorCode, advQosInfo = guiAdvQosPolicy.lanQosAdvancedPolicyGetInfo (cookie)
+
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+
+end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+?>
+<div id="tf1_policyBasedQosDailogContent">
+    <div class="topBg">
+        <h1>Policy Based QoS Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow" id="tf1_txtProfileName_div">
+            <label>Profile Name </label>
+            <?lua if(cgi["configRowId"] ~= "-1") then?>
+                <p> $| advQosInfo.policyName |$ </p>
+                <input type="hidden" name="policyBasedQos.policyName" value="$| 
+                advQosInfo.policyName or '' |$" id="tf1_txtProfileName">
+                <input type="hidden" name="policyBasedQos.cookie" value="$|
+            advQosInfo.policyName or '' |$" >
+            <?lua else ?>
+	            <input type="text" name="policyBasedQos.policyName" value="$|
+            advQosInfo.policyName or '' |$" id="tf1_txtProfileName" maxlength="30" onkeypress="return alphaNumericCheck (event, '')">
+                <input type="hidden" name="policyBasedQos.cookie" value="$|
+            advQosInfo.policyName or '' |$" >
+            <?lua end?>
+        </div>
+        <div class="break" id="break1_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_port_div">
+            <label>Port </label><select id="tf1_port" name="policyBasedQos.port" class="multiTwo" multiple size="4">
+                <?lua
+                local selectedPorts = {}
+                if (cgi["configRowId"] ~= "-1" ) then
+                    selectedPorts = util.split(advQosInfo["portName"] ,",")
+                end
+
+                ?>
+                <option $| web.multiDropDownSelected(selectedPorts, "Port1") |$ value="Port1">Port1</option>
+                <option $| web.multiDropDownSelected(selectedPorts, "Port2") |$ value="Port2">Port2</option>
+                <option $| web.multiDropDownSelected(selectedPorts, "Port3") |$ value="Port3">Port3</option>
+                <option $| web.multiDropDownSelected(selectedPorts, "Port4") |$ value="Port4">Port4</option>
+            </select> </div>
+        <div class="break" id="break2_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_profileType_div">
+            <label>Profile Type </label>
+            <select size="1" name="policyBasedQos.policyType" id="tf1_profileType" onchange="policyBasedProfileTypeChange('tf1_profileType');">
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "1") |$ value="1">VLAN</option>
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "2") |$ value="2">Destination MAC Address</option>
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "3") |$ value="3">Source MAC Address</option>
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "4") |$ value="4">Destination IP Address</option>
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "5") |$ value="5">Source IP Address</option>
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "6") |$ value="6">Source TCP Port</option>
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "7") |$ value="7">Destination TCP Port</option>
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "8") |$ value="8">Source UDP Address</option>
+            <option $| web.dropdownSelected(advQosInfo["policyType"] == "9") |$ value="9">Destination UDP Address</option>
+            </select> </div>
+        <div class="break" id="break3_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_policyVLAN_div">
+            <label>VLAN </label><select size="1" name="policyBasedQos.vlanId" id="tf1_policyVLAN">
+                <?lua
+					for k,v in pairs(vlanTbl) do
+						local row = vlanTbl[k]
+                        ?>
+           	<option value="$| row["vlanId"] |$" $|
+            web.dropdownSelected(advQosInfo["vlan"] ==
+            row["vlanId"]) |$ >$| row["vlanId"] or '' |$</option>
+            <?lua
+					end
+			?>
+            </select> </div>
+        <div class="break" id="break4_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtMacAddress_div">
+            <label>MAC Address </label>
+            <input type="text" name="policyBasedQos.macAddress" value="$|
+            advQosInfo.macDstAddr or advQosInfo.macSrcAddr or '' |$"id="tf1_txtMacAddress" maxlength="17" onkeypress="return numericValueCheck (event,'abcdefABCDEF:')" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')">
+        </div>
+        <div class="break" id="break5_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtIpAddress_div">
+            <label>IP Address </label>
+            <input type="text" name="policyBasedQos.ipAddress" value="$|
+            advQosInfo.ipDstAddr or advQosInfo.ipSrcAddr or '' |$" id="tf1_txtIpAddress" maxlength="17" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+        </div>
+        <div class="break" id="break6_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_L4Port_div">
+            <label>L4 Port </label>
+            <input type="text" name="policyBasedQos.portAddress" value="$|
+            advQosInfo.tcpDstPort or advQosInfo.tcpSrcPort or advQosInfo.udpSrcPort or advQosInfo.udpDstPort or '' |$" class="one" id="tf1_L4Port" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, 'Invalid L4 Port.', '');}">
+            <dl>
+                [Range: 1 - 65535]
+            </dl>
+        </div>
+        <div class="break" id="break7_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_priority_div">
+            <label>Priority </label><select size="1" name="policyBasedQos.queue" id="tf1_priority">
+            <option $| web.dropdownSelected(advQosInfo["priority"] == "3") |$ value="3">Highest</option>
+            <option $| web.dropdownSelected(advQosInfo["priority"] == "2") |$ value="2">High</option>
+            <option $| web.dropdownSelected(advQosInfo["priority"] == "1") |$ value="1">Low</option>
+            <option $| web.dropdownSelected(advQosInfo["priority"] == "0") |$ value="0">Lowest</option>
+            </select> </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit"
+        name="button.config.policyBasedQos.policyBasedQos.$| cgi["configRowId"] |$" onclick="return qosPolicyConfigValidate();" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+

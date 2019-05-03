@@ -1,0 +1,171 @@
+<?lua 
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "doubleVlan"
+
+if(true) then
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+    <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form name action="cgi-action.html" method="post" name="tf1_frmDoubleVlan" id="tf1_frmDoubleVlan">        
+            <input type="hidden" name="thispage" id="thispage" value="doubleVlan.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');" />
+                    &nbsp;Select
+                    All
+                </li>
+                <li id="edit">
+                    Edit
+                </li>
+                <li id="delete">
+                    Delete
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgInfo">
+                    <p>Status Message Place Holder.</p>
+                    </div>
+                    -->
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=macBasedVlan.html">MAC Based VLAN</a>
+                                </li>
+                                <li>
+                                    <a href="?page=voiceVlan.html">Voice VLAN</a>
+                                </li>
+                                <li>
+                                    <a href="?page=protocolVlan.html">Protocol Based
+                                    VLAN</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=doubleVLAN.html">Double VLAN</a>
+                                </li>
+                                <li>
+                                    <a href="?page=gvrp.html">GVRP</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>Double VLAN</h1>
+                    <div class="CLR">
+                        <div class="demo_jui">
+                            <div class="CLR">
+                                <div class="demo_jui" id="tf1_doubleVlan">
+                                    <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                        <thead>
+                                            <tr>
+                                                <th>Interface </th>
+                                                <th>Ether Type </th>
+                                                <th>Custom Tag </th>
+                                            </tr>
+                                        </thead>
+                                        <tr class="gradeA" id="doubleVlan1">
+                                            <td>LAN 1 </td>
+                                            <td>VLAN </td>
+                                            <td>1 </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="buttonsRow" id="tf1_btnShowModal">
+                                <input type="button" class="btnSubmit" title="Add New Double VLAN " value="Add New Double VLAN " id="btSave" onclick="openForm('button.edit.doubleVlan.doubleVlan',-1,'tf1_dialog','doubleVlan','doubleVlanForm.html', 'tf1_doubleVlanDailogContent','onLoadDoubleVlanFn');">
+                            </div>
+                            <div class="break">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/doubleVLAN.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+
+                $('#tf1_doubleVlan .gradeA').contextMenu('contextMenu', {
+                                    bindings : {
+                                        'editMenu' : function(t, e, rowId) {
+                                            openForm('button.edit.doubleVlan.doubleVlan',rowId,'tf1_dialog','doubleVlan','doubleVlanForm.html', 'tf1_doubleVlanDailogContent','onLoadDoubleVlanFn');                                    
+                                        },
+                                        'deleteMenu' : function(t, e, rowId) {
+                                            deleteRows('button.delete.doubleVlan.doubleVlan', 'tf1_frmDoubleVlan', rowId, 'optionSelectAll', 'tf1_dialog', 'doubleVlan', 'doubleVlan');
+                                        }
+                                    }
+                                });
+
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+
+            });
+        </script>
+    </body>
+
+</html>
+<?lua end ?>

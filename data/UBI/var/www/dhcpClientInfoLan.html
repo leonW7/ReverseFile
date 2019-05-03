@@ -1,0 +1,185 @@
+<?lua 
+require "teamf1lualib/dhcpClientInfoLan_bl"
+require "teamf1lualib/ipMacBinding_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "lanLeasedClients"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag
+
+if (ButtonType and ButtonType == "edit") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["ipMacBinding.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = ipMacBindingCreate (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+else
+	local dhcpClientLanInfo
+	errorFlag, dhcpClientLanInfo = dhcpClientInfoLanGetAll ()
+	if (errorFlag ~= returnCodes.SUCCESS) then
+         statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+        LANG_LOCALE = "11530,11456,10787,11531,11387,11636,11122"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+Copyright (c) 2008 - 2014, TeamF1 Networks Pvt. Ltd. 
+(Subsidiary of D-Link India)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmDhcpClientInfoLan" id="tf1_frmDhcpClientInfoLan">        
+            <input type="hidden" name="thispage" id="thispage" value="dhcpClientInfoLan.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->    
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+			<!-- Right click Div Start
+        	<div class="contextMenu" id="contextMenu">
+        	    <ul>
+        	        <li id="ipMacBinding">
+        	            IP / MAC Binding
+        	        </li>
+	            </ul>
+    	    </div>-->
+    	    <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li class="current">
+                                    <a href="?page=dhcpClientInfoLan.html">$| LANG_LOCALE['11530'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=dhcpClientInfoV6.html">$| LANG_LOCALE['11456'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=dhcpClientInfoDmz.html">$| LANG_LOCALE['10787'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                             $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11531'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_dhcpClientInfoLan">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11122'] |$</th>
+                                        <th>$| LANG_LOCALE['11387'] |$</th>
+                                        <th>$| LANG_LOCALE['11636'] |$</th>
+                                    </tr>
+                                </thead>
+
+                                    <?lua 
+                                    local i = 0
+                                        for k, v in pairs (dhcpClientLanInfo) do
+                                        i=i+1
+                                    local row = dhcpClientLanInfo[i]
+                                    ?>
+                                    <tr class="gradeA" id="dhcpClientInfoLan$| row["DhcpLeasedClients._ROWID_"] |$" >
+                                        <td class="gradeA">$| row["DhcpLeasedClients.HostName"] or '' |$</td>
+                                        <td class="gradeA">$| row["DhcpLeasedClients.IPAddr"] or '' |$</td>
+                                        <td class="gradeA">$| row["DhcpLeasedClients.MacAddr"] or '' |$</td>
+                                    </tr>
+                                        <?lua 
+                                            end 
+                                         ?>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipMacBindingConfig.js"></script>
+        <script type="text/ecmascript" language="javascript" src="js/macValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#tf1_dhcpClientInfoLan .gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'ipMacBindingMenu' : function(t, e, rowId) {                            
+                            openForm('button.edit.dhcpClientInfoLan.dhcpClientInfoLan',rowId,'tf1_dialog','dhcpClientInfoLan','dhcpClientInfoLanForm.html', 'tf1_dhcpClientInfoLanDailogContent','');
+                        }
+                    }
+                });
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 0 }
+                    ]
+                });
+                dataRightClick(false);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+                onloadCall();
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

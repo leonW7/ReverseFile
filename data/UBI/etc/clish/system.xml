@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+    <!--===================================================-->
+    <COMMAND name="show system status"
+            help="Display system status">
+	    <ACTION>lua clishCmdExec (sysStatusGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show system dashboard" 
+        help="Displays the resources being used in the system currently">
+    	    <ACTION>lua sysUtilizationInfoGet()</ACTION>
+    </COMMAND>
+   <!--=======================================================-->
+     <VIEW name="session-config" prompt="session-config[system-session_settings]>">
+            <COMMAND name="save" help="Save session logout changes.">
+                <ACTION>lua clishCfgObjExec("admin")</ACTION>
+             </COMMAND>
+             <COMMAND name="exit" 
+                 help="Save configuration changes and exit current mode." 
+                 view="root-view" viewid="">
+                 <ACTION>lua clishCfgObjExec("admin")</ACTION>
+             </COMMAND>
+             <COMMAND name="cancel" help="Roll back admin  configuration changes.">
+                 <ACTION>lua clishCfgObjReset()</ACTION>
+             </COMMAND>
+             <COMMAND name="admin.timeout" help="">
+                 <PARAM name="time" 
+                  help="Change Admin session timeout value"
+                  ptype="SESSION_TIMEOUT"/>
+                  <ACTION>lua clishCfgObjAdd ("admin","SessionSettings.adminTimeout", "${time}")
+                  </ACTION>
+             </COMMAND>
+            <COMMAND name="guest.timeout" help="">
+                 <PARAM name="time" 
+                  help="Change Guest session time"
+                  ptype="SESSION_TIMEOUT"/>
+                  <ACTION>lua clishCfgObjAdd ("admin", "SessionSettings.guestTimeout", "${time}")
+                  </ACTION>
+            </COMMAND>
+     </VIEW>
+    <!--=======================================================-->
+          <COMMAND name="system session_setting"
+              help="System session settings configuration."/>
+    <!--=======================================================-->
+          <COMMAND name="system session_setting configure"
+               help="User session configuration mode."
+               view="session-config" viewid="">
+               <ACTION>lua clishCfgObjNew ("admin", sessionCfgInit, sessionCfgSave, sessionCfgVal)
+               </ACTION>
+          </COMMAND>
+    <!--===================================================-->
+    	  <COMMAND name="show system session_settings" 
+              help="Displays system session_settings">
+    	     <ACTION>lua clishCmdExec (sysSessionsettingsGet)</ACTION>
+    	  </COMMAND>
+
+</CLISH_MODULE>

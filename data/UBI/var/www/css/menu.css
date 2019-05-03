@@ -1,0 +1,517 @@
+/*
+ Copyright (c) 2012 TeamF1, Inc. (www.TeamF1.com)
+ All rights reserved.
+ Created on 1st Aug 2012 - suresh
+ */ @charset "utf-8";
+
+.menuBg {
+    clear: both;
+    height: 56px;
+}
+
+.menuBg > div {
+    height: 68px;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+.menuBg > div > div {
+    height: 68px;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+.menuBg > div > div > div {
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#045690',EndColorStr='#048bb0');
+
+	background:#045690;
+	background:-ms-linear-gradient(top,#045690,#048bb0);
+	background:-webkit-gradient(linear,left top,left bottom,from(#045690),to(#048bb0));
+	background:-moz-linear-gradient(top,#045690,#048bb0);
+	background:-o-linear-gradient(top,#045690,#048bb0);
+ border-bottom: 5px solid #86C2FD;
+ height: 52px;
+}
+
+.menuDiv {background: url("../images/icons.png") no-repeat scroll -45px -1655px transparent; float: left; line-height: 60px; padding: 0 5px; }
+
+.submenuDiv { background:none; float: left; margin-top: 10px; } /* sub menu white divider image magic; it's depends on each column width + 1 [160+1] */
+
+ul, li { font-size:13px; font-family: Trebuchet MS,Arial,Verdana,Helvetica,Sans-serif; line-height:21px; text-align:left; }
+#menu { background: none repeat scroll 0 0 transparent; height: 50px; list-style: none outside none; padding: 5px 0 0 12px; }
+#menu li { border: medium none; display: block; float: left; margin-right: 15px; margin-top: 7px; padding: 4px 6px; position: relative; text-align: center; }
+
+#menu li a { color: #86C2FD; display: block; font-family: Trebuchet MS,Arial,Verdana,Helvetica,Sans-serif; font-size: 16px; outline: 0 none; text-decoration: none; }
+#menu li:hover a { color:#FFFFFF; }
+
+#menu li .subMenu1 { background: url("../images/icons.png") no-repeat scroll 0 -6px transparent; padding-left: 38px; }
+#menu li:hover .subMenu1 { background: url("../images/icons.png") no-repeat scroll 0 -38px transparent; }
+
+#menu li .subMenu2 { background: url("../images/icons.png") no-repeat scroll 0 -70px transparent; padding-left: 38px; }
+#menu li:hover .subMenu2 { background: url("../images/icons.png") no-repeat scroll 0 -102px transparent; }
+
+#menu li .subMenu3 { background: url("../images/icons.png") no-repeat scroll 0 -134px transparent; padding-left: 38px; }
+#menu li:hover .subMenu3 { background: url("../images/icons.png") no-repeat scroll 0 -166px transparent; }
+
+#menu li .subMenu4 { background: url("../images/icons.png") no-repeat scroll 0 -198px transparent; padding-left: 38px; }
+#menu li:hover .subMenu4 { background: url("../images/icons.png") no-repeat scroll 0 -230px transparent; }
+
+#menu li .subMenu5 { background: url("../images/icons.png") no-repeat scroll 0 -262px transparent; padding-left: 38px; }
+#menu li:hover .subMenu5 { background: url("../images/icons.png") no-repeat scroll 0 -294px transparent; }
+
+#menu li .subMenu6 { background: url("../images/icons.png") no-repeat scroll 0 -326px transparent; padding-left: 38px; }
+#menu li:hover .subMenu6 { background: url("../images/icons.png") no-repeat scroll 0 -358px transparent; }
+
+#menu li#Selected .subMenu1 { background: url("../images/icons.png") no-repeat scroll 0 -38px transparent; color:#FFFFFF; padding-left: 38px; }
+#menu li#Selected .subMenu2 { background: url("../images/icons.png") no-repeat scroll 0 -102px transparent; color:#FFFFFF; padding-left: 38px; }
+#menu li#Selected .subMenu3 { background: url("../images/icons.png") no-repeat scroll 0 -166px transparent; color:#FFFFFF; padding-left: 38px; }
+#menu li#Selected .subMenu4 { background: url("../images/icons.png") no-repeat scroll 0 -230px transparent; color:#FFFFFF; padding-left: 38px; }
+#menu li#Selected .subMenu5 { background: url("../images/icons.png") no-repeat scroll 0 -294px transparent; color:#FFFFFF; padding-left: 38px; }
+#menu li#Selected .subMenu6 { background: url("../images/icons.png") no-repeat scroll 0 -358px transparent; color:#FFFFFF; padding-left: 38px; }
+
+.subMenu1List,
+.subMenu2List,
+.subMenu3List,
+.subMenu4List,
+.subMenu5List,
+.subMenu6List, 
+.subMenu7List,
+.subMenu8List { 
+	margin:4px auto;
+	float:left;
+	position:absolute;
+	left:-999em; /* for diding dropdown */
+	text-align:left;
+	padding:0 5px;
+	border:1px solid #006699;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#d2d2d2',EndColorStr='#FFFFFF');
+	background:#FFFFFF;
+	background:-ms-linear-gradient(top,#d2d2d2,#FFFFFF);
+	background:-webkit-gradient(linear,left top,left bottom,from(#d2d2d2),to(#FFFFFF));
+	background:-moz-linear-gradient(top,#d2d2d2,#FFFFFF);
+	background:-o-linear-gradient(top,#d2d2d2,#FFFFFF);
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	z-index: 999;
+}
+
+.subMenu1List { width: 480px; }
+.subMenu2List { width: 320px; }
+.subMenu3List { width: 800px; }
+.subMenu4List { width: 960px; }
+.subMenu5List { width: 480px; }
+.subMenu6List { width: 640px; }
+.subMenu7List { width: 800px; }
+.subMenu8List { width: 320px; }
+
+#menu li:hover .subMenu1List, #menu li:hover .subMenu2List, #menu li:hover .subMenu3List, #menu li:hover .subMenu4List, #menu li:hover .subMenu5List, #menu li:hover .subMenu6List, #menu li:hover .subMenu7List, #menu li:hover .subMenu8List { 
+	top:auto;
+	-moz-box-shadow: 0 0 8px #999999;
+	-webkit-box-shadow: 0 0 8px #999999;
+	box-shadow: 0 0 8px #999999;
+}
+
+#menu li:hover .subMenu1List { left:-20px; }
+#menu li:hover .subMenu2List { left:-20px; }
+#menu li:hover .subMenu3List { left:-295px; }
+#menu li:hover .subMenu4List { left:-490px; }
+#menu li:hover .subMenu5List { left:-180px; }
+#menu li:hover .subMenu6List { left:-475px; }
+#menu li:hover .subMenu7List { left:-320px; }
+#menu li:hover .subMenu8List { left:-20px; }
+
+.subMenuCols { border-left: 1px solid #ffffff; display: inline; float: left; margin: 3px 3px; padding:0 0 0 2px; position: relative; width:150px; }
+
+.subMenuColsFirst {
+	border-left:none;
+}
+
+#menu h3 { color: #006699; font-family: Trebuchet MS, Arial, Verdana, Helvetica, Sans-serif; font-size: 13px; line-height: 15px; margin: 0 5px; text-align: left; }
+
+#menu li:hover div a { font-size:12px; color:#333333; padding: 0 6px; }
+#menu li:hover div a:hover { background: none repeat scroll 0 0 #86c2fd; color:#333333; }
+#menu li ul { list-style:none; padding:0; margin:0 0 12px 0; }
+#menu li ul li { font-size:12px; line-height:22px; position:relative; padding:0; margin:0; float:none; text-align:left; width:150px; }
+#menu li ul li:hover { background:none; border:none; padding:0; margin:0; }
+
+.wizard, .wizard a {
+ background: url("../images/icons.png") no-repeat scroll 0 -390px transparent;
+ color: #86C2FD;
+ font-family: Trebuchet MS,Arial,Verdana,Helvetica,Sans-serif;
+ font-size: 16px;
+ line-height: 30px;
+ padding: 1px 16px 0 36px;
+ text-align: left;
+ text-decoration: none;
+}
+.wizard:hover { background: url("../images/icons.png") no-repeat scroll 0 -422px transparent; color: #FFFFFF; }
+
+nav { display: block; position: relative; }
+
+.nav-bg {
+ border-bottom: 4px solid #0493B4;
+ line-height: 8px;
+ margin: 12px 0;
+ padding-left: 20px;
+}
+
+ul.menu { display: inline-block; margin: 0; }
+ul.menu li {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#7D7D7D',EndColorStr='#969696');
+	background:#969696;
+	background:-ms-linear-gradient(top,#7D7D7D,#969696);
+	background:-webkit-gradient(linear,left top,left bottom,from(#7D7D7D),to(#969696));
+	background:-moz-linear-gradient(top,#7D7D7D,#969696);
+	background:-o-linear-gradient(top,#7D7D7D,#969696);
+ border-radius: 4px 4px 0 0;
+ display: block;
+ float: left;
+ font-size: 13px;
+ letter-spacing: 1px;
+ margin: 0 1px;
+ padding: 0 8px;
+ text-align: center;
+}
+ul.menu li a {
+ color: #FFFFFF;
+ cursor: pointer;
+ display: block;
+ line-height: 10px;
+ padding: 10px 0;
+ text-decoration: none;
+}
+ul.menu li:hover, ul.menu li.current {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#045690',EndColorStr='#0493b4');
+	background:#0493b4;
+	background:-ms-linear-gradient(top,#045690,#0493b4);
+	background:-webkit-gradient(linear,left top,left bottom,from(#045690),to(#0493b4));
+	background:-moz-linear-gradient(top,#045690,#0493b4);
+	background:-o-linear-gradient(top,#045690,#0493b4);
+}
+ul.menu li a:hover , ul.menu li.current a { color: #FFFFFF; }
+
+/* for table right click menus */
+
+.toolTip {
+    box-shadow: 2px 2px 6px #999999;
+    margin:0 0 0 15px;
+    min-width: 120px;
+	  
+}
+
+.toolTip > ul {
+    border-radius: 3px 3px 3px 3px;
+    padding: 0 !important;
+	 
+}
+
+#editMenu, #deleteMenu, #disableMenu, #enableMenu, #exportMenu, #copyMenu, #startSyncMenu, #disconnectMenu, #applyMenu, #blockDeviceMenu, #startMenu, #acknowledgeMenu, #acknowledgeAllMenu, #viewDetailsMenu, #channelPowerMenu, #apdetailsMenu, #distributedMenu, #neighbourapMenu, #clearNeighbourapMenu, #neighbourClientMenu, #clearNeighbourClientMenu, #radio1Menu, #radio2Menu, #provisionMenu, #pushConfigMenu, #previewMenu, #detailsMenu, #rightConnectMenu, #clearMenu, #debugMenu, #disassociateClientsMenu, #resetAPMenu, #ipMacBindingMenu, #purgeHistoryMenu, #apStatisticsMenu, #radioStatisticsMenu, #vapStatisticsMenu, #preAuthDetailsMenu, #romaHistoryDetailsMenu, #traiangulationDetailsMenu, #rogueClassificationMenu, #clientStatisticsMenu, #addResourceObjectMenu, #refreshMenu, #moveMenu, #purgePreAuthHistoryMenu, #replyMenu, #forwardMenu, #printMenu, #sendSMSMenu, #printAllMenu, #installMenu, #launchMenu {
+	color: #006699 !important;
+	cursor: pointer !important;
+	padding-left: 30px !important;
+	padding-right: 8px !important;
+	line-height: 24px !important;
+}
+
+#editMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -481px transparent;
+}
+
+#detailsMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -513px transparent;
+}
+
+#deleteMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -545px transparent;
+}
+
+#enableMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -577px transparent;
+}
+
+#disableMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -609px transparent;
+}
+
+#exportMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -641px transparent;
+}
+
+#copyMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -673px transparent;
+}
+
+#startSyncMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -705px transparent;
+}
+
+#disconnectMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -737px transparent;
+}
+
+#applyMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -769px transparent;
+}
+
+#blockDeviceMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -833px transparent;
+}
+
+#startMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -833px transparent;
+}
+
+#acknowledgeMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1441px transparent;
+}
+
+#acknowledgeAllMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1441px transparent;
+}
+
+#viewDetailsMenu  {
+	background: url("../images/icons.png") no-repeat scroll -18px -897px transparent;
+}
+
+#channelPowerMenu  {
+	background: url("../images/icons.png") no-repeat scroll -18px -1376px transparent;
+}
+
+#apdetailsMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -513px transparent;
+}
+
+#distributedMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1474px transparent;
+}
+
+#neighbourapMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1025px transparent;
+}
+
+#clearNeighbourapMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1025px transparent;
+}
+
+#neighbourClientMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1025px transparent;
+}
+
+#clearNeighbourClientMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1025px transparent;
+}
+
+#radio1Menu {
+	background: url("../images/icons.png") no-repeat scroll -18px -481px transparent;
+}
+
+#radio2Menu{
+	background: url("../images/icons.png") no-repeat scroll -18px -481px transparent;
+}
+
+#provisionMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1153px transparent;
+}
+
+#pushConfigMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -481px transparent;
+}
+
+#previewMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1217px transparent;
+}
+
+#rightConnectMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -865px transparent;
+}
+
+#clearMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -1281px transparent;
+}
+
+#debugMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1121px transparent;
+}
+
+#resetAPMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -897px transparent;
+}
+
+#disassociateClientsMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -1409px transparent;
+}
+
+#ipMacBindingMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -929px transparent;
+}
+
+#purgeHistoryMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -513px transparent;
+}
+#apStatisticsMenu, #preAuthDetailsMenu, #romaHistoryDetailsMenu, #traiangulationDetailsMenu, #rogueClassificationMenu, #clientStatisticsMenu, #radioStatisticsMenu, #vapStatisticsMenu, #purgePreAuthHistoryMenu  {
+	background: url("../images/icons.png") no-repeat scroll -18px -513px transparent;
+}
+
+#addResourceObjectMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -961px transparent;
+}
+
+#refreshMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1217px transparent;
+}
+
+#moveMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -1057px transparent;
+}
+
+#replyMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -992px transparent;
+}
+
+#forwardMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -960px transparent;
+}
+
+#printMenu{
+	background: url("../images/icons.png") no-repeat scroll -18px -1184px transparent;
+}
+
+#sendSMSMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1088px transparent;
+}
+
+#printAllMenu {
+	background: url("../images/icons.png") no-repeat scroll -18px -1216px transparent;
+}
+
+#installMenu {
+    background: url("../images/icons.png") no-repeat scroll -18px -863px transparent;
+}
+
+#launchMenu {
+ background: url("../images/icons.png") no-repeat scroll -18px -864px transparent;
+}
+
+/* #Menu:hover,*/
+ul > #Menu:hover, #editMenu:hover, #deleteMenu:hover, #disableMenu:hover, #enableMenu:hover, #exportMenu:hover, #copyMenu:hover, #startSyncMenu:hover, #disconnectMenu:hover, #applyMenu:hover, #blockDeviceMenu:hover, #startMenu:hover, #acknowledgeMenu:hover, #acknowledgeAllMenu:hover, #viewDetailsMenu:hover, #channelPowerMenu:hover, #apdetailsMenu:hover, #distributedMenu:hover, #neighbourapMenu:hover, #clearNeighbourapMenu:hover, #neighbourClientMenu:hover, #clearNeighbourClientMenu:hover, #radio1Menu:hover, #radio2Menu:hover, #provisionMenu:hover, #pushConfigMenu:hover, #previewMenu:hover, #detailsMenu:hover, #rightConnectMenu:hover, #clearMenu:hover, #debugMenu:hover, #disassociateClientsMenu:hover, #resetAPMenu:hover, #ipMacBindingMenu:hover, #purgeHistoryMenu:hover, #apStatisticsMenu:hover, #apStatisticsMenu:hover, #preAuthDetailsMenu:hover, #romaHistoryDetailsMenu:hover, #traiangulationDetailsMenu:hover, #rogueClassificationMenu:hover, #clientStatisticsMenu:hover, #radioStatisticsMenu:hover, #vapStatisticsMenu:hover, #addResourceObjectMenu:hover, #refreshMenu:hover, #moveMenu:hover, #purgePreAuthHistoryMenu:hover, #replyMenu:hover, #forwardMenu:hover, #printMenu:hover, #sendSMSMenu:hover, #printAllMenu:hover, #installMenu:hover, #launchMenu:hover {
+	background-color: #86C2FD !important;
+	border: none !important;
+	color: #FFFFFF !important;
+}
+
+/* table right click menus end */
+
+
+/* for menu search */
+.menuSearchTf1 {
+    background: none repeat scroll 0 0 #FFFFFF;
+    box-shadow: 0 0 8px #999999;
+    border-radius: 4px 4px 4px 4px;
+    list-style: none outside none;
+    margin-top: 1px;
+    max-height: 400px;
+	min-width: 170px;
+    position: absolute;
+    text-align: left;
+    width: 170px;
+    overflow: auto;
+    z-index: 1;
+	-moz-box-shadow: 0 0 8px #999999;
+	-webkit-box-shadow: 0 0 8px #999999;   
+}
+
+.menuSearchTf1 li {
+    border-bottom: 1px solid #CCCCCC;
+    line-height: 18px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+li.menuLastChild {
+    border: 0px;
+}
+
+.menuSearchTf1 li a, .menuSearchTf1 li a:hover, li a.menu-selected, li a.menu-unselected {
+    color: #333333;
+    display: block;
+    font-size: 11px;
+    list-style: none outside none;
+    padding: 1px 5px;
+    text-decoration: none;
+}
+
+.menuSearchTf1 li a:hover, li a.menu-selected  {
+    cursor: pointer;
+    color: #489CDF;
+}
+
+.menuSpanArrow {
+    color: #489CDF;
+    font-size:14px;
+}
+
+.searchText {
+    font-size: 10px;
+    font-weight: normal;
+    color: #AFAFAF;
+}
+
+/* menu search end */
+
+
+/* breadcrumb starts here*/
+
+#breadCrumb{
+	color: #333333;
+    font-size: 12px;
+    font-weight: bold;
+    float: left;
+    line-height: 40px;
+    padding: 0 22px 5px 0;
+}
+
+#breadCrumb span{
+	color: #048bb0;
+	font-size: 14px;
+	padding: 0 10px;
+}
+
+.breadCrumb {
+	text-align: left;
+	overflow: hidden;
+	width: 100%;
+}
+
+.helpRefresh {
+	  float: right;
+}
+#menu li ul li a { line-height: 14px; padding: 5px !important; }
+
+.emergencyIcon {
+    background:url(../images/icons.png) no-repeat scroll 25px -2046px transparent;
+}
+.alertIcon {
+    background:url(../images/icons.png) no-repeat scroll 25px -2078px transparent;
+}
+.criticalIcon {
+    background:url(../images/icons.png) no-repeat scroll 25px -2110px transparent;
+}
+.errorIcon {
+    background:url(../images/icons.png) no-repeat scroll 25px -2142px transparent;
+}
+.warningIcon {
+    background:url(../images/icons.png) no-repeat scroll 25px -2174px transparent;
+}
+.noticeIcon {
+    background:url(../images/icons.png) no-repeat scroll 25px -2206px transparent;
+}
+.informationalIcon {
+    background:url(../images/icons.png) no-repeat scroll 25px -2238px transparent;
+}
+.debugIcon {
+    background:url(../images/icons.png) no-repeat scroll 25px -2270px transparent;
+}

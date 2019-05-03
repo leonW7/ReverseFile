@@ -1,0 +1,768 @@
+<?lua
+require "teamf1lualib/usb_bl"
+require "teamf1lualib/util"
+require "teamf1lualib/usb_returnCodes"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "maintenance"
+if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000AC") then
+	PAGE_HELP_SECTION = "usb_double"
+else
+		PAGE_HELP_SECTION = "usb"	
+end
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local firmReturnCode = require("com.teamf1.core.usb_returnCodes")
+
+local  CORRUPT_IMAGE = "0"
+local system = require("com.teamf1.bl.system.maintenance")
+
+if (ButtonType and ButtonType == "upgrade1") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["usb.usbStatus"] = "usb1"
+    errorFlag, status = system.usbFirmwareCheck (inputTable)
+    if (errorFlag == firmReturnCode.FIRMWARE_SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+local statusFile = io.open("/tmp/firmwareUpgradeStatus.txt", "w")
+      statusFile:write("PREPARING FOR UPGRADE")
+      statusFile:close()
+local progressFile = io.open("/tmp/progress.txt", "w")
+      progressFile:write("0")
+      progressFile:close()
+        displayCountDown = true
+        FILE_NAME = cgi["usb.filename"]
+        CORRUPT_IMAGE = "0"
+        USB_STATUS = "usb1"
+    elseif (errorFlag ~= returnCodes.SUCCESS) then
+        CORRUPT_IMAGE = "1"
+        displayCountDown = true
+        FILE_NAME = cgi["usb.filename"]
+        USB_STATUS = "usb1"
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        FILE_NAME = cgi["usb.filename"]
+        --web.goToPage (NextPage, true, true)
+    end
+    
+elseif (ButtonType and ButtonType == "upgrade2") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["usb.usbStatus"] = "usb2"
+    errorFlag, status = system.usbFirmwareCheck (inputTable)
+    if (errorFlag == firmReturnCode.FIRMWARE_SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+local statusFile = io.open("/tmp/firmwareUpgradeStatus.txt", "w")
+      statusFile:write("PREPARING FOR UPGRADE")
+      statusFile:close()
+local progressFile = io.open("/tmp/progress.txt", "w")
+      progressFile:write("0")
+      progressFile:close()
+        displayCountDown = true
+        FILE_NAME = cgi["usb.filename"]
+        CORRUPT_IMAGE = "0"
+        USB_STATUS = "usb2" 
+    elseif (errorFlag ~= returnCodes.SUCCESS) then
+        CORRUPT_IMAGE = "1"
+        displayCountDown = true
+        FILE_NAME = cgi["usb.filename"]
+        USB_STATUS = "usb1"
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        FILE_NAME = cgi["usb.filename"]
+       --web.goToPage (NextPage, true, true)   
+    end
+    
+elseif (ButtonType and ButtonType == "flashImage") then
+    local filename = cgi.fileName
+    local inputTbl = util.split(filename, "/") 
+    local inputTable = {}
+    inputTable["usb.filename"] = inputTbl[1]
+    inputTable["usb.usbStatus"] = inputTbl[2]
+    errorFlag, status = system.usbFirmwareUpgrade (inputTable)
+    --db.setAttribute("reboot","_ROWID_","1","reboot","1")
+    --os.execute ("/sbin/reboot -d 8 &") 
+else
+    errorFlag, cookie, usb1Status = system.usb1StatusGet()
+    errorFlag, cookie, usb2Status = system.usb2StatusGet()
+    local errorFlag, usbFileList1 = system.usbFileList1Get()
+    if (usbFileList1 ~= nil and util.fileExists(usbFileList1)) then
+        fileList1 = util.fileToString(usbFileList1)
+        fileList1 = string.gsub (fileList1, "\n", "|")
+        fileList1 = string.sub(fileList1, 1, -2)
+        if (fileList1 == nil) then
+            fileList1 = ""
+            end
+   else
+          fileList1 = ""
+          end
+    
+  local errorFlag,usbFileList2 = system.usbFileList2Get()
+    if (usbFileList2 ~= nil and util.fileExists(usbFileList2)) then
+        fileList2 = util.fileToString(usbFileList2)
+        fileList2 = string.gsub (fileList2, "\n", "|")
+        fileList2 = string.sub(fileList2, 1, -2)
+        if (fileList2 == nil) then
+            fileList2 = ""
+       end
+   else
+           fileList2 = ""
+   end
+  cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+
+LANG_LOCALE = "13247,13213,30348,13212,12800,13193,13500,13246,10496,11954,30405,30533,10752"
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<!--
+		Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+		Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+		(Subsidiary of D-Link India)
+		All rights reserved.
+		-->
+
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>        
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+                    <div class="midWidth"> 
+					<script language="JavaScript">
+						mmSel("mainMenu6");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ] -->
+				    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage or ''  |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage or '' |$</p>
+                </div>
+                    <?lua end ?>
+	
+                   
+                   <?lua
+                   if (usb1Status ~= "connected" and usb2Status ~= "connected") then
+                   ?>
+                    <div class="msgInfo">
+						<p>
+							$| LANG_LOCALE['11954'] |$
+						</p>
+                        
+                    </div>
+                    <?lua end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=systemPc.html">$| LANG_LOCALE['13246'] |$</a>
+								</li>
+								<li class="current">
+									<a href="?page=usb.html">$| LANG_LOCALE['13247'] |$</a>
+								</li>
+                                                                <li>
+									<a href="?page=checkUpdate.html">$| LANG_LOCALE['10496'] |$</a>
+								</li>
+							</ul>
+						</nav>
+                    </div>
+                    
+					<div class="FL2">
+						<p class="hint">
+							 $| helpHintText |$
+						</p>
+					</div>
+					<h1>$| LANG_LOCALE['13247'] |$</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmUsb" enctype="multipart/form-data" id="tf1_frmUsb" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="usb.html">
+                            <?lua if (PRODUCT_ID ~= "DSR-500AC_Ax" and PRODUCT_ID ~= "DSR-500_Bx") then?>
+                            <?lua if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000AC") then ?>
+								<h2>$| LANG_LOCALE['13213'] |$ 1</h2>
+                                                                <?lua else ?>
+                                                                <h2>$| LANG_LOCALE['30348'] |$</h2>
+                                                                <?lua end?>
+								<div class="configRow">
+                                    <label> $| LANG_LOCALE['13212'] |$ </label>
+                                    <?lua
+                                        if (usb1Status == "connected") then
+                                            usb1Status = LANG_LOCALE['30533']
+                                        else
+                                            usb1Status = LANG_LOCALE['10752']
+                                        end
+                                    ?>
+									<p>
+										$| usb1Status |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> $| LANG_LOCALE['12800'] |$ </label>
+									<select class="one" size="5" name="usb.filename" id="tf1_usb1FileList">
+									</select>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit" class="btnSubmit" title="$| LANG_LOCALE['13193'] |$" value="$| LANG_LOCALE['13193'] |$" id="tf1_usb1Bt" name="button.upgrade1.usb" onclick="return checkFile(1)">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+                                <?lua end ?>
+                               <?lua if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000AC" or UNIT_NAME == "DSR-500AC" or PRODUCT_ID == "DSR-500_Bx") then 
+                                if (PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then ?>
+                                <h2>$| LANG_LOCALE['13213'] |$</h2>
+                                <?lua else ?>
+                                <h2>$| LANG_LOCALE['13213'] |$ 2</h2>
+                                <?lua end ?>
+								<div class="configRow">
+									<label> $| LANG_LOCALE['13212'] |$ </label>
+                                    <?lua
+                                        if (usb2Status == "connected") then
+                                            usb2Status = LANG_LOCALE['30533']
+                                        else
+                                            usb2Status = LANG_LOCALE['10752']
+                                        end
+                                    ?>
+									<p>
+										$| usb2Status |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> $| LANG_LOCALE['12800'] |$ </label>
+									<select class="one" size="5" name="usb.filename" id="tf1_usb2FileList">
+									</select>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit" class="btnSubmit" title="$| LANG_LOCALE['13193'] |$" value="$| LANG_LOCALE['13193'] |$" id="tf1_usb2Bt" name="button.upgrade2.usb" onclick="return checkFile(2)">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+                                                               <?lua end ?>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+        </table>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" >
+
+            function checkFile(typeId){
+                if(typeId == 1) {
+                    if(document.getElementById('tf1_usb1FileList').selectedIndex == -1) 
+                        return false;    
+                }
+                 if(typeId == 2) {
+                     if(document.getElementById('tf1_usb2FileList').selectedIndex == -1)
+                       return false;    
+               }
+                 var proceed = confirm (LANG_LOCALE['13500'], '');
+	if (proceed == false)
+		{
+        return false
+        }
+			<?lua if (UNIT_NAME == "DSR-1000AC" or UNIT_NAME == "DSR-500AC" or PRODUCT_ID == "DSR-500_Bx") then ?>
+               killDaemons ();
+			<?lua else ?>
+	 $("#tf1_pageLoadingMask p").html(LANG_LOCALE['30405']+"...");               
+			<?lua end ?>
+               return true; 
+            }
+function killDaemons ()
+    {
+    var requestObj = getRequestObject ();
+    if(requestObj)
+        {
+        requestObj.onreadystatechange = function()
+            {
+            // Nothing is to be done
+            }
+        requestObj.open("GET","?page=killDeamons.html" + "&time=" + new Date(),false);
+        requestObj.send(null);
+        }
+    }
+/**********************************************************************
+* getRequestObject - Function to get Http request object. This function
+                     should be used to get an ajax related object
+* RETURNS: HTTP request object
+*/
+function getRequestObject ()
+    {
+    var request = null;
+    try 
+        {  // Firefox, Opera 8.0+, Safari
+        request=new XMLHttpRequest();
+        }
+    catch (e)
+        {// Internet Explorer
+        try
+            {
+            request=new ActiveXObject("Msxml2.XMLHTTP");
+            }
+        catch (e)
+            {
+            try
+                {
+                request=new ActiveXObject("Microsoft.XMLHTTP");
+                }
+            catch (e)
+                {
+                window.status = "Browser does not support Ajax!!";
+                return false;
+                }
+            }
+        }
+    return request;
+    }
+            var fileList1 = "$| fileList1 |$";
+            var fileArray1 = fileList1.split("|");
+            var fileList2 = "$| fileList2 |$";
+            var fileArray2 = fileList2.split("|");
+           
+            if (fileList1 != '') 
+                {
+                    var fileListObj = document.getElementById('tf1_usb1FileList');
+                    document.getElementById('tf1_usb1Bt').disabled = false;
+             
+                 for (i=0; i< fileArray1.length; i++)
+                 {
+                     fileListObj.options[i] = new Option(fileArray1[i],fileArray1[i], false, false);
+                    
+                 }
+                }
+          else 
+                {                     
+                var usb1BtObj = document.getElementById('tf1_usb1Bt');
+                if (usb1BtObj)
+                    {
+                    usb1BtObj.disabled = true;
+                    }
+                }
+          if (fileList2 != '') 
+                {
+                    var fileListObj = document.getElementById ('tf1_usb2FileList');
+                    document.getElementById('tf1_usb2Bt').disabled = false; 
+                 for (i=0; i< fileArray2.length; i++)
+                 {
+                     fileListObj.options[i] = new Option(fileArray2[i],fileArray2[i], false, false);
+                    
+                 }
+                }
+         else 
+               {
+					var usb2BtObj = document.getElementById('tf1_usb2Bt');
+					if (usb2BtObj)
+						{
+                 			usb2BtObj.disabled = true;
+						}
+               }
+             
+
+             </script>
+	</body>
+</html>
+<?lua end ?>
+<?lua if (displayCountDown) then
+    if ("DSR-1000AC_Ax" == PRODUCT_ID or "DSR-500AC_Ax" == PRODUCT_ID or 
+    "DSR-1000_Bx" == PRODUCT_ID or "DSR-500_Bx" == PRODUCT_ID) then
+        restartTime = 150
+    elseif (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+        restartTime = 180
+    else
+        restartTime = 600
+    end
+    local modRestartTime = tonumber(restartTime)*1000
+
+    LANG_LOCALE = "30001,12731,12732,30404,13988,11718,30036,30507"
+    LANG_LOCALE = db.getString (LANG_LOCALE)
+?>
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<style type="text/css">
+body { background-color: #EAEAEA; color: #006699; font-size: 12px; }
+a, article, audio, body, body, canvas, caption, dd, details, div, dl, dt, em, figcaption, figure, footer, form, h1, h2, h3, h4, h5, header, html, i, iframe, img, label, legend, li, mark, menu, nav, object, ol, p, q, samp, section, small, span, strong, sub, summary, table, tbody, td, textarea, tfoot, th, thead, time, tr, ul, var, video {     border: 0 none; font-family: Trebuchet MS,Arial,Verdana,Helvetica,Sans-serif; margin: 0; padding: 0; }
+h1 { color: #006699; float: left; font-size: 16px; font-weight: normal; letter-spacing: 1px; padding: 10px 0 10px; text-align: left; width: 75%; }
+.header { background: url("images/headerBg.png") repeat-x scroll 0 0 transparent; min-height: 140px; text-align: center; }
+.midWidth { min-width: 980px; width: 980px; }
+.logo { background: url("images/logo.png") no-repeat scroll 10px 16px transparent; color: #86C2FD; font-size: 14px; letter-spacing: 1px; padding: 54px 10px 10px; text-align: left; }
+.FL { float: left; }
+.headerRight { height: 90px; margin: 16px 16px 2px; }
+.FR { float: right; }
+.menuBg { clear: both; height: 56px; }
+.menuBg > div { height: 68px; margin: 0; padding: 0; width: auto; }
+.menuBg > div > div { height: 68px; margin: 0; padding: 0; width: auto; }
+.menuBg > div > div > div { filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#045690',EndColorStr='#048bb0'); background:#045690; background:-ms-linear-gradient(top,#045690,#048bb0); background:-webkit-gradient(linear,left top,left bottom,from(#045690),to(#048bb0)); background:-moz-linear-gradient(top,#045690,#048bb0); background:-o-linear-gradient(top,#045690,#048bb0); border-bottom: 5px solid #86C2FD; height: 52px; }
+.midWidth2 { min-width: 600px; width: 600px; }
+.midArea { background: none repeat scroll 0 0 #FFFFFF; border-radius: 8px 8px 8px 8px; -moz-box-shadow: 0 0 6px #999999; -webkit-box-shadow: 0 0 6px #999999; box-shadow: 0 0 6px #999999; clear: both; min-height: 250px; margin: 0 0 25px 0; padding: 15px; width: auto; }
+.footer { filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#919191',EndColorStr='#2F2F2F'); background:#919191; background:-ms-linear-gradient(top,#919191,#2F2F2F); background:-webkit-gradient(linear,left top,left bottom,from(#919191),to(#2F2F2F)); background:-moz-linear-gradient(top,#919191,#2F2F2F); background:-o-linear-gradient(top,#919191,#2F2F2F); color: #FFFFFF; font-size: 10px; letter-spacing: 1px; line-height: 48px; text-align: center; margin: 20px 0 0; }
+div.msgError, div.msgInfo, div.msgSuccess { color: #FFFFFF; font-size: 16px; letter-spacing: 1px; padding: 12px; width: 455px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px; border-radius: 6px 6px 6px 6px; margin-top: 10px; }
+div.msgError { filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#ff9999',EndColorStr='#ff0202'); background:#ff9999; background:-ms-linear-gradient(top,#ff9999,#ff0202); background:-webkit-gradient(linear,left top,left bottom,from(#ff9999),to(#ff0202)); background:-moz-linear-gradient(top,#ff9999,#ff0202); background:-o-linear-gradient(top,#ff9999,#ff0202); }
+div.msgInfo { filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#0096af',EndColorStr='#045d93'); background:#0096af; background:-ms-linear-gradient(top,#0096af,#045d93); background:-webkit-gradient(linear,left top,left bottom,from(#0096af),to(#045d93)); background:-moz-linear-gradient(top,#0096af,#045d93); background:-o-linear-gradient(top,#0096af,#045d93); }
+div.msgSuccess { filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#32af00',EndColorStr='#95f931'); background:#32af00; background:-ms-linear-gradient(top,#32af00,#95f931); background:-webkit-gradient(linear,left top,left bottom,from(#32af00),to(#95f931)); background:-moz-linear-gradient(top,#32af00,#95f931); background:-o-linear-gradient(top,#32af00,#95f931); }
+div.msgError > p, div.msgInfo > p, div.msgSuccess > p { background: url("images/play.gif") no-repeat scroll 0 4px transparent; line-height: 24px; padding-left: 24px; text-align: center; }
+.submitRow { margin-top: 5px; padding-left: 150px; }
+.btnSubmit, .btnReset{ filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#64b1d9',EndColorStr='#1876a6'); background:#1876a6; background:-ms-linear-gradient(top,#64b1d9,#1876a6); background:-webkit-gradient(linear,left top,left bottom,from(#64b1d9),to(#1876a6)); background:-moz-linear-gradient(top,#64b1d9,#1876a6); background:-o-linear-gradient(top,#64b1d9,#1876a6); color: #FCFCFC; border: 1px solid #ffffff; border-radius: 2px 2px 2px 2px; box-shadow: 0 1px 2px #666666; -moz-box-shadow: 0 1px 2px #666666; -webkit-box-shadow: 0 1px 2px #666666; cursor: pointer; font-size: 14px; float: left; letter-spacing: 1px; line-height: 18px; margin: 5px 10px 5px 5px;	min-width: 104px; padding: 4px 12px; text-align: center; }
+.midMsg { font-size: 14px; margin: 50px 25px; text-align: center; }
+
+/* for Progress Bar */
+.barMeter { filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#EDEDEF', EndColorStr='#C3C4CA');
+       background: #C3C4CA;
+       background: -ms-linear-gradient(top, #EDEDEF, #C3C4CA);
+       background: -webkit-gradient(linear, left top, left bottom, from(#EDEDEF), to(#C3C4CA));
+       background: -moz-linear-gradient(top, #EDEDEF, #C3C4CA);
+       background: -o-linear-gradient(top, #EDEDEF, #C3C4CA);
+       border: 2px solid #CCCCCC;
+       border-radius: 4px;
+       height: 32px; padding: 1px; position: relative; }
+.barMeter > span { display: block; height: 95%; overflow: hidden; position: absolute; }
+.barMeter > span:after, .animate > span > span { bottom: 0; content: ""; left: 0; overflow: hidden; position: absolute; right: 0; top: 0; z-index: 1; }
+.animate > span:after { display: none; }
+.barColor1 > span {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#64b1d9',EndColorStr='#1876a6');
+	background:#1876a6;
+	background:-ms-linear-gradient(top,#64b1d9,#1876a6);
+	background:-webkit-gradient(linear,left top,left bottom,from(#64b1d9),to(#1876a6));
+	background:-moz-linear-gradient(top,#64b1d9,#1876a6);
+	background:-o-linear-gradient(top,#64b1d9,#1876a6);
+}
+.usageDisplay {
+color: #333333;
+    font-size: 14px;
+    line-height: 32px;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    font-weight: bold;
+}
+/* end Progress Bar */
+
+</style>
+<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+
+</head>
+
+<body>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+		<td class="header" valign="top" align="center">
+		<div align="center">
+			<div class="midWidth">
+				<div class="logo FL">
+					$| LANG_LOCALE['30001'] |$ - $| UNIT_NAME |$ </div>
+				<div class="FR headerRight">
+&nbsp; </div>
+				<div class="midWidth menuBg">
+					<div>
+						<div>
+							<div align="center">
+&nbsp;</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top" align="center">
+		<div class="midWidth2">
+            <?lua 
+            if (statusErrorMessage ~= nil) then
+            ?>    
+            <div class="msgError">
+                <p>$| statusErrorMessage or '' |$</p>
+            </div>
+            <?lua elseif (statusSuccessMessage ~= nil) then
+            ?>
+            <div class="msgSuccess">
+                <p>$| statusSuccessMessage or '' |$</p>
+            </div>
+            <?lua end ?>
+            <div class="break">
+                &nbsp;
+            </div>
+			<div class="midArea">
+        <?lua if (CORRUPT_IMAGE ~= "1") then ?>
+			<div class="midMsg">
+				&nbsp;
+				<span  id="tf1_counterMessage" style="display:none">
+				   $| LANG_LOCALE['12731'] |$ $|restartTime|$ $| LANG_LOCALE['12732'] |$...
+               </span>
+        <?lua elseif (CORRUPT_IMAGE == "1") then ?>
+               <div class="midMsg" id="tf1_counterMessage">$| LANG_LOCALE['12731'] |$ $|restartTime|$ $| LANG_LOCALE['12732'] |$...</dov></div>
+                <div class="barMeter barColor1"><span style="width: 99%"></span></div>
+        <?lua end ?>
+			</div>
+
+			<div align="center" id="divPBar" >
+
+				        <div class="barMeter barColor1" style="display:none">
+		     	            <span style="width: 0%"></span>
+							<div class="usageDisplay" id="sMessage" style="color:#000">0% $| LANG_LOCALE['30404'] |$</div>
+                        </div>
+					</div>
+					</div>
+				<!-- <div class="barMeter barColor1"><span style="width: 99%"></span></div> -->
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<div class="footer">$| COPYRIGHTS |$</div>
+		</td>
+	</tr>
+</table>
+<?lua if (CORRUPT_IMAGE ~= "1") then?>
+<script>
+var timeHandler; 
+
+	function responseHandler(res)
+		{
+			console.log(res);
+			if (res.length < 200){
+				   var data=$.trim(res);
+				   var width=data.split('@')[0];
+				   var message=data.split('@')[1];
+				   message=$.trim(message);
+				   width=$.trim(width);
+				   console.log(width)
+				   $("#sMessage").html(width+"% "+message);
+				   if (width < 100)
+				      {
+						$(".barMeter > span").width(width+"%"); 
+					  } else {
+						 $(".barMeter > span").width(width+"%"); 
+						 clearInterval(timeHandler);
+						  loadRebootBar();
+						 $("#tf1_counterMessage").show();
+					 	$("#sMessage").hide();
+						  
+					  }
+		 }
+	}
+
+function checkUpgradeStatus()
+{
+       /* Call the Ajax for Image Flash */
+           var dataString = "button.firmwareUpgrade.firmware=yes&firmwareUpgradeStatus=upgradeStatus";
+           $.ajax({
+                   url:"upgradeStatus.cgi?"+ (new Date).getTime(),
+                   data:dataString,
+                   type:"GET",
+                   dataType:"html",
+                   async:false,
+                   cache:false,
+                   contentType:"text/plain",
+                   success: function (data) {
+                   responseHandler(data);
+                   },
+           		   error : function(xhr, status){
+                  	console.log(status);
+                  	}
+                  });
+}
+
+
+</script>
+
+<script type="text/javascript" language="javascript">
+    
+var LANG_LOCALE = new Object();
+<?lua  
+local strV = "" 
+for k,v in pairs(LANG_LOCALE) do
+strV = v
+if (string.find(v,"'") == nil) then?>LANG_LOCALE['$|k|$'] = '$|strV|$ ';<?lua else strV = string.gsub(v,"'","&acute;") ?>LANG_LOCALE['$|k|$'] = '$|strV|$ '.replace(/&acute;/g, "'");<?lua end ?><?lua end ?>
+
+var countDownTimer = $|restartTime|$;
+var cTimer;
+	function loadRebootBar() {
+
+		$(".barMeter > span").each(function() {
+			$(this)
+				.data("origWidth", $(this).width())
+				.width(0)
+				.animate({
+					width: $(this).data("origWidth")
+			}, $|modRestartTime|$);
+		});	
+        cTimer = setInterval(function(){
+		countDownTimer = countDownTimer - 1;                                        
+		if ( countDownTimer > 0 ) { 
+		minVar = Math.floor(countDownTimer/60);  
+		secVar = countDownTimer % 60; 
+		minString = " "+LANG_LOCALE['11718']+" ";
+		secString = " "+LANG_LOCALE['12732'];
+		if (secVar == 1) {
+			secString = " "+LANG_LOCALE['30507'];
+		}
+		 if (minVar == 1) {
+			minString = " "+LANG_LOCALE['30036']+" ";
+		}
+			if (secVar == 0 ) { 					
+				$("#tf1_counterMessage").html(LANG_LOCALE['12731'] + " " + minVar + minString); 
+			} else {
+				if (minVar == 0) {
+					$("#tf1_counterMessage").html(LANG_LOCALE['12731'] + " " + secVar + secString);
+				} else {				
+						$("#tf1_counterMessage").html(LANG_LOCALE['12731'] + " " + minVar + minString + secVar + secString); 
+				}
+			}			
+		} else {                                
+			$("#tf1_counterMessage").html(LANG_LOCALE['13988']+'...');
+			clearInterval(cTimer);
+			window.location="platform.cgi?page=index.html";
+		}          
+
+	},1000);
+
+
+}
+
+
+timeHandler = setInterval(function(){checkUpgradeStatus()},5000);
+
+ $(".barMeter").show();
+
+
+	$(function() {
+
+
+       /* Call the Ajax for Image Flash */
+  var dataString = "button.flashImage.usb.usb=flash&thispage=usb.html&fileName=$| FILE_NAME .. "/" .. USB_STATUS |$";
+   		$.ajax({
+			url:"platform.cgi",
+			data:dataString,
+			type:"POST"
+		});
+		
+   }); 
+</script>
+<?lua elseif (CORRUPT_IMAGE == "1") then ?>
+<script type="text/javascript" language="javascript">
+
+var LANG_LOCALE = new Object();
+<?lua  
+local strV = "" 
+for k,v in pairs(LANG_LOCALE) do
+strV = v
+if (string.find(v,"'") == nil) then?>LANG_LOCALE['$|k|$'] = '$|strV|$ ';<?lua else strV = string.gsub(v,"'","&acute;") ?>LANG_LOCALE['$|k|$'] = '$|strV|$ '.replace(/&acute;/g, "'");<?lua end ?><?lua end ?>
+
+function rebootNow()
+{
+       /* Call the Ajax for Image Flash */
+var dataString = "button.firmwareUpgrade.firmware=yes&firmwareUpgradeStatus=upgradeStatus&thispage=usb.html";
+           $.ajax({
+                   url:"upgradeStatusReboot.cgi?"+ (new Date).getTime(),
+                   data:dataString,
+                   type:"GET",
+                   dataType:"html",
+                   async:false,
+                   cache:false,
+                   contentType:"text/plain",
+                   success: function (data) {
+                   //responseHandler(data);
+                   },
+                          error : function(xhr, status){
+                       console.log(status);
+                       }
+                  });
+}
+
+    var countDownTimer = $|restartTime|$;
+    var cTimer;
+       $(function() {
+               $(".barMeter > span").each(function() {
+                       $(this)
+                               .data("origWidth", $(this).width())
+                               .width(0)
+                               .animate({
+                                       width: $(this).data("origWidth")
+                       }, $|modRestartTime|$);
+               });
+               /* call for reboot now */
+               rebootNow ();
+        cTimer = setInterval(function(){
+               countDownTimer = countDownTimer - 1;                                        
+               if ( countDownTimer > 0 ) { 
+               minVar = Math.floor(countDownTimer/60);  
+               secVar = countDownTimer % 60; 
+               minString = " "+LANG_LOCALE['11718']+" ";
+               secString = " "+LANG_LOCALE['12732'];
+               if (secVar == 1) {
+                       secString = " "+LANG_LOCALE['30507'];
+               }
+                if (minVar == 1) {
+                       minString = " "+LANG_LOCALE['30036']+" ";
+               }
+                       if (secVar == 0 ) {                                     
+                               $("#tf1_counterMessage").html(LANG_LOCALE['12731'] + " " + minVar + minString); 
+                       } else {
+                               if (minVar == 0) {
+                                       $("#tf1_counterMessage").html(LANG_LOCALE['12731'] + " " + secVar + secString);
+                               } else {                                
+                                               $("#tf1_counterMessage").html(LANG_LOCALE['12731'] + " " + minVar + minString + secVar + secString); 
+                               }
+                       }
+               } else {                                
+                       $("#tf1_counterMessage").html(LANG_LOCALE['13988']+'...');
+                       clearInterval(cTimer);
+                       window.location="platform.cgi?page=index.html";
+               }          
+
+       },1000);
+       /* Call the Ajax for Image Flash */
+               var dataString = "button.flashImage.usb.usb=flash&thispage=usb.html&fileName=$| FILE_NAME |$";
+               $.ajax({
+                       url:"platform.cgi",
+                       data:dataString,
+                       type:"POST"
+               });
+               
+   }); 
+</script>
+<?lua end?>
+</body>
+
+</html>
+<?lua end ?>

@@ -1,0 +1,302 @@
+<?lua
+require "teamf1lualib/routingMode_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500" ) then
+	PAGE_HELP_SECTION = "routing_octeon"
+
+else
+	PAGE_HELP_SECTION = "routing"
+end
+
+local wan_routingMode = require ("com.teamf1.bl.wan.routingmode")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+--Get ConfigPort 
+local returnCode, dmzPort = wan_routingMode.configurablePortGet ()
+
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local rowId = "1"
+    inputTable["routingMode.cookie"] = rowId
+
+    local returnCode, cookie
+
+    if ( UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+        returnCode, cookie = wan_routingMode.routingBridgeModeSectionSet(inputTable)
+    else
+        returnCode, cookie = wan_routingMode.routingModeSectionSet(inputTable)
+    end
+
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end    
+
+
+    web.goToPage(NextPage, true, true)
+
+else    
+    if ( UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+        returnCode, cookie, routingModeTable = wan_routingMode.routingBridgeModeSectionGet()
+    else
+        returnCode, cookie, routingModeTable = wan_routingMode.routingModeSectionGet()
+    end
+
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+    if(UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N") then 
+       local dmzstatus = wan_routingMode.dmzPortStatus ()
+       if(dmzstatus == "DMZ" or dmzstatus == "WAN2") then 
+          statusInfoMessage = "Transparent Mode cannot be configured when Configurable Port is set to WAN2/DMZ"
+       end
+    end
+                            
+
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    
+    LANG_LOCALE =
+    "12736,12737,11749,10504,13144,11752,10409,10411,10410,10785,11754,11755,10913,13508,13509,12402,30142,30143,30144,30458,30459,30460,13017,12758,10449"
+?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                    <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$ </p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                         $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['12736'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmRoutingMode" id="tf1_frmRoutingMode" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="routingMode.html">
+							<?lua if(UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N") then 
+								local grayoutTransparentMode = ""
+								local hideTransparent = ""
+                                dmzstatus = wan_routingMode.dmzPortStatus ()
+								if(dmzstatus == "DMZ" or dmzstatus == "WAN2")   then
+								    grayoutTransparentMode = "disabled"
+								    hideTransparent = "hide"
+								end
+                            
+                            ?>
+							<h2>$| LANG_LOCALE['12737'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['12737'] |$</label>
+                                    <p>
+                                        <input type="radio" $| web.radioSelected(routingModeTable["routeMode"] == "1") |$ name="routingMode.routeMode" value="1" onclick="return showWarning ('tf1_NAT')" id="tf1_NAT">
+                                        $| LANG_LOCALE['11749'] |$
+                                    </p>
+                                    <p> 
+                                        <input type="radio" $| web.radioSelected(routingModeTable["routeMode"] == "2") |$ name="routingMode.routeMode" value="2" onclick="return showWarning ('tf1_Classical')" id="tf1_Classical">
+                                        $| LANG_LOCALE['10504'] |$
+                                    </p>
+                                    <p class="$|hideTransparent|$">
+                                        <input type="radio" $| web.radioSelected(routingModeTable["routeMode"] == "3") |$ name="routingMode.routeMode" value="3" onclick="return showWarning('tf1_Transparent')" id="tf1_Transparent" $| grayoutTransparentMode |$>
+                                        $| LANG_LOCALE['13144'] |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+							<?lua  end -- End ECONA Board code base
+							if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then 
+								local disableBridge = ""
+								local grayoutTransparentMode = ""
+								local hideBridge = ""
+								local hideTransparent = ""
+								dmzstatus = wan_routingMode.dmzPortStatus ()
+								if(dmzstatus ~= "DMZ") then
+								    disableBridge = "disabled"
+								    hideBridge = "hide"
+								elseif(dmzstatus == "DMZ") then
+								    grayoutTransparentMode = "disabled"
+								    hideTransparent = "hide"
+								end
+							?>
+							<h2>$| LANG_LOCALE['12737'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['12737'] |$</label>
+                                    <p>
+                                        <input type="radio" $| web.radioSelected(routingModeTable["routeMode"] == "1") |$ name="routingMode.routeMode" value="1" onclick="return showWarning ('tf1_NAT')" id="tf1_NAT">
+                                        $| LANG_LOCALE['11752'] |$
+                                    </p>
+                                    <p class="$|hideTransparent|$"> 
+                                        <input type="radio" $| web.radioSelected(routingModeTable["routeMode"] == "2") |$ name="routingMode.routeMode" value="2" onclick="return showWarning ('tf1_Transparent')" id="tf1_Transparent" $| grayoutTransparentMode |$>
+                                        $| LANG_LOCALE['13144'] |$
+                                    </p>
+                                    <p class="$|hideBridge|$">
+                                        <input type="radio" $| web.radioSelected(routingModeTable["routeMode"] == "3") |$ name="routingMode.routeMode" value="3" onclick="return showWarning ('tf1_Bridge')" id="tf1_Bridge" $| disableBridge |$>
+                                        $| LANG_LOCALE['10409'] |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+				<div id="tf1_bridgeModeBlock_div">
+				<h2>$| LANG_LOCALE['10411'] |$</h2>
+				<div class="configRow" id="tf1_bridgeIpAddr_div">
+					<label>$| LANG_LOCALE['10410'] |$</label>
+					<input type="text" id="tf1_bridgeIpAddr" name="routingMode.bridgeVlanIpAddr" value="$| routingModeTable["bridgeVlanIpAddr"] |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">							 
+				</div>
+				<div class="break" id="bridgeIpAddr_div">&nbsp; </div>
+				<div class="configRow" id="tf1_dmzIpAddr_div">
+					<label>$| LANG_LOCALE['10785'] |$</label>
+					<input type="text" id="tf1_dmzIpAddr" name="routingMode.dmzIP" value="$| routingModeTable["dmzIP"] |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">							 
+				</div>
+				<div class="break" id="dmzIpAddr_div">&nbsp; </div>
+				<div class="configRow" id="tf1_subnetMask_div">
+					<label>$| LANG_LOCALE['13017'] |$</label>
+					<input type="text" name="routingMode.subnetMask" value="$| routingModeTable["subnetMask"] |$" maxlength="15" id="tf1_subnetMask" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return validNetMask (this.id); }">
+				</div>
+				<div class="break" id="subnetMask_div">&nbsp; </div>
+				</div>
+				<div id="tf1_routingModebetweenWANsBlock_div">
+				<h2>$| LANG_LOCALE['11754'] |$</h2>
+				<div class="configRow" id="tf1_routingModeWan1_div">
+					<label>$| LANG_LOCALE['11755'] |$1</label>
+					<?lua 
+                                            if (routingModeTable["wan1RoutingMode"] == "1") then
+                                    		statusStr="enable-disable-on"
+                                    		statusVar = "1"
+                                 	    else
+                                    		statusStr="enable-disable-off"
+                                    		statusVar = "0"
+                                   	   end
+                           		?>
+                                <a class="$| statusStr |$" alt=""></a>
+                                <input type="hidden" value="$| statusVar |$" name="routingMode.wan1RoutingMode" id="tf1_routingModeWan1">							 
+				</div>
+				<div class="break" id="routingModeWan1_div">&nbsp; </div>
+				<?lua if(dmzstatus ~= "DMZ") then?>
+				<div class="configRow" id="tf1_routingModeWan2_div">
+					<label>$| LANG_LOCALE['11755'] |$2</label>
+					<?lua 
+                                            if (routingModeTable["wan2RoutingMode"] == "1") then
+                                    		statusStr="enable-disable-on"
+                                    		statusVar = "1"
+                                 	    else
+                                    		statusStr="enable-disable-off"
+                                    		statusVar = "0"
+                                   	   end
+                           		?>
+                                    	<a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="routingMode.wan2RoutingMode" id="tf1_routingModeWan2">							 
+				</div>
+				<div class="break" id="routingModeWan2_div">&nbsp; </div>
+				<?lua end ?>
+				</div>	
+				<?lua  end -- End OCTEON Board 
+				?>
+                                <div class="submitRow">
+                                <input type="submit" name="button.config.routingMode" id="btSave" value="$| LANG_LOCALE['12758'] |$" title="$| LANG_LOCALE['12758'] |$" class="btnSubmit" onclick="return getRoutingModeValidate('tf1_frmRoutingMode');">
+								<input type="reset" id="btSave" value="$| LANG_LOCALE['10449'] |$" title="$| LANG_LOCALE['10449'] |$" class="btnSubmit" onclick="this.form.reset(); resetImgOnOff('tf1_frmRoutingMode'); routingModeOnReset();">
+
+                                </div>                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td><?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+	<input type="hidden" id="hdEnable" value="$| routingModeTable["routeMode"] |$">
+	<?lua
+            local i = 0
+            bridgeVlan = db.getAttribute ("NatTable","_ROWID_","1","BridgeVlan")
+            bridgeModeVlan = "LAN"..bridgeVlan
+            local where = "ifType = 'bridge'"
+            local table = db.getRowsWhere("networkInterface", where)
+            for k,v in pairs(table) do
+                local logIfName = "'" .. v["networkInterface.LogicalIfName"] .. "'"
+                where = "LogicalIfName = "..logIfName.." and AddressFamily=2"
+                local ifRow = db.getRowWhere("ifStatic", where)
+                ifName = ifRow["ifStatic.LogicalIfName"]
+                if( ifName  ~= bridgeModeVlan ) then  
+                    i = i + 1
+                    local lanIp = ifRow["ifStatic.StaticIp"]
+                    local snetMask = ifRow["ifStatic.NetMask"]
+                    local ipVar = "hdIPAddr" .. i
+                    local snetVar = "hdSnetAddr" .. i
+        ?>
+        <input type="hidden" id="$| ipVar |$" value="$| lanIp |$">
+        <input type="hidden" id="$| snetVar |$" value="$| snetMask |$">
+        <input type="hidden" id="tf1_dmzPort" value="$| dmzPort |$">
+        <?lua
+                end
+            end
+        ?>
+        <input type="hidden" id="vlanNumId" value="$| i |$">
+        <input type="hidden" id="hdUnitName" value="$| UNIT_NAME |$">
+        <input type="hidden" id="hdProductId" value="$| PRODUCT_ID |$">
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+	    <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+	    <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script language="JavaScript" src="js/routingMode.js" type="text/javascript"></script>
+    </body>
+</html>
+<?lua end ?>

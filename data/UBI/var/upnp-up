@@ -1,0 +1,16 @@
+#!/bin/sh
+# upnp-up script
+
+PORT=$1
+export LD_LIBARY_PATH=$LD_LIBARY_PATH:/pfrm2.0/lib
+
+#Check if upnpPortUpdate process is already running and TERMINATE it.
+procId=$(pidof upnpPortUpdate)
+if [[ -z $procId ]]; then
+     :
+else
+     kill -15 $procId
+fi
+
+# update the upnpListenPort table
+/pfrm2.0/bin/upnpPortUpdate -d /tmp/system.db -p $PORT

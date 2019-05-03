@@ -1,0 +1,121 @@
+<?lua 
+require "teamf1lualib/applicationRules_bl"
+        local inputCookie = cgi["configRowId"]
+        local returnCode, cookie 
+        local applicationRuleTable = {}                
+        if (ButtonType and ButtonType == "edit") then
+           returnCode, cookie, applicationRuleTable =  applicationRulesGet (inputCookie) 
+        else
+	   applicationRuleTable["protocol"]="1"
+	   applicationRuleTable["interface"]="1"	
+	end  
+
+		cgilua.header ("Content-Type","text/html; charset=UTF-8")   
+?>
+<div id="tf1_applicationRulesDailogContent">
+    <div class="topBg">
+        <h1 data-localize="10272">Application Rules Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <h2 data-localize="10271">Application Rules</h2>
+        <div class="configRow">
+            <label data-localize="11748">Name </label>
+       <?lua if(cgi["configRowId"] ~= "-1") then?>
+		<p>$| applicationRuleTable["ruleName"] |$</p>
+            <input type="hidden" name="applicationRules.ruleName" value="$| applicationRuleTable["ruleName"] or ' ' |$" id="tf1_name">
+	<?lua else?>
+<input type="text" name="applicationRules.ruleName" value="$|
+applicationRuleTable["ruleName"] or '' |$" maxlength="32" id="tf1_name" onkeypress="return alphaNumericCheck (event, '')">
+	<?lua end?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="10875">Enable </label>
+            <?lua if (applicationRuleTable["ruleStatus"]== "1") then
+                        statusStr="enable-disable-on"
+                        statusVar = "1"
+                 else
+                        statusStr="enable-disable-off"
+                        statusVar = "0"
+                 end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enable"></a>
+            <input type="hidden" name="applicationRules.ruleStatus" value="$| statusVar |$">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="13455">Protocol </label>
+            <p>
+            <input type="radio" name="applicationRules.protocol" value="1" $| web.radioSelected(applicationRuleTable["protocol"] == "1") |$ id="tf1_tcp"> 
+            <span data-localize="13047">TCP</span> </p>
+            <p>
+            <input type="radio" name="applicationRules.protocol" value="2" $| web.radioSelected(applicationRuleTable["protocol"] == "2") |$ id="tf1_udp"> 
+            <span data-localize="13175">UDP</span> </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="11187">Interface </label>
+            <p>
+            <input type="radio" name="applicationRules.interface" value="1" id="tf1_lan" $| web.radioSelected(applicationRuleTable["interface"] == "1" ) |$> 
+            <span data-localize="11515">LAN</span> </p>
+            <p>
+            <input type="radio" name="applicationRules.interface" value="2" id="tf1_lan" $| web.radioSelected(applicationRuleTable["interface"]== "2" ) |$> 
+            <span data-localize="10777">DMZ</span> </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <h2 data-localize="11877">Outgoing (Trigger) Port Range</h2>
+        <div class="configRow">
+            <label data-localize="12969">Start Port </label>
+            <input type="text" name="applicationRules.outgoingPortStart" value="$| applicationRuleTable["outgoingPortStart"] or "" |$" maxlength="5" id="OutStartPort" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11356']+'. ', ''); }" class="one">
+            <dl>
+                [<span data-localize="12627">Range</span>: 1 - 65535]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="13105">To </label>
+            <input type="text" name="applicationRules.outgoingPortEnd" value="$| applicationRuleTable["outgoingPortEnd"] or "" |$" maxlength="5" id="OutEndPort" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11368']+'. ', ''); }" class="one">
+            <dl>
+                [<span data-localize="12627">Range</span>: 1 - 65535]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <h2 data-localize="11172">Incoming (Response) Port Range</h2>
+        <div class="configRow">
+            <label data-localize="12969">Start Port </label>
+            <input type="text" name="applicationRules.incomingPortStart" value="$| applicationRuleTable["incomingPortStart"] or "" |$" maxlength="5" id="InStartPort" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11356']+'. ', ''); }" class="one">
+            <dl>
+                [<span data-localize="12627">Range</span>: 1 - 65535]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="13105">To </label>
+            <input type="text" name="applicationRules.incomingPortEnd" value="$| applicationRuleTable["incomingPortEnd"] or "" |$" maxlength="5" id="InEndPort" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11368']+'. ', ''); }" class="one">
+            <dl>
+                [<span data-localize="12627">Range</span>: 1 - 65535]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+        <?lua if(cgi["configRowId"] == "-1") then?>
+        <input data-localize="12758" type="submit" name="button.add.applicationRules" onclick="return pageValidate('tf1_frmApplicationRules')" class="btnSubmit" title="Save" value="Save" id="btSave">
+        <?lua else?>
+        <input data-localize="12758" type="submit" name="button.edit.applicationRules" onclick="return pageValidate('tf1_frmApplicationRules')" class="btnSubmit" title="Save" value="Save" id="btSave">
+        <?lua end?>
+</div>
+
+</div>

@@ -1,0 +1,166 @@
+<?lua
+require "teamf1lualib/managedAPs_bl"
+require "teamf1lualib/util"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bl_apChannelList"
+local managedAPs = require("com.teamf1.bl.wlan.managedAps")
+local guiRadioChannels = require ("com.teamf1.bl.wlan.channellist")
+configRowId = cgi["configRowId"]
+local param = {}
+param = util.split(configRowId,",")
+local macAddr = param[1]
+local radio = param[2]
+local channelPowerTbl = {}
+
+if(ButtonType and ButtonType == "channelPower") then
+    local returnCode, cookie
+        configRowId = cgi["configRowId"]
+        local inputTable = web.cgiToLuaTable (cgi)
+        returnCode, channelPowerTbl = managedAPs.managedAPsChannelPowerGet(macAddr, radio)
+        local configRow = {}
+        configRow.apMacAddress = macAddr
+        configRow.radioIndex = radio
+        returnCode, channelList = guiRadioChannels.managedApChannelListGet (configRow)
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!-- Section for Channel Power Starts -->
+<div id="tf1_manageValidApsChannelDailogContent">
+    <div class="topBg">
+        <h1>Channel and Power Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>MAC Address</label>
+            <p>$|macAddr|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Radio</label>
+            <p>$|channelPowerTbl.managedapchannelandpowerRADIOPHYMODE|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Channel Status</label>
+            <p>$|channelPowerTbl.managedapchannelandpowerCHANNELSTATUS|$</p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Channel </label><select class="two" name="managedAPs.managedapchannelandpowerCHANNEL">
+                <?lua
+                if (channelList ~= nil) then
+                for k, v in pairs (channelList) do
+                ?>
+                <option value="$| v |$" $| web.dropdownSelected(channelPowerTbl.managedapchannelandpowerCHANNEL == v)
+                |$>$| v |$</option>
+                <?lua
+                end
+                end
+                ?>
+            </select> </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Power Status</label>
+            <p>$|channelPowerTbl.managedapchannelandpowerPOWERSTATUS|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Power </label>
+            <input type="text" id="tf1_power" value="$| channelPowerTbl["managedapchannelandpowerPOWER"] or '' |$" name="managedAPs.managedapchannelandpowerPOWER" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 100, true, 'Invalid Power', '%'); }" class="one">
+            <dl>
+                [Range: 1 -100% ]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" id="btSave" name="button.config.manageValidAps.manageValidAps.$|configRowId|$" value="Save" title="Save" class="btnSubmit" onclick="return validatePowerSettingsConfig()">
+    </div>
+</div>
+<!-- Section for Channel Power ends -->
+<?lua
+   elseif(ButtonType and ButtonType == "debug") then
+    local returnCode, cookie
+    local apDebugTbl = {}
+    local channelList
+        configRowId = cgi["configRowId"]
+        local inputTable = web.cgiToLuaTable (cgi)
+        returnCode, apDebugTbl = managedAPs.managedAPDebugGet(macAddr)
+        
+
+?>
+
+<!-- Section for Managed Distributed Tunnels starts -->
+<div id="tf1_manageValidApsDebugDailogContent">
+    <div class="topBg">
+        <h1>Managed AP Debug Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>MAC Address</label>
+            <p>$|configRowId|$</p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Location</label>
+            <p>$|apDebugTbl.managedapdebugLOCATION or ''|$</p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>IP Address</label>
+            <p>$|apDebugTbl.managedapdebugIPADDRESS|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Status</label>
+            <p>$|apDebugTbl.managedapdebugSTATUS|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Enable Debug</label>
+             <?lua if ( apDebugTbl["managedapdebugDEBUG"] == 1) then
+                                                                                      statusStr="enable-disable-on"
+                                                                                      statusVar = "1"
+                                                                                   else
+                                                                                      statusStr="enable-disable-off"
+                                                                                      statusVar = "0"
+                                                                                   end
+                                                                       ?>
+            <a class="$|statusStr|$" alt="" id="tf1_enableDebug"></a>
+            <input type="hidden" value="$|statusVar|$" name="managedAPs.managedapdebugDEBUG">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtPwd_div">
+            <label>Password</label> <input type="password" value="" id="tf1_txtPwd" name="managedAPs.debugPassword" maxlength="32" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_txtPwd',5,32,'Password Length Must be between 5 and 32'); }">
+        </div>
+        <div class="break" id="break_txtPwd_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtConfirmPwd_div">
+            <label>Confirm Password</label>
+            <input type="password" id="tf1_txtConfirmPwd" value="" name="managedAPs.debugConfirmPassword" maxlength="32" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_txtConfirmPwd',5,32,'Confirm Password Length Must be between 5 and 32'); }"> </div>
+        <div class="break" id="break_txtConfirmPwd_div">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" id="btSave" name="button.edit.manageValidAps.manageValidAps.$|configRowId|$" value="Save" title="Save" class="btnSubmit" onclick="return validateManagedAPDebug('tf1_frmManageValidAps')">
+    </div>
+</div>
+<!-- Section for Managed Distributed Tunnels ends -->
+<?lua end ?>

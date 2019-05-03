@@ -1,0 +1,128 @@
+<?lua 
+require "teamf1lualib/wps_bl"
+local wps = require("com.teamf1.bl.wireless.wps")
+
+local checkWpsEnabled = wps.isWpsEnabled ()
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up Wizard dialog starts -->
+
+
+<div id="tf1Wizard_dashboardWizardDailogContent">
+  <div class="topBgWizard">
+    <h1 data-localize="13390">Wizards</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizardStartup">
+    <div class="wizardBlock">
+    <div class="break"> &nbsp; </div>
+      <div class="leftBlock">
+        <div class="blockTwo">
+          <div class="configRowWizard">
+            <div class="contentBlockOne">
+              <h2 data-localize="11198">Internet Connection Wizard</h2>
+              <p> <span data-localize="30359">This wizard will guide you in connecting your new D-Link Unified Services Router to the Internet</span>.</p>
+            </div>
+            <div class="buttonBlock">
+              <input data-localize="12746" type="button" class="startWizard" title="Run..." value="Run..." id="btSave" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','internetConnectionWizardForm.html', 'tf1Wizard_internetConnectionWizardDailogContent','internetConnectionWizardFn')">
+            </div>
+          </div>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="blockTwo">
+          <div class="configRowWizard">
+            <div class="contentBlockOne">
+              <h2 data-localize="30360">Date and Time  Wizard</h2>
+              <p><span data-localize="30361">This Wizard helps you in configuring Date and Time settings</span>.</p>
+            </div>
+            <div class="buttonBlock">
+              <input data-localize="12746" type="button" class="startWizard" title="Run..." value="Run..." id="btSave" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','dateTimeWizardForm.html', 'tf1Wizard_dateTimeWizardDailogContent','dateTimeWizardStepOneFn');">
+            </div>
+          </div>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="blockTwo">
+          <div class="configRowWizard">
+            <div class="contentBlockOne">
+                <h2 data-localize="10849">Dynamic DNS Wizard</h2>
+                <?lua
+                local wanContent
+                if (UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N" or
+                UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-250N") then
+                    wanContent = "WAN1"
+                elseif (UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then
+                    wanContent = "WAN1 or WAN2"
+                else
+                    wanContent = "WAN1 or WAN2 or WAN3"
+                end
+                ?>
+              <p>This Wizard helps in configuring Dynamic DNS $| wanContent |$ settings.</p>
+            </div>
+            <div class="buttonBlock">
+              <input data-localize="12746" type="button" class="startWizard" title="Run..." value="Run..." id="btSave" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','dynamicDnsWizardForm.html', 'tf1Wizard_dynamicDnsWizardDailogContent','dynamicDnsOnloadFn');">
+            </div>
+          </div>
+        </div>
+        <div class="break">&nbsp;</div>
+        <?lua
+        if (PRODUCT_ID ~= "DSR-1000AC_Ax" and PRODUCT_ID ~= "DSR-500AC_Ax" and PRODUCT_ID ~= "DSR-1000_Bx" and PRODUCT_ID ~= "DSR-500_Bx") then
+          if (tonumber(checkWpsEnabled) == 1) then
+        ?> 
+        <div class="blockTwo">
+          <div class="configRowWizard">
+            <div class="contentBlockOne">
+              <h2 data-localize="30362">WPS Wizard</h2>
+              <p><span data-localize="30363">This wizard is designed to assist you in connecting your wireless device to your wireless router</span>.</p>
+            </div>
+            <div class="buttonBlock">                
+              <input data-localize="12746" type="button" class="startWizard" title="Run..." value="Run..." id="btSave" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wpsWizardForm.html', 'tf1Wizard_wpssWizardDailogContent','wpsMethod');">
+            </div>
+          </div>
+        </div>
+        <div class="break">&nbsp;</div>        
+        <?lua end end ?>
+      </div>
+      <div class="rightBlock">
+        <div class="blockTwo">
+          <div class="configRowWizard">
+            <div class="contentBlockOne">
+              <h2 data-localize="12794">Security Wizard</h2>
+              <p><span data-localize="30364">This wizard will guide you in configuring default Outbound Policy, VPN Passthrough and  VPN Network Settings</span>.</p>
+            </div>
+            <div class="buttonBlock">
+              <input data-localize="12746" type="button" class="startWizard" title="Run..." value="Run..." id="btSave" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','securityWizardForm.html', 'tf1Wizard_securityWizardDailogContent','wizardSecurityOnLoadFn');">
+            </div>
+          </div>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="blockTwo">
+          <div class="configRowWizard">
+            <div class="contentBlockOne">
+              <h2 data-localize="13245">Users Wizard</h2>
+              <p><span data-localize="30365">This Wizard guides you in creating a new user</span>.</p>
+            </div>
+            <div class="buttonBlock">
+              <input data-localize="12746" type="button" class="startWizard" title="Run..." value="Run..." id="btSave" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','usersWizardForm.html', 'tf1Wizard_usersWizardDailogContent','');">
+            </div>
+          </div>
+        </div>
+        <div class="break">&nbsp;</div>
+	<?lua if (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or PRODUCT_ID == "DSR-1000AC_Ax" or  PRODUCT_ID == "DSR-500AC_Ax") then ?>
+        <div class="blockTwo">
+          <div class="configRowWizard">
+            <div class="contentBlockOne">
+              <h2 data-localize="30366">Wireless Wizard</h2>
+              <p><span data-localize="30367">This wizard will guide you through common and easy steps to configure your router's wireless interface</span>.
+		</p>
+            </div>
+            <div class="buttonBlock">
+              <input data-localize="12746" type="button" class="startWizard" title="Run..." value="Run..." id="btSave" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wirelessWizardForm.html', 'tf1Wizard_wirelessWizardDailogContent','');">
+            </div>
+          </div>
+        </div>
+        <div class="break">&nbsp;</div>
+	<?lua end ?>
+      </div>
+    </div>
+  </div>
+</div>

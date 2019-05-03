@@ -1,0 +1,514 @@
+<?lua 
+
+require "teamf1lualib/bl_routingLogs"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "routingLogs"
+    
+local log = require("com.teamf1.bl.logging.configuration")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable ["routingLogs.cookie"] = "1"
+    errorFlag, status = log.routingLogsSet (inputTable)
+     if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)    
+else
+    errorFlag, status, lanToWanAccept, lanToWanDrop, wanToLanAccept,
+    wanToLanDrop, wanToDmzAccept, wanToDmzDrop, dmzToWanAccept, dmzToWanDrop,
+    lanToDmzAccept, lanToDmzDrop, dmzToLanAccept, dmzToLanDrop, lanToLanAccept,
+    lanToLanDrop, categoryServerLogs, webCategoryDrop, webCategoryAccept = log.routingLogsGet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+LANG_LOCALE = "13283,12758,10449,10791,11543,10792,13313,11544,13314,12734,10031,10830,30186,11444,14371,10466"
+ ?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>        
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body onLoad="onloadCall ();">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>
+               <div align="left">
+                   <nav class="nav-bg">
+                   <ul class="menu">
+                       <li class="current">
+                           <a href="?page=routingLogs.html">$| LANG_LOCALE['30186'] |$</a>
+                       </li>
+                       <li>
+                           <a href="?page=ipv6Logs.html">$| LANG_LOCALE['11444'] |$</a>
+                       </li>
+                   </ul>
+                   </nav>
+               </div>                       
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <div class="FL2">
+                        <p class="hint">
+                             $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['14371'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmRoutingLogs"
+                                id="tf1_frmRoutingLogs" action="platform.cgi" method="post">
+                                <input type="hidden" name="thispage" id="thispage" value="routingLogs.html">
+                                <h2>$| LANG_LOCALE['12734'] |$</h2>
+                                <div class="configRow">
+                                    <label> &nbsp; </label>
+                                    <p style="width: 125px; line-height: 16px;">
+                                        $| LANG_LOCALE['10031'] |$
+                                    </p>
+                                    <p>&nbsp;</p>
+                                    <p style="width: 125px; line-height: 16px;">
+                                        $| LANG_LOCALE['10830'] |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11544'] |$ </label>
+                                        <?lua
+                                
+                                        if (lanToWanAccept == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden"
+                                        name="routingLogs.lanToWanAccept" value="$| statusVar |$">
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                        <?lua
+                                
+                                        if (lanToWanDrop == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.lanToWanDrop" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13314'] |$ </label>
+                                         <?lua
+                                
+                                        if (wanToLanAccept == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.wanToLanAccept" value="$| statusVar |$">
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                         <?lua
+                                
+                                        if (wanToLanDrop == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.wanToLanDrop" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13313'] |$ </label>
+                                        <?lua
+                                
+                                        if (wanToDmzAccept == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.wanToDmzAccept" value="$| statusVar |$" >
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                         <?lua
+                                
+                                        if (wanToDmzDrop == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.wanToDmzDrop" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10792'] |$ </label>
+                                        <?lua
+                                
+                                        if (dmzToWanAccept == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.dmzToWanAccept" value="$| statusVar |$">
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                        <?lua
+                                
+                                        if (dmzToWanDrop == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.dmzToWanDrop" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11543'] |$ </label>
+                                        <?lua
+                                
+                                        if (lanToDmzAccept == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.lanToDmzAccept" value="$| statusVar |$">
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                         <?lua
+                                
+                                        if (lanToDmzDrop == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden"
+                                        name="routingLogs.lanToDmzDrop" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10791'] |$</label>
+                                         <?lua
+                                
+                                        if (dmzToLanAccept == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.dmzToLanAccept" value="$| statusVar |$">
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                       
+                                         <?lua
+                                
+                                        if (dmzToLanDrop == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden"
+                                        name="routingLogs.dmzToLanDrop" value="$| statusVar |$">
+                                    </p>
+                                </div>
+                                
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13283'] |$ </label>
+                                         <?lua
+                                
+                                        if (lanToLanAccept == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.lanToLanAccept" value="$| statusVar |$">
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                       
+                                         <?lua
+                                
+                                        if (lanToLanDrop == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden"
+                                        name="routingLogs.lanToLanDrop" value="$| statusVar |$">
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10466'] |$</label>
+                                         <?lua
+                                
+                                        if (webCategoryAccept == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" name="routingLogs.webCategoryAccept" value="$| statusVar |$">
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                    <p>&nbsp;
+                                        
+                                    </p>
+                                       
+                                         <?lua
+                                
+                                        if (webCategoryDrop == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden"
+                                        name="routingLogs.webCategoryDrop" value="$| statusVar |$">
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit"
+ title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" onClick="setHiddenChks('tf1_frmRoutingLogs');" name="button.config.routingLogs">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onClick="this.form.reset(); resetImgOnOff('tf1_frmRoutingLogs');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+    </body>
+</html>
+<?lua end ?>
+

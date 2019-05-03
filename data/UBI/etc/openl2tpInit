@@ -1,0 +1,4 @@
+
+mkdir -p /usr/lib/openl2tp
+
+cp /pfrm2.0/lib/ppp_unix.so /usr/lib/openl2tp/

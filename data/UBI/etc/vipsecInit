@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# vipsecInit - initialization script for vipsec
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+#Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+#(Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01d,01sep14,knr added auto-connect l2tp_over_ipsec support(SPR-46221)
+# 01c,24jul11,vij added vpn keep alive support 
+# 01b,15oct08 gpr added an entry to start rvgd daemon
+# 01a,01May08 gpr written
+
+
+if [ "$INCLUDE_VIPSEC" = "y" ]; then
+
+MODULES_DIR=$VIPSEC_INSTALL_PATH/lib/modules/vipsec
+
+
+[ -f $MODULES_DIR/vipsec.$MOD_SUFFIX ] && { insmod $MODULES_DIR/vipsec.$MOD_SUFFIX; }
+
+
+touch /var/racoon.log
+touch /var/psk.txt
+
+cp $VIPSEC_INSTALL_PATH/etc/racoon_path.conf /var/racoon_path.conf
+cp $VIPSEC_INSTALL_PATH/etc/ipsec/phase1-* /var/
+
+if [ "$AUTO_L2TP_IPSEC" = "y" ]; then
+    echo -n "Starting AutoL2tpIpsec Daemon..."
+    $VIPSEC_INSTALL_PATH/bin/autol2tpipsec $DB_FILENAME &
+    echo "Done"
+fi
+
+echo -n "Starting IKE Daemon..."
+$VIPSEC_INSTALL_PATH/bin/racoon -a 8787 -f /var/racoon_path.conf -l /var/racoon.log
+echo "Done"
+
+# Use New SA 
+echo "0" > /proc/sys/net/key/preferred_oldsa 
+echo "-1" > /proc/sys/net/ipv4/ipsec4/ecn 
+#echo -n "Starting Redundant VPN GW Daemon..."
+if [ "$CONFIG_RVGD" = "y" ]; then
+    rvgd $DB_FILENAME &
+fi
+echo "Done"
+if [ "$CONFIG_VPNKAD" = "y" ]; then
+    echo -n "Starting VPN KEEP ALIVE Daemon..."
+    vpnKAd $DB_FILENAME &
+    echo "Done"
+fi
+fi
+

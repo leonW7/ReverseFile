@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# xlr8NatInit - initialization script for XLR8 NAT module
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,24apr09,sat added fastpath support for VPN
+# 01a,01oct08,jkg written
+
+
+if [ "$INCLUDE_XLR8NAT" = "y" ]; then
+
+MODULES_DIR=$XLR8NAT_INSTALL_PATH/lib/modules/xlr8Nat/
+
+[ -f $MODULES_DIR/xlr8Nat.$MOD_SUFFIX ] && { insmod $MODULES_DIR/xlr8Nat.$MOD_SUFFIX; }
+
+fi

@@ -1,0 +1,66 @@
+<?lua
+require "teamf1lualib/mailFiltering_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local mailFiltering = require("com.teamf1.bl.subjectList")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, subject, mailId, actionVal
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, subject, mailId, actionVal = 
+                mailFiltering.mailFilteringSectionGetCur(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+    else
+        configRowId = "-1"
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- start -->
+<div id="tf1_mailFilteringDialogContent">
+    <div class="topBg">
+        <h1 data-localize="11650">Mail Filtering Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="13015">Subject </label>
+            <input type="text" name="mailFiltering.subject" id="tf1_subject"
+            maxlength="64" value="$| subject or '' |$"> </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="11652">Mail ID </label>
+            <input type="text" name="mailFiltering.mailId" 
+            value="$| mailId or '' |$" id="tf1_mailID" maxlength="64"> </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="10056">Action </label>
+            <p>
+            <input type="radio" value="1" $|  web.radioSelected(actionVal == "1") |$ checked name="mailFiltering.action" id="tf1_allow"> 
+            <span data-localize="10214">Allow</span> </p>
+            <p><input type="radio" value="0" $|  web.radioSelected(actionVal ==
+            "0") |$ name="mailFiltering.action" id="tf1_block"> <span data-localize="10389">Block</span>
+            </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" 
+        name="button.config.mailFiltering.mailFiltering.$| configRowId |$" 
+        onclick="return subjectListValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<!-- end -->
+<?lua end?>

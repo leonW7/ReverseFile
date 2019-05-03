@@ -1,0 +1,89 @@
+<?lua 
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+    require "teamf1lualib/bridgeBandwidthProfiles_bl"
+    
+    local returnCodes = require ("com.teamf1.core.returnCodes")
+    local errorMap = require("com.teamf1.core.errorMap")
+	-- bridgeBandwidthProfiles business Logic
+	local BBWP_bl = require("com.teamf1.bl.network.bridgeBandwidthProfiles")
+ if(ButtonType == "add" or ButtonType == "edit") then
+    local bbwProfileTab = {}
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, bbwProfileTab = 
+                BBWP_bl.bridgeBandwidthProfileGet(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+    else
+        configRowId = "-1"
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_bridgeBandwidthProfilesDailogContent">
+    <div class="topBg">
+        <h1 data-localize="30163">Bridge Bandwidth Profile Configuration</h1>
+        <close>
+            <a href="#" id="btnClose" title="Close">X</a>
+        </close>
+    </div>
+    <div class="dialogMidArea">
+        <div align="left">
+            <div class="configRow" id="tf1_bridgeName_div">
+                <label data-localize="11748">Name</label>
+                <?lua if (configRowId == "-1") then ?>
+                <input type="text" size="30" name="L2BandWidthProfile.ProfileName" value="$| bbwProfileTab["L2BandWidthProfile.ProfileName"] or '' |$" id="tf1_bridgeName" onkeypress="return alphaNumericCheck (event, '')">
+                <?lua else ?>
+                <p>$| bbwProfileTab["L2BandWidthProfile.ProfileName"] or '' |$</p>
+                <input type="hidden" name="L2BandWidthProfile.ProfileName" value="$| bbwProfileTab["L2BandWidthProfile.ProfileName"] or '' |$" >
+                <?lua end ?>
+            </div>
+            <div class="break" id="break_bridgeName">&nbsp;</div>
+            <div class="configRow" id="tf1_policyType_div">
+                <label data-localize="12459">Policy Type</label>
+                <select size="1" name="L2BandWidthProfile.Policy" id="tf1_policyType">
+                    <option data-localize="30152" $| web.dropdownSelected(bbwProfileTab["L2BandWidthProfile.Policy"] == "0") |$ value = "0">Outbound</option>
+                    <option data-localize="30153" $| web.dropdownSelected(bbwProfileTab["L2BandWidthProfile.Policy"] == "1") |$ value = "1">Inbound</option>
+                </select>
+            </div>
+            <div class="break" id="break_policyType">&nbsp;</div>
+                <div class="configRow" id="tf1_profileType_div">
+                <label data-localize="12562">Profile Type</label>
+                <select size="1" name="L2BandWidthProfile.ProfileType" id="tf1_profileType" onchange="bridgeBandwidthProfileStatusCheck ()">
+                    <option data-localize="12546" $| web.dropdownSelected(bbwProfileTab["L2BandWidthProfile.ProfileType"] == "0") |$ value="0">Priority</option>
+                    <option data-localize="30155" $| web.dropdownSelected(bbwProfileTab["L2BandWidthProfile.ProfileType"] == "1") |$ value="1">Rate</option>
+                </select>
+            </div>
+            <div class="break" id="break_profileType">&nbsp;</div>	
+            <div class="configRow" id="tf1_priority_div">
+                <label data-localize="12546">Priority</label>
+                <select size="1" name="L2BandWidthProfile.Priority" id="tf1_priority">
+                    <option data-localize="11633" $| web.dropdownSelected(bbwProfileTab["L2BandWidthProfile.Priority"] == "0") |$ value="0">Low</option>
+                    <option data-localize="11705" $| web.dropdownSelected(bbwProfileTab["L2BandWidthProfile.Priority"] == "1") |$ value="1">Medium</option>
+                    <option data-localize="11113" $| web.dropdownSelected(bbwProfileTab["L2BandWidthProfile.Priority"] == "2") |$ value="2">High</option>
+                </select>
+            </div>
+            <div class="break" id="break_priority">&nbsp;</div>	
+            <div class="configRow" id="tf1_minBandwidth_div">
+	        <label data-localize="11716">Minimum Bandwidth Rate</label>
+                <input name="L2BandWidthProfile.MinimumRate" value="$| bbwProfileTab["L2BandWidthProfile.MinimumRate"] or '' |$" class="one" type="text" maxlength="6" id="tf1_minBandwidth" onkeypress="return numericValueCheck (event)">
+                <dl>[<span data-localize="12627">Range</span>: 1 - <span data-localize="11686">Max. Bandwidth</span>] <span data-localize="11488">Kbps</span></dl>
+            </div>
+            <div class="break" id="break_minBandwidth">&nbsp;</div>
+            <div class="configRow" id="tf1_maxBandwidth_div">
+                <label data-localize="11695">Maximum Bandwidth Rate</label>
+                <input name="L2BandWidthProfile.MaximumRate" value="$| bbwProfileTab["L2BandWidthProfile.MaximumRate"] or '' |$" class="one" type="text" maxlength="7" id="tf1_maxBandwidth" onkeypress="return numericValueCheck (event)">
+                    <dl>[<span data-localize="12627">Range</span>: 100 - 1000000] <span data-localize="11488">Kbps</span></dl>
+            </div>
+            <div class="break" id="break_maxBandwidth">&nbsp;</div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.config1.bridgeBandwidthProfiles.bridgeBandwidthProfiles.$|configRowId|$" onclick="return bridgeBandwidthProfilesValidation()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<?lua end?>
+<!-- Section for Pop up dialog ends -->

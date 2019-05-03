@@ -1,0 +1,182 @@
+<?lua
+
+require "teamf1lualib/bridgeFirewallRules_bl"
+        local inputCookie = cgi["configRowId"]
+        local returnCode, cookie 
+        local bridgeFwInfo = {}
+        if (ButtonType and ButtonType == "edit") then
+            bridgeFwInfo = l2FirewallRules.editGet (inputCookie)
+        else
+            bridgeFwInfo = l2FirewallRules.addGet (inputCookie)
+	end
+        if (bridgeFwInfo) then
+            bridgeFwInfo = util.addPrefix (bridgeFwInfo,"bridgeFirewallRules.")
+        end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_bridgeFirewallRulesDailogContent">
+    <div class="topBg">
+        <h1 data-localize="30295">Bridge Firewall Rule Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow" id="tf1_selDirection_div">
+            <label data-localize="10747">Direction</label>
+            <select size="1" name="bridgeFirewallRules.Direction" id="tf1_selDirection">
+            	<option data-localize="30153" $| web.dropdownSelected(bridgeFwInfo["bridgeFirewallRules.Direction"] == "Inbound") |$ value="Inbound" >Inbound</option>
+            	<option data-localize="30152" $| web.dropdownSelected(bridgeFwInfo["bridgeFirewallRules.Direction"] == "Outbound") |$ value="Outbound" >Outbound</option>
+            </select>
+		</div>
+        <div class="break" id="break1_div">
+		&nbsp; </div>
+        <input type="hidden" name="bridgeFirewallRules.L2ServiceName" value="IPv4" >
+        <div class="configRow" id="tf1_selSvrName_div">
+            <label data-localize="12831">Service</label>
+            <select name="bridgeFirewallRules.ServiceName" id="tf1_selSvrName">
+            <?lua 
+                        local svcTbl = {}
+				for key, val in pairs (bridgeFwInfo) do
+                                    if (key == "bridgeFirewallRules.ServiceNames") then   
+                                        svcTbl = val
+                                    end
+                                end
+                	            for k, v in pairs (svcTbl) do
+                                        if (v ~= nil) then
+                       			?>										
+        	    <option $| web.dropdownSelected(v["ServiceName"] == bridgeFwInfo["bridgeFirewallRules.ServiceName"]) |$  value="$| v["ServiceName"] |$">$| v["ServiceName"] or ''|$</option>
+        	<?lua
+                    end
+                end
+        	?>
+            </select> </div>
+        <div class="break" id="break2_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_selFwAction_div">
+            <label data-localize="10056">Action </label>
+            <select size="1" name="bridgeFirewallRules.Action" id="tf1_selFwAction">
+            	<option data-localize="30471" $| web.dropdownSelected(bridgeFwInfo["bridgeFirewallRules.Action"] == "DROP") |$ value="DROP">Block Always</option>
+				<option data-localize="30486" $| web.dropdownSelected(bridgeFwInfo["bridgeFirewallRules.Action"] == "ACCEPT") |$ value="ACCEPT">Allow Always</option>
+            </select>
+		</div>
+        <div class="break" id="break3_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_addFwSrcUser_div">
+            <label data-localize="12900">Source Hosts </label>
+            <p>
+            <input type="radio" value="0" id="tf1_addFwSrcUser1"  name="bridgeFirewallRules.SourceAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.SourceAddressType"] == "0") |$ onclick="dropFieldSelectSrc ('tf1_addFwSrcUser1')"> 
+            <span data-localize="10226">Any</span> </p>
+            <p>
+            <input type="radio" value="1"  id="tf1_addFwSrcUser2" name="bridgeFirewallRules.SourceAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.SourceAddressType"] == "1") |$ onclick="dropFieldSelectSrc ('tf1_addFwSrcUser2')"> 
+            <span data-localize="13712">Single Address</span> </p>
+            <p>
+            <input type="radio" value="2" id="tf1_addFwSrcUser3" name="bridgeFirewallRules.SourceAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.SourceAddressType"] == "2") |$ onclick="dropFieldSelectSrc ('tf1_addFwSrcUser3')"> 
+            <span data-localize="13713">Address Range</span> </p>
+        </div>
+        <div class="break" id="break4_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwSrcUserStart_div">
+            <label data-localize="11043">From </label>
+            <input type="text" name="bridgeFirewallRules.SourceAddressStart" value="$| bridgeFwInfo["bridgeFirewallRules.SourceAddressStart"] or ''|$" id="tf1_txtFwSrcUserStart" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break" id="break5_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwSrcUserFinish_div">
+            <label data-localize="13105">To </label>
+            <input type="text" name="bridgeFirewallRules.SourceAddressEnd" value="$| bridgeFwInfo["bridgeFirewallRules.SourceAddressEnd"] or ''|$" maxlength="15" id="tf1_txtFwSrcUserFinish" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break" id="break6_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_addFwDestUser_div">
+            <label data-localize="10711">Destination Hosts </label>
+            <p>
+            <input type="radio" value="0" id="tf1_addFwDestUser1" name="bridgeFirewallRules.DestinationAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.DestinationAddressType"] == "0") |$ onclick="dropFieldSelectDest ('tf1_addFwDestUser1')"> 
+            <span data-localize="10226">Any</span> </p>
+            <p>
+            <input type="radio" value="1" id="tf1_addFwDestUser2"  name="bridgeFirewallRules.DestinationAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.DestinationAddressType"] == "1") |$  onclick="dropFieldSelectDest ('tf1_addFwDestUser2')"> 
+            <span data-localize="13712">Single Address</span> </p>
+            <p>
+            <input type="radio" value="2" id="tf1_addFwDestUser3" name="bridgeFirewallRules.DestinationAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.DestinationAddressType"] == "2") |$   onclick="dropFieldSelectDest ('tf1_addFwDestUser3')"> 
+            <span data-localize="13713">Address Range</span> </p>
+        </div>
+        <div class="break" id="break7_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwDestUserStart_div">
+            <label data-localize="11043">From </label>
+            <input type="text" name="bridgeFirewallRules.DestinationAddressStart" value="$| bridgeFwInfo["bridgeFirewallRules.DestinationAddressStart"] or ''|$" id="tf1_txtFwDestUserStart" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break" id="break8_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwDestUserFinish_div">
+            <label data-localize="13105">To </label>
+            <input type="text" name="bridgeFirewallRules.DestinationAddressEnd" value="$| bridgeFwInfo["bridgeFirewallRules.DestinationAddressEnd"] or ''|$" maxlength="15" id="tf1_txtFwDestUserFinish" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break" id="break9_div">
+&nbsp; </div>
+
+        <div class="configRow" id="tf1_addFwSrcMac_div">
+            <label data-localize="30298">Source MAC </label>
+            <p>
+            <input type="radio" value="0" id="tf1_addFwSrcMac1"  name="bridgeFirewallRules.SourceMACAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.SourceMACAddressType"] == "0") |$ onclick="dropFieldSelMacSrc ('tf1_addFwSrcMac1')"> 
+            <span data-localize="10226">Any</span> </p>
+            <p>
+            <input type="radio" value="1"  id="tf1_addFwSrcMac2" name="bridgeFirewallRules.SourceMACAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.SourceMACAddressType"] == "1") |$ onclick="dropFieldSelMacSrc ('tf1_addFwSrcMac2')"> 
+            <span data-localize="30503">Single MAC</span> </p>
+            <p>
+            <input type="radio" value="2" id="tf1_addFwSrcMac3" name="bridgeFirewallRules.SourceMACAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.SourceMACAddressType"] == "2") |$ onclick="dropFieldSelMacSrc ('tf1_addFwSrcMac3')"> 
+            <span data-localize="30300">MAC Range</span> </p>
+        </div>
+        <div class="break" id="break10_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwSrcMacStart_div">
+            <label data-localize="11043">From </label>
+            <input type="text" name="bridgeFirewallRules.SourceMACAddressStart" value="$| bridgeFwInfo["bridgeFirewallRules.SourceMACAddressStart"] or ''|$" id="tf1_txtFwSrcMacStart" maxlength="17" onkeypress="return numericValueCheck (event,'abcdefABCDEF:')" onkeydown="return macAddrVerify (event, this, true, LANG_LOCALE['11295']+':', '')">
+        </div>
+        <div class="break" id="break11_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwSrcMacFinish_div">
+            <label data-localize="13105">To </label>
+            <input type="text" name="bridgeFirewallRules.SourceMACAddressEnd" value="$| bridgeFwInfo["bridgeFirewallRules.SourceMACAddressEnd"] or ''|$" maxlength="17" id="tf1_txtFwSrcMacFinish" onkeypress="return numericValueCheck (event,'abcdefABCDEF:')" onkeydown="return macAddrVerify (event, this, true, LANG_LOCALE['11295']+':', '')">
+        </div>
+        <div class="break" id="break12_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_addFwDestMac_div">
+            <label data-localize="30299">Destination MAC </label>
+            <p>
+            <input type="radio" value="0" id="tf1_addFwDestMac1" name="bridgeFirewallRules.DestinationMACAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.DestinationMACAddressType"] == "0") |$ onclick="dropFieldSelMacDest ('tf1_addFwDestMac1')"> 
+            <span data-localize="10226">Any</span> </p>
+            <p>
+            <input type="radio" value="1" id="tf1_addFwDestMac2"  name="bridgeFirewallRules.DestinationMACAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.DestinationMACAddressType"] == "1") |$  onclick="dropFieldSelMacDest ('tf1_addFwDestMac2')"> 
+            <span data-localize="30503">Single MAC</span> </p>
+            <p>
+            <input type="radio" value="2" id="tf1_addFwDestMac3" name="bridgeFirewallRules.DestinationMACAddressType" $| web.radioSelected(bridgeFwInfo["bridgeFirewallRules.DestinationMACAddressType"] == "2") |$   onclick="dropFieldSelMacDest ('tf1_addFwDestMac3')"> 
+            <span data-localize="30300">MAC Range</span> </p>
+        </div>
+        <div class="break" id="break13_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwDestMacStart_div">
+            <label data-localize="11043">From </label>
+            <input type="text" name="bridgeFirewallRules.DestinationMACAddressStart" value="$| bridgeFwInfo["bridgeFirewallRules.DestinationMACAddressStart"] or ''|$" id="tf1_txtFwDestMacStart" maxlength="17" onkeypress="return numericValueCheck (event,'abcdefABCDEF:')" onkeydown="return macAddrVerify (event, this, true, LANG_LOCALE['11295']+':', '')">
+        </div>
+        <div class="break" id="break14_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwDestMacFinish_div">
+            <label data-localize="13105">To </label>
+            <input type="text" name="bridgeFirewallRules.DestinationMACAddressEnd" value="$| bridgeFwInfo["bridgeFirewallRules.DestinationMACAddressEnd"] or ''|$" maxlength="17" id="tf1_txtFwDestMacFinish" onkeypress="return numericValueCheck (event,'abcdefABCDEF:')" onkeydown="return macAddrVerify (event, this, true, LANG_LOCALE['11295']+':', '')">
+        </div>
+        <div class="break" id="break15_div">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+	    <?lua if(cgi["configRowId"] == "-1") then?>
+        	<input data-localize="12758" type="submit" name="button.add.bridgeFirewallRules" onclick="return bridgeFirewallRulesValidate('tf1_frmBridgeFirewallRules')" class="btnSubmit" title="Save" value="Save" id="btSave">
+        <?lua else?>
+        	<input data-localize="12758" type="submit" name="button.edit.bridgeFirewallRules" onclick="return bridgeFirewallRulesValidate('tf1_frmBridgeFirewallRules')" class="btnSubmit" title="Save" value="Save" id="btSave">
+        <?lua end?>
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->

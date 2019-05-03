@@ -1,0 +1,47 @@
+<?lua
+require "teamf1lualib/approvedMailIds_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local approvedMailIds = require("com.teamf1.bl.approvedMailIdList")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, mailId
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, mailId = approvedMailIds.approvedMailIdsSectionGetCur(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+    else
+        configRowId = "-1"
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_approvedMailIdsDailogContent">
+                <div class="topBg">
+                    <h1 data-localize="10280">Approved Mail IDs Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label data-localize="11652"> Mail ID </label>
+                        <input type="text" id="tf1_approvedMail" maxlength="64"
+                        name="approvedMailIds.approvedMailId" value="$| mailId or '' |$">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input data-localize="12758" type="submit" onclick="return approvedMailIdsValidate()" class="btnSubmit" title="Save"
+                    name="button.config.approvedMailIds.approvedMailIds.$| configRowId |$" value="Save" id="btSave">
+                </div>
+            </div>
+<?lua end?>

@@ -1,0 +1,333 @@
+<?lua
+require "teamf1lualib/wanWizard_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local wanWizard = require("com.teamf1.bl.wan.wan_wizard")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local DHCP              = "dhcpc"
+local STATIC            = "ifStatic"
+local L2TP              = "l2tp"
+local PPTP              = "pptp"
+local PPPOE             = "pppoe"
+local RL2TP             = "rl2tp"
+local RPPTP             = "rpptp"
+local JPPPOE            = "jpppoe"
+local DUALACCESSPPPOE   = "dualPppoe"
+
+
+
+local returnCode, ispType, clientType = wanWizard.wanWizardSectionGet ()
+
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+?>
+<!-- InterNet Connection -->
+
+<div id="tf1Wizard_internetConnectionWizardDailogContent">
+<div class="topBgWizard">
+  <h1 data-localize="11198">Internet Connection Wizard</h1>
+  <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+</div>
+<div class="dialogMidAreaWizard">
+<form id="tf1Wizard_internetForm">
+
+	<!-- From stepMain u will get only connection type --->
+    
+    <input type="hidden" name="thispage" id="tf1Wizard_thispage" value="wizard.html">
+	<input type="hidden" name="button.internetConfig.wizard" id="tf1Wizard_btnConnect" value="testconnect">
+    
+<!-- Step 1 starts  -->  	  
+
+  <div id="tf1Wizard_divStep1" class="divStep">
+      <div class="wizardMessage">
+          <p><span data-localize="13978">Current Connection type</span> <?lua if(ispType == DHCP) then?>
+                                 <span data-localize="10731">DHCP</span>
+                                 <?lua elseif(ispType == PPTP) then?>
+                                 <span data-localize="12509">PPTP</span>
+                                 <?lua elseif(ispType == L2TP) then?>
+                                 <span data-localize="11502">L2TP</span>
+                                 <?lua elseif(ispType == STATIC) then?>
+                                 <span data-localize="12991">Static</span>
+				<?lua elseif(ispType == DUALACCESSPPPOE) then?>
+                <span data-localize="13979">DUALACCESSPPPOE</span>
+				<?lua elseif(ispType == PPPOE) then?>
+                <span data-localize="12507">PPPoE</span>
+                                <?lua end?>
+                                 </p>
+    </div>
+    <div class="wizardBlock">
+      <h1 data-localize="11197">Internet Connection</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label data-localize="10731">DHCP </label>
+        <?lua 
+
+local selConnection = ""
+
+            if (ispType == DHCP) then
+                statusStr="enable-disable-on-wizard connection-type"
+                statusVar = "1"
+                selConnection = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="1" id="" style="margin-right:0 !important"  db-id="1"></a>
+           
+            <div class="description">
+                <span data-localize="10497">Choose this if your Internet connection automatically provides you with an IP Address. Most Cable Modems use this type of connection</span>
+            </div>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="12509">PPTP </label>
+        <?lua 
+
+            if (ispType == PPTP) then
+                statusStr="enable-disable-on-wizard connection-type"
+                selConnection = "2"
+                statusVar = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="2" style="margin-right:0 !important" db-id="2"></a>
+           
+            <div class="description"><span data-localize="10498">Choose this if your Internet connection requires PPTP username and password to get online</span></div>
+                
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="11502">L2TP </label>
+        <?lua 
+
+            if (ispType == L2TP) then
+                selConnection = "5"
+                statusStr="enable-disable-on-wizard connection-type"
+                statusVar = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="5" style="margin-right:0 !important"  db-id="5"></a>
+          
+            <div class="description"><span data-localize="13837">Choose this if your Internet connection requires L2TP username and password to get online</span></div>                
+                
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label data-localize="12507">PPPoE</label>
+        <?lua 
+
+            if (ispType == PPPOE or ispType == DUALACCESSPPPOE) then
+                selConnection = "4"
+                statusStr="enable-disable-on-wizard connection-type"
+                statusVar = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="4" style="margin-right:0 !important"  db-id="4"></a>
+            
+            <div class="description"> <span data-localize="10499">Choose this option if your Internet connection requires a username and password to get online. Most DSL modems use this type of connection</span></div>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="12994">Static IP Address </label>
+        <?lua 
+
+            if (ispType == STATIC) then
+                selConnection = "3"
+                statusStr="enable-disable-on-wizard connection-type"
+                statusVar = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="3" style="margin-right:0 !important"  db-id="3"></a>
+           
+            <div class="description"><span data-localize="10500">Choose this option if your Internet Setup Provider provided you with IP Address information that has to be manually configured</span> </div>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+          <div class="pageList"><span data-localize="13008">Step</span>: [1 <span data-localize="13836">of</span> 2] <span class="wizardInfoMsg" id="internetWizardStatusMsgStep1">&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="tf1Wizard_btPreviousStep1" value="Previous" title="Previous" class="wizardBtnNext btStep btStep1" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wizardForm.html', 'tf1Wizard_dashboardWizardDailogContent','internetPageEndFn');">
+          <input data-localize="11779" type="button" id="tf1Wizard_btNextStep1" value="Next" title="Next" class="wizardBtnNext  btStep btStep1"  onclick="moveToConnectionDetails()">
+        </div>
+      </div>
+    </div>
+  </div>
+<input type="hidden" name="Wan.IspType" id="tf1Wizard_wlanIspType" value="$|selConnection|$">
+ <!-- Step1 ends -->
+  
+<!-- Step2 starts -->
+   <div id="tf1Wizard_divStep2" style="display:none" class="divStep">     
+    <div class="wizardMessage">
+        <p><span data-localize="13980">Current DHCP Connection is Use Default Address</span></p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingConnectionType"></h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+         <div class="configRowWizard" id="tf1Wizard_loginName_div">
+            <label data-localize="13239">User Name</label>
+           <input type="text" id="tf1Wizard_loginName" name="Wan.LoginName" class="wizardField" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return alphaNumericCheck (event, '_~`!@#$%^&*()-+={}[]|:;<>.?/')" maxlength="64">
+          </div>
+          <div class="break" id="break_loginName_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_macAddressSource_div">
+            <label data-localize="11637">MAC Address Source</label>
+            <select id="tf1Wizard_macAddressSource" size="1" name="Wan.UseMac" onchange="dhcpMacAddressCheck()"
+             size="1" label="MAC Address Source" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="select">
+             <option data-localize="14212" value="1" selected >Use Default Address</option>
+				<option data-localize="14174" value="2">Clone your PC's MAC Address</option>
+				<option data-localize="14175" value="3">Use this MAC Address</option>
+            </select>
+          </div>
+          <div class="break" id="break_macAddressSource_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_macAddress_div">
+            <label data-localize="11636">MAC Address</label>
+            <input type="text" id="tf1Wizard_macAddress" name="Wan.macAddress" maxlength="17" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, LANG_LOCALE['11295']+':', '')">
+          </div>
+          <div class="break" id="break_macAddress_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_reconnectMode_div">
+            <label data-localize="12640">Reconnect Mode</label>
+            <select size="1" name="Wan.IdleTimeOutFlag" id="tf1Wizard_reconnectMode" onchange="internetConnectionReconnectModeChange()" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="select">
+        		<option data-localize="13983" value="1">Always On</option>
+        		<option data-localize="13984" value="2">On Demand</option>
+        	</select>
+          </div>
+          <div class="break" id="break_reconnectMode_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_addressMode_div">
+            <label data-localize="10176">Address Mode</label>
+            <select size="1" name="Wan.addressMode" id="tf1Wizard_addressMode" onchange="internetConnectionAddressModeChange()" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="select">
+        		<option data-localize="14173" value="1">Dynamic</option>
+        		<option data-localize="12991" value="2">Static</option>
+        	</select>
+          </div>
+          <div class="break" id="break_addressMode_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_ipAddr_div">
+            <label data-localize="11387">IP Address</label>
+            <input type="text" id="tf1Wizard_ipAddr" name="Wan.staticIPAddress" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+          </div>
+          <div class="break" id="break_ipAddr_div"> &nbsp; </div>          
+          <div class="configRowWizard" id="tf1Wizard_gateWayIpAddress_div">
+            <label data-localize="11058">Gateway IP Address</label>
+            <input type="text" name="Wan.gateway" id="tf1Wizard_gateWayIpAddress" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+          </div>
+          <div class="break" id="break_gateWayIpAddress_div"> &nbsp; </div>
+          
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard" id="tf1Wizard_macHostName_div">
+            <label data-localize="11122">Host Name</label>
+            <input type="text" name="Wan.HostName" id="tf1Wizard_macHostName" maxlength="64" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text">
+          </div>
+          <div class="break" id="break_macHostName_div"> &nbsp; </div>
+          
+          <div class="configRowWizard" id="tf1Wizard_loginPassword_div">
+            <label data-localize="11899">Password</label>
+            <input type="password" id="tf1Wizard_loginPassword" name="Wan.LoginPassword" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="password" maxlength="64">
+          </div>
+          <div class="break" id="break_loginPassword_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_idleTime_div">
+            <label data-localize="11141">Idle Time</label>
+             <input type="text" name="Wan.maxIdleTime" id="tf1Wizard_idleTime" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, LANG_LOCALE['13589']+': ', '');}" maxlength="2">
+          </div>
+          <div class="break" id="break_idleTime_div"> &nbsp; </div> 
+          <div class="configRowWizard" id="tf1Wizard_serverIpAddress_div">
+            <label data-localize="14172">Server IP Address</label>
+            <input type="text" id="tf1Wizard_serverIpAddress" name="Wan.serverIPAddress" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" maxlength="64">
+          </div>
+          <div class="break" id="break_serverIpAddress_div"> &nbsp; </div>
+
+          <div class="configRowWizard" id="tf1Wizard_ipSubnetMask_div">
+            <label data-localize="11413">IP Subnet Mask</label>
+            <input type="text" name="Wan.netmask" id="tf1Wizard_ipSubnetMask" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }">
+          </div>
+          <div class="break" id="break_ipSubnetMask_div"> &nbsp; </div>
+        </div>
+      </div>
+      <h1 data-localize="13981" id="tf1Wizard_dnsSettings">DNS settings</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard" id="tf1Wizard_dnsIpMode_div">
+            <label data-localize="10798">DNS Server Source</label>
+            <select id="tf1Wizard_dnsIpMode" name="Wan.useIspDns" size="1" onchange="internetConnectionDnsChange()" headingId="tf1Wizard_dnsSettings"  headingId="tf1Wizard_dnsSettings" class="wizardField" field-type="select" >
+		<option data-localize="11066" value="1">Get Dynamically from ISP</option>
+		<option data-localize="13230" value="2">Use These DNS Servers</option>
+		</select>
+          </div>
+          <div class="break" id="break_dnsIpMode_div" > &nbsp; </div>
+					<div class="configRowWizard" id="tf1Wizard_primaryDnsServer_div">
+            <label data-localize="12537">Primary DNS Server</label>
+            <input type="text" name="Wan.primaryDNS" id="tf1Wizard_primaryDnsServer" headingId="tf1Wizard_dnsSettings" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+          </div>
+          <div class="break" id="break_primaryDnsServer_div"> &nbsp; </div>          
+        </div>
+        <div class="rightBlock">
+					<div class="configRowWizard" id="tf1Wizard_secondaryDnsServer_div">
+            <label data-localize="12782">Secondary DNS Server</label>
+            <input type="text" name="Wan.secondaryDNS" id="tf1Wizard_secondaryDnsServer" headingId="tf1Wizard_dnsSettings" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+          </div>
+          <div class="break" id="break_secondaryDnsServer_div"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+          <div class="pageList"><span data-localize="13008">Step</span>: [2 <span data-localize="13836">of</span> 2] <span id="tf1Wizard_step2StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="showWizardDiv('tf1Wizard_divStep1','')">
+          <input data-localize="12758" type="button" id="btSave" value="Save" title="Save" class="wizardBtnNext"  onClick="internetConnectionSave()">
+        </div>
+      </div>
+    </div>
+
+   
+   </div>
+   
+<!--Step2 ends -->
+</form>
+
+    <!-- Preview -->
+    
+    <div id="tf1Wizard_previewDiv" style="display:none;">
+    
+    	<div class="wizardMessage">
+            <p><span data-localize="14171">Internet Connection Configuration Saved Successfully</span></p>
+    </div>
+    <div class="wizardBlock" id="tf1Wizard_previewBlock">
+    
+     
+    </div>
+    
+ 
+ 
+  <div class="pagination">
+    <div class="pageList"><span>&nbsp;</span></div>
+    <div class="prevNext">
+      <input data-localize="14066" type="button" id="btSave" value="Finish" title="Finish" class="wizardBtnNext" onclick="cancelWizard()" >
+    </div>
+  </div>
+</div>
+
+<!-- preview step ends -->
+    
+    </div>
+</div>  
+

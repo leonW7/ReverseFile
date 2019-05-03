@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->              
+<VIEW name="security-firewall-ipv6-config" prompt="security-config[firewall-ipv6]> "> 
+    <COMMAND name="save" help="Save Firewall IPV6 rules configuration changes.">
+	     <ACTION>lua clishCfgObjExec("FirewallRules6")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Firewall IPV6 rules configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Firewallrules6")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back IPV6 rules configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="rule_type"
+             help="Type of rule to be added">
+             <PARAM name="ruleType"
+                    help="Type of rule to be added"
+                    ptype="RULE_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.RuleType", "${ruleType}")              
+             </ACTION>
+    </COMMAND> 
+
+    <COMMAND name="service" help="."/>
+    <COMMAND name="service service_custom"
+             help="Name of the custom  service for which a rule is to be added
+             custom name should already be added into custom service">
+             <PARAM name="services"
+                    help="Name of the service for which a rule is to be added"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.ServiceName", "${services}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="service service_normal"
+             help="Name of the service for which a rule is to be added">
+             <PARAM name="service"
+                    help="Name of the service for which a rule is to be added"
+                    ptype="SERVICE6"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.ServiceName", "${service}")              
+             </ACTION>
+    </COMMAND>
+    
+
+    <COMMAND name="action"
+             help="Action to be taken by the rule">
+             <PARAM name="action"
+                    help="Action to be taken by the rule"
+                    ptype="ACTION_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.Action", "${action}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="schedule"
+             help="Schedule for which the rule is applicable">
+             <PARAM name="schedule"
+                    help="Schedule for which the rule is applicable"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.ScheduleName", "${schedule}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_address_type"
+             help="Type of the source user">
+             <PARAM name="srcType"
+                    help="Any, Single Address, Address Range"
+                    ptype="USER_ADDRESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.SourceAddressType", "${srcType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address_type"
+             help="Type of the destination user">
+             <PARAM name="dstType"
+                    help="Any, Single Address, Address Range"
+                    ptype="USER_ADDRESS_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.DestinationAddressType", "${dstType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="log"
+             help="Log Always or Never">
+             <PARAM name="log"
+                    help="Log always or never"
+                    ptype="LOG_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.LogLevel", "${log}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_start_address"
+             help="IP of the Source user">
+             <PARAM name="srcAddrStart"
+                    help="IP of the Source User"
+                    ptype="IPV6_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.SourceAddressStart", "${srcAddrStart}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_end_address"
+             help="IP of the Source user">
+             <PARAM name="srcAddrEnd"
+                    help="IP of the Source User"
+                    ptype="IPV6_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.SourceAddressEnd", "${srcAddrEnd}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="source_address_prefix"
+             help="prefix length of the Source user">
+             <PARAM name="srcAddrPrefix"
+                    help="Prefix length of the Source User"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.SourceAddressPrefixLength", "${srcAddrPrefix}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_start_address"
+             help="IP of the Destination user">
+             <PARAM name="dstAddrStart"
+                    help="IP of the Destination User"
+                    ptype="IPV6_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.DestinationAddressStart", "${dstAddrStart}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_end_address"
+             help="IP of the Destiation user">
+             <PARAM name="dstAddrEnd"
+                    help="IP of the Destination User"
+                    ptype="IPV6_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.DestinationAddressEnd", "${dstAddrEnd}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address_prefix"
+             help="Prefix Length of the Destination user">
+             <PARAM name="dstPrefix"
+                    help="Prefix Length of the destination user"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("FirewallRules6", "FirewallRules6.DestinationAddressPrefixLength", "${dstPrefix}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-firewall-ipv6-move" prompt="security-config[firewall-ipv6-reorder]> "> 
+    <COMMAND name="save" help="Save Firewall IPV6 rule reordering changes.">
+	     <ACTION>lua clishCfgObjExec("Rule6ToMove")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Firewall IPV6 rule reordering changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Rule6ToMove")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back IPV6 rule reordering changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="position"
+             help="New position for the rule">
+             <PARAM name="pos"
+                    help="Move rule to this position"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("Rule6ToMove", "Rule6ToMove.pos", "${pos}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+
+<!--=======================================================-->
+    <COMMAND name="security firewall ipv6" help="Firewall IPv6 rules setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv6 configure"
+             help="Firewall IPV6 rules configuration mode."
+             view="security-firewall-ipv6-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("FirewallRules6", 
+                              accessControlRule6CfgInit, accessControlRule6CfgSave, 
+				       accessControlRule6CfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>                          
+
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv6 edit"
+             help="Firewall IPV6 rules configuration mode."
+             view="security-firewall-ipv6-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("FirewallRules6", 
+                              accessControlRule6CfgInit, accessControlRule6CfgSave, 
+				       accessControlRule6CfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv6 enable"
+             help="Firewall IPV6 rules configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be enabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(accessControlRule6Modify, "${row_id}", "enable")
+                   </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv6 disable"
+             help="Firewall IPV6 Rules configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be disabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(accessControlRule6Modify, "${row_id}", "disable")
+                   </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv6 delete"
+             help="Firewall IPV6 Rules configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(accessControlRule6Modify, "${row_id}", "delete")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv6 move"
+             help="Firewall IPV6 Rule reordering mode."
+             view="security-firewall-ipv6-move" viewid="">        
+	<PARAM name="row_id" 
+	       help=" Row Id(s) Of the rule to be moved "
+	       ptype="FW_RULE_ROW_IDS"/>
+       <ACTION>lua clishCfgObjNew ("Rule6ToMove", rule6ReorderInit, 
+                       rule6ReorderSave, rule6ReorderInVal,"${row_id}")
+       </ACTION>
+    </COMMAND>
+
+    <!--=======================================================-->
+    <COMMAND name="security firewall ipv6 default_outbound_policy"
+             help="Firewall Settings, IPv6 Default Outbound Policy configuration mode."
+             >
+             <PARAM name="default_outbound_policy" help="enable/disable default ob policy" ptype="FIREWALL_POLICY"/>
+             <ACTION>lua clishCfgObjNew ("FirewallRules6", 
+                              firewallSettings6CfgInit, firewallSettings6CfgSave, 
+				              firewallSettings6InVal, "${default_outbound_policy}")
+             clishCfgObjExec("FirewallRules6")
+             </ACTION>
+    </COMMAND>
+    <!--=======================================================-->    
+</CLISH_MODULE>
+

@@ -1,0 +1,143 @@
+<!--Wireless  Wizard -->
+<?lua
+require "teamf1lualib/wps_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/dot11_returnCodes"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local wps = require("com.teamf1.bl.wireless.wps")
+local dot11ReturnCodes = require("com.teamf1.core.wireless.dot11.returnCodes")
+local ssid = "N\/A"
+local encType = "N\/A"
+local authType = "N\/A"
+local security = "N\/A"
+local passKey = ""
+local returnCode, wpsRow, wpsStatusRow, vapTblRow = wps.wpsSectionGet ()
+local apName = wpsRow["dot11WPS.vapName"] or ''
+if (apName ~= nil and apName ~= '') then 
+   returnCode, profileName = wps.wpsprofileNameGetCur (apName)
+   returnCode, profileConfig = wps.profileRowGetCur (profileName)
+   if (profileConfig ~= nil) then
+       ssid = profileConfig["dot11Profile.ssid"] 
+       passKey = profileConfig["dot11Profile.pskPassAscii"] 
+       encType = profileConfig["dot11Profile.pairwiseCiphers"] or ""
+       authType = profileConfig["dot11Profile.authMethods"] or ""
+       security = profileConfig["dot11Profile.security"] or ""
+       if (profileConfig["dot11Profile.security"] == "OPEN")  then
+           encType = "NONE"
+           authType = "NONE"
+       elseif (profileConfig["dot11Profile.security"] == "WEP") then
+           encType = profileConfig["dot11Profile.groupCipher"] or "N\/A"
+	       authType = profileConfig["dot11Profile.wepAuth"] or "N\/A"
+       end
+   end
+end
+
+?>
+
+<div id="tf1Wizard_wpssWizardDailogContent">
+  <div class="topBgWizard">
+    <h1 data-localize="30362">WPS Wizard</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard">
+      <form id="tf1Wizard_wpsForm">
+    <input type="hidden" name="thispage" id="tf1Wizard_thispage" value="wizard.html">
+
+	<input type="hidden" name="button.wpsWizard.wizard" id="tf1Wizard_btnConnect" value="testconnect">
+    <div id="tf1Wizard_divStep1" class="divStep">
+ 
+    <div class="wizardMessage">
+        <p><span data-localize="30374">WPS Wizard Setup</span></p>
+    </div>
+    <div class="wizardBlock">
+      <h1 data-localize="30375" id="tf1Wizard_headingUser">WPS Configuration Method</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label data-localize="30376">Select Wps Method </label>
+            <select id="tf1_wpsMethodSelect" name="wps.name" onchange="wpsMethod('tf1_wpsMethodSelect');">
+                <option data-localize="10333" value="0">Auto</option>
+                <option data-localize="11676" value="1">Manual</option>
+            </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+         
+        </div>
+        <div class="rightBlock">
+             <div class="configRowWizard"  id="tf1_wpsPin_div">
+            <label data-localize="30377">PIN</label>
+            <input type="radio"  name="wps.method" value="0" style="float: left; width: 20px; padding: 0 4px 0 0 !important;" checked  id="tf1_pin" onclick="pinMethodChange()"> 
+            <input type="text" name="wps.wpsStationPin" id="tf1_wpsPin" headingid="" class="wizardField"  style="float: left; width: 100px;" maxlength="8"  onkeypress="return numericValueCheck (event)">
+          </div>
+          <div class="break" id="break_wpsPin_div"> &nbsp; </div>
+           <div class="configRowWizard" id="tf1_pbc_div">
+            <label data-localize="30378">PBC</label>
+            <input type="radio" name="wps.method"  value="1" style="float: left; width: 20px;"  id="tf1_pbc" value="1"  onclick="pinMethodChange()"> 
+          </div>
+          <div class="break"  id="break_pbc_div"> &nbsp; </div>
+          <div class="configRowWizard"  id="tf1_ssid_div">
+            <label data-localize="12918">SSID</label>
+            <p id="tf1_ssid">$| ssid |$</p>
+          </div>
+          <div class="break"  id="break_ssid_div"> &nbsp; </div>
+            <div class="configRowWizard"  id="tf1_securityMode_div">
+            <label data-localize="13716">Security Mode</label>
+            <p id="tf1_securityMode">$| security |$</p>
+          </div>
+          <div class="break"  id="break_securityMode_div"> &nbsp; </div>
+            <div class="configRowWizard"  id="tf1_cipherType_div">
+            <label data-localize="30379">Cipher Type</label>
+            <p id="tf1_cipherType">$| encType |$</p>
+          </div>
+          <div class="break"  id="break_cipherType_div"> &nbsp; </div>
+            <div class="configRowWizard"  id="tf1_presharedKey_div">
+            <label data-localize="30380">Pre-shared key</label>
+            <p id="tf1_presharedKey">$| passKey |$</p>
+          </div>
+          <div class="break"  id="break_presharedKey_div"> &nbsp; </div>           
+        </div>
+      </div>
+      <div class="pagination">
+          <div class="pageList"><span data-localize="13008">Step</span>: [1 <span data-localize="13836">of</span> 1] <span id="tf1Wizard_Step1StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onclick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wizardForm.html', 'tf1Wizard_dashboardWizardDailogContent','');">
+          <input data-localize="13451" type="button" id="tf1_btSaveConnect" value="Connect" title="Connect" class="wizardBtnNext" onclick="validateWizardWps()">
+        </div>
+      </div>
+    </div>
+    
+    </div></form>	
+    
+    
+    <!-- Preview -->
+    
+    <div id="tf1Wizard_previewDiv" style="display:none;">
+    
+    	<div class="wizardMessage">
+            <p><span data-localize="30381">Wireless setting saved successfully</span></p>
+    </div>
+    <div class="wizardBlock" id="tf1Wizard_previewBlock">
+    
+     
+    </div>
+    
+ 
+ 
+  <div class="pagination">
+    <div class="pageList"><span id="wirelessStatusMessage">&nbsp;</span></div>
+    <div class="prevNext">
+      <input data-localize="14066" type="button" id="btSave" value="Finish" title="Finish" class="wizardBtnNext" onclick="cancelWizard()" >
+    </div>
+  </div>
+</div>
+
+<!-- preview step ends -->
+    
+    
+  </div>
+</div>
+

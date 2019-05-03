@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <COMMAND name="show system logging" help="."/>
+    <COMMAND name="show system logging remote" help="."/>
+    <COMMAND name="show system logging remote setup"
+            help="Display remote logging configuration">
+	    <ACTION>lua clishCmdExec (sysEmailSchedGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show system logging syslogServer" help="."/>
+    <COMMAND name="show system logging syslogServer setup"
+            help="Displays the syslog servers configuration">
+	    <ACTION>lua clishCmdExec (sysLogInfoGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show system logging facility" help="."/>
+    <COMMAND name="show system logging facility setup"
+            help="Display logging facility configuration">
+	     <PARAM name="facility" 
+		    help="Name of the facility."
+		    default="all"
+		    ptype="STRING"/>		    
+	    <ACTION>lua clishCmdExec (sysLoggingGet, "${facility}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show system log" help="."/>
+    <COMMAND name="show system log viewLogs"
+        help="Display viewLogs page configuration">
+        <PARAM name="faciltylevel" 
+            help="type of facility to configure"
+            ptype="VIEW_LOGS_FACILITY_INT"/>
+        <PARAM name="categorylevel" 
+            help="type of category to configure"
+            ptype="VIEW_LOGS_CATEGORY_STR"/>
+        <PARAM name="severitylevel" 
+            help="type of severity to configure"
+            ptype="VIEW_LOGS_SEVERITY_INT"/>        
+        <ACTION>lua viewLogsInfoGet ("${faciltylevel}", "${categorylevel}", "${severitylevel}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show system logging ipv4" help="."/>
+    <COMMAND name="show system logging ipv4 setup"
+            help="Display logging configuration">
+	    <ACTION>lua clishCmdExec (sysEventLogsGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show system logging ipv6" help="."/>
+    <COMMAND name="show system logging ipv6 setup"
+            help="Display ipv6 logs configuration">
+	    <ACTION>lua clishCmdExec (ipv6LogsCfgGet)</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+   <COMMAND name="show system logging SMS"
+       help="Display SMS logging configuration">
+       <ACTION>lua smsEventsCfgShow()</ACTION>
+   </COMMAND>
+<!--=======================================================-->
+	
+</CLISH_MODULE>

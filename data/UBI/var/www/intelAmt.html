@@ -1,0 +1,321 @@
+<?lua
+
+require "teamf1lualib/intelAmt_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "intelAmt"
+
+local intelAmt = require("com.teamf1.bl.admin.intelamt")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)    
+    returnCode, status = intelAmt.intelAmtReflectorSectionSetAll (inputTable)
+     if (returnCode == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    errorFlag, cookie = intelAmt.intelAmtSetupSectionSetAll (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage (NextPage, true, true)
+else
+    errorFlag, status, portsStatus, hostOption, hostAddress, internalIpAddress =intelAmt.intelAmtSetupSectionGetAll ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    errorFlag, status, reflectorStatus, redirectPort16992, listenPort16992,
+    redirectPort16993, listenPort16993, redirectPort16994, listenPort16994,
+    redirectPort16995, listenPort16995, redirectPort9971, listenPort9971 = intelAmt.intelAmtReflectorSectionGetAll()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "11193,11031,11281,30409,12497,12646,30410,30411,13304,10226,12909,13305,30412,12642,11587,11333,12415,12027,12084,11376,11376,11031,11280,11031,12627,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    	<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['30409'] |$&#174; $| LANG_LOCALE['30410'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmIntelAmt" id="tf1_frmIntelAmt"
+                                action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="intelAmt.html">
+                                <h2>$| LANG_LOCALE['30409'] |$&#174; $| LANG_LOCALE['30411'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['12497'] |$</label>
+                                     <?lua if (portsStatus == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                    <a class = "$| statusStr |$" alt="" id="tf1_imgPort" ></a>
+                                        <input type="hidden" name="intelAmt.ports" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break1_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_selWanHosts1_div">
+                                    <label> $| LANG_LOCALE['13304'] |$ </label>
+                                    <p>
+                                        <input type="radio" $| web.radioSelected(hostOption == "0") |$ value="1" id="tf1_selWanHosts1" checked name="intelAmt.optionHost" onClick="enableHostTextField('tf1_selWanHosts1')">
+                                        $| LANG_LOCALE['10226'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" $| web.radioSelected(hostOption == "1") |$ value="2" name="intelAmt.optionHost" id="tf1_selWanHosts2" name="WanHost" onClick="enableHostTextField('tf1_selWanHosts2')">
+                                        $| LANG_LOCALE['12909'] |$
+                                    </p>
+                                </div>
+                                <div class="break" id="break2_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtWanHosts_div">
+                                    <label> $| LANG_LOCALE['13305'] |$ </label>
+                                    <input type="text" name = "intelAmt.wanHostAddress" value ="$| hostAddress or '' |$" id="tf1_txtWanHosts" onKeyPress="return numericValueCheck(event, '.,')">
+                                </div>
+                                <div class="break" id="break3_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtLocalServerIp_div">
+                                    <label> $| LANG_LOCALE['11193'] |$ </label>
+                                    <input type="text" name = "intelAmt.internalIpAddress" value ="$| internalIpAddress or ''|$" id="tf1_txtLocalServerIp" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break" id="break4_div">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['30409'] |$&#174; $| LANG_LOCALE['30412'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['12646'] |$</label>
+                                    <?lua if (reflectorStatus == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_imgReflector" ></a>
+                                        <input type="hidden" name="intelAmt.reflector" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break5_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_imgRedirect16992_div">
+                                    <label> $| LANG_LOCALE['12642'] |$ 16992 </label>
+                                    <?lua if (redirectPort16992 == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_imgRedirect16992"  ></a>
+                                        <input type="hidden" name="intelAmt.redirectToPort16992" value="$| statusVar |$">
+                                    <div class="configRow" id="tf1_txtRedirectPort16992_div">
+                                        <p>
+                                            $| LANG_LOCALE['11587'] |$
+                                        </p>
+                                        <input class="one" name ="intelAmt.listenOnPort16992" value ="$| listenPort16992 |$" type="text" id="tf1_txtRedirectPort16992" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11333']+'16992.', '');}">
+                                        <dl>
+                                            [$| LANG_LOCALE['12627'] |$ : 1 - 65535]
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="break" id="break6_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_imgRedirect16993_div">
+                                    <label> $| LANG_LOCALE['12642'] |$ 16993 </label>
+                                    <?lua if (redirectPort16993 == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_imgRedirect16993" ></a>
+                                        <input type="hidden" name="intelAmt.redirectToPort16993" value="$| statusVar |$">
+                                    <div class="configRow" id="tf1_txtRedirectPort16993_div">
+                                        <p>
+                                             $| LANG_LOCALE['11587'] |$
+                                        </p>
+                                        <input class="one" name ="intelAmt.listenOnPort16993" value ="$| listenPort16993 |$" type="text" id="tf1_txtRedirectPort16993" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11333']+'16993.', '');}">
+                                        <dl>
+                                            [$| LANG_LOCALE['12627'] |$ : 1 - 65535]
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="break" id="break7_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_imgRedirect16994_div">
+                                    <label> $| LANG_LOCALE['12642'] |$ 16994 </label>
+                                     <?lua if (redirectPort16994 == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_imgRedirect16994" ></a>
+                                        <input type="hidden" name="intelAmt.redirectToPort16994" value="$| statusVar |$">
+                                    <div class="configRow" id="tf1_txtRedirectPort16994_div">
+                                        <p>
+                                            $| LANG_LOCALE['11587'] |$
+                                        </p>
+                                        <input class="one" name ="intelAmt.listenOnPort16994" value ="$| listenPort16994 |$" type="text" id="tf1_txtRedirectPort16994" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11333']+'16994.', '');}">
+                                        <dl>
+                                            [$| LANG_LOCALE['12627'] |$ : 1 - 65535]
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="break" id="break8_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_imgRedirect16995_div">
+                                    <label> $| LANG_LOCALE['12642'] |$ 16995 </label>
+                                    <?lua if (redirectPort16995 == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_imgRedirect16995"  ></a>
+                                        <input type="hidden" name="intelAmt.redirectToPort16995" value="$| statusVar |$">
+                                    <div class="configRow" id="tf1_txtRedirectPort16995_div">
+                                        <p>
+                                            $| LANG_LOCALE['11587'] |$
+                                        </p>
+                                        <input class="one" name ="intelAmt.listenOnPort16995" value ="$| listenPort16995 |$" type="text" id="tf1_txtRedirectPort16995" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11333']+'16995.', '');}">
+                                        <dl>
+                                            [$| LANG_LOCALE['12627'] |$ : 1 - 65535]
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="break" id="break9_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_imgRedirect9971_div">
+                                    <label> $| LANG_LOCALE['12642'] |$ 9971 </label>
+                                    <?lua if (redirectPort9971 == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_imgRedirect9971"  ></a>
+                                        <input type="hidden" name="intelAmt.redirectToPort9971" value="$| statusVar |$">
+                                    <div class="configRow" id="tf1_txtRedirectPort9971_div">
+                                        <p>
+                                            $| LANG_LOCALE['11587'] |$
+                                        </p>
+                                        <input class="one"  name ="intelAmt.listenOnPort9971" value ="$| listenPort9971 |$" type="text" id="tf1_txtRedirectPort9971" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11333']+'9971.', '');}">
+                                        <dl>
+                                            [$| LANG_LOCALE['12627'] |$ : 1 - 65535]
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="break" id="break10_div">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.intelAmt" onclick="return intelAmtValidation('tf1_frmIntelAmt')" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset; intelAmtOnReset('tf1_frmIntelAmt');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/intelAmt.js"></script>
+    </body>
+</html>
+<?lua end ?>

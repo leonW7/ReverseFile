@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# pppInit - initialization script for ppp
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01e,25mar16,har  Added executable permissions on compile time ppp-ip-pre-up
+# 01d,27jul15,abd  setting the executable permissions to the pp-ip-pre-up.
+# 01c,23jul15,abd  adding a new pre ip up script.
+# 01b,12mar12,arc  added support for radius authentication
+# 01a,31jan08,ss   written
+mkdir -p /etc/radiusclient
+
+cp -f /pfrm2.0/etc/port-id-map /etc/radiusclient/port-id-map
+cp -f /pfrm2.0/etc/dictionary /etc/radiusclient/dictionary
+cp -f /pfrm2.0/etc/dictionary.microsoft /etc/radiusclient/dictionary.microsoft
+ln -s /pfrm2.0/var/ppp-ip-up /var/ppp-ip-up
+ln -s /pfrm2.0/var/ppp-ip-pre-up /var/ppp-ip-pre-up
+ln -s /pfrm2.0/var/ppp-ip-down /var/ppp-ip-down
+ln -s /pfrm2.0/var/ppp-ipv6-up /var/ppp-ipv6-up
+ln -s /pfrm2.0/var/ppp-ipv6-down /var/ppp-ipv6-down

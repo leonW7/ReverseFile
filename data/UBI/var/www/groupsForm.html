@@ -1,0 +1,777 @@
+<?lua
+require "teamf1lualib/groups_bl"
+require "teamf1lualib/groups_ul"
+
+local gui_groups = require("com.teamf1.bl.userdb.groups")
+     local inputCookie = cgi["configRowId"]
+     local groupTable = {}
+     local groupLoginTable = {}
+     local groupBrowserTable = {}
+     local groupNetworkTable = {}
+     cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<?lua
+if ((ButtonType and ButtonType == "editGroups") or (ButtonType and ButtonType == "addGroups")) then
+    if (ButtonType and ButtonType == "editGroups") then
+        returnCode, cookie ,groupTable = gui_groups.groupsGetRow (inputCookie)
+    else
+	     groupTable["groups.userType"] = "2"
+    end
+  
+
+?>
+<div id="tf1_groupsDailogContent">
+    <div class="topBg">
+        <h1 data-localize="11083">Group Configuration</h1>
+            <close>
+                <a href="#" id="btnClose" title="Close">X</a>
+            </close>
+        </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="11085">Group Name </label>
+            <?lua if (ButtonType == "editGroups") then ?>
+            <p>$| groupTable["groups.name"] or '' |$</p>
+            <input type="hidden" value="$| groupTable["groups.name"] or '' |$" name="groupTable.name" id="hdGroupName">
+            <?lua else ?>
+   <input type="text" name="groupTable.name" value="$|groupTable["groups.name"] or ''|$" maxlength="32" class="txt1" id="tf1_grpName" onkeydown="if (event.keyCode == 9 ) { return validGroupName ('tf1_grpName','Invalid Group Name.'); }" onkeypress="return alphaNumericCheck (event, '')">
+
+   <?lua end
+   ?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="10702">Description </label><input type="text" name="groupTable.description" value="$|groupTable["groups.description"] or '' |$" id="tf1_description">
+        </div>
+        <div class="break">
+&nbsp;</div>
+		<div id="tf1_UserTypeBlock_div">
+	        <h2 data-localize="13241">User Type</h2>
+	        <div class="configRow" id="tf1_userType_div">
+	            <label data-localize="13241">User Type </label>
+	            <p>
+	            <input type="radio" name="groupTable.userType"
+	            $|web.radioSelected(groupTable["groups.userType"]== "1") |$
+                id="tf1_userTypeAdmin" value="1"  onclick="changeUserType('tf1_userTypeAdmin')">
+                <span data-localize="30234">Admin</span></p>
+	            <p>
+	            <input type="radio" name="groupTable.userType" $|web.radioSelected(groupTable["groups.userType"]== "2") |$ id="tf1_userTypeNetwork" value="2" onclick="changeUserType('tf1_userTypeNetwork')">
+                <span data-localize="11761">Network</span></p>
+	            <p>
+	            <input type="radio" name="groupTable.userType" $|web.radioSelected(groupTable["groups.userType"]== "4") |$ id="tf1_userTypeGuest" value="4" onclick="changeUserType('tf1_userTypeGuest')">
+                <span data-localize="11090">Guest</span></p>
+	        </div>
+	        <div class="break" id="break_userType_div">
+                  &nbsp;</div>
+              <input type="hidden" value="$| groupTable["groups.userType"] |$" id="hdUserType">
+	        <div class="configRow" id="tf1_pptp_div">
+	            <label data-localize="12516">PPTP User </label>
+	            <?lua 
+	                                     local statueStr
+	                                     local statusVar
+	                                     if (groupTable["groups.pptp"] == "1") then
+									         statusStr="enable-disable-on"
+	                                         statusVar = "1"
+	                                     else
+	                                         statusStr="enable-disable-off"
+								             statusVar = "0"
+	                                     end
+	                                     ?>
+	
+	                                     <a class="$|statusStr|$" src="$|statusStr|$"  id="tf1_pptp" ></a>
+	            <input type="hidden" name="groupTable.pptp" value="$|statusVar|$" id="tf1_pptp_hidden">
+	        </div>
+	        <div class="break" id="break_pptp_div">
+	&nbsp;</div>
+	        <div class="configRow" id="tf1_l2tp_div">
+	            <label data-localize="11510">L2TP User</label>
+	            <?lua 
+                                     local statueStr
+                                     local statusVar
+                                     if (groupTable["groups.l2tp"] == "1") then
+									    statusStr="enable-disable-on"
+	                                    statusVar = "1"
+	                                 else
+	                                    statusStr="enable-disable-off"
+								        statusVar = "0" 
+                                     end
+                                     ?>
+
+            <a class="$|statusStr|$" src="$|statusStr|$" id="tf1_l2tp" ></a>
+            <input type="hidden" name="groupTable.l2tp" value="$|statusVar|$" id="tf1_l2tp_hidden">
+        </div>
+        <div class="break" id="break_l2tp_div">
+&nbsp;</div>
+        <div class="configRow" id="tf1_xauth_div">
+            <label data-localize="13438">Xauth User</label>
+            <?lua 
+                                     local statueStr
+                                     local statusVar
+                                     if (groupTable["groups.xauth"] == "1") then
+									    statusStr="enable-disable-on"
+	                                    statusVar = "1"
+	                                 else
+	                                    statusStr="enable-disable-off"
+								        statusVar = "0"
+				                     end
+                                     ?>
+
+            <a class="$|statusStr|$" id="tf1_xauth" ></a>
+            <input type="hidden" name="groupTable.xauth" value="$|statusVar|$" id="tf1_xauth_hidden">
+        </div>
+        <div class="break" id="break_xauth_div">
+&nbsp;</div>
+	<?lua if (HIGH_SEC == "HIGH") then ?>
+        <div class="configRow" id="tf1_openVpn_div">
+            <label>OpenVPN User</label>
+            <?lua 
+                                     local statueStr
+                                     local statusVar
+                                     if (groupTable["groups.openVpn"] == "1") then
+								                
+									                statusStr="enable-disable-on"
+								                
+	                                                statusVar = "1"
+	                                  else
+								                
+	                                               statusStr="enable-disable-off"
+								                
+								                   statusVar = "0"
+				                      end
+                                     ?>
+
+            <a class="$|statusStr|$" id="tf1_openVpn" ></a>
+            <input type="hidden" name="groupTable.openVpn" value="$|statusVar|$" id="tf1_openVpn_hidden">
+        </div>
+        <div class="break" id="break_openVpn_div">
+&nbsp;</div>
+        <div class="configRow" id="tf1_sslvpn_div">
+            <label data-localize="12957">SSLVPN User</label>
+            <?lua 
+                                     local statueStr
+                                     local statusVar
+                                     if (groupTable["groups.sslvpn"] == "1") then
+								                
+									                statusStr="enable-disable-on"
+								              
+	                                                statusVar = "1"
+	                                  else
+								                			               
+	                                               statusStr="enable-disable-off"
+								               
+								                   statusVar = "0"
+                                      end
+                                     ?>
+	
+	    <a class="$|statusStr|$" id="tf1_sslvpn" ></a>
+	
+            <input type="hidden" name="groupTable.sslvpn" value="$|statusVar|$" id="tf1_sslvpn_hidden">
+        </div>
+        <div class="break" id="break_sslvpn_div">
+&nbsp;</div>
+	<?lua end ?>
+		<?lua
+			if (UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250"  and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+		?>
+        <div class="configRow" id="tf1_captivePortal_div">
+            <label data-localize="10462">Captive Portal User</label>
+            <?lua 
+                                     local statueStr
+                                     local statusVar
+                                     if
+                                     (groupTable["groups.captivePortal"] == "1") then
+								                
+									                statusStr="enable-disable-on"
+								             
+	                                                statusVar = "1"
+	                                  else
+								                
+	                                               statusStr="enable-disable-off"
+								               
+								                   statusVar = "0"
+                                     end
+                                     ?>
+
+            <a class="$|statusStr|$" id="tf1_captivePortal" ></a>
+            <input type="hidden" name="groupTable.captivePortal" value="$|statusVar|$" id="tf1_captivePortal_hidden">
+        </div>
+        <div class="break" id="break_captivePortal_div">
+&nbsp;</div>
+	<?lua end ?>
+</div>
+        <div class="configRow" id="tf1_idleTimeOut_div">
+            <label data-localize="11142">Idle Timeout</label>
+            <input type="text"name="groupTable.timeOut"
+                        value="$|groupTable["groups.timeOut"] or '10'|$" id="tf1_idleTimeOut" class="one" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 999, true, LANG_LOCALE['11274'], LANG_LOCALE['11718']);}" maxlength="3"><dl>
+                [<span data-localize="10683">Default</span>: 10, <span data-localize="12627">Range</span>: 1 - 999] <span data-localize="11718">Minutes</span></dl>
+        </div>
+        <div class="break" id="break_idleTimeOut_div">
+&nbsp;</div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="hidden" name="configRowId" value="$|cgi["configRowId"] |$" id="hdConfigRowId">
+    <?lua if(cgi["configRowId"] == "-1") then?>
+    <input data-localize="12758" type="submit" name="button.addGroups.groups.groups"
+                onclick="return groupsValidate('tf1_frmGroups')" class="btnSubmit" title="Save" value="Save" id="btSave">
+     <?lua else ?>
+        <input data-localize="12758" type="submit" name="button.editGroups.groups.groups"
+                onclick="return groupsValidate('tf1_frmGroups')" class="btnSubmit" title="Save" value="Save" id="btSave">
+     <?lua end ?>
+
+
+    </div>
+</div>
+
+<!-- end of Popup 1 content -->
+<?lua end ?>
+
+<!-- start of Popup 2 content -->
+<?lua
+if ((ButtonType and ButtonType == "editLogin") or (ButtonType and ButtonType == "addLogin")) then
+    if (ButtonType and ButtonType == "editLogin") then
+        returnCode, cookie ,groupLoginTable = gui_groups.groupsLoginPolicyGetRow (inputCookie)
+    end   
+?>
+
+<div id="tf1_groupsDailogContent2">
+    <div class="topBg">
+        <h1 data-localize ="11620">Login Policies Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize ="11085">Group Name </label>
+            
+   <?lua if (ButtonType == "editLogin") then ?>
+            <input type="hidden" name="groupLoginTable.groupName"
+            value="$|groupLoginTable["login.groupName"] or
+            ''|$"><p>$|groupLoginTable["login.groupName"] or ''|$</p>
+              <?lua else ?>
+                <select name="groupLoginTable.groupName" size="1">
+                    <?lua
+
+            local i = 0
+                                    local ret, groupNameTable = gui_groups.groupsGetAll()
+                                    if (groupNameTable ~= nil or #groupNameTable ~= 0) then
+                                        for k, v in pairs (groupNameTable) do
+                                        i = i + 1
+                                               if(i ~= 3) then
+                                            local row = groupNameTable[i]
+            ?>
+           <option value="$|row["UserGroups.GroupName"]|$">$|row["UserGroups.GroupName"] or ''|$</option>
+ <?lua
+                                        end
+                                    end
+                                   end 
+                                    ?>
+                            </select>
+                            <?lua end ?>
+
+            
+            
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize ="10750">Disable Login </label>
+             <?lua 
+                                     local statueStr
+                                     local statusVar
+                                     if (groupLoginTable["login.denyLogin"] == "1") then
+                                                                statusStr="enable-disable-on"
+                                                                statusVar =
+                                                                "1"
+                                                                  else
+                                                                statusStr="enable-disable-off"
+                                                                statusVar =
+                                                                "0"
+                                                                   end
+                                     ?>
+
+             <a class="$|statusStr|$" src="$|statusStr|$" id="tf1_disableLogin" alt="" ></a>
+            <input type="hidden" name="groupLoginTable.login" value="$|statusVar
+            or ''|$">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label><span data-localize ="30235">Deny Login from WAN</span> <br>
+            <span data-localize ="11187">Interface</span> </label>
+        <?lua 
+                                     local statueStr
+                                     local statusVar
+                                     if (groupLoginTable["login.denyWanLogin"] == "1") then
+                                                                statusStr="enable-disable-on"
+                                                                statusVar =
+                                                                "1"
+                                                                  else
+                                                                statusStr="enable-disable-off"
+                                                                statusVar =
+                                                                "0"
+                                                                   end
+                                     ?>
+
+             <a class="$|statusStr|$" src="$|statusStr|$" id="tf1_denyLogin" alt="" ></a>
+            <input type="hidden" name="groupLoginTable.wanLogin"
+            value="$|statusVar or ''|$">
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+    <?lua if(cgi["configRowId"] == "-1") then?>
+
+    <input data-localize ="12758" type="submit" name="button.addLogin.groups"
+                onclick="setHiddenChks('tf1_frmGroups')"  class="btnSubmit" title="Save" value="Save" id="btSave">
+     <?lua else ?>
+                <input data-localize ="12758" type="submit" name="button.editLogin.groups"
+                onclick="setHiddenChks('tf1_frmGroups')" class="btnSubmit" title="Save" value="Save" id="btSave">
+     <?lua end ?>
+
+    </div>
+</div>
+
+<!-- end of Popup 2 content -->
+<?lua end ?>
+
+<!-- start of Popup 3 content -->
+<?lua
+if ((ButtonType and ButtonType == "editBrowser") or (ButtonType and ButtonType == "addBrowser")) then
+    if (ButtonType and ButtonType == "editBrowser") then
+         returnCode, cookie ,groupBrowserTable = gui_groups.groupsBrowserPolicyGetRow (inputCookie)
+    end
+    local ret, groupNameTable = gui_groups.browserGroupsGetAll()
+?>
+
+<div id="tf1_groupsDailogContent3">
+    <div class="topBg">
+        <h1 data-localize ="10425">Browser Policies Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+
+    <div class="dialogMidArea">
+	<?lua if (#groupNameTable ~= 0) then ?>
+        <div class="configRow">
+            <label data-localize ="11085">Group Name </label>
+            
+            <?lua if (ButtonType == "editBrowser") then ?>
+            <p><input type="hidden" name="groupBrowserTable.groupName" value="$|groupBrowserTable["browser.groupName"] or ''|$">$|groupBrowserTable["browser.groupName"] or ''|$ </p>
+            <?lua else ?>
+                <select name="groupBrowserTable.groupName" size="1">
+                    <?lua
+
+            local i = 0
+                                    if (groupNameTable ~= nil or #groupNameTable ~= 0) then
+                                        for k, v in pairs (groupNameTable) do
+                                        i = i + 1
+                                            local row = groupNameTable[i]
+
+            ?>
+ <option
+                                value="$|row["UserGroups.GroupName"]|$">$|row["UserGroups.GroupName"] or ''|$</option>
+                                        <?lua  end
+                                    end
+                                    
+                                    ?>
+                            </select>
+                            <?lua end ?>
+            
+        </div>
+        <div class="break">
+&nbsp;  </div>
+        <h2 data-localize ="10105">Add Defined Browser</h2>
+        <div class="configRow">
+            <label data-localize ="10516">Client Browser </label>
+	    <?lua if(ButtonType == "editBrowser") then?>
+            <select style="display:none" class="txt1" name="groupBrowserTable.browserName" size="1">
+            <option data-localize ="20015" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "MSIE") |$  value="1"  selected="selected">Internet Explorer</option>
+            <option data-localize ="20030" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "Opera") |$  value="2" >Opera</option>
+            <option data-localize ="30238" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "Chrome") |$  value="3" >Chrome</option>
+            <option data-localize ="30239" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+            "Firefox") |$  value="4" >Firefox</option>
+             </select>
+
+            <select DISABLED class="txt1" name="groupBrowserTable.browserNameTemp" size="1">
+            <option data-localize ="20015" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "MSIE") |$  value="1"  selected="selected">Internet Explorer</option>
+            <option data-localize ="20030" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "Opera") |$  value="2" >Opera</option>
+            <option data-localize ="30238" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "Chrome") |$  value="3" >Chrome</option>
+            <option data-localize ="30239" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+            "Firefox") |$  value="4" >Firefox</option>
+             </select>
+	    <?lua else?>
+            <select class="txt1" name="groupBrowserTable.browserName" size="1">
+            <option data-localize ="20015" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "MSIE") |$  value="1"  selected="selected">Internet Explorer</option>
+            <option data-localize ="20030" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "Opera") |$  value="2" >Opera</option>
+            <option data-localize ="30238" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "Chrome") |$  value="3" >Chrome</option>
+            <option data-localize ="30239" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+            "Firefox") |$  value="4" >Firefox</option>
+             </select>
+	    <?lua end?>
+            </div>
+        <div class="break">
+&nbsp; </div>
+	<?lua else ?>
+	<div class="configRow" >
+		<label data-localize ="10424">
+		  Browser Policies already added for all Groups
+		</label>
+	</div>
+
+	<?lua end ?>
+    </div>
+    <div class="dialogSubmitRow">
+		    <?lua if (#groupNameTable ~= 0) then ?>
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    <?lua if(cgi["configRowId"] == "-1") then?>
+        <input data-localize ="12758" type="submit"  name="button.addBrowser.groups"
+        onclick="setHiddenChks('tf1_frmGroups')" class="btnSubmit" title="Save" value="Save" id="btSave">
+              <?lua else ?>
+                <input data-localize ="12758" type="submit"  name="button.editBrowser.groups"
+                onclick="setHiddenChks('tf1_frmGroups')" class="btnSubmit" title="Save" value="Save" id="btSave">
+     <?lua end end ?>
+    </div>
+</div>
+
+<!-- end of Popup 3 content -->
+<?lua end ?>
+
+<!-- start of Popup 4 content -->
+<?lua
+if ((ButtonType and ButtonType == "editIp") or(ButtonType and ButtonType == "addIp")) then
+    if (ButtonType and ButtonType == "editIp") then
+        returnCode, cookie ,groupNetworkTable = gui_groups.groupsNetworkPolicyGetRow (inputCookie)
+    end
+    local ret, groupNameTable = gui_groups.ipGroupsGetAll()
+    	    
+?>
+<div id="tf1_groupsDailogContent4">
+    <div class="topBg">
+        <h1 data-localize="11411">IP Policies Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+	<?lua if (#groupNameTable ~= 0) then ?>
+        <div class="configRow">
+            <label data-localize="11085">Group Name </label>
+           
+            <?lua if (ButtonType == "editIp") then ?>
+            <input type="hidden" name="groupNetworkTable.groupName"
+            value="$|groupNetworkTable["network.groupName"] or ''|$"> <p>$|groupNetworkTable["network.groupName"] or ''|$ </p>
+                       <?lua else ?>
+                <select name="groupNetworkTable.groupName" size="1">
+                    <?lua
+
+            local i = 0
+                                      if (groupNameTable ~= nil or #groupNameTable ~= 0) then
+                                        for k, v in pairs (groupNameTable) do
+                                        i = i + 1
+
+                                            local row = groupNameTable[i]
+
+            ?>
+ <option value="$|row["UserGroups.GroupName"]|$">$|row["UserGroups.GroupName"] or ''|$</option>
+ <?lua
+ end
+                                    end
+                                    
+                                    ?>
+                            </select>
+                            <?lua end ?>
+           
+        </div>
+        <div class="break">
+&nbsp; </div>
+         <h2 data-localize="10693">Defined Address Configuration</h2>
+        <div class="configRow">
+            <label data-localize="12891">Source Address Type </label>
+	<?lua if (ButtonType == "editIp") then?>
+		<select style="display:none" name="groupNetworkTable.addressType" onchange="ipNetworkChk('tf1_sourceAddresType')" id="tf1_sourceAddresType">
+            <option data-localize="11387" $|web.dropdownSelected(groupNetworkTable["network.ipAddressType"] ==
+                            "0") |$ value="1"  >IP Address</option>
+            <option data-localize="14097" $|web.dropdownSelected(groupNetworkTable["network.ipAddressType"] ==
+                            "1") |$ value="2" >IP Network</option>
+            </select>
+		<select DISABLED name="groupNetworkTable.addressTypeTemp" id="tf1_sourceAddresTypeTemp">
+            <option data-localize="11387" $|web.dropdownSelected(groupNetworkTable["network.ipAddressType"] ==
+                            "0") |$ value="1"  >IP Address</option>
+            <option data-localize="14097" $|web.dropdownSelected(groupNetworkTable["network.ipAddressType"] ==
+                            "1") |$ value="2" >IP Network</option>
+            </select>
+	<?lua else?>
+            <select name="groupNetworkTable.addressType" onchange="ipNetworkChk('tf1_sourceAddresType')" id="tf1_sourceAddresType">
+            <option data-localize="11387" $|web.dropdownSelected(groupNetworkTable["network.ipAddressType"] ==
+                            "0") |$ value="1"  >IP Address</option>
+            <option data-localize="14097" $|web.dropdownSelected(groupNetworkTable["network.ipAddressType"] ==
+                            "1") |$ value="2" >IP Network</option>
+            </select>
+	<?lua end?>
+ </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="11763">Network Address / IP Address </label>
+	<?lua if (ButtonType == "editIp") then?> 
+	<p>	$| groupNetworkTable["network.ipAddress"] |$ </p>
+            <input type="hidden" name="groupNetworkTable.ipAddress"
+                        value="$|groupNetworkTable["network.ipAddress"] or ''|$" id="tf1_txtIpAddr" maxlength="15" name="tf1_txtIpAddr" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+	<?lua else?>
+            <input type="text" name="groupNetworkTable.ipAddress"
+                        value="$|groupNetworkTable["network.ipAddress"] or ''|$" id="tf1_txtIpAddr" maxlength="15" name="tf1_txtIpAddr" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+
+	<?lua end?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtMaskLen_div">
+            <label data-localize="11684">Mask Length </label>
+	<?lua if (ButtonType == "editIp") then?> 
+	<p>$| groupNetworkTable["network.maskLength"] |$ </p>
+            <input type="hidden" name="groupNetworkTable.maskLength"
+                        value="$|groupNetworkTable["network.maskLength"] or '32'|$" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 32, true, '', '');}" onkeypress="return numericValueCheck (event)" id="tf1_txtMaskLen" maxlength="2" value="32" name="tf1_txtMaskLen" class="one">
+	<?lua else?>
+            <input type="text" name="groupNetworkTable.maskLength"
+                        value="$|groupNetworkTable["network.maskLength"] or '32'|$" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 32, true, '', '');}" onkeypress="return numericValueCheck (event)" id="tf1_txtMaskLen" maxlength="2" value="32" name="tf1_txtMaskLen" class="one">
+
+	<?lua end?>
+            <dl>
+                [<span data-localize="10683">Default</span>:32, <span data-localize="12627">Range</span> 0 - 32]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+ <?lua else?>
+	<div class="configRow" >
+		<label data-localize="11410">
+		  IP Policies already added for all Groups
+		</label>
+	</div>
+
+<?lua end ?>
+    </div>
+    <div class="dialogSubmitRow">
+		<?lua if (#groupNameTable ~= 0) then ?>
+
+            <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    <?lua if(cgi["configRowId"] == "-1") then?>
+                    <input data-localize="12758" type="submit" name="button.addIp.groups"
+                    class="btnSubmit" title="Save" value="Save" id="btSave"
+                    onclick="return validateIPPolicies('tf1_frmGroups');">
+                    <?lua else ?>
+                    <input data-localize="12758" type="submit" name="button.editIp.groups"
+                    class="btnSubmit" title="Save" value="Save" id="btSave"
+                    onclick="return validateIPPolicies('tf1_frmGroups');">
+     <?lua end end ?>
+    </div>
+
+   	
+   
+</div>
+<!-- end of Popup 4 content -->
+<?lua end ?>
+
+<!-- start of Popup 5 content -->
+<?lua
+if (ButtonType and ButtonType == "deleteBrowser") then
+       returnCode, browserNames = gui_groups.groupBrowserNamesGet (cgi["configRowId"])
+    
+?>
+
+<div id="tf1_groupsDailogContent5">
+    <div class="topBg">
+        <h1 data-localize="13592"> Delete Browsers</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="30240">Browser Names</label>
+             <?lua
+		browserNameTable = util.split(browserNames,",")
+		
+		?>
+		      
+           <select name="browserPolicies.browserNames" multiple style="height:100px;width:200px">
+		<?lua for u,v in pairs(browserNameTable) do ?>
+		<option> $| v |$ </option>
+		<?lua end?>
+	   </select>
+		                                    
+        </div>
+        <div class="break">
+&nbsp;  </div>
+    </div>
+    <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    
+                <input data-localize="12758" type="submit"  name="button.deleteNameBrowser.groups"
+                onclick="setHiddenChks('tf1_frmGroups')" class="btnSubmit" title="Save" value="Delete Browsers" id="btSave">
+     
+    </div>
+</div>
+<?lua end?>
+<!-- end of Popup 5 content -->
+
+<!-- start of Popup 6 content -->
+<?lua
+if (ButtonType and ButtonType == "deleteIpPolicy") then
+     returnCode, ipPoliciesNames = gui_groups.groupIpPoliciesGet (cgi["configRowId"])
+    
+?>
+
+<div id="tf1_groupsDailogContent6">
+    <div class="topBg">
+        <h1 data-localize="10698"> Delete IP Policies</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="11391">IP Address and SubnetMask</label>
+             <?lua
+		ipPoliciesTable = util.split(ipPoliciesNames,",")
+		
+		?>
+		      
+           <select name="users.ipPoliciesNames" multiple style="height:100px;width:200px">
+		<?lua for u,v in pairs(ipPoliciesTable) do ?>
+		<option> $| v |$ </option>
+		<?lua end?>
+	   </select>
+		                                    
+        </div>
+        <div class="break">
+&nbsp;  </div>
+    </div>
+    <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    
+                <input data-localize="12758" type="submit"  name="button.deleteIpPolicies.groups"
+                onclick="setHiddenChks('tf1_frmGroups')" class="btnSubmit" title="Save" value="Save" id="btSave">
+     
+    </div>
+</div>
+<?lua end?>
+<!-- end of Popup 6 content -->
+<!-- start of Popup 7 content -->
+<?lua
+if (ButtonType and ButtonType == "addIpPolicy") then
+    
+?>
+
+<div id="tf1_groupsDailogContent7">
+    <div class="topBg">
+        <h1 data-localize="10106"> Add Ip Policies</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+       <h2 data-localize="10106">Add IP Policy</h2>
+        <h2 data-localize="10693">Defined Address Configuration</h2>
+        <div class="configRow">
+            <label data-localize="12891">Source Address Type </label>
+		<select  name="groupNetworkTable.addressType" id="tf1_sourceAddresType" onchange="ipNetworkChk('tf1_sourceAddresType')">
+            <option data-localize="11387" $|web.dropdownSelected(groupNetworkTable["network.ipAddressType"] ==
+                            "0") |$ value="1"  >IP Address</option>
+            <option data-localize="14097" $|web.dropdownSelected(groupNetworkTable["network.ipAddressType"] ==
+                            "1") |$ value="2" >IP Network</option>
+            </select>
+ </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="11763">Network Address / IP Address </label>
+            <input type="text" name="groupNetworkTable.ipAddress"
+                        value="$|groupNetworkTable["network.ipAddress"] or ''|$" id="tf1_txtIpAddr" maxlength="15" name="tf1_txtIpAddr" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtMaskLen_div">
+            <label data-localize="11684">Mask Length </label>
+            <input type="text" name="groupNetworkTable.maskLength"
+                        value="$|groupNetworkTable["network.maskLength"] or '32'|$" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 32, true, '', '');}" onkeypress="return numericValueCheck (event)" id="tf1_txtMaskLen" maxlength="2" value="32" name="tf1_txtMaskLen" class="one">
+
+            <dl>
+                [<span data-localize="10683">Default</span>:32, <span data-localize="12627">Range</span>:0 - 32]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    
+                <input data-localize="12758" type="submit"  name="button.addIpPolicies.groups"
+                onclick="return validateIPPolicies('tf1_frmGroups')" class="btnSubmit" title="Save" value="add IP Policy" id="btSave">
+     
+    </div>
+</div>
+<?lua end?>
+<!-- end of Popup 7 content -->
+<!-- start of Popup 8 content -->
+<?lua
+if (ButtonType and ButtonType == "addBrowser") then
+    
+?>
+
+<div id="tf1_groupsDailogContent8">
+    <div class="topBg">
+        <h1 data-localize="10103"> Add Browser Policies</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+<h2 data-localize="10105">Add Defined Browser</h2>
+        <div class="configRow">
+            <label data-localize="10516">Client Browser </label>
+
+
+            <select class="txt1" name="groupBrowserTable.browserName" size="1">
+            <option data-localize ="20015" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "MSIE") |$  value="1"  selected="selected">Internet Explorer</option>
+            <option data-localize ="20030" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "Opera") |$  value="2" >Opera</option>
+            <option data-localize ="30238" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+                            "Chrome") |$  value="3" >Chrome</option>
+            <option data-localize ="30239" $|web.dropdownSelected(groupBrowserTable["browser.browserName"] ==
+            "Firefox") |$  value="4" >Firefox</option>
+             </select>
+            </div>
+        <div class="break">
+&nbsp; </div>        <div class="break">
+&nbsp;  </div>
+    </div>
+    <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    
+                <input data-localize="12758" type="submit"  name="button.addBrowserPolicies.groups"
+                onclick="setHiddenChks('tf1_frmGroups')" class="btnSubmit" title="Save" value="add Browser Policy" id="btSave">
+     
+    </div>
+</div>
+<?lua end?>
+<!-- end of Popup 8 content -->
+
+
+

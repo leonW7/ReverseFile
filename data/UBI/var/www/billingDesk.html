@@ -1,0 +1,519 @@
+<?lua
+require "teamf1lualib/billingDesk_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local billingDesk = require ("com.teamf1.bl.billingDesk")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local configRowId
+if (ButtonType and ButtonType == "generate") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable["billingDesk.cookie"] = cgi["billing.profileId"] 
+    local returnCode = billingDesk.gentempUser(inputTable)
+-- Save Code
+    local newRowId = cgi["billing.profileId"]
+    if (returnCode ~= returnCodes.SUCCESS) then
+    newRowId = errorMap.errorStringGet (returnCode)
+    end
+
+	cgilua.htmlheader()
+?>
+$| newRowId |$
+<?lua else
+    local returnCode
+    local configRow = {}
+    returnCode, configRow = billingDesk.billingProfilesGetAll ()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+        
+	
+	local billingProfileId
+	
+	if(#configRow ~= 0) then
+		if (cgi["billing.profileId"] ~= nil and cgi["billing.profileId"] ~= "") then
+			billingProfileId = cgi["billing.profileId"]
+		else
+			billingProfileId = configRow[1]["tempCPUserProfiles.ProfileId"]
+		end
+	end
+
+	local dateAndTime = util.date ()
+    local month = dateAndTime.month;
+    local date = dateAndTime.date;
+    local year = dateAndTime.year;
+    local hours = dateAndTime.hours;
+    local minutes = dateAndTime.minutes;
+    local seconds = dateAndTime.seconds;
+    ?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/dateTimePicker.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+		<script language="JavaScript" type="text/javascript">			
+			/* Help default variable */
+			var helpSection = "frontDesk";
+			var helpConfigFile = "status.txt";
+        </script>	
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body onLoad="onloadCall ();">
+
+		<!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmBillingDesk" id="tf1_frmBillingDesk">			
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">	
+                       	<div align="center">
+			<div class="midWidth">
+				<div class="logo FL">
+					Unified Services Router - $| UNIT_NAME |$
+				</div>
+				 <div class="FR headerRight">
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td valign="top">&nbsp;</td>
+							<td rowspan="2" valign="top">
+						<a class="btnLogout" href="?page=billingDeskLogin.html">
+							<div>
+								<div>
+									<icon>
+										Logout
+									</icon>
+								</div>
+							</div> </a></td>
+						</tr>
+						<tr>
+							<td valign="top">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2" valign="top">&nbsp;
+							 
+							 </td>
+						</tr>
+					</table>
+				</div>
+				  <div class="midWidth menuBg">
+					<div>
+						<div>
+							<div align="left">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td>
+										<ul id="menu">
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										<li>
+						<a href="?page=billingDesk.html">Home</a>
+											</li>
+	<div class="menuDiv">
+												&nbsp;
+											</div>
+											
+
+										</ul></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+		<div class="breadCrumb">
+			<div id="breadCrumb">
+			</div>
+			<div class="helpRefresh">
+				<div class="topRightLinks refresh">
+					<input type="button" value class="refreshButton" title="Refresh" onclick="window.location='platform.cgi?page=billingDesk.html'">
+				</div>
+				<div class="topRightLinks help">
+					<input type="button" value class="helpButton" title="Help">
+				</div>
+			</div>
+		</div>
+
+				 
+			</div>
+		</div>
+  </td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+										<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+					<div class="FL2">
+						<p class="hint">
+							This page shows information about Front Desk
+                            profile and generated users. 
+						</p>
+					</div>
+					<h1>Billing - BillingDesk</h1>
+					<div class="midArea">
+						<div align="left">
+					<form method="post" name="tf1_selectBillingProfileFrm" name="tf1_selectBillingProfileFrm" action="?page=billingDesk.html" >
+				  
+				 
+					<div class="configRow">
+                               <?lua 
+                                     local i = 0
+                                     if (#configRow ~= 0) then?>
+			        <label>Select Billing Profile</label>
+				
+			         <select name="billing.profileId" onchange="document.tf1_selectBillingProfileFrm.submit()">
+                                       <?lua
+                                         for k,v in pairs(configRow) do
+                                             i= i + 1
+                                             util.appendDebugOut("printing profile name " .. v["tempCPUserProfiles.ProfileName"])
+                                ?>
+					<option $| web.dropdownSelected(v["tempCPUserProfiles.ProfileId"] == billingProfileId) |$ value="$| v["tempCPUserProfiles.ProfileId"] |$">$| v["tempCPUserProfiles.ProfileName"] |$</option>
+				<?lua 
+
+					end 
+					end ?>
+
+				</select>	 
+
+								</div>
+								<div class="break">&nbsp;</div>
+								<div class="break">&nbsp;</div>
+</form>
+				<?lua if (billingProfileId ~= nil) then ?>
+
+				<nav class="nav-bg">
+							<ul class="menu">
+								<li class="current">
+						<a href="?page=billingDesk.html&billing.profileId=$| billingProfileId or '' |$">Billing Form</a>
+								</li>
+								<li>
+									<a href="?page=billingsUsers.html&billing.profileId=$| billingProfileId or ''|$">View Accounts</a>
+								</li>
+								 
+							</ul>
+						</nav>
+
+				
+                                <?lua
+				
+                                     local returnCode, selectedProfileRow = 
+                                           billingDesk.billingProfileGetCur (billingProfileId)
+                                ?>				<form name = "frmBillingDesk" action="platform.cgi?page=billingDesk.html" method="post" >
+				<input type="hidden" name="thispage" value="billingDesk.html">
+                <?lua local thisProfileDesc = selectedProfileRow["tempCPUserProfiles.ProfileDesc"] or ''
+                local profileDesc = thisProfileDesc
+                local counter, upNum, downNum, space
+                local lineBreakNum = 70
+                if (string.len(thisProfileDesc) > lineBreakNum) then
+                    counter = string.len(thisProfileDesc)
+                    upNum = 1
+                    downNum = lineBreakNum
+                    space =
+                    string.len(selectedProfileRow["tempCPUserProfiles.ProfileName"]) * 2
+                    spaceStr = ""
+                    while (space > 0) do
+                        spaceStr = spaceStr .. "&nbsp;"
+                        space = space - 1
+                    end
+                    profileDesc = ""
+                    while (counter > lineBreakNum) do
+                        profileDesc = profileDesc .. string.sub(thisProfileDesc, upNum, downNum) .."</br>" .. spaceStr
+                        counter = counter - lineBreakNum
+                        upNum = upNum + lineBreakNum
+                        downNum = downNum + lineBreakNum
+                    end
+                end ?>
+		<h2>$| selectedProfileRow["tempCPUserProfiles.ProfileName"] |$ - $| profileDesc |$</h2>
+                                <div class="break">&nbsp;</div>
+                                 <?lua 
+                                if(selectedProfileRow["tempCPUserProfiles.ModifyAccount"]=="1") then ?>
+                                <div class="configRow">
+			        <label>Visitor Account Customization </label>
+			         <input type="text" name="tempUsers.CstmAccName" id="txtCstmAcc">	 
+								</div>
+								<div class="break">&nbsp;</div>
+                                  <?lua end?>
+                                   <?lua if(selectedProfileRow["tempCPUserProfiles.BatchGen"]=="1") then ?>
+				   <div class="configRow">
+				   <label>Batch Generation</label>
+				   <select name="tempUsers.BatchGenValue" size="1" class="two">	
+                                   <?lua 
+                                        for i=1,50,1 do ?>			     				
+		     <option $| web.dropdownSelected(selectedProfileRow["tempUsers.BatchGenValue"] == "1") |$ value="$|i|$">$|i|$</option>
+                                   <?lua end?>
+						</select>
+								</div>
+								<div class="break">&nbsp;</div>
+                                <?lua end
+                                 if(selectedProfileRow["tempCPUserProfiles.ValidDurationCheck"]== "1") then 
+                                if(selectedProfileRow["tempCPUserProfiles.DurationType"]== "0") then ?>
+                                <div class="configRow">
+			        <label>Start While Account Created</label>
+                                <?lua if(selectedProfileRow["tempCPUserProfiles.ModifyDuration"]=="1") then ?>
+				<input type="text" class="one" name="tempCPUserProfiles.StartTimeValue" value="$| selectedProfileRow["tempCPUserProfiles.StartTimeValue"] or '' |$"  >
+                                <select size="1" class="two" name="tempCPUserProfiles.StartTimeType" id="startAccCreated">
+                               <option $| web.dropdownSelected(selectedProfileRow["tempCPUserProfiles.StartTimeType"] == "0") |$ value="0">Hours</option>
+                               <option $| web.dropdownSelected(selectedProfileRow["tempCPUserProfiles.StartTimeType"] == "1") |$ value="1">Days</option>
+                                </select>
+                                <?lua else ?>
+                                <p>
+				<span id="txtStartTimeValue$">$| selectedProfileRow["tempCPUserProfiles.StartTimeValue"] |$ </span>
+                                <span id="txtDaysHours">$| web.getArgsFromIndex (selectedProfileRow["tempCPUserProfiles.StartTimeType"], "Hours","Days") |$ </span></p>
+                                 <?lua end ?>
+				 <div class="break">&nbsp;</div>
+                                 <?lua elseif(selectedProfileRow["tempCPUserProfiles.DurationType"]== "1") then ?>
+                                 <div class="configRow">
+                                 <label>Start While Account Login</label>
+                                <?lua if(selectedProfileRow["tempCPUserProfiles.ModifyDuration"]=="1") then ?>
+				<input type="text" class="one" name="tempCPUserProfiles.StartTimeValue" value="$| selectedProfileRow["tempCPUserProfiles.StartTimeValue"] or '' |$" id="txtStartTimeValue" >
+                                <select size="1" class="two" name="tempCPUserProfiles.StartTimeType" id="startAccLogin">
+                               <option $| web.dropdownSelected(selectedProfileRow["tempCPUserProfiles.StartTimeType"] == "0") |$ value="0">Hours</option>
+                               <option $| web.dropdownSelected(selectedProfileRow["tempCPUserProfiles.StartTimeType"] == "1") |$ value="1">Days</option>                                </select>
+                                <?lua else ?>
+				<p>
+                                $| selectedProfileRow["tempCPUserProfiles.StartTimeValue"] |$
+                                $| web.getArgsFromIndex (selectedProfileRow["tempCPUserProfiles.StartTimeType"], "Hours","Days") |$ </p>
+			</div>  <div class="break">&nbsp;</div>
+                                <?lua end ?>
+                                <?lua   
+                                 elseif(selectedProfileRow["tempCPUserProfiles.DurationType"]== "2") then ?>
+
+                                <div class="configRow">
+				<label>Begin Date </label>
+                                <?lua 
+                                 local dateStr = billingDesk.covertDateInGUi(selectedProfileRow["tempCPUserProfiles.BeginDate"])
+                                 if(selectedProfileRow["tempCPUserProfiles.ModifyDuration"]=="1") then ?>
+				<input id="txtBeginDate" type="text" name="tempCPUserProfiles.BeginDate" value="$| dateStr or '' |$" >	                              <?lua else ?>
+                                  $| dateStr |$
+                                 <?lua end ?> 
+				</div>
+								<div class="break">&nbsp;</div>
+                                <?lua end 
+                                 end
+                                 util.appendDebugOut("printing check values " .. selectedProfileRow["tempCPUserProfiles.MaxUsageTimeCheck"])
+                                   if(selectedProfileRow["tempCPUserProfiles.MaxUsageTimeCheck"] == "1") then ?>
+
+                                <div class="configRow">
+				<label>Maximum Usage Time</label>
+                                   <?lua if(selectedProfileRow["tempCPUserProfiles.ModifyUsage"]=="1") then ?>
+				<input type="text" class="one" name="tempCPUserProfiles.MaxUsageTimeValue" value="$|selectedProfileRow["tempCPUserProfiles.MaxUsageTimeValue"] or '' |$" id="txtMaxUsageTime">	
+                                     <select size="1" class="two" name="tempCPUserProfiles.MaxUsageTimeType" id="selMaxTime">
+                                <option $| web.dropdownSelected(selectedProfileRow["tempCPUserProfiles.MaxUsageTimeType"] == "0") |$ value="0">Hours</option>
+                               <option $| web.dropdownSelected(selectedProfileRow["tempCPUserProfiles.MaxUsageTimeType"] == "1") |$ value="1">Days</option>
+                                        </select>
+                                <?lua else ?><p>
+                                $| selectedProfileRow["tempCPUserProfiles.MaxUsageTimeValue"] |$
+                               $| web.getArgsFromIndex (selectedProfileRow["tempCPUserProfiles.MaxUsageTimeType"],"Hours","Days") |$</p>
+                               <?lua end ?>
+ 
+					</div>
+								<div class="break">&nbsp;</div>
+                               <?lua end 
+                        if(selectedProfileRow["tempCPUserProfiles.MaxUsageTrafficCheck"] == "1") then ?>
+                               <div class="configRow">
+	                        <label>Maximum Usage Traffic</label>
+                            <?lua if(selectedProfileRow["tempCPUserProfiles.ModifyUsage"]=="1") then ?>
+			<input type="text" class="one" name="tempCPUserProfiles.MaxUsageTrafficValue" value="$| selectedProfileRow["tempCPUserProfiles.MaxUsageTrafficValue"] or '' |$" id="txtMaxUsageTraffic">	
+                         <select name="tempCPUserProfiles.MaxUsageTrafficType" size="1" class="two" id="selMaxUsage">
+                          <option $| web.dropdownSelected(selectedProfileRow["tempCPUserProfiles.MaxUsageTrafficType"] == "2") |$ value="2">MB</option>
+                          <option $| web.dropdownSelected(selectedProfileRow["tempCPUserProfiles.MaxUsageTrafficType"] == "3") |$ value="3">GB</option>
+                                        </select>
+                                        <?lua else ?><p>
+                                                        $| selectedProfileRow["tempCPUserProfiles.MaxUsageTrafficValue"] |$
+                                                        $| web.getArgsFromIndex (selectedProfileRow["tempCPUserProfiles.MaxUsageTrafficType"]," "," ","MB","GB") |$</p>
+                                                 <?lua end ?> 
+								</div>
+								<div class="break">&nbsp;</div>
+                                   <?lua end ?>
+                                   <?lua if(selectedProfileRow["tempCPUserProfiles.ValidDurationCheck"]== "1") then ?>
+								 <div class="configRow">
+									<label>Expiration Date and Time </label>
+                                     <?lua   
+                                      if(selectedProfileRow["tempCPUserProfiles.StartTimeValue"]~= nil and 
+                                                  selectedProfileRow["tempCPUserProfiles.StartTimeValue"]~= "") then
+                                          expDateStr =""
+                                      else
+                                          expDateStr ="" 
+                                      end                                             
+                                       ?>
+				<input type="text" name="tempUsers.ExpirationDate" value="$| expDateStr |$" id="txtExpirationDate" readonly> (Set time from below)
+					</div>
+					<div class="break" >
+							        &nbsp;
+							    </div>
+							    <div class="configRow" >
+							        <label>&nbsp; </label>
+							        <input type="hidden" id="tf1_setDateTime"  onChange="onchangeValue()" readonly>
+							        <div id="tf1_setDateTime"></div>
+							    </div>
+							    <div class="break">
+							        &nbsp;
+								</div> 
+                                <?lua else ?>
+				<div class="break">&nbsp;</div>
+                                <?lua end?>
+		<div class="submitRow">
+		<input type="hidden" name="button.generate.billingDesk.$| selectedProfileRow["tempCPUserProfiles.ProfileId"] |$" 
+value="$| selectedProfileRow["tempCPUserProfiles.ProfileId"] |$">
+	        <input type="button" class="btnSubmit" title="Generate" value="Generate" id="btnGenerate" name="btnGenerate"  onclick="generateBilling()">
+								</div>
+								<div class="break">&nbsp;</div>
+			</form>
+<input type="hidden" value="1" id="hdFrntNum" />
+<input type="hidden" value="$| year |$" id="hdYear" />
+<input type="hidden" value="$| month |$" id="hdMonth" />
+<input type="hidden" value="$| date |$" id="hdDay" />
+<input type="hidden" value="$| hours |$" id="hdHours" />
+<input type="hidden" value="$| minutes |$" id="hdMinutes" />
+<input type="hidden" value="$| seconds |$" id="hdSeconds" />
+<input type="hidden" id="hdUpTime" value="0" />
+
+			<?lua else ?>
+				No records found.
+			<?lua end ?>
+                                            
+						</div>
+					</div>
+				</div>
+                          </td>
+			</tr>
+			<tr>
+				<td>
+		 		<?lua web.includeMenu("footer.html")?>
+			</td>
+			</tr>
+		</table>
+	<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+	<script language="JavaScript" src="js/mgmt.js" type="text/javascript"></script>
+	<script language="JavaScript" src="js/textValidations.js" type="text/javascript"></script>
+	<script type="text/javascript" language="javascript" src="js/billingDeskCommon.js"></script>
+	<script type="text/javascript" language="javascript" src="js/captivePortalFrontDesk.js"></script>
+	<script language="JavaScript" src="js/dateTime.js" type="text/javascript"></script>
+        <script language="JavaScript" src="js/dateTimePicker.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			var curr = new Date().getFullYear();
+			var opt = {}			
+			opt.datetime = {preset: 'datetime',minDate: new Date(2000,3,10,9,22),maxDate: new Date(2099,7,30,15,44),stepMinute: 1};
+			$('#tf1_setDateTime').val('$| os.date("%m/%d/%Y %I:%M %p") |$');
+			$('#tf1_setDateTime').scroller('destroy').scroller(
+				$.extend(
+					opt["datetime"], { 					
+						mode: "scroller", 
+						display: "inline" 
+					}
+				)			
+			);			
+		});
+		function onchangeValue(){
+			$('#txtExpirationDate').val($('#tf1_setDateTime').val());
+		}		
+	</script>
+
+		<script language="javascript">
+			
+
+function helpPop (helpSection,helpConfigFile){
+	/* For all browsers */	
+	var url = "platform.cgi?page=showFrontDeskHelp.html&help="+helpSection+"&helpfile="+helpConfigFile;	
+	/*Overwrite if it is Opera browser */	
+	if ( navigator.appName.indexOf ('Opera') != -1 ) {	
+			url = "platform.cgi?page=showFrontDeskHelp.html&help="+helpSection+"&helpfile="+helpConfigFile;			
+		}	
+	helpwindow=window.open(url,'name','height=398,width=560,left=200,top=150,resizable=no,scrollbars=yes,toolbar=no,status=no');	
+	
+	if (window.focus) {helpwindow.focus()}
+	
+	
+}
+			function generateBilling() {
+
+				var validateGenerate = captivePortalFrontDesk.validate();
+
+				if (validateGenerate ) {
+			                 $("#tf1_dialog").html($("#tf1_loadingDiv").html());
+    
+                                 	ShowDialog(true, 'tf1_dialog', 'tf1_overlay'); 	
+					 $.ajax({
+	    						data: $("form").serialize(),
+							url: "platform.cgi?page=billingDesk.html",
+							type:"POST",
+                            success: function(dataResponse) {
+                                if (dataResponse.search("error:") != -1) {
+                                     HideDialog('tf1_dialog', 'tf1_overlay');
+                                    alert(dataResponse.replace("error:", ""));
+                                    return;
+                                }
+								 
+								var rowID = $.trim(dataResponse);
+								// Call the open form
+	openForm('button.preview.billingDesk.billingDesk',rowID,'tf1_dialog','billingDesk','billingDeskGeneratePreviewForm.html', 'tf1_billingDeskDailogContent','');
+				
+							}
+						    
+						    });		
+				}		
+	
+			}
+	 $(document).ready(function() {
+
+			$("#btnClose").live("click",function(e){
+				    HideDialog('tf1_dialog', 'tf1_overlay');
+				    e.preventDefault();
+				   });
+
+		/* Activate the click event for help Button */	
+		$(".helpButton").live("click", function(e){			
+		/*Prevent the anchor action or donot append the # to URL */						
+			e.preventDefault();						
+			/*Open the help file */
+			helpPop (helpSection,helpConfigFile);	
+		});	
+
+		});
+
+		function PrintMe(DivID) {
+				var disp_setting="toolbar=yes,location=no,";
+				disp_setting+="directories=yes,menubar=yes,";
+				disp_setting+="scrollbars=yes,width=650, height=600, left=100, top=25";
+				   var content_vlue = document.getElementById(DivID).innerHTML;
+				   var docprint=window.open("","",disp_setting);
+				   docprint.document.open();
+				   docprint.document.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"');
+				   docprint.document.write('"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
+				   docprint.document.write('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">');
+				   docprint.document.write('<head><title>My Title</title><link rel="stylesheet" type="text/css" href="css/style.css" />');
+				   docprint.document.write('<style type="text/css">body{ margin:0px;');
+				   docprint.document.write('font-family:verdana,Arial;color:#000;');
+				   docprint.document.write('font-family:Verdana, Geneva, sans-serif; font-size:12px;}');
+				   docprint.document.write('a{color:#000;text-decoration:none;} </style>');
+				   docprint.document.write('</head><body onLoad="self.print()"><center>');
+				   docprint.document.write(content_vlue);
+				   docprint.document.write('</center></body></html>');
+				   docprint.document.close();
+				   docprint.focus();
+				}
+		</script>
+
+	</body>
+</html>
+
+<?lua end?>
+

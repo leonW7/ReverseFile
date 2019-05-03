@@ -1,0 +1,304 @@
+<?lua
+require "teamf1lualib/bl_wdsAPLink"
+require "teamf1lualib/util"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "wdsApLink"
+
+local guiWdsManagedApLinks = require("com.teamf1.bl.wlan.wdslinkgroup")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local wdsManagedApLinks, errorCode
+errorCode, wdsManagedApLinks = guiWdsManagedApLinks.wdsMangedApsLinksGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "config") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local errorFlag
+    local page = "wdsAPLink"
+    local prefix = page .. "."
+    configRow = util.removePrefix (configRow, prefix)
+    if (RowId == "-1") then
+        errorFlag = guiWdsManagedApLinks.wdsMangedApsLinksAdd (configRow)
+    	if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    	end
+        web.goToPage(NextPage, true, true)
+
+    else
+        errorFlag = guiWdsManagedApLinks.wdsMangedApsLinksEdit (configRow)
+    	if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    	end
+        web.goToPage(NextPage, true, true)
+    end
+
+        
+elseif (ButtonType and ButtonType == "delete") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local errorFlag
+    if (type(cgi["wdsAPLink.checkbox"]) == "string") then
+        local configRow1
+        local configRow2 = {}
+        configRow1 = util.split (configRow["wdsAPLink.checkbox"], "_")
+        configRow2.wdsaplinksGROUPID = configRow1[1]
+        configRow2.wdsaplinksSOURCEAPMAC = configRow1[2]
+        configRow2.wdsaplinksDESTINATIONAPMAC = configRow1[3]
+        configRow2.wdsaplinksSOURCERADIO = configRow1[4]
+        configRow2.wdsaplinksDESTINATIONRADIO = configRow1[5]
+        errorFlag = guiWdsManagedApLinks.wdsMangedApsLinksDelete (configRow2)
+    	if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    	end
+        web.goToPage(NextPage, true, true)         
+
+     else
+        for k, v in pairs (cgi["wdsAPLink.checkbox"]) do
+            local cookieTbl = {}
+            local configRow1
+            local configRow2 = {}
+            configRow1 = util.split (v, "_")
+            configRow2.wdsaplinksGROUPID = configRow1[1]
+            configRow2.wdsaplinksSOURCEAPMAC = configRow1[2]
+            configRow2.wdsaplinksDESTINATIONAPMAC = configRow1[3]
+            configRow2.wdsaplinksSOURCERADIO = configRow1[4]
+            configRow2.wdsaplinksDESTINATIONRADIO = configRow1[5]
+            errorFlag = guiWdsManagedApLinks.wdsMangedApsLinksDelete (configRow2)
+        	if (errorFlag == returnCodes.SUCCESS) then
+                statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+            else
+                statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        	end
+            --	statusMessage = db.getAttribute("stringsMap", "stringId", statusCode, LANGUAGE) or ''
+        end
+        web.goToPage(NextPage, true, true)  
+      end
+    
+        
+else        
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmWdsAPLink" id="tf1_frmWdsAPLink">        
+            <input type="hidden" name="thispage" id="thispage" value="wdsAPLink.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+        
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');" />
+                    &nbsp;Select
+                    All
+                </li>
+                <li id="edit">
+                    Edit
+                </li>
+                <li id="delete">
+                    Delete
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=wdsManagedAPGroups.html">WDS Groups</a>
+                                </li>
+                                <li>
+                                    <a href="?page=wdsManagedAP.html">WDS Managed
+                                    AP</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=wdsAPLink.html">WDS AP Link</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>WDS AP Link List</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_wdsAPLink">
+                            <div id="tf1_table1_div">
+                                <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                    <thead>
+                                        <tr>
+                                            <th>ID
+                                            <br>
+                                            &nbsp;</th>
+                                            <th>Source AP MAC</th>
+                                            <th>Source AP Radio</th>
+                                            <th>Source AP Hardware Type</th>
+                                            <th>Destination AP MAC</th>
+                                            <th>Destination AP Radio</th>
+                                            <th>Destination AP Hardware Type</th>
+                                            <th>STP Link Cost</th>
+                                        </tr>
+                                    </thead>
+                                     <?lua
+                                            if (wdsManagedApLinks ~= nil) then
+                                            for k, v in pairs (wdsManagedApLinks) do
+                                            local row = wdsManagedApLinks[k]
+                                            ?>
+                                            <tr class="gradeA"
+                                                id="wdsAPLink$|
+                                                row.wdsaplinksGROUPID .. "_" ..
+                                                row.wdsaplinksSOURCEAPMAC .. "_" .. row.wdsaplinksDESTINATIONAPMAC .. "_" ..
+                                                row.wdsaplinksSOURCERADIO .. "_" .. row.wdsaplinksDESTINATIONRADIO .. "_" .. row.wdsaplinksSTPLINKCOST |$">
+                                                <td>$| row.wdsaplinksGROUPID or '' |$</td>
+                                                <td>$| row.wdsaplinksSOURCEAPMAC or '' |$</td>
+                                                <td>$| row.wdsaplinksSOURCERADIO or '' |$</td>
+                                                <td>$| row.wdsaplinksSRCAPHWTYPE or '' |$</td>
+                                                <td>$| row.wdsaplinksDESTINATIONAPMAC or '' |$</td>
+                                                <td>$| row.wdsaplinksDESTAPHWTYPE or '' |$</td>
+                                                <td>$| row.wdsaplinksDESTINATIONRADIO or '' |$</td>
+                                                <td>$| row.wdsaplinksSTPLINKCOST or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                            end
+                                            end
+                                            ?>
+                                </table>
+
+                                <div class="buttonsRow" id="tf1_btnShowModal">
+                                    <input type="button" class="btnSubmit" title="Add new WDS AP Link" value="Add new WDS AP Link" id="btSave" onclick="openForm('button.add.wdsAPLink.wdsAPLink',-1,'tf1_dialog','wdsAPLink','wdsAPLinkForm.html', 'tf1_wdsAPLinkDailogContent','onloadwdsAPLinkFn');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+		
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/macValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/wdsAPLinkConfig.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            function deleteRows( buttonPrefix, frmId, rowId, selBoxId, dialogId, rowPrefix, checkBoxPrefix) {
+    $("#"+dialogId).html('');
+
+ if ( $("#"+selBoxId+"Menu").is(':checked') ) {
+var regex = new RegExp(":", "g");
+     rowId = rowId.replace(regex,"\\:");
+        var childrenRows = $("#"+rowId).parent().children('tr');
+       
+        for (var i = 0; i < childrenRows.length; i++) {
+            var thisElement = $(childrenRows[i]);
+            thisRowId = thisElement.attr('id');
+           
+            thisRowId = thisRowId.replace(rowPrefix,"");
+            $("#"+dialogId).append('<input type="hidden" name="'+checkBoxPrefix+'.checkbox" value="'+thisRowId+'">');
+        }
+    } else {
+        rowId = rowId.replace(rowPrefix,"");
+        $("#"+dialogId).append('<input type="hidden" name="'+checkBoxPrefix+'.checkbox" value="'+rowId+'">');
+    }
+   
+    $("#"+dialogId).append('<input type="hidden" name="'+buttonPrefix+'" value="delete">');
+   
+    $("#"+frmId).submit();
+            }
+
+            $(document).ready(function() {
+                $('#tf1_wdsAPLink .gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'editMenu' : function(t, e, rowId) {
+                            openForm('button.edit.wdsAPLink.wdsAPLink',rowId,'tf1_dialog','wdsAPLink','wdsAPLinkForm.html', 'tf1_wdsAPLinkDailogContent','onloadwdsAPLinkFn');
+                        },
+                        'deleteMenu' : function(t, e, rowId) {
+                            deleteRows('button.delete.wdsAPLink.wdsAPLink', 'tf1_frmWdsAPLink', rowId, 'optionSelectAll', 'tf1_dialog', 'wdsAPLink', 'wdsAPLink');
+                        }
+                    }
+                });
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+            });
+        </script>
+    </body>
+
+</html>
+<?lua end ?>

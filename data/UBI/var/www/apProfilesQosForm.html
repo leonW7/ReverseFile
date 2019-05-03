@@ -1,0 +1,1680 @@
+<?lua
+require "teamf1lualib/bl_apProfilesQos"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/util"
+
+local guiApProfileQos = require("com.teamf1.bl.wlan.approfileqos")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local apQosInfo = {}
+local ENABLE = 1
+local DISABLE = 0
+if (ButtonType and ButtonType == "edit") then
+local configRow = cgi
+local CUSTOM = "Custom"
+local FACTORY = "Factory Default"
+local VOICE = "Voice"
+local cookieTbl = {}
+local cookieInfo = util.split (cgi.configRowId, ":")
+cookieTbl.profileId = cookieInfo[1]
+cookieTbl.radioMode = cookieInfo[2]
+local profileName = cookieInfo[1] .. "-" .. cookieInfo[4]
+local radioInfo = cookieInfo[2] .. "-" .. cookieInfo[5]
+local template = cookieInfo[3]
+local errorCode
+errorCode, apQosInfo = guiApProfileQos.apProfileQosCurrentGet (cookieTbl)
+
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+?>
+<!-- Section for Pop up dialog starts -->
+            <div id="tf1_apProfilesQosDailogContent">
+                <div class="topBg">
+                    <h1>AP Profile QoS Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label>AP Profile </label>
+                        <p>
+                            $| profileName or '' |$
+                            <input type="hidden" name="apProfilesQos.profileId"
+                            value="$| cookieTbl.profileId or '' |$">
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Radio Mode </label>
+                        <p>
+                            $| radioInfo or '' |$
+                            <input type="hidden" name="apProfilesQos.radioMode"
+                            value="$| cookieTbl.radioMode or '' |$">
+                        </p>
+
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Template </label>
+                        <p>
+                            <input type="radio" $|
+                                        web.radioSelected(template ==
+                                        CUSTOM) |$ value="1"
+                                        name="apProfilesQos.template"
+                                        id="tf1_templateCustom"
+                                        onclick="changeTemplate('tf1_templateCustom')"
+                                        check="checked">
+                            Custom
+                        </p>
+                        <p>
+                            <input type="radio" $|
+                                        web.radioSelected(template ==
+                                        FACTORY) |$ value="2" name="apProfilesQos.template" id="tf1_templateFactory" onclick="changeTemplate('tf1_templateFactory')">
+                            Factory
+                            Default
+                        </p>
+                        <p>
+                            <input type="radio" $|
+                                        web.radioSelected(template ==
+                                         VOICE) |$ value="3" name="apProfilesQos.template" id="tf1_templateVoice" onclick="changeTemplate('tf1_templateVoice')">
+                            Voice
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div id="tf1_APEDCAParameters_div">
+                        <h2>AP EDCA Parameters</h2>
+                        <div class="configRow">
+                            <label>Data 0 (Voice) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" name="apProfilesQos.apDataAIFS"
+                            value="$| apQosInfo.apDataAIFS |$" id="tf1_apDataAIFS" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid AP EDCA Data 0 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select name="apProfilesQos.apDataCwMin" id="tf1_apDataCwMin" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                1) |$ value="1" >1</option>
+                                <option  $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMin ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select name="apProfilesQos.apDataCwMax" id="tf1_apDataCwMax" class="two">
+                               <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apDataCwMax ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Max. Burst </label>
+                            <input type="text" id="tf1_apDataMaxBurst"
+                            name="apProfilesQos.apDataMaxBurst" value="$|
+                            apQosInfo.apDataMaxBurst |$"  onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999900, true, 'Invalid AP EDCA Data 0 Max. Burst', '');}" maxlength="6" class="two">
+                            <dl>
+                                [Range: 0 - 999900] U. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 1 (Video) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" name="apProfilesQos.apData1AIFS"
+                            value="$| apQosInfo.apData1AIFS |$" id="tf1_apData1AIFS" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid AP EDCA Data 1 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_apData1CwMin" name="apProfilesQos.apData1CwMin" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMin ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_apData1CwMax" name="apProfilesQos.apData1CwMax" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData1CwMax ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Max. Burst </label>
+                            <input type="text"
+                            name="apProfilesQos.apData1MaxBurst" value="$|
+                            apQosInfo.apData1MaxBurst |$" id="tf1_apData1MaxBurst" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999900, true, 'Invalid AP EDCA Data 1 Max. Burst', '');}" maxlength="6" class="two">
+                            <dl>
+                                [Range: 0 - 999900] U. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 2 (Best Effort) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" name="apProfilesQos.apData2AIFS"
+                            value="$| apQosInfo.apData2AIFS |$" id="tf1_apData2AIFS" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid AP EDCA Data 2 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_apData2CwMin" name="apProfilesQos.apData2CwMin" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMin ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_apData2CwMax" name="apProfilesQos.apData2CwMax" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData2CwMax ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Max. Burst </label>
+                            <input type="text"
+                            name="apProfilesQos.apData2MaxBurst" value="$|
+                            apQosInfo.apData2MaxBurst |$" id="tf1_apData2MaxBurst" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999900, true, 'Invalid AP EDCA Data 2 Max. Burst', '');}" maxlength="6" class="two">
+                            <dl>
+                                [Range: 0 - 999900] U. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 3 (Background) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" name="apProfilesQos.apData3AIFS"
+                            value="$| apQosInfo.apData3AIFS |$" id="tf1_apData3AIFS" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid AP EDCA Data 3 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_apData3CwMin" name="apProfilesQos.apData3CwMin" class="two">
+                               <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMin ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_apData3CwMax" name="apProfilesQos.apData3CwMax" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.apData3CwMax ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Max. Burst </label>
+                            <input type="text"
+                            name="apProfilesQos.apData3MaxBurst" value="$|
+                            apQosInfo.apData3MaxBurst |$" id="tf1_apData3MaxBurst" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999900, true, 'Invalid AP EDCA Data 3 Max. Burst', '');}" maxlength="6" class="two">
+                            <dl>
+                                [Range: 0 - 999900] U. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="configRow">
+                        <label>WMM Mode </label>
+                         <?lua if ( apQosInfo.wmmMode == ENABLE) then
+                                                        statusStr="enable-disable-on"
+                                                        statusVar = ENABLE
+						                            else
+							                            statusStr="enable-disable-off"
+                                                        statusVar = DISABLE
+						                            end
+						                        ?>
+                        <a class="$| statusStr |$" alt=""></a>
+                            <input type="hidden" name="apProfilesQos.wmmMode" value="$| statusVar |$">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div id="tf1_StationEDCAParameters_div">
+                        <h2>Station EDCA Parameters</h2>
+                        <div class="configRow">
+                            <label>Data 0 (Voice) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text"
+                            name="apProfilesQos.stationDataAIFS" value="$|
+                            apQosInfo.stationDataAIFS |$" id="tf1_stationDataAIFS" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid Station EDCA Data 0 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_stationDataCwMin" name="apProfilesQos.stationDataCwMin" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMin ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_stationDataCwMax" name="apProfilesQos.stationDataCwMax" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationDataCwMax ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>TXOP Limit </label>
+                            <input type="text"
+                            name="apProfilesQos.stationDataTXOPLimit" value="$|
+                            apQosInfo.stationDataTXOPLimit |$" id="tf1_stationDataTXOPLimit" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, 'Invalid Station EDCA Data 0 TXOP Limit', '');}" maxlength="5" class="two">
+                            <dl>
+                                [Range: 0 - 65535] 32 U. Sec Units
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 1 (Video) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>&nbsp;
+                            <input type="text"
+                            name="apProfilesQos.stationData1AIFS" value="$|
+                            apQosInfo.stationData1AIFS |$"  id="tf1_stationData1AIFS" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid Station EDCA Data 1 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_stationData1CwMin" name="apProfilesQos.stationData1CwMin" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMin ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_stationData1CwMax" name="apProfilesQos.stationData1CwMax" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData1CwMax ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>TXOP Limit </label>
+                            <input type="text"
+                            name="apProfilesQos.stationData1TXOPLimit" value="$|
+                            apQosInfo.stationData1TXOPLimit |$" id="tf1_stationData1TXOPLimit" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, 'Invalid Station EDCA Data 1 TXOP Limit', '');}" maxlength="5" class="two">
+                            <dl>
+                                [Range: 0 - 65535] 32 U. Sec Units
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 2 (Best Effort) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text"
+                            name="apProfilesQos.stationData2AIFS" value="$|
+                            apQosInfo.stationData2AIFS |$" id="tf1_stationData2AIFS" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid Station EDCA Data 2 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_stationData2CwMin" name="apProfilesQos.stationData2CwMin" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                15) |$ value="15"  >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMin ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_stationData2CwMax" name="apProfilesQos.stationData2CwMax" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData2CwMax ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>TXOP Limit </label>
+                            <input type="text"
+                            name="apProfilesQos.stationData2TXOPLimit" value="$|
+                            apQosInfo.stationData2TXOPLimit |$" id="tf1_stationData2TXOPLimit" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, 'Invalid Station EDCA Data 2 TXOP Limit', '');}" maxlength="5" class="two">
+                            <dl>
+                                [Range: 0 - 65535] 32 U. Sec Units
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 3 (Background) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text"
+                            name="apProfilesQos.stationData3AIFS" value="$|
+                            apQosInfo.stationData3AIFS |$" id="tf1_stationData3AIFS" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid Station EDCA Data 3 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_stationData3CwMin" name="apProfilesQos.stationData3CwMin" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                15) |$ value="15" >15</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                31) |$ value="31" >31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMin ==
+                                1023) |$ value="1023" >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_stationData3CwMax" name="apProfilesQos.stationData3CwMax" class="two">
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                1) |$ value="1" >1</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                3) |$ value="3" >3</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                7) |$ value="7" >7</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                15) |$ value="15" >15</option>
+                                <optio $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                31) |$ value="31" n>31</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                63) |$ value="63" >63</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                127) |$ value="127" >127</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                255) |$ value="255" >255</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                511) |$ value="511" >511</option>
+                                <option $|
+                                web.dropdownSelected(apQosInfo.stationData3CwMax ==
+                                1023) |$ value="1023"  >1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>TXOP Limit </label>
+                            <input type="text"
+                            name="apProfilesQos.stationData3TXOPLimit" value="$|
+                            apQosInfo.stationData3TXOPLimit |$" id="tf1_stationData3TXOPLimit" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, 'Invalid Station EDCA Data 3 TXOP Limit', '');}" maxlength="5" class="two">
+                            <dl>
+                                [Range: 0 - 65535] 32 U. Sec Units
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="submit" name="button.config.apProfilesQos" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return apProfilesQosValidate('tf1_frmApProfilesQos')">
+                </div>
+            </div>
+        </form>
+        <!-- Section for Pop up dialog ends -->
+<?lua
+else
+
+
+?>
+        <!-- Section for Pop up dialog Edit2 starts -->
+            <div id="tf1_apProfilesQosEdit2DailogContent">
+                <div class="topBg">
+                    <h1>AP Profile QoS Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label>AP Profile </label>
+                        <p>
+                            AP Profile 2-Default
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Radio Mode </label>
+                        <p>
+                            802.11b/g/n
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Template </label>
+                        <p>
+                            <input type="radio" value="1" name="tf1_templateEdit2" id="tf1_templateEdit2Custom" onclick="changeTemplateEdit2('tf1_templateEdit2Custom')" checked>
+                            Custom
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="tf1_templateEdit2" id="tf1_templateEdit2Factory" onclick="changeTemplateEdit2('tf1_templateEdit2Factory')">
+                            Factory
+                            Default
+                        </p>
+                        <p>
+                            <input type="radio" value="3" name="tf1_templateEdit2" id="tf1_templateEdit2Voice" onclick="changeTemplateEdit2('tf1_templateEdit2Voice')">
+                            Voice
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div id="tf1_APEDCAParametersEdit2_div">
+                        <h2>AP EDCA Parameters</h2>
+                        <div class="configRow">
+                            <label>Data 0 (Voice) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" id="tf1_apDataAIFSEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid AP EDCA Data 0 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_apDataCwMinEdit2" class="two">
+                                <option>1</option>
+                                <option selected>3</option>
+                                <option>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_apDataCwMaxEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option selected>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Max. Burst </label>
+                            <input type="text" id="tf1_apDataMaxBurstEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999900, true, 'Invalid AP EDCA Data 0 Max. Burst', '');}" maxlength="6" class="two">
+                            <dl>
+                                [Range: 0 - 999900] U. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 1 (Video) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" id="tf1_apData1AIFSEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid AP EDCA Data 1 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_apData1CwMinEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option selected>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_apData1CwMaxEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option selected>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Max. Burst </label>
+                            <input type="text" id="tf1_apData1MaxBurstEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999900, true, 'Invalid AP EDCA Data 1 Max. Burst', '');}" maxlength="6" class="two">
+                            <dl>
+                                [Range: 0 - 999900] U. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 2 (Best Effort) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" id="tf1_apData2AIFSEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid AP EDCA Data 2 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_apData2CwMinEdit2" class="two">
+                                <option>1</option>
+                                <option selected>3</option>
+                                <option>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_apData2CwMaxEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option selected>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Max. Burst </label>
+                            <input type="text" id="tf1_apData2MaxBurstEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999900, true, 'Invalid AP EDCA Data 2 Max. Burst', '');}" maxlength="6" class="two">
+                            <dl>
+                                [Range: 0 - 999900] U. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 3 (Background) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" id="tf1_apData3AIFSEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid AP EDCA Data 3 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_apData3CwMinEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option selected>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_apData3CwMaxEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option selected>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Max. Burst </label>
+                            <input type="text" id="tf1_apData3MaxBurstEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999900, true, 'Invalid AP EDCA Data 3 Max. Burst', '');}" maxlength="6" class="two">
+                            <dl>
+                                [Range: 0 - 999900] U. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="configRow">
+                        <label>WMM Mode </label>
+                        <a class="enable-disable-off" alt=""></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div id="tf1_StationEDCAParametersEdit2_div">
+                        <h2>Station EDCA Parameters</h2>
+                        <div class="configRow">
+                            <label>Data 0 (Voice) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" id="tf1_stationDataAIFSEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid Station EDCA Data 0 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_stationDataCwMinEdit2" class="two">
+                                <option>1</option>
+                                <option selected>3</option>
+                                <option>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_stationDataCwMaxEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option selected>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>TXOP Limit </label>
+                            <input type="text" id="tf1_stationDataTXOPLimitEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, 'Invalid Station EDCA Data 0 TXOP Limit', '');}" maxlength="5" class="two">
+                            <dl>
+                                [Range: 0 - 65535] 32 U. Sec Units
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 1 (Video) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>&nbsp;
+                            <input type="text" id="tf1_stationData1AIFSEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid Station EDCA Data 1 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_stationData1CwMinEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option selected>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_stationData1CwMaxEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option selected>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>TXOP Limit </label>
+                            <input type="text" id="tf1_stationData1TXOPLimitEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, 'Invalid Station EDCA Data 1 TXOP Limit', '');}" maxlength="5" class="two">
+                            <dl>
+                                [Range: 0 - 65535] 32 U. Sec Units
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 2 (Best Effort) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" id="tf1_stationData2AIFSEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid Station EDCA Data 2 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_stationData2CwMinEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option selected>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_stationData2CwMaxEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option selected>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>TXOP Limit </label>
+                            <input type="text" id="tf1_stationData2TXOPLimitEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, 'Invalid Station EDCA Data 2 TXOP Limit', '');}" maxlength="5" class="two">
+                            <dl>
+                                [Range: 0 - 65535] 32 U. Sec Units
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>Data 3 (Background) </label>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>AIFS </label>
+                            <input type="text" id="tf1_stationData3AIFSEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid Station EDCA Data 3 AIFS', '');}" maxlength="3" class="two">
+                            <dl>
+                                [Range: 1 - 255] M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMin </label>
+                            <select id="tf1_stationData3CwMinEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option selected>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>cwMax </label>
+                            <select id="tf1_stationData3CwMaxEdit2" class="two">
+                                <option>1</option>
+                                <option>3</option>
+                                <option>7</option>
+                                <option>15</option>
+                                <option>31</option>
+                                <option>63</option>
+                                <option>127</option>
+                                <option>255</option>
+                                <option>511</option>
+                                <option selected>1023</option>
+                            </select>
+                            <dl>
+                                M. Sec.
+                            </dl>
+                        </div>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                        <div class="configRow">
+                            <label>TXOP Limit </label>
+                            <input type="text" id="tf1_stationData3TXOPLimitEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, 'Invalid Station EDCA Data 3 TXOP Limit', '');}" maxlength="5" class="two">
+                            <dl>
+                                [Range: 0 - 65535] 32 U. Sec Units
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="submit" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return apProfilesQosValidateEdit2('tf1_frmApProfilesQos')">
+                </div>
+            </div>
+            <!-- Section for Pop up dialog ends -->
+            <?lua end ?>

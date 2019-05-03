@@ -1,0 +1,959 @@
+<?lua 
+require "teamf1lualib/loginProfiles_bl"
+
+
+local gui_login = require("com.teamf1.bl.captiveportal.loginprofiles")
+
+    local inputCookie = cgi["configRowId"]
+    local profileTable = {}
+    if (ButtonType and ButtonType == "edit") then
+        returnCode, cookie, profileTable  =  gui_login.profileGetRow (inputCookie)
+
+    end
+
+
+    returnCode, bgImageTable = gui_login.pageBackgroundImageGetAll()
+
+    returnCode, hdImageTable = gui_login.headerImageGetAll()
+        
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<iframe name="upload_iframe" src="" style="display:none;"></iframe>
+<div id="tf1_loginProfilesViewContent" class="configDialogGray">
+                <div class="topBg">
+                    <h1 data-localize="13680">Profile Preview</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                    <div class="configRow">
+                        <span data-localize="13679">Profile preview displayed here ...</span> 
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    &nbsp;
+                </div>
+            </div>
+ 
+        <!-- Section for Pop up preview dialog ends -->
+        <!-- Section for Pop up dialog starts -->
+            <div id="tf1_loginProfilesDailogContent">
+                <div class="topBg">
+                    <h1 data-localize="11621">Login Profile Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <h2 data-localize="11062">General Details</h2>
+                    <div class="configRow" id="tf1_profileName_div">
+                        <label data-localize="12560"> Profile Name </label>
+                          <?lua if (ButtonType == "edit") then
+            ?>
+
+                 <input type="hidden" name="profileTable.profileName" maxlength="32" value="$|profileTable["CaptivePortalPageDetails.configurationName"] or '' |$"  id="tf1_profileName">$|profileTable["CaptivePortalPageDetails.configurationName"] or '' |$
+                         <?lua else ?>
+ <input type="text" name="profileTable.profileName" maxlength="32" value="$|profileTable["CaptivePortalPageDetails.configurationName"] or '' |$"  id="tf1_profileName" onkeypress="return alphaNumericCheck (event, '')">
+  <?lua end?>
+
+                    </div>
+                    <div class="break" id="break_profileName_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_browserTitle_div">
+                        <label data-localize="10426"> Browser Title </label>
+                        <input type="text" name="profileTable.pageTitle" maxlength="32"
+                        value="$|profileTable["CaptivePortalPageDetails.title"] or '' |$"  id="tf1_browserTitle">
+                </div>
+                    <div class="break" id="break_browserTitle_div">
+                        &nbsp;
+                    </div>
+                   
+                    <div class="configRow" id="tf1_pageBackground_div">
+                        <label data-localize="10346"> Background </label>
+                        <p>
+                            <input type="radio" name="profileTable.pageBackgroundType" $|
+                            web.radioSelected(profileTable["CaptivePortalPageDetails.pageBackgroundStyleSelector"] 
+                            == "1") |$ value="1" id = "tf1_pageBackground1"  
+                            onClick="pageBackgroundImageChange('tf1_pageBackground1')" 
+                            checked="checked" > <span data-localize="11159">Image</span> </p>
+                            <p>
+                            <input type="radio" name="profileTable.pageBackgroundType" $|
+                            web.radioSelected(profileTable["CaptivePortalPageDetails.pageBackgroundStyleSelector"]
+                            == "2") |$ value="2" id="tf1_pageBackground2"
+                            onClick="pageBackgroundImageChange('tf1_pageBackground2')"
+                            >  <span data-localize="10543">Color</span>   </p>
+                    </div>
+                    <div class="break" id="break_pageBackground_div" >
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_pageBackgroundImage_div">
+                        <?lua 
+                        
+                        bgImageIndex = profileTable["CaptivePortalPageDetails.pageBackgroundImgConfigRow"]
+                        or '1'
+
+
+                        ?>
+                        <label data-localize="11894"> Page Background Image </label>
+                            <div class="pageloginProfileHide <?lua if
+                                    (bgImageIndex == "1") then ?>
+                                    pageloginProfileHideActive <?lua
+                                    else?>divBgImage<?lua end?>"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="1" image="true"><img
+                                src="images/capPort/$|bgImageTable[1]["pageBackgroundImage.imageName"]|$"
+                                style="border: 1px solid; width:45px; height:45px"></div>
+                    <?lua if
+                                (bgImageTable[2]["pageBackgroundImage.enableStatus"]
+                                == "1") then?>
+        
+                                <div class="pageloginProfileHide <?lua if
+                                    (bgImageIndex == "2") then ?>
+                                    pageloginProfileHideActive <?lua
+                                    else?>divBgImage<?lua end?>"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="2" image="true">
+                                                              <img
+                                src="images/capPort/$|bgImageTable[2]["pageBackgroundImage.imageName"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="pageloginProfileHide divBgImage"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="2" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                                </div>
+                                <?lua end?>
+<?lua if
+                                (bgImageTable[3]["pageBackgroundImage.enableStatus"]
+                                == "1") then?>
+
+                            <div class="pageloginProfileHide <?lua if
+                                    (bgImageIndex == "3") then ?>
+                                    pageloginProfileHideActive <?lua
+                                    else?>divBgImage<?lua end?>"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="3" image="true">
+
+                                <img
+                                src="images/capPort/$|bgImageTable[3]["pageBackgroundImage.imageName"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else?>
+                                 <div class="pageloginProfileHide divBgImage"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="3" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                                </div>
+                                <?lua end?>
+<?lua if
+                                (bgImageTable[4]["pageBackgroundImage.enableStatus"]
+                                == "1") then?>
+
+                      <div class="pageloginProfileHide <?lua if
+                                    (bgImageIndex == "4") then ?>
+                                    pageloginProfileHideActive <?lua
+                                    else?>divBgImage<?lua end?>"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="4" image="true">
+                                <img
+                                src="images/capPort/$|bgImageTable[4]["pageBackgroundImage.imageName"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else?>
+                                 <div class="pageloginProfileHide divBgImage"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="4" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                                </div>
+                                <?lua end?>
+                                <?lua if
+                                (bgImageTable[5]["pageBackgroundImage.enableStatus"]
+                                == "1") then?>
+
+                        <div class="pageloginProfileHide <?lua if
+                                    (bgImageIndex == "5") then ?>
+                                    pageloginProfileHideActive <?lua
+                                    else?>divBgImage<?lua end?>"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="5" image="true">
+                                <img
+                                src="images/capPort/$|bgImageTable[5]["pageBackgroundImage.imageName"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else?>
+                                 <div class="pageloginProfileHide divBgImage"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="5" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                                </div>
+                                <?lua end?>
+         <?lua if
+                                (bgImageTable[6]["pageBackgroundImage.enableStatus"]
+                                == "1") then?>
+                       
+                        <div class="pageloginProfileHide <?lua if
+                                    (bgImageIndex == "6") then ?>
+                                    pageloginProfileHideActive <?lua
+                                    else?>divBgImage<?lua end?>"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="6" image="true">
+                                <img
+                                src="images/capPort/$|bgImageTable[6]["pageBackgroundImage.imageName"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else?>
+                                 <div class="pageloginProfileHide divBgImage"
+                                onclick="pageBackgroundSelect(this)"
+                                page-bg-id="6" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                                </div>
+                                <?lua end?>
+
+                                                        
+                            <input type="hidden"
+                            name="profileTable.pageBackgroundImgIndex"
+                            id="tf1_pageBackgroundImage"
+                            value="$|profileTable["CaptivePortalPageDetails.pageBackgroundImgConfigRow"]
+                            or '1'|$">
+
+                        </div>
+                         <div class="break" id="break_pageBackgroundImage_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_bgImageControl_div">
+                        <label> &nbsp; </label>
+
+                            <div class="pageloginProfileHide" align="center" data-localize="10683">Default</div>
+                            <div class="pageloginProfileHide" align="center"> <a
+                                    href="#" upload-index="2"
+                                    class="fileUploadBg" ><?lua if
+                                    (bgImageTable[2]["pageBackgroundImage.enableStatus"]
+                                    ~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="3"
+                                    class="fileUploadBg" ><?lua if
+                                    (bgImageTable[3]["pageBackgroundImage.enableStatus"]
+                                    ~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#" upload-index="4"
+                                    class="fileUploadBg" ><?lua if
+                                    (bgImageTable[4]["pageBackgroundImage.enableStatus"]
+                                    ~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#" upload-index="5"
+                                    class="fileUploadBg" ><?lua if
+                                    (bgImageTable[5]["pageBackgroundImage.enableStatus"]
+                                    ~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#" upload-index="6"
+                                    class="fileUploadBg" ><?lua if
+                                    (bgImageTable[6]["pageBackgroundImage.enableStatus"]
+                                    ~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            </div>
+			  
+
+                    <div class="break" id="break_bgImageControl_div">
+                        &nbsp;
+                    </div>
+		    <div id="tf1_uploadBg_div" class="upFile">
+
+                    
+		   </div>
+
+                   
+                    <div class="configRow" id="tf1_pageBackgroundColor_div">
+                        <label data-localize="11893">
+                            Page Background Color
+                        </label>
+                        <select name = "profileTable.pageBackgroundColor" size="1" id="tf1_pageBackgroundColor" onChange="pageBackgroundColorChange('tf1_pageBackgroundColor')">
+                        	<option data-localize="13670"  $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.BackGroundColor"] ==
+                            "1") |$ value="1" selected="">White</option>                           
+                            <option data-localize="13669" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.BackGroundColor"] == "2") |$ value="2">Red</option>
+                            <option data-localize="13668" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.BackGroundColor"] ==
+                            "3") |$ value="3">Green</option>
+                            <option data-localize="13667" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.BackGroundColor"] ==
+                            "4") |$ value="4">Blue</option>
+                            <option data-localize="10648" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.BackGroundColor"] ==
+                            "5") |$  value="5">Custom</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break_pageBackgroundColor_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_pageBackgroundCustom_div">
+                        <label data-localize="13677">
+                            Custom Color
+                        </label>
+                        <input type="text" name="profileTable.pageCustomColor"
+                        value="$|profileTable["CaptivePortalPageDetails.CustomColor"]
+                        or '' |$" class="one" id="tf1_pageBackgroundCustom"
+                        maxlength="6">
+                        <dl>
+                            [#CF00CF]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_pageBackgroundCustom_div">
+                        &nbsp;
+                    </div>
+                     <div class="configRow" id="tf1_mobileRedirectionContent_div">
+                        <label><span data-localize="11713"> Minimal Page for Mobile</span><br><span data-localize="13678">Devices</span> </label>
+                   <?lua 
+                        local startsStr
+                        local statusVar
+                        if (ButtonType == "edit") then
+                            if (profileTable["CaptivePortalPageDetails.MobileRedirection"] == "1") then
+                                statusStr="enable-disable-on"
+                                statusVar = "1"
+                            else
+                                statusStr="enable-disable-off"
+                                statusVar = "0"
+                            end
+                        else
+                            statusStr = "enable-disable-on"
+                            statusVar = "1"
+                        end
+                        
+                   ?>
+
+                            <a class="$|statusStr|$" alt="" src="$|statusStr|$"
+                                id="tf1_enableMobileRedirection"></a>
+                            <input type="hidden"  name="profileTable.mobileRedirection"
+                            value="$| statusVar or ''|$">
+                                              </div>
+                    <div class="break" id="break_enableMobileRedirection_div">
+                        &nbsp;
+                    </div>
+
+                    <h2 data-localize="11106">Header Details</h2>
+                    <div class="configRow" id="tf1_headerBackground_div">
+                        <label data-localize="10346"> Background </label>
+                        <p>
+                            <input type="radio" name="profileTable.headerBackgroundType" $|
+                            web.radioSelected(profileTable["CaptivePortalPageDetails.headerBackground"]
+                            == "1") |$  value="1" id="tf1_headerBackground1"
+                            onClick="headerBackgroundImageChange('tf1_headerBackground1')"
+                            checked="checked">
+                            <span data-localize="11159">Image</span>
+                        </p>
+                        <p>
+                            <input type="radio" name="profileTable.headerBackgroundType" $|
+                            web.radioSelected(profileTable["CaptivePortalPageDetails.headerBackground"]
+                            == "2") |$ value="2" id="tf1_headerBackground2" onClick="headerBackgroundImageChange('tf1_headerBackground2')">
+                            <span data-localize="10543">Color</span>
+                        </p>
+                    </div>
+                    <div class="break" id="break_headerBackground_div">
+                        &nbsp;
+                    </div>
+                   
+                    <div class="configRow" id="tf1_headerBackgroundImage_div">
+                         <?lua 
+                        
+                        hdImageIndex = profileTable["CaptivePortalPageDetails.headerImage"]
+                        or '1'
+
+
+                        ?>
+
+                        <label data-localize="11104"> Header Background Image </label> 
+                            <div class="headerloginProfileHide <?lua if (hdImageIndex == "1") then ?>           headerloginProfileHideActive <?lua else?>   divHdImage <?lua end?>" onclick="headerBackGroundSelect(this)"  header-bg-id="1" image="true"><img  src="images/capPort/$|hdImageTable[1]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px"></div>       
+
+                            <?lua if (hdImageTable[2]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "2") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="2" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[2]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="2" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+                            <?lua end?>
+
+                            <?lua if (hdImageTable[3]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "3") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="3" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[3]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="3" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+<?lua end?>
+
+                            <?lua if (hdImageTable[4]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "4") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="4" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[4]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="4" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+                            <?lua end?>
+
+                             <?lua if (hdImageTable[5]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "5") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="5" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[5]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="5" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+<?lua end?>
+
+
+                            <?lua if (hdImageTable[6]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if(hdImageIndex == "6") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="6" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[6]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="6" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+                            <?lua end?>
+
+                    </div>
+                    <div class="break" id="break_headerBackgroundImage_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_hdImageControl_div">
+                        <label> &nbsp; </label>
+
+                            <div class="pageloginProfileHide" data-localize="10683">Default</div>
+                            <div class="pageloginProfileHide" align="center">
+<a href="#"  upload-index="2" class="fileUploadHd"><?lua if (hdImageTable[2]["ImageDetails.value"]~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="3"
+                                    class="fileUploadHd"><?lua if
+                                    (hdImageTable[3]["ImageDetails.value"]~=
+                                    "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="4"
+                                    class="fileUploadHd"><?lua if
+                                    (hdImageTable[4]["ImageDetails.value"]~=
+                                    "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="5"
+                                    class="fileUploadHd"><?lua if
+                                    (hdImageTable[5]["ImageDetails.value"]~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="6"
+                                    class="fileUploadHd"><?lua if
+                                    (hdImageTable[6]["ImageDetails.value"]~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            </div>
+
+	   <?lua if (HIGH_SEC == "HIGH") then ?>       
+	    
+                    <div class="configRow" id="tf1_headerBackgroundImage2_div">
+                        
+                        <label> &nbsp; </label> 
+                            <?lua if (hdImageTable[7]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "7") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="7" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[7]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="7" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+                            <?lua end?>
+  
+
+                            <?lua if (hdImageTable[8]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "8") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="8" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[8]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="8" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+                            <?lua end?>
+
+                            <?lua if (hdImageTable[9]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "9") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="9" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[9]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="9" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+<?lua end?>
+
+                            <?lua if (hdImageTable[10]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "10") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="10" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[10]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="10" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+                            <?lua end?>
+
+                             <?lua if (hdImageTable[11]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua if
+                                    (hdImageIndex == "11") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="11" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[11]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="11" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+<?lua end?>
+
+
+                            <?lua if (hdImageTable[12]["ImageDetails.value"]  == "1") then?>
+        
+                                <div class="headerloginProfileHide <?lua
+                                    if(hdImageIndex == "12") then ?>
+                                    headerloginProfileHideActive <?lua
+                                    else?>divHdImage<?lua end?>"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="12" image="true">
+                                                              <img
+                                src="images/capPort/$|hdImageTable[12]["ImageDetails.name"]|$" style="border: 1px solid; width:45px; height:45px">
+                                </div>
+                                <?lua else ?>
+                                 <div class="headerloginProfileHide divHdImage"
+                                onclick="headerBackGroundSelect(this)"
+                                header-bg-id="12" image="false">
+
+                                <img src="images/capPort/imageNew.gif"
+                                style="border: 1px solid; width:45px;
+                                height:45px" >
+                            </div>
+                            <?lua end?>
+
+
+
+
+                            <input type="hidden" name="profileTable.headerBackgroundImgIndex" id="tf1_headerBackgroundImage" value="$|profileTable["CaptivePortalPageDetails.headerImage"] or '1' |$">
+                    </div>
+                    <div class="break" id="break_headerBackgroundImage2_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_hdImageControl2_div">
+                        <label> &nbsp; </label>
+
+
+                        <div class="pageloginProfileHide" align="center">
+<a href="#"  upload-index="7" class="fileUploadHd"><?lua if
+    (hdImageTable[7]["ImageDetails.value"]~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+
+                            <div class="pageloginProfileHide" align="center">
+<a href="#"  upload-index="8" class="fileUploadHd"><?lua if
+    (hdImageTable[8]["ImageDetails.value"]~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="9"
+                                    class="fileUploadHd"><?lua if
+                                    (hdImageTable[9]["ImageDetails.value"]~=
+                                    "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="10"
+                                    class="fileUploadHd"><?lua if
+                                    (hdImageTable[10]["ImageDetails.value"]~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="11"
+                                    class="fileUploadHd"><?lua if
+                                    (hdImageTable[11]["ImageDetails.value"]~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            <div class="pageloginProfileHide" align="center"><a
+                                    href="#"  upload-index="12"
+                                    class="fileUploadHd"><?lua if
+                                    (hdImageTable[12]["ImageDetails.value"]~= "1") then?><span data-localize="10100">Add</span><?lua else?><span data-localize="30287">Change</span><?lua end?></a></div>
+                            </div>
+
+		            <div class="break" id="break_hdImageControl2_div">
+		                &nbsp;
+                    </div>
+                    <?lua end ?>
+			     <div id="tf1_uploadHd_div" class="upFile">
+
+                    
+		   	    </div>
+		             
+
+                    
+                    <div class="configRow" id="tf1_headerBackgroundColor_div">
+                        <label data-localize="11103"> Header Background Color </label>
+                        <select size="1" id="tf1_headerBackgroundColor"
+                            name="profileTable.headerBackgroundColor" onChange="headerBackgroundColorChange('tf1_headerBackgroundColor')">
+                            <option data-localize="13670" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerBackColor"] ==
+                            "1") |$ value="1" selected="">White</option>
+                            <option data-localize="13669" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerBackColor"] ==
+                            "2") |$ value="2">Red</option>
+                            <option data-localize="13668" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerBackColor"] ==
+                            "3") |$ value="3">Green</option>
+                            <option data-localize="13667" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerBackColor"] ==
+                            "4") |$ value="4">Blue</option>
+                            <option data-localize="10683" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerBackColor"] ==
+                            "5") |$ value="5">Custom</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break_headerBackgroundColor_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_headerBackgroundCustom_div">
+                        <label data-localize="13677"> Custom Color </label>
+                        <input type="text"
+                        name="profileTable.headerBackgroundCustomColor"
+                        value="$|profileTable["CaptivePortalPageDetails.headerCustomColor"]
+                        or '' |$" class="one" id="tf1_headerBackgroundCustom"
+                        maxlength="6">
+                        <dl>
+                            [#CF00CF]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_headerBackgroundCustom_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_headerCaption_div">
+                        <label data-localize="11105"> Header Caption </label>
+                        <input type="text" name="profileTable.headerCaption"
+                        maxlength="64" value="$|profileTable["CaptivePortalPageDetails.headerCaption"] or '' |$"  id="tf1_headerCaption">
+                    </div>
+                    <div class="break" id="break_headerCaption_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_headerCaptionFont_div">
+                        <label data-localize="10453"> Caption Font </label>
+                        <select size="1" name="profileTable.headerCaptionFontFace" id="tf1_headerCaptionFont">
+                            <option data-localize="13676" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFont"] ==
+                            "1") |$ value="1" selected="">Tahoma</option>
+                            <option data-localize="13675" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFont"] ==
+                            "2") |$ value="2">Times New Roman</option>
+                            <option data-localize="13674" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFont"] ==
+                            "3") |$ value="3">Verdana</option>
+                            <option data-localize="13673" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFont"] ==
+                            "4") |$ value="4">Arial</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break_headerCaptionFont_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_headerCaptionFontSize_div">
+                        <label data-localize="11025"> Font Size </label>
+                        <select name="profileTable.headerCaptionFontSize" size="1" id="tf1_headerCaptionFontSize">
+                            <option data-localize="13672" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFontSize"] ==
+                            "1") |$ value="1" selected="">Small</option>
+                            <option data-localize="11705" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFontSize"] ==
+                            "2") |$ value="2">Medium</option>
+                            <option data-localize="13671" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFontSize"] ==
+                            "3") |$ value="3">Big</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break_headerCaptionFontSize_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_headerCaptionFontColor_div">
+                        <label data-localize="11024"> Font Color </label>
+                        <select  name="profileTable.headerCaptionFontColor" size="1" id="tf1_headerCaptionFontColor">
+                            <option data-localize="13669" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFontColor"] == "1") |$ value="1" selected>Red</option>
+                            <option data-localize="13666" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFontColor"] ==
+                            "2") |$ value="2">Black</option>
+                            <option data-localize="13668" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFontColor"] ==
+                            "3") |$  value="3">Green</option>
+                            <option data-localize="13667" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.headerFontColor"] ==
+                            "4") |$ value="4">Blue</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break_headerCaptionFontColor_div">
+                        &nbsp;
+                    </div>
+                    <h2 data-localize="11618">Login Details</h2>
+                    <div class="configRow" id="tf1_loginTitle_div">
+                        <label data-localize="11626"> Login Section Title </label>
+                        <input type="text" name="profileTable.loginSectionTitle"
+                        maxlength="32"
+                        value="$|profileTable["CaptivePortalPageDetails.LoginBoxTitle"] or 'Portal Login' |$"  id="tf1_loginTitle">
+                    </div>
+                    <div class="break" id="break_loginTitle_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_loginWelcomeMessage_div">
+                        <label data-localize="13361"> Welcome Message </label>
+                        <input type="text" name="profileTable.welcomeMessage" maxlength = "64"
+                        value="$|profileTable["CaptivePortalPageDetails.welcomeMessage"]
+                        or 'Please Login!' |$" id="tf1_loginWelcomeMessage">
+                    </div>
+                    <div class="break" id="break_loginWelcomeMessage_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_loginErrorMessage_div">
+                        <label data-localize="10950"> Error Message </label>
+                        <input type="text" name="profileTable.errorMessage" maxlength = "64"
+                        value="$|profileTable["CaptivePortalPageDetails.errorMessage"] or 'Invalid UserName/Password' |$" id="tf1_loginErrorMessage">
+                    </div>
+                    <div class="break" id="break_loginErrorMessage_div">
+                        &nbsp;
+                    </div>                    
+
+				<h2 data-localize="14429">Advertisement Details</h2>
+      				<div class="configRow" id="tf1_enableAdv_div">
+        				<label data-localize="14430">Enable Advertisement</label>
+              			<?lua 
+        					local statusStr
+        					local statusVar
+							if (profileTable["CaptivePortalPageDetails.AdEnable"] == "1") then
+        						statusStr="enable-disable-on"
+        						statusVar = "1"
+        					else
+        						statusStr="enable-disable-off"
+        						statusVar = "0"
+        					end
+        				?>
+        				<a class="$|statusStr|$" alt="" src="$|statusStr|$" id="tf1_enableAdv"></a>
+                            <input type="hidden" name="profileTable.showAdvertisement" value="$| statusVar or ''|$">
+      			    </div>
+      				<div class="break" id="break_enableAdv_div" >&nbsp;</div>
+      				<div class="configRow" id="tf1_advPlace_div">
+        				<label data-localize="14431">Ad Place</label>
+        				<select size="1" name="profileTable.advertisementAlignment" id="tf1_advPlace">
+            				<option data-localize="14432" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdPlace"] == "1") |$ value="1">Top</option>
+            				<option data-localize="14433" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdPlace"] == "2") |$ value="2">Bottom</option>
+						</select>
+      				</div>
+      				<div class="break" id="break_advPlace_div">&nbsp;</div>
+      				<div class="configRow" id="tf1_adContent_div">
+        				<label data-localize="14434">Ad Content</label>
+        				<textarea cols="30" maxlength="64" id="tf1_adContent" rows="3" name="profileTable.advertisementContent" onkeydown="if (event.keyCode == 13){ return false;}">$| profileTable["CaptivePortalPageDetails.AdContent"] or '' |$</textarea>
+      				</div>
+      				<div class="break" id="break_advPlace_div">&nbsp;</div>
+      				<div class="configRow" id="tf1_font_div">
+        				<label data-localize="14435">Font</label>
+        				<select size="1" name="profileTable.advertisementFontType" id="tf1_font">
+            				<option data-localize='13676' $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFont"] == "1") |$ value="1">Tahoma</option>
+            				<option data-localize="13675" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFont"] == "2") |$ value="2">Times New Roman</option>
+            				<option data-localize="13674" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFont"] == "3") |$ value="3">Verdana</option>
+            				<option data-localize="13673" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFont"] == "4") |$ value="4">Arial</option>
+						</select>
+      				</div>
+      				<div class="break" id="break_font_div">&nbsp;</div>
+      				<div class="configRow" id="tf1_fontSize_div">
+        				<label data-localize="11025">Font Size</label>
+        				<select size="1" name="profileTable.advertisementFontSize" id="tf1_fontSize">
+            				<option data-localize="13672" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFontSize"] == "1") |$ value="1">Small</option>
+            				<option data-localize="11705" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFontSize"] == "2") |$ value="2">Medium</option>
+            				<option data-localize="13671" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFontSize"] == "3") |$ value="3">Big</option>
+						</select>
+      				</div>
+      				<div class="break" id="break_fontSize_div">&nbsp;</div>
+      				<div class="configRow" id="tf1_fontColor_div">
+        				<label data-localize="11024">Font Color</label>
+        				<select size="1" name="profileTable.advertisementFontColor" id="tf1_fontColor">
+            				<option data-localize="13669" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFontColor"] == "1") |$ value="1">Red</option>
+            				<option data-localize="13666" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFontColor"] == "2") |$ value="2">Black</option>
+            				<option data-localize="13668" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFontColor"] == "3") |$ value="3">Green</option>
+            				<option data-localize="13667" $| web.dropdownSelected(profileTable["CaptivePortalPageDetails.AdFontColor"] == "4") |$ value="4">Blue</option>
+						</select>
+      				</div>
+      				<div class="break" id="break_fontColor_div">&nbsp;</div>
+                <h2 data-localize="11027">Footer Details</h2>
+                    <div class="configRow" id="tf1_enableFooterContent_div">
+                        <label data-localize="10471"> Change Footer Content </label>
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+                                     if (profileTable["CaptivePortalPageDetails.FooterEnable"] == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar = "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar = "0"
+                                     end
+                                     ?>
+
+                            <a class="$|statusStr|$" alt="" src="$|statusStr|$" id="tf1_enableFooterContent"></a>
+                            <input type="hidden" name="profileTable.showFooter"
+                            value="$| statusVar or ''|$">
+                                              </div>
+                    <div class="break" id="break_enableFooterContent_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_footerContent_div">
+                        <label data-localize="11026"> Footer Content </label>
+                        <input type="text" name="profileTable.footerContent" maxlength = "64"
+                        value="$|profileTable["CaptivePortalPageDetails.FooterContent"] or '' |$" id="tf1_footerContent">
+                    </div>
+                    <div class="break" id="break_footerContent_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_footerContentFontColor_div">
+                        <label data-localize="11028"> Footer Font Color </label>
+                        <select size="1" name="profileTable.footerFontColor" id="tf1_footerContentFontColor">
+                            <option data-localize="13670" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.FooterFontColor"] ==
+                            "1") |$ value="1">White</option>
+                            <option data-localize="13669" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.FooterFontColor"] ==
+                            "2") |$ value="2">Red</option>
+                            <option data-localize="13668" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.FooterFontColor"] ==
+                            "3") |$ value="3">Green</option>
+                            <option data-localize="13667" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.FooterFontColor"] ==
+                            "4") |$ value="4">Blue</option>
+                            <option data-localize="13666" $|
+                            web.dropdownSelected(profileTable["CaptivePortalPageDetails.FooterFontColor"] ==
+                            "5") |$ value="5">Black</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break_footerContentFontColor_div">&nbsp;</div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    <?lua if(cgi["configRowId"] == "-1") then?>
+                    <input data-localize="12758" type="submit" name="button.add.loginProfiles" onclick="return loginProfilesValidate('tf1_frmLoginProfilesForm')" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua else ?>
+                    <input data-localize="12758" type="submit" name="button.edit.loginProfiles" onclick="return loginProfilesValidate('tf1_frmLoginProfilesForm')" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua end ?>
+
+                </div>
+            </div>

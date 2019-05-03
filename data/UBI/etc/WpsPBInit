@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# WpsPBInit - initialization script for WpsPB
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# 05dec09,mdn written
+
+
+if [ "$INCLUDE_WPS_PB" = "y" ]; then
+
+MODULES_DIR=$WPSPB_INSTALL_PATH/lib/modules/WpsPB/
+LIB_DIR=/lib/modules
+MOD_SUFFIX=ko
+
+echo -n "Loading WpsPB Module.."
+
+[ -f $LIB_DIR/gpio-module.$MOD_SUFFIX ] && { rmmod gpio-module.$MOD_SUFFIX; }
+[ -f $MODULES_DIR/WpsPB.$MOD_SUFFIX ] && { insmod $MODULES_DIR/WpsPB.$MOD_SUFFIX; }
+[ -f $MODULES_DIR/WpsPB.$MOD_SUFFIX ] && { mknod /dev/wps_pb_dev c 244 0; }
+
+fi

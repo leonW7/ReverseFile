@@ -1,0 +1,242 @@
+<?lua
+require "teamf1lualib/bl_capturePackets"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "capturePackets"
+
+local guiCapturePackets = require("com.teamf1.bl.diagnostics.network")
+local errorMap          = require ("com.teamf1.core.errorMap")
+local returnCodes       = require ("com.teamf1.core.returnCodes")
+local DOWNLOAD_STATUS = true
+
+local errorCode, wanInterface, dmzStatus = guiCapturePackets.wanInterfaceGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+    
+local errorCode, lanInterface = guiCapturePackets.lanInterfaceGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+local errorCode, capStatus, dmzInterFace = guiCapturePackets.capTureInfo ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "start") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local cookieTbl = {}
+    cookieTbl.ifName = configRow["capturePackets.ifName"]
+    if (configRow["capturePackets.ifName"] == "DMZ") then
+         cookieTbl.ifName = "WAN2"                       
+    end 
+    cookieTbl.cookie = "start"
+    local errorCode = guiCapturePackets.capturePacketSet (cookieTbl)
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    web.goToPage(NextPage, true, true)
+
+
+elseif (ButtonType and ButtonType == "stop") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local cookieTbl = {}
+    cookieTbl.ifName = configRow["capturePackets.ifName"]
+    cookieTbl.cookie = "stop"
+    local errorCode = guiCapturePackets.capturePacketSet (cookieTbl)
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    DOWNLOAD_BUTTON = 1
+    web.goToPage(NextPage, true, true)
+
+
+    
+elseif (ButtonType and ButtonType == "download") then
+    local errorCode = guiCapturePackets.capturePacketDownload ()
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+        DOWNLOAD_BUTTON = 0
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    web.download("/var/pkt.cap","pkt.cap")
+    
+else
+if (capStatus ~= "DUMMY") then
+    statusInfoMessage = errorMap.errorStringGet ('805503020')
+elseif (DOWNLOAD_BUTTON ~= nil and DOWNLOAD_BUTTON == 1) then
+    statusInfoMessage = errorMap.errorStringGet ('805503021')
+end
+
+if (capStatus == "DUMMY" and DOWNLOAD_BUTTON == 1) then
+DOWNLOAD_STATUS = false
+end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE =
+"11766,10464,13037,13315,10464,11187,12972,13010,10817,30014,30015,30016,30017,10777"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                     <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusInfoMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                     <a href="?page=networkTools.html">$| LANG_LOCALE['11766'] |$</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=capturePackets.html">$| LANG_LOCALE['10464'] |$</a>
+                                </li>
+                                <li>
+                                  <a href="?page=systemCheck.html">$| LANG_LOCALE['13037'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$    
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['10464'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmCapturePackets" id="tf1_frmCapturePackets" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="capturePackets.html">
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11187'] |$ </label>
+                                    <select size="1" name="capturePackets.ifName">
+                                        <?lua 
+                                        if (capStatus ~= "DUMMY") then
+                                        if (dmzInterFace ~= returnCodes.NIL) then 
+                                        ?>
+                                        <option value="$| dmzInterFace |$">$| capStatus |$</option>
+                                         <?lua elseif (capStatus == "WAN1") then
+                                               if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+                                               wanDispName = LANG_LOCALE['30015']
+                                               else
+                                                wanDispName = LANG_LOCALE['30015']
+                                               --wanDispName = LANG_LOCALE['30014']
+                                               end  
+                                        ?>
+                                        <option value="$| capStatus |$"> $| wanDispName |$</option>
+                                         <?lua elseif (capStatus == "WAN2") then
+                                         if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or  PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then 
+                                             wan2DispName = LANG_LOCALE['30017']
+                                         else
+                                             wan2DispName = LANG_LOCALE['30017']
+                                             --wan2DispName = LANG_LOCALE['30016']
+                                         end 
+                                        ?>
+                                        <option value="$| capStatus |$">$| wan2DispName |$</option>
+                                        <?lua else?>
+                                        <option value="$| capStatus |$">$| capStatus |$</option>
+                                        <?lua end?>
+                                        <?lua else ?>
+                                        <?lua for k, v in pairs (lanInterface) do
+                                        ?>
+                                        <option value="$| v |$">$| v |$</option>
+                                        <?lua end ?>
+                                        <?lua for k, v in pairs (wanInterface) do
+                                        wanDispName = v
+                                        if (UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-250N") then
+                                            if (v == "WAN1") then
+                                             wanDispName = LANG_LOCALE['30015']
+                                            --wanDispName = LANG_LOCALE['30014']
+                                            elseif (v == "DMZ") then
+                                            wanDispName = LANG_LOCALE['10777']
+                                            else
+                                            wanDispName = LANG_LOCALE['30017']
+                                            end
+                                        end
+                                        ?>
+                                        <option value="$| v |$">$| wanDispName |$</option>
+                                        <?lua end ?>
+                                        <?lua end ?>
+                                    </select>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit"
+                                    name="button.start.capturePackets" <?lua if  
+                                    (capStatus ~= "DUMMY") then ?> disabled  <?lua end ?> class="btnSubmit" title="$| LANG_LOCALE['12972'] |$" value="$| LANG_LOCALE['12972'] |$" id="btSave">
+                                    <input type="submit" name="button.stop.capturePackets" <?lua if
+                                    (capStatus == "DUMMY") then ?> disabled  <?lua end ?> class="btnSubmit" title="$| LANG_LOCALE['13010'] |$" value="$| LANG_LOCALE['13010'] |$" id="btSave">
+                                    <input type="submit" name="button.download.capturePackets" <?lua if
+                                    (DOWNLOAD_STATUS) then ?> disabled  <?lua end ?> class="btnSubmit" title="$| LANG_LOCALE['10817'] |$" value="$| LANG_LOCALE['10817'] |$" id="btSave">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+       

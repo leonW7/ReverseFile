@@ -1,0 +1,53 @@
+<?lua
+require "teamf1lualib/bl_priority802"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local guiCos2queue = require("com.teamf1.bl.lanqos.costoqueuemapping")
+local errorMap     = require ("com.teamf1.core.errorMap")
+local returnCodes  = require ("com.teamf1.core.returnCodes")
+
+local configRow              = cgi
+local cookie                 = {}
+cookie["priority802.cookie"] = configRow["configRowId"]
+
+local errorCode, cos2queueInfo = guiCos2queue.cos2queueRemarkGetInfo (cookie)
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_priority802DailogContent">
+	<div class="topBg">
+		<h1>802.1p Priority Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+	<div class="dialogMidArea">
+		<div class="configRow">
+			<label>Priority </label>
+			<p><input type="hidden" name="priority802.cookie" value= "$|
+                        cos2queueInfo["cosNum"] |$" >
+            $| cos2queueInfo["cosNum"] |$ </p>
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label>Queue </label><select size="1" name="priority802.queue">
+			<option $| web.dropdownSelected(cos2queueInfo["ethQueue"] == "3") |$
+            value="3">Highest</option>
+            <option $| web.dropdownSelected(cos2queueInfo["ethQueue"] == "2") |$
+            value="2">Medium</option>
+            <option $| web.dropdownSelected(cos2queueInfo["ethQueue"] == "1") |$
+            value="1" >Low</option>
+            <option $| web.dropdownSelected(cos2queueInfo["ethQueue"] == "0") |$
+            value="0">Lowest</option>
+			</select> </div>
+		<div class="break">
+&nbsp; </div>
+	</div>
+	<div class="dialogSubmitRow">
+		<input type="submit" name="button.edit.priority802" class="btnSubmit" title="Save" value="Save" id="btSave">
+	</div>
+</div>

@@ -1,0 +1,12 @@
+<?lua
+    local authType = ""
+    if (cgi["AuthType"] ~= nil) then
+        authType = cgi["AuthType"]
+    end
+    local serverRow = db.getRow ("serverCheck", "authType", authType)
+    local responseStatus = serverRow["serverCheck.response"] or "0"
+    local firstServer = serverRow["serverCheck.firstServerStatus"] or "0" 
+    local secondServer = serverRow["serverCheck.secondServerStatus"] or "0"
+    local thirdServer =  serverRow["serverCheck.thirdServerStatus"] or "0"
+?>
+$| responseStatus .. "||" .. firstServer .. "||" .. secondServer .. "||" .. thirdServer |$

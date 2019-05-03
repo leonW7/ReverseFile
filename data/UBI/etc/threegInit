@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# threegInit - initialization script for threeg.
+#
+# Copyright (c) 2009, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,09nov09,anp  written.
+#
+# DESCRIPTION
+# This script is the initialization script for threeg component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_THREEG" = "y" ]; then
+    echo -n "Initializing 3G... "
+    cp /pfrm2.0/bin/smsChat /var/smsChat
+    BOX_MODEL_ID=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+    if [ $BOX_MODEL_ID == "DSR-250N" ] || [ $BOX_MODEL_ID == "DSR-250" ] || [ $BOX_MODEL_ID == "DSR-150N" ] || [ $BOX_MODEL_ID == "DSR-150" ]; then
+        echo -n "Executing pppd command "
+        /pfrm2.0/bin/pppd /dev/modem connect "chat -v -f /var/smsChat -t 3"
+    fi
+    echo "Done"
+fi

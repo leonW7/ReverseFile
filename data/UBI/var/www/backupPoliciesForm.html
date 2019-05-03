@@ -1,0 +1,1247 @@
+<?lua
+require "teamf1lualib/policies_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/ipv6_mode"
+
+local ipsecPolicies = require("com.teamf1.bl.ipsec.policy")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local ipv6Mode = require("com.teamf1.core.ipv6.mode")
+
+if(ButtonType == "backup") then
+    local returnCode, cookie
+    local ikeConfigRow = {}
+    local vpnConfigRow = {}
+    returnCode, cookie, ipMode = ipv6Mode.ipv6ModeGet ()
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, ikeConfigRow, vpnConfigRow = ipsecPolicies.policiesSectionGetCur(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_policiesDailogContent">
+	<div class="topBg">
+		<h1 data-localize="11424">IPSec Policy Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+	<div class="dialogMidArea">
+		<h2 data-localize="11061">General</h2>
+		<div class="configRow">
+            <label data-localize="12458">Policy Name </label>
+            <?lua if(configRowId ~= "-1") then?>
+                <p>$| vpnConfigRow["vpnPolicy.policyName"] |$</p>
+            <?lua else ?>
+            <input type="text" name="policies.policyName" value ="" id="tf1_policy" maxlength="32" onkeypress="return alphaNumericCheck (event, '')"> 
+            <?lua end?>
+        </div>
+		<div class="break" id="break1_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_policyType_div">
+			<label data-localize="12459">Policy Type </label>
+			<select name="policies.policyType" id="tf1_policyType" onchange="changeGeneralPolicyType('tf1_policyType')">
+			<option data-localize="14346" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.policyType"] == "1" ) |$ value="1">Auto Policy</option>
+			<option data-localize="14345" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.policyType"] == "2" ) |$ value="2">Manual Policy</option>
+			</select> </div>
+		<div class="break" id="break2_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_ipProtocolVersion_div">
+			<label data-localize="11412">IP Protocol Version </label>
+			<select name="policies.addressFamily" id="tf1_ipProtocolVersion" onchange="changeProtocolType()">
+			<option data-localize="30186" $| web.dropdownSelected(ikeConfigRow["ikePolicy.addressFamily"] == "1" ) |$ value="1">IPv4</option>
+                        <?lua if(ipMode == "3") then ?>
+			<option data-localize="11444" $| web.dropdownSelected(ikeConfigRow["ikePolicy.addressFamily"] == "2" ) |$ value="2">IPv6</option>
+                        <?lua end?>
+			</select> </div>
+		<div class="break" id="break3_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_IKEVersion_div">
+			<label data-localize="11158">IKE Version </label><select name="policies.policyVersion" id="tf1_IKEVersion">
+			<option data-localize="14130" $|web.dropdownSelected(ikeConfigRow["ikePolicy.policyVersion"] == "1" ) |$ value="1">IKEv1</option>
+			<option data-localize="14131" $| web.dropdownSelected(ikeConfigRow["ikePolicy.policyVersion"] == "2" ) |$ value="2">IKEv2</option>
+			</select> </div>
+		<div class="break" id="break4_div">
+&nbsp; </div>
+	<div class="configRow" id="tf1_chkL2tpIpsec_div">
+		<label data-localize="30187">L2TP Mode</label>
+        <select size="1" name="policies.L2tpIpsecPolicy" id="tf1_chkL2tpIpsec" onchange="checkL2tpIpsec ();">
+			<option data-localize="11789" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.L2tpIpsecPolicy"] == "0") |$ value="0">None</option>
+			<option data-localize="13448" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.L2tpIpsecPolicy"] == "1") |$ value="1">Client</option>
+			<option data-localize="11057" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.L2tpIpsecPolicy"] == "2") |$ value="2">Gateway</option>
+		</select>
+	</div>
+	<div class="break" id="break5_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_ipSecMode_div">
+			<label data-localize="11422">IPSec Mode </label>
+                  <p id="tf1_ipSecMode"></p>
+            </div>
+		<div class="break" id="breakIPSec_div">
+&nbsp; </div>
+                 <?lua
+                 wan1DispName = "Dedicated WAN"
+                 localizeWAN1 = "data-localize='30014'"
+                 wan2DispName = "Configurable WAN"
+                 localizeWAN2 = "data-localize='30154'"
+		 if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000AC") then
+                     wan3DispName = "3G Internet"
+                     localizeWAN3 = "data-localize='30132'"
+		 end
+                  ?>   
+                  
+                   
+		<div class="configRow" id="tf1_localGateway_div">
+			<label data-localize="12803">Select Local Gateway </label><select name="policies.localGateway" id="tf1_localGateway">
+			<option $| localizeWAN1 |$ $| web.dropdownSelected(vpnConfigRow["vpnPolicy.localGateway"] == "1" ) |$ value="1">
+$| wan1DispName |$ </option>
+			<option $| localizeWAN2 |$ $| web.dropdownSelected(vpnConfigRow["vpnPolicy.localGateway"] == "2" ) |$ value="2"> $| wan2DispName |$ </option>
+                        <?lua if (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000AC") then ?>
+	                    <option $| localizeWAN3 |$ $|web.dropdownSelected(vpnConfigRow["vpnPolicy.localGateway"] == "3" ) |$ value="3"> $| wan3DispName |$ </option>
+		        <?lua end ?>
+			</select> </div>
+
+		<div class="break" id="break6_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_remoteEndpoint_div">
+			<label data-localize="12660">Remote Endpoint </label>
+			<select name="policies.remoteEndPointType" id="tf1_remoteEndpoint" >
+			<option data-localize="11387" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.remoteEndPointType"] == "1" ) |$ value="1">IP Address</option>
+			<option data-localize="14125" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.remoteEndPointType"] == "2" ) |$ value="2">FQDN</option>
+			</select> </div>
+		<div class="break" id="break7_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_remoteEndpointValue_div">
+            <label id="tf1_remoteEndPointLable"><span data-localize="11389">IP Address / FQDN</span> </label>
+			<input name="policies.remoteEndPoint" type="text" value= "$| vpnConfigRow["vpnPolicy.remoteEndPoint"] or '' |$" maxlength="127" id="tf1_remoteEndpointValue" onkeydown="if (event.keyCode == 9) { return remoteEndPointCheck () }">
+		</div>
+		<div class="break" id="break8_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_enableModeConfig_div">
+			<label data-localize="10895">Enable Mode Config </label>
+            <?lua 
+                if (vpnConfigRow["vpnPolicy.modeConfigStatus"] == "1") then
+	                statusStr="enable-disable-on"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableModeConfig"></a>
+			<input type="hidden" value="$| statusVar |$" name= "policies.modeConfigStatus" >
+		</div>
+		<div class="break" id="break9_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_enableNetBIOS_div">
+			<label data-localize="10897">Enable NetBIOS </label>
+            <?lua 
+                if (vpnConfigRow["vpnPolicy.netbios"] == "1") then
+	                statusStr="enable-disable-on"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableNetBIOS"></a>
+			<input type="hidden" value="$| statusVar |$" name= "policies.netbios" >
+		</div>
+		<div class="break" id="break10_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_enableRollOver_div">
+			<label data-localize="30188">Enable RollOver </label>
+            <?lua 
+                if (vpnConfigRow["vpnPolicy.rollover"] == "1") then
+	                statusStr="enable-disable-on"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableRollOver"></a>
+			<input type="hidden" value="$| statusVar |$" name= "policies.rollover">
+		</div>
+		<div class="break" id="break11_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_protocol_div">
+			<label data-localize="13455">Protocol </label><select name="policies.protocol" id="tf1_protocol" onChange="selProtocol ();">
+			<option data-localize="14343" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.protocol"] == "1" ) |$ value="1">AH</option>
+			<option data-localize="14342" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.protocol"] == "2" ) |$ value="2">ESP</option>
+			</select> </div>
+		<div class="break" id="break12_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_enableDHCP_div">
+			<label data-localize="10884">Enable DHCP </label>
+            <?lua 
+                if (vpnConfigRow["vpnPolicy.dhcpOverIpsec"] == "1") then
+	                statusStr="enable-disable-on"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableDHCP"></a>
+			<input type="hidden" value="$| statusVar |$" name="policies.dhcpOverIpsec">
+		</div>
+		<div class="break" id="break13_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_localIp_div">
+            <label data-localize="11599">Local IP </label>
+            <?lua if (ButtonType == "backup") then ?>
+            <input type="hidden" id="tf1_nonEditLocal">
+              <div style="display:none">
+            <?lua end ?>
+			<select size="1" name="policies.localNetworkType" id="tf1_localIp" onchange="changeLocalIpSelect('tf1_localIp')">
+			<option data-localize="10226" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.localNetworkType"] == "1" ) |$ value="1">Any</option>
+			<option data-localize="14340" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.localNetworkType"] == "2" ) |$ value="2">Single</option>
+			<option data-localize="12627" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.localNetworkType"] == "3" ) |$ value="3">Range</option>
+			<option data-localize="14339" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.localNetworkType"] == "4" ) |$ value="4" >Subnet</option>
+		</select> 
+        <?lua if (ButtonType == "backup") then ?></div><select
+        id="tf1_nonEdit_localIp" disabled></select><?lua end ?>
+	</div>
+    <input type="hidden" name="policies.localNetworkType" value="$|vpnConfigRow["vpnPolicy.localNetworkType"]|$" />
+		<div class="break" id="break14_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_localStartIpAddr_div">
+			<label data-localize="11607">Local Start IP Address </label>
+			<input type="text" name="policies.localStartIP" value="$| vpnConfigRow["vpnPolicy.localStartIP"] or '' |$" id="tf1_localStartIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipAddress4or6Check('tf1_localStartIpAddr')}" readonly>
+		</div>
+		<div class="break" id="break15_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_localEndIpAddr_div">
+			<label data-localize="14341">Local End IP Address </label>
+			<input type="text" name="policies.localEndIP" value="$| vpnConfigRow["vpnPolicy.localEndIP"] or '' |$" id="tf1_localEndIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipAddress4or6Check('tf1_localEndIpAddr')}" readonly>
+		</div>
+		<div class="break" id="break16_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_localSubnetMask_div">
+			<label data-localize="11608">Local Subnet Mask </label>
+			<input type="text" name="policies.localSubnetmask" value="$| vpnConfigRow["vpnPolicy.localSubnetmask"] or '' |$" id="tf1_localSubnetMask" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }" readonly>
+		</div>
+		<div class="break" id="break17_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_localPrefixLength_div">
+			<label data-localize="14115">Local Prefix Length </label>
+			<input type="text" name="policies.localPrefixLength" value="$| vpnConfigRow["vpnPolicy.localPrefixLength"] or '' |$" id="tf1_localPrefixLength" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 128, true, LANG_LOCALE['11294'], ''); }" class="one" readonly>
+			<dl>
+                [<span data-localize="12627">Range</span>: 0 - 128]
+			</dl>
+		</div>
+		<div class="break" id="break18_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_remoteIp_div">
+            <label data-localize="12663">Remote IP </label>
+            <?lua if (ButtonType == "backup") then ?>
+            <input type="hidden" id="tf1_nonEditRemote" />
+            <div style="display:none">
+            <?lua end ?>
+			<select size="1" name="policies.remoteNetworkType" id="tf1_remoteIp" onchange="changeRemoteIpSelect('tf1_remoteIp')" disabled>
+			<option data-localize="10226" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.remoteNetworkType"] == "1" ) |$ value="1">Any</option>
+			<option data-localize="14340" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.remoteNetworkType"] == "2" ) |$ value="2">Single</option>
+			<option data-localize="12627" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.remoteNetworkType"] == "3" ) |$ value="3">Range</option>
+			<option data-localize="14339" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.remoteNetworkType"] == "4" ) |$ value="4" >Subnet</option>
+        </select> 
+        <?lua if (ButtonType == "backup") then ?></div>
+        <select id="tf1_nonEdit_remoteIp" disabled></select>
+        <?lua end ?>
+		</div>
+    <input type="hidden" name="policies.remoteNetworkType" value="$|vpnConfigRow["vpnPolicy.remoteNetworkType"]|$" />
+		<div class="break" id="break20_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_remoteStartIpAddr_div">
+			<label data-localize="12672">Remote Start IP Address </label>
+			<input type="text" name="policies.remoteStartAddress" value="$| vpnConfigRow["vpnPolicy.remoteStartAddress"] or '' |$" id="tf1_remoteStartIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipAddress4or6Check('tf1_remoteStartIpAddr')}" readonly>
+		</div>
+		<div class="break" id="break21_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_remoteEndIpAddr_div">
+			<label data-localize="12659">Remote End IP Address </label>
+			<input type="text" name="policies.remoteEndAddress" value="$| vpnConfigRow["vpnPolicy.remoteEndAddress"] or '' |$" id="tf1_remoteEndIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipAddress4or6Check('tf1_remoteEndIpAddr')}" readonly>
+		</div>
+		<div class="break" id="break22_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_remoteSubnetMask_div">
+			<label data-localize="12673">Remote Subnet Mask </label>
+			<input type="text" name="policies.remoteSubnetmask" value="$| vpnConfigRow["vpnPolicy.remoteSubnetmask"] or '' |$" id="tf1_remoteSubnetMask" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }" readonly>
+		</div>
+		<div class="break" id="break23_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_remotePrefixLength_div">
+			<label data-localize="14119">Remote Prefix Length </label>
+			<input type="text" name="policies.remotePrefixLength" value="$| vpnConfigRow["vpnPolicy.remotePrefixLength"] or '' |$" id="tf1_remotePrefixLength"  maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 128, true, LANG_LOCALE['11335'], ''); }" class="one" readonly>
+			<dl>
+                [<span data-localize="12627">Range</span>: 0 - 128]
+			</dl>
+		</div>
+		<div class="break" id="break24_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_enableKeepalive_div">
+			<label data-localize="14338">Enable Keepalive </label>
+            <?lua 
+                if (vpnConfigRow["vpnPolicy.keepAlive"] == "1") then
+	                statusStr="enable-disable-on"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableKeepalive"></a>
+			<input type="hidden" value="$| statusVar |$"
+            name="policies.keepAlive" >
+		</div>
+		<div class="break" id="break25_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_sourceIpAddr_div">
+			<label data-localize="13655">Source IP Address </label>
+			<input type="text" name="policies.keepAliveSourceAddress" value="$|
+            vpnConfigRow["vpnPolicy.keepAliveSourceAddress"] or '' |$" id="tf1_sourceIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipAddress4or6Check('tf1_sourceIpAddr')}">
+		</div>
+		<div class="break" id="break26_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_destinationIpAddr_div">
+			<label data-localize="10712">Destination IP Address </label>
+			<input type="text" name="policies.remotePingIPAddress" value="$|
+            vpnConfigRow["vpnPolicy.remotePingIPAddress"] or '' |$" id="tf1_destinationIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipAddress4or6Check('tf1_destinationIpAddr')}">
+		</div>
+		<div class="break" id="break27_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_detectionPeriod_div">
+			<label data-localize="10723">Detection Period </label>
+			<input type="text" id="tf1_detectionPeriod" value="$|
+            vpnConfigRow["vpnPolicy.keepAlivePeriod"] or '' |$" name="policies.keepAlivePeriod" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 10, 999, true, LANG_LOCALE['11246'], '');}" class="one">
+			<dl>
+                [<span data-localize="12627">Range</span>: 10 - 999]
+			</dl>
+		</div>
+		<div class="break" id="break28_div">
+&nbsp; </div>
+		<div class="configRow" id="tf1_reconnectAfterFailureCount_div">
+			<label data-localize="30189">Reconnect After Failure <br />
+			Count </label>
+			<input type="text" id="tf1_reconnectAfterFailureCount" value="$|
+            vpnConfigRow["vpnPolicy.keepAliveFailureCount"] or '' |$" name="policies.keepAliveFailureCount" maxlength="2" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 3, 99, true, LANG_LOCALE['11332'], '');}" class="one">
+			<dl>
+                [<span data-localize="12627">Range</span>: 3 - 99]
+			</dl>
+		</div>
+		<div class="break" id="break29_div">
+&nbsp; </div>
+		<div id="tf1_phase1IKESaParameters_div">
+			<h2 data-localize="11938">Phase1(IKE SA Parameters)</h2>
+			<div class="configRow" id="tf1_exchangeMode1">
+				<label data-localize="10967">Exchange Mode </label><select name="policies.exchangeMode" id="tf1_exchangeMode1">
+				<option data-localize="14337" $| web.dropdownSelected(ikeConfigRow["ikePolicy.exchangeMode"] == "1") |$ value="1">Main</option>
+				<option data-localize="14336" $| web.dropdownSelected(ikeConfigRow["ikePolicy.exchangeMode"] == "2") |$ value="2">Aggressive</option>
+				</select> </div>
+			<div class="break" id="break30_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_direction_div">
+				<label data-localize="10748">Direction / Type </label>
+				<select size="1" name="policies.policyDirection" id="tf1_direction" onchange="enableRedundantVPNGatewayParameters()">
+				<option data-localize="14335" $| web.dropdownSelected(ikeConfigRow["ikePolicy.policyDirection"] == "1" ) |$ value="1">Initiator</option>
+				<option data-localize="14334" $| web.dropdownSelected(ikeConfigRow["ikePolicy.policyDirection"] == "2" ) |$ value="2">Responder</option>
+				<option data-localize="13650" $| web.dropdownSelected(ikeConfigRow["ikePolicy.policyDirection"] == "3" ) |$ value="3">Both</option>
+				</select> </div>
+			<div class="break" id="break31_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_natTraversal_div">
+				<label data-localize="11753">Nat Traversal </label>
+                <?lua 
+                if (ikeConfigRow["ikePolicy.natTraversal"] == "1") then
+	                statusStr="enable-disable-on"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_natTraversal"></a>
+				<input type="hidden" value="$| statusVar |$" name="policies.natTraversal" >
+			</div>
+			<div class="break" id="break32_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_natKeepAliveFrequency_div">
+				<label data-localize="11751">NAT Keep Alive Frequency <br />
+				</label>
+				<input type="text" name="policies.natKeepAliveTime" value="$|
+            ikeConfigRow["ikePolicy.natKeepAliveTime"] or '' |$" id="tf1_natKeepAliveFrequency" onkeypress="return numericValueCheck (event)" maxlength="32">
+				<dl>
+                    <span data-localize="12732">Seconds</span>
+				</dl>
+			</div>
+			<div class="break" id="break33_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_localIdentifierType_div">
+				<label data-localize="11597">Local Identifier Type </label>
+				<select size="1" name="policies.localIdentifierType" id="tf1_localIdentifierType" onchange="changeLocalAndRemoteIdentifierType('tf1_localIdentifierType', 'tf1_localIdentifier', 'break34')">
+				<option data-localize="14333" $| web.dropdownSelected(ikeConfigRow["ikePolicy.localIdentifierType"] == "1" ) |$ value="1">Local Wan IP</option>
+				<option data-localize="14125" $| web.dropdownSelected(ikeConfigRow["ikePolicy.localIdentifierType"] == "2" ) |$ value="2">FQDN</option>
+				<option data-localize="14331" $| web.dropdownSelected(ikeConfigRow["ikePolicy.localIdentifierType"] == "3" ) |$ value="3">User-FQDN</option>
+				<option data-localize="14330" $| web.dropdownSelected(ikeConfigRow["ikePolicy.localIdentifierType"] == "4" ) |$ value="4">DER ASN1 DN</option>
+				</select> </div>
+			<div class="break" id="break34_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_localIdentifier_div">
+				<label data-localize="11596">Local Identifier </label>
+				<input type="text" name="policies.localIdentifier"
+                value="$| ikeConfigRow["ikePolicy.localIdentifier"] or ''|$" id="tf1_localIdentifier" maxlength="127" onkeydown="if (event.keyCode == 9) { return validateFQDN ('tf1_localIdentifier'); }">
+			</div>
+			<div class="break" id="break35_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_remoteIdentifierType_div">
+				<label data-localize="12662">Remote Identifier Type </label>
+				<select size="1" name="policies.remoteIdentifierType" id="tf1_remoteIdentifierType" onchange="changeLocalAndRemoteIdentifierType('tf1_remoteIdentifierType', 'tf1_remoteIdentifier', 'break36')">
+				<option data-localize="14332" $| web.dropdownSelected(ikeConfigRow["ikePolicy.remoteIdentifierType"] == "1" ) |$ value="1">Remote Wan IP</option>
+				<option data-localize="14125" $| web.dropdownSelected(ikeConfigRow["ikePolicy.remoteIdentifierType"] == "2" ) |$ value="2">FQDN</option>
+				<option data-localize="14331" $| web.dropdownSelected(ikeConfigRow["ikePolicy.remoteIdentifierType"] == "3" ) |$ value="3">User-FQDN</option>
+				<option data-localize="14330" $| web.dropdownSelected(ikeConfigRow["ikePolicy.remoteIdentifierType"] == "4" ) |$ value="4">DER ASN1 DN</option>
+				</select> </div>
+			<div class="break" id="break36_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_remoteIdentifier_div">
+				<label data-localize="12661">Remote Identifier </label>
+				<input type="text" name="policies.remoteIdentifier"
+                value="$| ikeConfigRow["ikePolicy.remoteIdentifier"] or ''|$" id="tf1_remoteIdentifier" maxlength="127" onkeydown="if (event.keyCode == 9) { return validateFQDN ('tf1_remoteIdentifier'); }">
+			</div>
+			<div class="break" id="break37_div">&nbsp; </div>
+			<div id="tf1_encryptionAlgorithm_div">
+			<h2 data-localize="10917">Encryption Algorithm</h2>
+				<div class="configRow" id="tf1_encryptionDes_div">
+					<label data-localize="10701" class="three">DES </label>
+					<p class="three">
+                                         <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.Des"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1EncryptionDes"></a>
+					<input type="hidden" value="$| statusVar |$" name = "policies.Des"></p>
+					<?lua if(HIGH_SEC == "HIGH") then ?><label data-localize="10008" class="three">3DES </label>
+					<p class="three">
+                                        <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.3Des"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1Encryption3DES"></a>
+					<input type="hidden" value="$| statusVar |$" name = "policies.3Des"></p>
+					<?lua  end?>
+				</div>
+				<div id="break66_div" class="break">&nbsp;</div>				
+				<?lua if(HIGH_SEC == "HIGH") then ?>
+				<div class="configRow" id="tf1_encryptionDes_div">
+					<label data-localize="14319" class="three">AES-128</label>
+					<p class="three">
+                                        <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.AES128"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1EncryptionAES-128"></a>
+					<input type="hidden" value="$| statusVar |$" name= "policies.AES128"></p>
+					<label data-localize="14318" class="three">AES-192</label>
+					<p class="three">
+                                         <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.AES192"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1EncryptionAES192"></a>
+					<input type="hidden" value="$| statusVar |$" name= "policies.AES192"></p>
+				</div>
+				<div id="break66_div" class="break">&nbsp;</div>
+				<div class="configRow" id="tf1_encryptionDes_div">
+					<label data-localize="14317" class="three">AES-256</label>
+					<p class="three">
+                                        <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.AES256"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1EncryptionAES256"></a>
+					<input type="hidden" value="$| statusVar |$" name= "policies.AES256"></p>					
+				</div>
+			 <?lua  end?>
+			</div>
+			<div class="break" id="break38_div">&nbsp; </div>
+			<?lua if(HIGH_SEC == "HIGH") then ?>
+			<div class="configRow" id="tf1_blowfish_div">
+                <label data-localize="10408" class="three">BLOWFISH </label>
+		<p class="three">
+                <?lua 
+                if (ikeConfigRow["ikePolicy.BLOWFISH"] == "1") then
+	                statusStr="enable-disable-on"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_blowfish"></a>
+				<input type="hidden" value="$| statusVar |$" name= "policies.BLOWFISH" >
+			</p>
+		
+				<div class="configRow" id="tf1_blowfishValue_div">
+					<input type="text" name="policies.KeyLengthBLOWFISH"
+                    value= "$|ikeConfigRow["ikePolicy.KeyLengthBLOWFISH"] or ''|$"  id="tf1_blowfishValue" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 40, 448, true, LANG_LOCALE['11227'], '');}" class="one">
+					<dl>
+                        [<span data-localize="12627">Range</span>: 40 - 448]
+					</dl>
+				</div>
+			</div>
+			<div class="break" id="break39_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_cast128_div">
+				<label data-localize="10465" class="three">CAST128 </label>
+		<p class="three">
+                <?lua 
+                if (ikeConfigRow["ikePolicy.CAST128"] == "1") then
+	                statusStr="enable-disable-on"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_cast128"></a>
+				<input type="hidden" value="$| statusVar |$" name= "policies.CAST128">
+</p>
+				<div class="configRow" id="tf1_cast128Value_div">
+                    <input type="text" name="policies.KeyLengthCAST128" 
+                    value= "$|ikeConfigRow["ikePolicy.KeyLengthCAST128"] or ''|$" maxlength="3" id="tf1_cast128Value" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 40, 128, true, LANG_LOCALE['11228'], '');}" class="one">
+					<dl>
+                        [<span data-localize="12627">Range</span>: 40 - 128]
+					</dl>
+				</div>
+			</div>
+			<div class="break" id="break40_div">
+&nbsp; </div>
+		 <?lua  end?>
+				<div id="tf1_authAlgorithm_div">
+			<h2 data-localize="10313">Authentication Algorithm</h2>
+				<div class="configRow" id="tf1_encryptionDes_div">
+					<label data-localize="11701" class="three">MD5</label>
+					<p class="three">
+                                         <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.Md5"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1EncryptionDes"></a>
+					<input type="hidden" value="$| statusVar |$" name = "policies.Md5"></p>
+					<label data-localize="14316" class="three">SHA-1</label>
+					<p class="three">
+                                        <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.Sha1"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1Encryption3DES"></a>
+					<input type="hidden" value="$| statusVar |$" name = "policies.Sha1"></p>
+				</div>
+				<div id="break66_div" class="break">&nbsp;</div>				
+				<?lua if(HIGH_SEC == "HIGH") then ?>
+				<div class="configRow" id="tf1_encryptionDes_div">
+					<label data-localize="14308" class="three">SHA2-256</label>
+					<p class="three">
+                                        <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.Sha2256"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1EncryptionAES-128"></a>
+					<input type="hidden" value="$| statusVar |$" name= "policies.Sha256"></p>
+					<label data-localize="14307" class="three">SHA2-384</label>
+					<p class="three">
+                                         <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.Sha2384"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1EncryptionAES192"></a>
+					<input type="hidden" value="$| statusVar |$" name= "policies.Sha384"></p>
+				</div>
+				<div id="break66_div" class="break">&nbsp;</div>
+				<div class="configRow" id="tf1_encryptionDes_div">
+					<label data-localize="14306" class="three">SHA2-512</label>
+					<p class="three">
+                                        <?lua            	 
+                                         if (ikeConfigRow["ikePolicy.Sha2512"] == "1") then
+	                                     statusStr="enable-disable-on"
+	                                     statusVar = "1"
+					else
+					     statusStr="enable-disable-off"
+	                                     statusVar = "0"
+                                        end
+                                        ?>
+					<a class="$| statusStr |$" alt="" id="tf1_phase1EncryptionAES256"></a>
+					<input type="hidden" value="$| statusVar |$" name= "policies.Sha512"></p>					
+				</div>
+			</div>
+			<div class="break" id="break41_div">
+&nbsp; </div>
+						<?lua  end?>
+			<div class="configRow" id="tf1_authMethod_div">
+				<label data-localize="10321">Authentication Method </label>
+				<select id="tf1_authMethod" name="policies.authenticationType" onchange="changeAuthenticationMethod ('tf1_authMethod')">
+				<option data-localize="12532" $|
+                web.dropdownSelected(ikeConfigRow["ikePolicy.authenticationType"]
+                == "1" ) |$ value="1">Pre-Shared Key</option>
+				<option data-localize="14329" $|
+                web.dropdownSelected(ikeConfigRow["ikePolicy.authenticationType"]
+                == "2" ) |$ value="2">RSA-Signature</option>
+				</select> </div>
+			<div class="break" id="break44_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_presharedkey_div">
+				<label data-localize="12532">Pre-Shared Key </label>
+                                <?lua if(ACCESS_LEVEL ~= 0) then
+                             if (ikeConfigRow["ikePolicy.presharedKey"] ~= returnCodes.NIL) then
+                                 ikeConfigRow["ikePolicy.presharedKey"] = util.mask(ikeConfigRow["ikePolicy.presharedKey"])
+                             end
+                             end
+                                   ?>
+				<input type="text" name="policies.presharedKey" value="$| ikeConfigRow["ikePolicy.presharedKey"] or '' |$"id="tf1_presharedkey" maxlength="49" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_presharedkey', 8, 49, LANG_LOCALE['11323']);}" onkeypress="return alphaNumericCheck (event, '')">
+				<dl>
+                    [<span data-localize="11565">Length</span>: 8 - 49]
+				</dl>
+			</div>
+			<div class="break" id="break45_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_diffieHellman_div">
+				<label data-localize="10746">Diffie-Hellman (DH) Group </label>
+				<select name="policies.dhGroup" size="1" id="tf1_diffieHellman">
+				<option data-localize="30190" $| web.dropdownSelected(ikeConfigRow["ikePolicy.dhGroup"] == "1" ) |$ value="1">Group 1 (768 bit)</option>
+				<option data-localize="30191" $| web.dropdownSelected(ikeConfigRow["ikePolicy.dhGroup"] == "2" ) |$ value="2">Group 2 (1024 bit)</option>
+				<option data-localize="30192" $| web.dropdownSelected(ikeConfigRow["ikePolicy.dhGroup"] == "5" ) |$ value="5">Group 5 (1536 bit)</option>
+				<?lua if(HIGH_SEC == "HIGH") then ?>
+				<option data-localize="14302" $| web.dropdownSelected(ikeConfigRow["ikePolicy.dhGroup"] == "14" ) |$ value="14">DH Group 14 (2048 bit)</option>
+				<option data-localize="14301" $| web.dropdownSelected(ikeConfigRow["ikePolicy.dhGroup"] == "15" ) |$ value="15">DH Group 15 (3072 bit)</option>
+				<option data-localize="14300" $| web.dropdownSelected(ikeConfigRow["ikePolicy.dhGroup"] == "16" ) |$ value="16">DH Group 16 (4096 bit)</option>
+				<option data-localize="14299" $| web.dropdownSelected(ikeConfigRow["ikePolicy.dhGroup"] == "17" ) |$ value="17">DH Group 17 (6144 bit)</option>
+				<option data-localize="14298" $| web.dropdownSelected(ikeConfigRow["ikePolicy.dhGroup"] == "18" ) |$ value="18">DH Group 18 (8192 bit)</option>
+                <?lua  end?>
+				</select> </div>
+			<div class="break" id="break46_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_SALifeTime_div">
+				<label data-localize="12755">SA-Lifetime </label>
+				<p></p>
+				<input type="text" name="policies.saLifeTime" value="$| ikeConfigRow["ikePolicy.saLifeTime"] or '' |$" class="one" value="28800" maxlength="10" id="tf1_SALifeTime" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 300, 2147483647, true, LANG_LOCALE['11345'], LANG_LOCALE['12732']);}">
+				<dl>
+                    [<span data-localize="12627">Range</span>: 300 - 2147483647] <span data-localize="12732">Seconds</span>
+				</dl>
+			</div>
+			<div class="break" id="break47_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_enableDeadPeerDetection_div">
+				<label data-localize="10881">Enable Dead Peer Detection </label>
+                <?lua 
+                if (ikeConfigRow["ikePolicy.DPD"] == "1") then
+	                statusStr="enable-disable-on-noclick"
+	                statusVar = "1"
+                else
+		            statusStr="enable-disable-off"
+	                statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableDeadPeerDetection"></a>
+				<input type="hidden" value="$| statusVar |$" name="policies.DPD" >
+			</div>
+			<div class="break" id="break48_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_Phase1DetectionPeriod_div">
+				<label data-localize="10723">Detection Period </label>
+				<input type="text" name="policies.DPDDetectionPeriod" value="$|
+                ikeConfigRow["ikePolicy.DPDDetectionPeriod"] or '' |$" id="tf1_Phase1DetectionPeriod"  maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 10, 999, true, LANG_LOCALE['11246'], '');}" class="one">
+				<dl>
+                    [<span data-localize="10683">Default</span>: 10, <span data-localize="12627">Range</span>: 10 - 999]
+				</dl>
+			</div>
+			<div class="break" id="break49_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_reconnectAfterFailure_div">
+				<label data-localize="14328">Reconnect after Failure <br />
+				Count </label>
+				<input type="text" name="policies.DPDFailureCount" value="$|
+                ikeConfigRow["ikePolicy.DPDFailureCount"] or '' |$"  maxlength="2" id="tf1_reconnectAfterFailure" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 3, 99, true, LANG_LOCALE['11332'], '');}" class="one">
+				<dl>
+                    [<span data-localize="10683">Default</span>: 3, <span data-localize="12627">Range</span>: 3 - 99]
+				</dl>
+			</div>
+			<div class="break" id="break50_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_extendedAuth_div">
+				<label data-localize="10984">Extended Authentication </label>
+				<select size="1" name="policies.extendedAuthentication" id="tf1_extendedAuth" onchange="changeExtendedAuthentication('tf1_extendedAuth')">
+				<option data-localize="11789" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthentication"] == "1" ) |$ value="1">None</option>
+				<option data-localize="14327" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthentication"] == "2" ) |$ value="2">IPSec Host</option>
+				<option data-localize="14326" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthentication"] == "3" ) |$ value="3">Edge Device</option>
+				</select> </div>
+			<div class="break" id="break51_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_authType_div">
+				<label data-localize="10330">Authentication Type </label>
+				<select size="1" name="policies.extendedAuthType" id="tf1_authType">
+				<option data-localize="13238" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "1" ) |$ value="1">User Database</option>
+				<option data-localize="30193" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "2" ) |$ value="2">Radius-PAP</option>
+				<option data-localize="30194" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "3" ) |$ value="3">Radius-CHAP</option>
+				<option data-localize="30195" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "4" ) |$ value="4">Radius-MSCHAP</option>
+				<option data-localize="30196" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "5" ) |$ value="5">Radius-MSCHAPv2</option>
+				<option data-localize="30197" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "6" ) |$ value="6">Active-Directory</option>
+				<option data-localize="12462" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "7" ) |$ value="7">POP3</option>
+				<option data-localize="30198" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "8" ) |$ value="8">LDAP</option>
+				<option data-localize="30199" $| web.dropdownSelected(ikeConfigRow["ikePolicy.extendedAuthType"] == "9" ) |$ value="9">NT-Domain</option>
+				</select> </div>
+			<div class="break" id="break52_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_UserName_div">
+				<label data-localize="13242">Username </label>
+				<input type="text" name="policies.userName" value = "$|
+                ikeConfigRow["ikePolicy.userName"] or '' |$" maxlength="32" id="tf1_UserName">
+			</div>
+			<div class="break" id="break53_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_Password_div">
+				<label data-localize="11899">Password </label>
+				<input type="password" name="policies.password" value = "$|
+                ikeConfigRow["ikePolicy.password"] or '' |$" maxlength="32" id="tf1_Password" onkeypress="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }">
+			</div>
+		</div>
+		<div class="break" id="break54_div">
+&nbsp; </div>
+		<div id="tf1_manualPolicyParameters_div">
+			<h2 data-localize="14322">Phase2-(Manual Policy Parameters)</h2>
+			<div class="configRow" id="tf1_SPIIncoming_div">
+				<label data-localize="14321">SPI-Incoming </label>
+				<input type="text" name="policies.ipsecSPIIn" maxlength="10" value="$|
+                vpnConfigRow["vpnPolicy.ipsecSPIIn"] or '' |$" id="tf1_SPIIncoming" onkeypress="return numericValueCheck (event, 'xXABCDEFabcdef')" onblur="SPInOut('tf1_SPIIncoming')">
+			</div>
+			<div class="break" id="break55_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_SPIOutgoing_div">
+				<label data-localize="14320">SPI-Outgoing </label>
+				<input type="text" name="policies.ipsecSPIOut" value= "$|
+                vpnConfigRow["vpnPolicy.ipsecSPIOut"] or '' |$" maxlength="10" id="tf1_SPIOutgoing" onkeypress="return numericValueCheck (event, 'xXABCDEFabcdef')" onblur="SPInOut('tf1_SPIOutgoing')">
+			</div>
+			<div class="break" id="break56_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_manualEncryptionAlgorithm_div">
+				<label data-localize="10917">Encryption Algorithm </label>
+				<select size="1" id="tf1_manualEncryptionAlgorithm"
+                    name="policies.encryptionAlgoVpn" onchange="changeManualEncryptionAlgorithm('tf1_manualEncryptionAlgorithm')">
+				<option data-localize="10701" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "2" ) |$ value="1">DES</option>
+				<?lua if(HIGH_SEC == "HIGH") then ?>
+				<option data-localize="11789" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "1" ) |$ value="2">None</option>
+				<option data-localize="10008" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "4" ) |$ value="3">3DES</option>
+				<option data-localize="14319" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "8" ) |$ value="4" >AES-128</option>
+				<option data-localize="14318" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "16" ) |$ value="5">AES-192</option>
+				<option data-localize="14317" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "32" ) |$ value="6">AES-256</option>
+				<option data-localize="10200" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "64" ) |$ value="7">AES-CCM</option>
+				<option data-localize="10201" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "128" ) |$ value="8">AES-GCM</option>
+				<option data-localize="14312" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "256" ) |$ value="9">TWOFISH (128)</option>
+				<option data-localize="14311" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "512" ) |$ value="10">TWOFISH (192)</option>
+				<option data-localize="14310" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "1024" ) |$ value="11">TWOFISH (256)</option>
+				<option data-localize="10408" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "2048" ) |$ value="12">BLOWFISH</option>
+				<option data-localize="10465" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.encryptionAlgo"] == "4096" ) |$ value="13">CAST128</option>
+				<?lua  end?>
+				</select> </div>
+			<div class="break" id="break57_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_encryptionkeyLength_div">
+				<label data-localize="14111">Key length </label>
+				<input type="text" name="policies.encryptionAlgoKeyLengthVpn" maxlength="15" id="tf1_encryptionkeyLength" value="$| vpnConfigRow["vpnPolicy.encryptionAlgoKeyLength"] or '' |$" onkeypress="return numericValueCheck (event, '.')">
+			</div>
+			<div class="break" id="break58_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_encryptionKeyIn_div">
+				<label data-localize="14315">Key-In </label>
+				<input type="text" name="policies.encryptionKeyIn" value= "$| vpnConfigRow["vpnPolicy.encryptionKeyIn"] or '' |$" id="tf1_encryptionKeyIn" onkeypress='return !isProblemChar (event, "\"", LANG_LOCALE['14315']);'>
+			</div>
+			<div class="break" id="break59_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_encryptionKeyOut_div">
+				<label data-localize="14314">Key-Out </label>
+				<input type="text" name="policies.encryptionKeyOut" value= "$| vpnConfigRow["vpnPolicy.encryptionKeyOut"] or '' |$" id="tf1_encryptionKeyOut" onkeypress='return !isProblemChar (event, "\"", LANG_LOCALE['14314']);'>
+			</div>
+			<div class="break" id="break60_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_integrityAlgorithm_div">
+				<label data-localize="11182">Integrity Algorithm </label>
+				<select size="1" name="policies.authenticationAlgoVpn" id="tf1_integrityAlgorithm">
+				<option data-localize="14316" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.authenticationAlgo"] == "4" ) |$ value="4">SHA-1</option>
+                <?lua if(HIGH_SEC == "HIGH") then ?>
+                <option data-localize="14309" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.authenticationAlgo"] == "64" ) |$ value="64">SHA2-224</option>
+				<option data-localize="14308" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.authenticationAlgo"] == "8" ) |$ value="8">SHA2-256</option>
+				<option data-localize="14307" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.authenticationAlgo"] == "16" ) |$ value="16">SHA2-384</option>
+                <option data-localize="14306" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.authenticationAlgo"] == "32" ) |$ value="32">SHA2-512</option>
+                <?lua  end?>
+				<option data-localize="11701" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.authenticationAlgo"] == "2" ) |$ value="2">MD5</option>
+				</select> </div>
+			<div class="break" id="break61_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_integrityKeyIn_div">
+				<label data-localize="14315">Key-In </label>
+				<input type="text" name="policies.authKeyIn" value= "$|
+                vpnConfigRow["vpnPolicy.authKeyIn"] or '' |$" id="tf1_integrityKeyIn" onkeypress="return !isProblemChar (event, '\'', LANG_LOCALE['14315']);">
+			</div>
+			<div class="break" id="break62_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_integrityKeyOut_div">
+				<label data-localize="14314">Key-Out </label>
+				<input type="text" name="policies.authKeyOut" value= "$|
+                vpnConfigRow["vpnPolicy.authKeyOut"] or '' |$" id="tf1_integrityKeyOut" onkeypress="return !isProblemChar (event, '\'', LANG_LOCALE['14314']);">
+			</div>
+			<div class="break" id="break63_div">
+&nbsp; </div>
+		</div>
+		<div id="tf1_autoPolicyParameters_div">
+			<h2 data-localize="11939">Phase2-(Auto Policy Parameters)</h2>
+			<div class="configRow" id="tf1_autoLifetime_div">
+				<label data-localize="12754">SA Lifetime </label>
+				<input type="text" name="policies.saLifeTimeVpn" value= "$|
+                vpnConfigRow["vpnPolicy.saLifeTime"] or '' |$" maxlength="10" value="3600" id="tf1_autoSALifeTime" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return saValueRangeCheck ();}" class="one">
+				<select size="1" name="policies.saLifeTimeType" id="tf1_Lifetime" class="two">
+				<option data-localize="12732" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.saLifeTimeType"] == "1" ) |$ value="1" >Seconds</option>
+				<option data-localize="14313" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.saLifeTimeType"] == "2" ) |$ value="2">Kbytes</option>
+				</select> </div>
+			<div class="break" id="break64_div">
+&nbsp; </div>
+        <div id="tf1_phase2EncryptionAlg_div">
+			<h2 data-localize="10917">Encryption Algorithm</h2>
+                       <div class="break" id="break65_div"> &nbsp; </div>
+                       <div class="configRow" id="tf1_encryptionDes2_div">
+				<label data-localize="10701" class="three">DES </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2DES"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+                                <a class="$| statusStr |$" alt="" id="tf1_encryptionDes2"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2DES" ></p>
+				<?lua if(HIGH_SEC == "HIGH") then ?> 
+				<label data-localize="11789" class="three">None </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2EncrNONE"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_encryptionNone"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2EncrNONE" >
+				
+				</p>
+				<?lua end ?>
+			</div>
+                        <div class="break" id="break66Phase2_div">&nbsp; </div>
+			<?lua if(HIGH_SEC == "HIGH") then ?> 
+			<div class="configRow" id="tf1_encryptionAes128_div">
+				<label data-localize="10008" class="three">3DES </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase23DES"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_encryption3Des"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase23DES"></p>
+				<label data-localize="14319" class="three">AES-128 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2AES128"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_encryptionAes128"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2AES128"></p>
+			</div>
+                        <div class="break" id="break69Phase2_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_encryptionAes192_div">
+				<label data-localize="14318" class="three">AES-192 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2AES192"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_encryptionAes192"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2AES192"></p>
+				<label data-localize="14317" class="three">AES-256 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2AES256"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_encryptionAes256"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2AES256"></p>
+			</div>
+                        <div class="break" id="break71Phase2_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_encryptionTwofish128_div">
+				<label data-localize="14312" class="three">TWOFISH (128) </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2TWOFISH128"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_encryptionTwofish128"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2TWOFISH128"></p>
+				<label data-localize="14311" class="three">TWOFISH (192) </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2TWOFISH192"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_encryptionTwofish192"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2TWOFISH192"></p>
+			</div>
+                        <div class="break" id="break75Phase2_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_encryptionTwofish256_div">
+				<label data-localize="14310" class="three">TWOFISH (256) </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2TWOFISH256"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_encryptionTwofish256"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2TWOFISH256"></p>
+			</div>
+                        <div class="break" id="break76Phase2_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_phase2EncryptionBlowfish_div">
+				<label data-localize="10408" class="three">BLOWFISH </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2BLOWFISH"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_phase2EncryptionBlowfish"></a>
+				<input type="hidden" value="$| statusVar |$" name ="policies.Phase2BLOWFISH"></p>
+				<div class="configRow" id="tf1_phase2EncryptionBlowfishValue_div">
+					<input type="text" name="policies.Phase2KeyLengthBLOWFISH" maxlength="3" value="$|vpnConfigRow["vpnPolicy.Phase2KeyLengthBLOWFISH"] or '' |$" id="tf1_phase2EncryptionBlowfishValue" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 40, 448, true, LANG_LOCALE['11227'], '');}" class="one">
+					<dl>
+                        [<span data-localize="12627">Range</span>: 40 - 448]
+					</dl>
+				</div>
+			</div>
+                        <div class="break" id="break77Phase2_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_phase2EncryptionCast128_div">
+				<label data-localize="10465" class="three">CAST128 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2Cast128"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_phase2EncryptionCast128"></a>
+				<input type="hidden" value="$| statusVar |$" name= "policies.Phase2Cast128"></p>
+				<div class="configRow" id="tf1_phase2EncryptionCast128Value_div">
+					<input type="text" name="policies.Phase2KeyLengthCast128" maxlength="3" value="$|vpnConfigRow["vpnPolicy.Phase2KeyLengthCast128"] or '' |$" id="tf1_phase2EncryptionCast128Value" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 40, 128, true, LANG_LOCALE['11228'], '');}" class="one">
+					<dl>
+                        [<span data-localize="12627">Range</span>: 40 - 128]
+					</dl>
+				</div>
+			</div>
+                        <div class="break" id="break78Phase2_div">&nbsp; </div>
+			<?lua  end?>
+        </div>
+        <div id="break_phase2EncryptionAlg_div">&nbsp;</div>
+
+			<h2 data-localize="11182">Integrity Algorithm</h2>
+			<div class="configRow" id="tf1_integrityMd5_div">
+				<label data-localize="11701" class="three">MD5 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2Md5"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_integrityMd5"></a>
+				<input type="hidden" value="$| statusVar |$" name="policies.Phase2Md5"></p>
+				<label data-localize="14316" class="three">SHA-1 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2Sha1"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_integritySha1"></a>
+				<input type="hidden" value="$| statusVar |$" name="policies.Phase2Sha1"></p>
+			</div>
+			<div class="break" id="break80_div">&nbsp; </div>
+			<?lua if(HIGH_SEC == "HIGH") then ?>
+		  <div class="configRow" id="tf1_integritySha224_div">
+				<label data-localize="14309" class="three">SHA2-224 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2Sha224"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_integritySha224"></a>
+				<input type="hidden" value="$| statusVar |$" name="policies.Phase2Sha224" ></p>
+				<label data-localize="14308" class="three">SHA2-256 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2Sha256"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_integritySha256"></a>
+				<input type="hidden" value="$| statusVar |$" name="policies.Phase2Sha256"></p>
+			</div>
+			<div class="break" id="break82_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_integritySha384_div">
+				<label data-localize="14307" class="three">SHA2-384 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2Sha384"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_integritySha384"></a>
+				<input type="hidden" value="$| statusVar |$" name="policies.Phase2Sha384"></p>
+				<label data-localize="14306" class="three">SHA2-512 </label>
+				<p class="three">
+                                <?lua            	 
+                                 if (vpnConfigRow["vpnPolicy.Phase2Sha512"] == "1") then
+	                             statusStr="enable-disable-on"
+	                             statusVar = "1"
+				else
+				      statusStr="enable-disable-off"
+	                              statusVar = "0"
+                                end
+                                 ?>
+				<a class="$| statusStr |$" alt="" id="tf1_integritySha512"></a>
+				<input type="hidden" value="$| statusVar |$" name="policies.Phase2Sha512"></p>
+			</div>
+			<div class="break" id="break84_div">&nbsp; </div><?lua  end?>
+			<div class="configRow" id="tf1_pfsKeyGroup_div">
+				<label data-localize="11937" class="three">PFS Key Group </label>
+                <p class="three">
+                <?lua
+                if (vpnConfigRow["vpnPolicy.pfsKeyGroup"] == "1") then
+                    statusStr="enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr="enable-disable-off"
+                    statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_pfsKeyGroup"></a>
+	    <input type="hidden" value="$| statusVar |$ " name ="policies.pfsKeyGroup" ></p>
+				<div class="configRow" id="tf1_pfsKeyGroupSelect_div">
+			        <select size="1" name="policies.pfsKeyGroup1" id="tf1_pfsKeyGroupSelect">
+				<option data-localize="14305" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.pfsKeyGroup1"] == "1" ) |$ value="1">DH Group 1 (768 bit)</option>
+				<option data-localize="14304" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.pfsKeyGroup1"] == "2" ) |$ value="2">DH Group 2 (1024 bit)</option>
+				<option data-localize="14303" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.pfsKeyGroup1"] == "5" ) |$ value="5">DH Group 5 (1536 bit)</option>
+				<?lua if(HIGH_SEC == "HIGH") then ?>
+				<option data-localize="14302" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.pfsKeyGroup1"] == "14" ) |$ value="14">DH Group 14 (2048 bit)</option>
+				<option data-localize="14301" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.pfsKeyGroup1"] == "15" ) |$ value="15">DH Group 15 (3072 bit)</option>
+				<option data-localize="14300" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.pfsKeyGroup1"] == "16" ) |$ value="16">DH Group 16 (4096 bit)</option>
+				<option data-localize="14299" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.pfsKeyGroup1"] == "17" ) |$ value="17">DH Group 17 (6144 bit)</option>
+				<option data-localize="14298" $| web.dropdownSelected(vpnConfigRow["vpnPolicy.pfsKeyGroup1"] == "18" ) |$ value="18">DH Group 18 (8192 bit)</option><?lua  end?>
+				</select> </div>
+			</div>
+			<div class="break" id="break84_div">
+&nbsp; </div>
+		</div>
+		<div id="tf1_redundantVANGatewayParameters_div">
+			<h2 data-localize="14297">Redundant VPN Gateway Parameters</h2>
+			<div class="configRow" id="tf1_enableRedundantGateway_div">
+				<label data-localize="10900">Enable Redundant Gateway </label>
+                <?lua
+                if (vpnConfigRow["vpnPolicy.rvgStatus"] == "1") then
+                    statusStr="enable-disable-on-noclick"
+                    statusVar = "1"
+                else
+                    statusStr="enable-disable-off"
+                    statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableRedundantGateway"></a>
+				<input type="hidden" value="$| statusVar |$" name=
+                "policies.rvgStatus" >
+			</div>
+			<div class="break" id="break85_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_selectBackPolicy_div">
+				<label data-localize="30200">Select Back-up Policy </label>
+				<select size="1" name="policies.backupPolicyName" value="$|
+                vpnConfigRow["vpnPolicy.backupPolicyName"] or '' |$" id="tf1_selectBackPolicy" >
+                                <?lua
+                                local i = 0
+                                local returnCode, backupPolicies = ipsecPolicies.policiesSectionGetAll()
+                                for k,v in pairs(backupPolicies) do
+                                    i = i + 1
+                                    local row = backupPolicies[i]
+                                    local display = true
+                                    local ikeConfig = nil
+                                    if (row["PolicyType"] == "Auto Policy" and 
+                                        row["IKEPolicyName"] ~= returnCodes.NIL) then
+                                        ikeConfig = ipsecPolicies.ikeConfigGet (row["IKEPolicyName"])
+                                    end
+                                    if (configRowId ~= "-1" and row["_ROWID_"] == configRowId) then
+                                       display = false
+                                    elseif (row["PolicyType"] == "Manual policy" or 
+                                       row["RVGStatus"] == "1") then
+                                       display = false
+                                    elseif (row["TypeofPolicy"] ~= nil and row["TypeofPolicy"] == "2" and
+                                       vpnConfigRow["vpnPolicy.backupPolicyName"] ~= row["VPNPolicyName"]) then
+                                       display = false
+                                    elseif (ikeConfig ~= nil) then
+                                       if (ikeConfig["IpsecIKEPolicy.Direction"] == "1" or 
+                                        ikeConfig["IpsecIKEPolicy.DPD"] == "0" or 
+                                        ikeConfig["IpsecIKEPolicy.XAUTHType"] == "12") then
+                                           display = false
+                                       end
+                                    end
+                                    if (display) then ?>
+				<option $| web.dropdownSelected(vpnConfigRow["vpnPolicy.backupPolicyName"] == row["VPNPolicyName"]) |$ value="$| row["VPNPolicyName"] |$" >$| row["VPNPolicyName"] |$</option>
+                                <?lua 
+                                    end
+                                end?>
+				</select> </div>
+			<div class="break" id="break86_div">
+&nbsp; </div>
+			<div class="configRow" id="tf1_FailbackTime_div">
+                <label><span data-localize="14296">Failback Time to Switch</span> <br />
+                    <span data-localize="14295">from Back-up to Primary</span> </label>
+				<input type="text" name="policies.failBackTime" value="$|
+                vpnConfigRow["vpnPolicy.failBackTime"] or '' |$" maxlength="4" id="tf1_FailbackTime" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 30, 3600, true, LANG_LOCALE['11260'], '');}" class="one">
+				<dl>
+                    [<span data-localize="12627">Range</span>: 30 - 3600]
+				</dl>
+			</div>
+		</div>
+		<div class="break">
+&nbsp; </div>
+	</div>
+        <input type="hidden" value="$| ikeConfigRow["ikePolicy.policyDirection"] or '' |$" id="hdselDirection">
+        <input type="hidden" value="$| ikeConfigRow["ikePolicy.remoteIdentifierType"] or ''|$" id="hdremoteIdentifier">
+	<div class="dialogSubmitRow">
+		<input data-localize="12758" type="submit" name= "button.config.polices.policies.$| configRowId |$" onclick="return policiesFormValidate('tf1_frmPolicies');" class="btnSubmit" title="Save" value="Save" id="btSave">
+	</div>
+</div>
+<!-- Section for Pop up dialog ends -->
+<?lua end ?>

@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="sslvpn-portal-layout-configure-add" prompt="[portal-settings]> "> 
+    <COMMAND name="save" help="Save portal settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNPortalLayout")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save portal settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNPortalLayout")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back portal settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+	<COMMAND name="portal_name"
+             help="Specify the portal name">
+             <PARAM name="portal_name"
+                    help="Specify the portal name"
+                    ptype="STRING_ALPHA_NUM_31"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.PortalLayoutName", "${portal_name}")
+             </ACTION>
+   </COMMAND>
+   <COMMAND name="profile_name"
+             help="Specify the profile name">
+             <PARAM name="profile_name"
+                    help="Specify the profile name"
+                    ptype="STRING_ALPHA_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.profileName", "${profile_name}")
+             </ACTION>
+    </COMMAND>     
+	<COMMAND name="portal_title"
+             help="Specify the portal title">
+             <PARAM name="portal_title"
+                    help="Specify the portal title"
+                    ptype="STRING64"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.PortalSiteTitle", "${portal_title}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="banner_title"
+             help="Specify the banner title">
+             <PARAM name="banner_title"
+                    help="Specify the banner title"
+                    ptype="STRING64_ACCEPT_SPACE"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.BannerTitle", "${banner_title}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="banner_message"
+             help="Specify the banner message">
+             <PARAM name="banner_message"
+                    help="Specify the banner message"
+                    ptype="STRING_ACCEPT_SPACE"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.BannerMessage", "${banner_message}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="display_banner"
+             help="Specify whether the banner message should be displayed">
+             <PARAM name="display_banner"
+                    help="Specify whether the banner message should be displayed"
+                    ptype="BOOL"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.DisplayBanner", "${display_banner}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="enable_httpmetatags"
+             help="Specify whether the http meta tags should be enabled">
+             <PARAM name="enable_httpmetatags"
+                    help="Specify whether the http meta tags should be enabled"
+                    ptype="BOOL"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.EnableHTTPMetaTags", "${enable_httpmetatags}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="enable_activexwebcachecleaner"
+             help="Specify whether the activex web cache cleaner should be enabled">
+             <PARAM name="enable_activexwebcachecleaner"
+                    help="Specify whether the activex web cache cleaner should be enabled"
+                    ptype="BOOL"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.EnableActiveXWebCacheCleaner", "${enable_activexwebcachecleaner}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="enable_vpntunnel"
+             help="Specify whether the vpn tunnel should be enabled">
+             <PARAM name="enable_vpntunnel"
+                    help="Specify whether the vpn tunnel should be enabled"
+                    ptype="BOOL"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.EnableVPNTunnel", "${enable_vpntunnel}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="enable_portforwarding"
+             help="Specify whether the port forwarding should be enabled">
+             <PARAM name="enable_portforwarding"
+                    help="Specify whether the port forwarding should be enabled"
+                    ptype="BOOL"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.EnablePortForwarding", "${enable_portforwarding}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="sslAuthType"
+        help="Authentication method for the portal.">
+        <PARAM name="sslAuthType"
+            help="Select a authentication type."
+            ptype="AUTH_TYPE"/>
+        <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.sslAuthType", "${sslAuthType}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="SSL_GROUP"
+        help="group name for the portal(only for local authentication).">
+        <PARAM name="sslGroupName"
+            help="Select a group"
+            ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.sslGroupName", "${sslGroupName}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-portal-layout-configure-edit" prompt="[portal-settings]> "> 
+    <COMMAND name="save" help="Save portal settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNPortalLayout")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save portal settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNPortalLayout")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back portal settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+   <COMMAND name="profile_name"
+             help="Specify the profile name">
+             <PARAM name="profile_name"
+                    help="Specify the profile name"
+                    ptype="STRING32"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.profileName", "${profile_name}")
+             </ACTION>
+    </COMMAND>     
+	<COMMAND name="portal_title"
+             help="Specify the portal title">
+             <PARAM name="portal_title"
+                    help="Specify the portal title"
+                    ptype="STRING64"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.PortalSiteTitle", "${portal_title}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="banner_title"
+             help="Specify the banner title">
+             <PARAM name="banner_title"
+                    help="Specify the banner title"
+                    ptype="STRING64_ACCEPT_SPACE"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.BannerTitle", "${banner_title}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="banner_message"
+             help="Specify the banner message">
+             <PARAM name="banner_message"
+                    help="Specify the banner message"
+                    ptype="STRING_ACCEPT_SPACE"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.BannerMessage", "${banner_message}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="display_banner"
+             help="Specify whether the banner message should be displayed">
+             <PARAM name="display_banner"
+                    help="Specify whether the banner message should be displayed"
+                    ptype="BOOL"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.DisplayBanner", "${display_banner}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="enable_httpmetatags"
+             help="Specify whether the http meta tags should be enabled">
+             <PARAM name="enable_httpmetatags"
+                    help="Specify whether the http meta tags should be enabled"
+                    ptype="BOOL"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.EnableHTTPMetaTags", "${enable_httpmetatags}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="enable_activexwebcachecleaner"
+             help="Specify whether the activex web cache cleaner should be enabled">
+             <PARAM name="enable_activexwebcachecleaner"
+                    help="Specify whether the activex web cache cleaner should be enabled"
+                    ptype="BOOL"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.EnableActiveXWebCacheCleaner", "${enable_activexwebcachecleaner}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="enable_vpntunnel"
+             help="Specify whether the vpn tunnel should be enabled">
+             <PARAM name="enable_vpntunnel"
+                    help="Specify whether the vpn tunnel should be enabled"
+                    ptype="BOOL"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.EnableVPNTunnel", "${enable_vpntunnel}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="enable_portforwarding"
+             help="Specify whether the port forwarding should be enabled">
+             <PARAM name="enable_portforwarding"
+                    help="Specify whether the port forwarding should be enabled"
+                    ptype="BOOL"/>
+             <ACTION>lua sslvpnEditValidate ("SSLVPNPortalLayout", "SSLVPNPortalLayout.EnablePortForwarding", "${enable_portforwarding}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="SSL_GROUP"
+        help="group name for the portal(only for local authentication).">
+        <PARAM name="sslGroupName"
+            help="Select a SSLVPN group"
+            ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("SSLVPNPortalLayout", "SSLVPNPortalLayout.sslGroupName", "${sslGroupName}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-portforwarding-apps-configure" prompt="[portforwarding-settings]> "> 
+    <COMMAND name="save" help="Save portforwarding Apps settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNPortForwardingAppsMap")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save portforwarding Apps settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNPortForwardingAppsMap")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back portforwarding Apps settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="serverip"
+             help="server ip address">
+             <PARAM name="serverip"
+                    help="server ip address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortForwardingAppsMap", "SSLVPNPortForwardingAppsMap.ServerIP", "${serverip}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="port"
+             help="server port">
+             <PARAM name="port"
+                    help="server port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortForwardingAppsMap", "SSLVPNPortForwardingAppsMap.Port", "${port}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-portforwarding-host-configure" prompt="[portforwarding-settings]> "> 
+    <COMMAND name="save" help="Save portforwarding Host settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNPortForwardingFQDNMap")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save portforwarding Host settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNPortForwardingFQDNMap")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back portforwarding Host settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="serverip"
+             help="server ip address">
+             <PARAM name="serverip"
+                    help="server ip address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortForwardingFQDNMap", "SSLVPNPortForwardingFQDNMap.ServerIP", "${serverip}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="domain_name"
+             help="domain name">
+             <PARAM name="domain_name"
+                    help="domain name"
+                    ptype="STRING128"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPortForwardingFQDNMap", "SSLVPNPortForwardingFQDNMap.FQDNName", "${domain_name}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-resource" prompt="[sslvpn-resource-settings]> "> 
+    <COMMAND name="save" help="Save sslvpn resource settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNResource")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save sslvpn resource settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNResource")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back sslvpn resource settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="resource_name"
+             help="resource name">
+             <PARAM name="resource_name"
+                    help="resource name"
+                    ptype="STRING_ALPHA_NUM_128"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNResource", "SSLVPNResource.ResourceName", "${resource_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="service_type"
+             help="service type">
+             <PARAM name="service_type"
+                    help="service type"
+                    ptype="SSLVPN_RESOURCE"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNResource", "SSLVPNResource.ServiceType", "${service_type}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-resource-object" prompt="[sslvpn-resource-settings]> "> 
+    <COMMAND name="save" help="Save sslvpn resource object settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNResourceObject")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save sslvpn resource settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNResourceObject")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back sslvpn resource settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="object_type"
+             help="object type">
+             <PARAM name="object_type"
+                    help="object type"
+                    ptype="SSLVPN_RESOURCE_OBJECT_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNResourceObject", "SSLVPNResourceObject.ObjectType", "${object_type}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="object_address"
+             help="object address">
+             <PARAM name="object_address"
+                    help="object address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNResourceObject", "SSLVPNResourceObject.ObjectAddress", "${object_address}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="mask_length"
+             help="mask length">
+             <PARAM name="mask_length"
+                    help="mask length"
+                    ptype="MASK_LENGTH"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNResourceObject", "SSLVPNResourceObject.MaskLength", "${mask_length}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="start_port"
+             help="start port">
+             <PARAM name="start_port"
+                    help="start port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNResourceObject", "SSLVPNResourceObject.StartPort", "${start_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="end_port"
+             help="end port">
+             <PARAM name="end_port"
+                    help="end port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNResourceObject", "SSLVPNResourceObject.EndPort", "${end_port}")
+             </ACTION>
+    </COMMAND>
+   	<COMMAND name="icmp"
+             help="include icmp">
+             <PARAM name="icmp"
+                    help="include icmp traffic"
+                    ptype="SSL_ICMP_BLOCK"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNResourceObject", "SSLVPNResourceObject.IcmpBlock", "${icmp}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-policy-edit" prompt="[sslvpn-policy-settings]> "> 
+    <COMMAND name="save" help="Save sslvpn policy settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNPolicy")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save sslvpn policy settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNPolicy")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back sslvpn policy settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="policy_address"
+             help="policy address">
+             <PARAM name="policy_address"
+                    help="policy address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.Address", "${policy_address}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_masklength"
+             help="policy masklength">
+             <PARAM name="policy_masklength"
+                    help="policy masklength"
+                    ptype="MASK_LENGTH"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.MaskLength", "${policy_masklength}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="start_port"
+             help="start port">
+             <PARAM name="start_port"
+                    help="start port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.StartPort", "${start_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="end_port"
+             help="end port">
+             <PARAM name="end_port"
+                    help="end port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.EndPort", "${end_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="resource_name"
+             help="resource name">
+             <PARAM name="resource_name"
+                    help="resource name"
+                    ptype="STRING_ALPHA_NUM_128"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.ResourceName", "${resource_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_permission"
+             help="policy permission">
+             <PARAM name="policy_permission"
+                    help="policy permission"
+                    ptype="SSLVPN_POLICY_PERMISSION"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.Permission", "${policy_permission}")
+             </ACTION>
+    </COMMAND>
+    	<COMMAND name="icmp"
+             help="include icmp traffic">
+             <PARAM name="icmp"
+                    help="include icmp traffic"
+                    ptype="SSL_ICMP_BLOCK"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.IcmpBlock", "${icmp}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-policy" prompt="[sslvpn-policy-settings]> "> 
+    <COMMAND name="save" help="Save sslvpn policy settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNPolicy")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save sslvpn policy settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNPolicy")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back sslvpn policy settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="policy_type"
+             help="policy type">
+             <PARAM name="policy_type"
+                    help="policy type"
+                    ptype="SSLVPN_POLICY_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.PolicyType", "${policy_type}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_owner"
+             help="policy owner">
+             <PARAM name="policy_owner"
+                    help="policy owner"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.PolicyOwnerName", "${policy_owner}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="destination_objecttype"
+             help="destination object type">
+             <PARAM name="destination_objecttype"
+                    help="destination object type"
+                    ptype="SSLVPN_POLICY_DESTINATION_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.DestinationObjectType", "${destination_objecttype}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_name"
+             help="policy name">
+             <PARAM name="policy_name"
+                    help="policy name"
+                    ptype="STRING_ALPHA_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.PolicyName", "${policy_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_address"
+             help="policy address">
+             <PARAM name="policy_address"
+                    help="policy address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.Address", "${policy_address}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_masklength"
+             help="policy masklength">
+             <PARAM name="policy_masklength"
+                    help="policy masklength"
+                    ptype="MASK_LENGTH"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.MaskLength", "${policy_masklength}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="start_port"
+             help="start port">
+             <PARAM name="start_port"
+                    help="start port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.StartPort", "${start_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="end_port"
+             help="end port">
+             <PARAM name="end_port"
+                    help="end port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.EndPort", "${end_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="service_type"
+             help="service type">
+             <PARAM name="service_type"
+                    help="service type"
+                    ptype="SSLVPN_RESOURCE"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.ServiceType", "${service_type}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="resource_name"
+             help="resource name">
+             <PARAM name="resource_name"
+                    help="resource name"
+                    ptype="STRING_ALPHA_NUM_128"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.ResourceName", "${resource_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_permission"
+             help="policy permission">
+             <PARAM name="policy_permission"
+                    help="policy permission"
+                    ptype="SSLVPN_POLICY_PERMISSION"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.Permission", "${policy_permission}")
+             </ACTION>
+    </COMMAND>
+    	<COMMAND name="icmp"
+             help="include icmp traffic">
+             <PARAM name="icmp"
+                    help="include icmp traffic"
+                    ptype="SSL_ICMP_BLOCK"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNPolicy", "SSLVPNPolicy.IcmpBlock", "${icmp}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-client" prompt="[sslvpn-client-settings]> "> 
+    <COMMAND name="save" help="Save sslvpn client settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNClientConf")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save sslvpn client settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNClientConf")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back sslvpn client settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="enable_fulltunnel"
+             help="enable split tunnel">
+             <PARAM name="enable_fulltunnel"
+                    help="enable split tunnel"
+                    ptype="BOOL"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientConf", "SSLVPNClientConf.EnableFullTunnel", "${enable_fulltunnel}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="dns_suffix"
+             help="dns suffix">
+             <PARAM name="dns_suffix"
+                    help="dns suffix"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientConf", "SSLVPNClientConf.DNSSuffix", "${dns_suffix}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="primary_dns"
+             help="primary dns server">
+             <PARAM name="primary_dns"
+                    help="primary dns server"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientConf", "SSLVPNClientConf.PrimaryDNSServer", "${primary_dns}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="secondary_dns"
+             help="secondary dns server">
+             <PARAM name="secondary_dns"
+                    help="secondary dns server"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientConf", "SSLVPNClientConf.SecondaryDNSServer", "${secondary_dns}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="begin_clientaddress"
+             help="Client Address Range Begin">
+             <PARAM name="begin_clientaddress"
+                    help="Client Address Range Begin"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientConf", "SSLVPNClientConf.BeginClientAddress", "${begin_clientaddress}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="end_clientaddress"
+             help="Client Address Range End">
+             <PARAM name="end_clientaddress"
+                    help="Client Address Range End"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientConf", "SSLVPNClientConf.EndClientAddress", "${end_clientaddress}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="lcp_timeout"
+             help="lcp timeout">
+             <PARAM name="lcp_timeout"
+                    help="lcp timeout"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientConf", "SSLVPNClientConf.lcpTimeout", "${lcp_timeout}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="sslvpn-route" prompt="[sslvpn-route-settings]> "> 
+    <COMMAND name="save" help="Save sslvpn route settings">
+	     <ACTION>lua clishCfgObjExec("SSLVPNClientRoute")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save sslvpn route settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("SSLVPNClientRoute")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back sslvpn route settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="destination_network"
+             help="destination network">
+             <PARAM name="destination_network"
+                    help="destination network"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientRoute", "SSLVPNClientRoute.DestinationNetwork", "${destination_network}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="subnet_mask"
+             help="subnet mask">
+             <PARAM name="subnet_mask"
+                    help="subnet mask"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("SSLVPNClientRoute", "SSLVPNClientRoute.SubnetMask", "${subnet_mask}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn" 
+	help="sslvpn configuration commands"/>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn portal-layouts" 
+	help="sslvpn portal layout configuration commands"/>
+<!--=======================================================-->
+	<COMMAND name="vpn sslvpn portal-layouts add"
+             help="Add sslvpn portal layout"
+             view="sslvpn-portal-layout-configure-add" viewid="">
+                   <ACTION>lua clishCfgObjNew ("SSLVPNPortalLayout", 
+                              sslvpnportallayoutCfgInit, sslvpnportallayoutCfgSave, 
+				       sslvpnportallayoutCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn sslvpn portal-layouts edit"
+             help="Edit sslvpn portal layout"
+             view="sslvpn-portal-layout-configure-edit" viewid="">
+	<PARAM name="row_id" 
+	       help="Row Id Of the portal layout to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("SSLVPNPortalLayout", 
+                              sslvpnportallayoutCfgInit, sslvpnportallayoutCfgSave, 
+				       sslvpnportallayoutCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn sslvpn portal-layouts delete"
+		help="Delete sslvpn portal layout">
+	<PARAM name="row_id" 
+	       help="Row Id Of the portal layout to be deleted"
+	       ptype="UINT"/>
+			 	   <ACTION>lua clishCmdExec(sslvpnportallayoutCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn portforwarding" 
+	help="sslvpn portforwarding configuration commands"/>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn portforwarding appconfig" 
+	help="sslvpn portforwarding application configuration commands"/>
+<!--=======================================================-->
+	<COMMAND name="vpn sslvpn portforwarding appconfig add"
+             help="Add an application configuration rule"
+             view="sslvpn-portforwarding-apps-configure" viewid="">
+                   <ACTION>lua clishCfgObjNew ("SSLVPNPortForwardingAppsMap", 
+                              sslvpnportforwardingappsCfgInit, sslvpnportforwardingappsCfgSave, 
+				       sslvpnportforwardingappsCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn sslvpn portforwarding appconfig delete"
+		help="Delete an application configuration rule">
+	<PARAM name="row_id" 
+	       help="Row Id Of the app config rule to be deleted"
+	       ptype="UINT"/>
+			 	   <ACTION>lua clishCmdExec(sslvpnportforwardingappsCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn portforwarding hostconfig" 
+	help="sslvpn portforwarding host configuration commands"/>
+<!--=======================================================-->
+	<COMMAND name="vpn sslvpn portforwarding hostconfig add"
+             help="Add a host configuration rule"
+             view="sslvpn-portforwarding-host-configure" viewid="">
+                   <ACTION>lua clishCfgObjNew ("SSLVPNPortForwardingFQDNMap", 
+                              sslvpnportforwardinghostCfgInit, sslvpnportforwardinghostCfgSave, 
+				       sslvpnportforwardinghostCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn sslvpn portforwarding hostconfig delete"
+		help="Delete a host configuration rule">
+	<PARAM name="row_id" 
+	       help="Row Id Of the host config rule to be deleted"
+	       ptype="UINT"/>
+			 	   <ACTION>lua clishCmdExec(sslvpnportforwardinghostCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn resource" 
+	help="sslvpn resource configuration commands"/>
+<!--=======================================================-->
+	<COMMAND name="vpn sslvpn resource add"
+             help="Add an sslvpn resource"
+             view="sslvpn-resource" viewid="">
+                   <ACTION>lua clishCfgObjNew ("SSLVPNResource", 
+                              sslvpnresourceCfgInit, sslvpnresourceCfgSave, 
+				       sslvpnresourceCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn sslvpn resource configure"
+		help="Configure an sslvpn resource">
+    </COMMAND>
+		<COMMAND name="vpn sslvpn resource configure add"
+				 help="Add an sslvpn resource object"
+				 view="sslvpn-resource-object" viewid="">
+		<PARAM name="resource_name"
+			   help="resource name"
+			   ptype="STRING_ALPHA_NUM_128"/>
+				 	   <ACTION>lua clishCfgObjNew ("SSLVPNResourceObject", 
+                       		       sslvpnresourceobjectCfgInit, sslvpnresourceobjectCfgSave, 
+				       		sslvpnresourceobjectCfgInputVal,"${resource_name}")
+                   	   </ACTION>
+		</COMMAND>
+		<COMMAND name="vpn sslvpn resource configure delete"
+				 help="Delete an sslvpn resource object">
+		<PARAM name="row_id"
+			   help="Row Id of the resource object to be deleted"
+			   ptype="UINT"/>
+		   <ACTION>lua clishCmdExec(sslvpnresourceobjectCfgDel,"${row_id}")</ACTION>
+		</COMMAND>
+	<COMMAND name="vpn sslvpn resource delete"
+		help="Delete an sslvpn resource">
+	<PARAM name="row_id" 
+	       help="Row Id Of the sslvpn resource to be deleted"
+	       ptype="UINT"/>
+			 	   <ACTION>lua clishCmdExec(sslvpnresourceCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn policy" 
+	help="sslvpn policy configuration commands"/>
+<!--=======================================================-->
+	<COMMAND name="vpn sslvpn policy add"
+             help="Add an sslvpn policy"
+             view="sslvpn-policy" viewid="">
+                   <ACTION>lua clishCfgObjNew ("SSLVPNPolicy", 
+                              sslvpnpolicyCfgInit, sslvpnpolicyCfgSave, 
+				       sslvpnpolicyCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn sslvpn policy edit"
+             help="Edit an sslvpn policy"
+             view="sslvpn-policy-edit" viewid="">
+	<PARAM name="row_id" 
+	       help="Row Id Of the policy to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("SSLVPNPolicy", 
+                              sslvpnpolicyCfgInit, sslvpnpolicyCfgSave, 
+							  sslvpnpolicyCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn sslvpn policy delete"
+		help="Delete an sslvpn policy">
+	<PARAM name="row_id" 
+	       help="Row Id Of the sslvpn policy to be deleted"
+	       ptype="UINT"/>
+			 	   <ACTION>lua clishCmdExec(sslvpnpolicyCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn client" 
+	help="sslvpn client configuration commands"
+	view="sslvpn-client" viewid="">
+			<ACTION>lua clishCfgObjNew ("SSLVPNClientConf", 
+            			sslvpnclientCfgInit, sslvpnclientCfgSave, 
+						sslvpnclientCfgInputVal,nil)
+			</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="vpn sslvpn route" 
+	help="sslvpn route configuration commands"/>
+	<COMMAND name="vpn sslvpn route add" 
+		help="Add sslvpn client route"
+		view="sslvpn-route" viewid="">
+				   <ACTION>lua clishCfgObjNew ("SSLVPNClientRoute", 
+            	   			   sslvpnrouteCfgInit, sslvpnrouteCfgSave, 
+							   sslvpnrouteCfgInputVal,nil)
+				   </ACTION>
+	</COMMAND>
+	<COMMAND name="vpn sslvpn route delete"
+		help="Delete sslvpn client route">
+	<PARAM name="row_id" 
+	       help="Row Id Of the sslvpn client route to be deleted"
+	       ptype="UINT"/>
+			 	   <ACTION>lua clishCmdExec(sslvpnrouteCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn" 
+	help="show sslvpn settings"/>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn connections" 
+	help="show sslvpn active connections">
+	 	  <ACTION>lua clishCmdExec(sslvpnActiveConnectionsShow)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn client" 
+	help="show sslvpn client settings">
+	 	  <ACTION>lua clishCmdExec(sslvpnClientShow)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn route" 
+	help="show route settings">
+	 	  <ACTION>lua clishCmdExec(sslvpnRouteShow)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn policy" 
+	help="show sslvpn policy settings">
+	 	  <ACTION>lua clishCmdExec(sslvpnPolicyShow)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn portal-layouts" 
+	help="show sslvpn portal-layouts settings">
+	 	  <ACTION>lua clishCmdExec(sslvpnPortalShow)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn portforwarding" 
+	help="show sslvpn portforwarding settings"/>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn portforwarding appconfig" 
+	help="show sslvpn portforwarding appconfig settings">
+	 	  <ACTION>lua clishCmdExec(sslvpnAppconfigShow)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn portforwarding hostconfig" 
+	help="show sslvpn portforwarding hostconfig settings">
+	 	  <ACTION>lua clishCmdExec(sslvpnHostconfigShow)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn resource" 
+	help="show sslvpn resource settings">
+	 	  <ACTION>lua clishCmdExec(sslvpnResourceShow)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn sslvpn resource-object" 
+	help="show sslvpn resource object settings">
+	<PARAM name="resource_name" 
+	       help="resource name"
+	       ptype="STRING"/>
+	   <ACTION>lua clishCmdExec(sslvpnResourceObjectShow, "${resource_name}")</ACTION>
+</COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="security-custom-service-config" prompt="security-config[custom-service]> "> 
+    <COMMAND name="save" help="Save custom services configuration changes.">
+	     <ACTION>lua clishCfgObjExec("Services")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save custom services configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Services")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back custom services configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="name"
+             help="Name of the service for which a rule is to be added">
+             <PARAM name="service"
+                    help="Name of the service for which a rule is to be added"
+                    ptype="STRING_ALPHA_NUM_16"/>
+             <ACTION>lua clishCfgObjAdd ("Services", "Services.ServiceName", "${service}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="protocol"
+             help="Protocol">
+             <PARAM name="protocol"
+                    help="protocol"
+                    ptype="PROTOCOL_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("Services", "Services.Protocol", "${protocol}")              
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="type"
+             help="Port type can be Port Range/Multiple Ports">
+             <PARAM name="portType"
+                    help="type can be Range/Icmp or Multiple"
+                    ptype="CUSTOM_PORT_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("Services", "Services.PortType", "${portType}")              
+             </ACTION>
+         </COMMAND>
+
+    <COMMAND name="destination_start_port"
+             help="Start port number of the Destination user.">
+             <PARAM name="dstPortStart"
+                    help=" Start Port number of the Destination User. valid Port range is 1-65535. "
+                    ptype="PORT_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("Services","Services.DestinationPortStart", "${dstPortStart}")              
+             </ACTION>
+    </COMMAND>
+ 
+     <COMMAND name="destination_finish_port"
+             help="End port number of the Destination user.">
+             <PARAM name="dstPortEnd"
+                    help="End Port number of the Destination User,  valid Port range is 1-65535."
+                    ptype="PORT_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("Services","Services.DestinationPortEnd", "${dstPortEnd}")              
+             </ACTION>
+    </COMMAND>
+    
+     <COMMAND name="source_start_port"
+             help="Start port number of the source user.">
+             <PARAM name="srcPortStart"
+                    help="Start Port number of the source User, valid Port range is 1-65535."
+                    ptype="PORT_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("Services","Services.SourcePortStart", "${srcPortStart}")              
+             </ACTION>
+    </COMMAND>
+
+
+     <COMMAND name="source_finish_port"
+             help="End port number of the source user.">
+             <PARAM name="srcPortEnd"
+                    help="End Port number of the source User, valid Port range is 1-65535."
+                    ptype="PORT_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("Services","Services.SourcePortEnd", "${srcPortEnd}")              
+             </ACTION>
+    </COMMAND>     
+         
+    <COMMAND name="icmp_type"
+             help="port number of the Destination user">
+             <PARAM name="dstPortStart"
+                    help="Port number of the Destination User"
+                    ptype="ICMP_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("Services","Services.DestinationPortStart2", "${dstPortStart}")              
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="destination_multiple_port"
+             help="Muliple Ports of the Destination user, Separate Ports by Comma.">
+             <PARAM name="multiPort"
+                    help="Multiple Port of the Destination User. Separate Ports by Comma, valid range of each port is 1-65535."
+                    ptype="MULTIPLE_PORT"/>
+             <ACTION>lua clishCfgObjAdd ("Services", "Services.MultiPort", "${multiPort}")              
+             </ACTION>
+    </COMMAND> 
+
+    <COMMAND name="source_multiple_port"
+             help="Multiple Ports of the source user, Separate Ports by Comma.">
+             <PARAM name="srcMultiPort"
+                    help="Multiple Port of the source User. Separate Ports by Comma, valid range of each port is 1-65535."
+                    ptype="MULTIPLE_PORT"/>
+             <ACTION>lua clishCfgObjAdd ("Services", "Services.SourceMultiPort", "${srcMultiPort}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security firewall custom_service" help="Custom Services Configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security firewall custom_service add"
+             help="custom services  configuration mode."
+             view="security-custom-service-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("Services", 
+                              customServicesCfgInit, customServicesCfgSave, 
+				       customServicesCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security firewall custom_service edit"
+             help="custom services  configuration mode."
+             view="security-custom-service-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("Services", 
+                              customServicesCfgInit, customServicesCfgSave, 
+				       customServicesCfgInputVal,"${row_id}","edit")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security firewall custom_service delete"
+             help="custom services  configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec (customServicesCfgDel,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security firewall custom_service" help="."/>
+    <COMMAND name="show security firewall custom_service setup"
+            help="Display Custom Service configuration">
+	    <ACTION>lua clishCmdExec (customServicesCfgGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <VIEW name="security-blocked-clients-config" prompt="security-config[blocked-clients]> "> 
+    <COMMAND name="save" help="Save blocked clients configuration changes.">
+	     <ACTION>lua clishCfgObjExec("blockMAC")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save blocked clients configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("blockMAC")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back blocked clients configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="mac_address" help="Valid MAC address">
+         <PARAM name="macAddress"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("blockMAC", "blockedClients.macAddress","${macAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="description"
+             help="Description or Reason for blocking">
+             <PARAM name="description"
+                    help="Description or Reason for blocking"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("blockMAC", "blockedClients.description", "${description}")              
+             </ACTION>
+    </COMMAND>
+    
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security blocked_clients" help="Blocked Clients Configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="security blocked_clients add"
+             help="Blocked Clients configuration mode."
+             view="security-blocked-clients-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("blockMAC", 
+                              blockedClientsCfgInit, blockedClientsCfgSave, 
+				       blockedClientsCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security blocked_clients edit"
+             help="Blocked Clients configuration mode."
+             view="security-blocked-clients-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("blockMAC", 
+                              blockedClientsEditCfgInit, blockedClientsCfgSave, 
+				       blockedClientsCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security blocked_clients delete"
+             help="Blocked Clients configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec (blockedClientsCfgDel,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security blocked_clients" help="."/>
+    <COMMAND name="show security blocked_clients setup"
+            help="Display Blocked Clients configuration">
+	    <ACTION>lua clishCmdExec (blockedClientsCfgGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

@@ -1,0 +1,312 @@
+:|noHelpSet|:
+The table lists all the available logs in the system.
+:|noHelpSetEnd|:
+
+:|lanSettings|:
+The LAN Configuration page allows you to configure the LAN interface of the router including default behaviour for ping on LAN interfaces, the DHCP Server which runs on it and Changes here affect all devices connected to the router's LAN switch and also wireless LAN clients. Note that a change to the LAN IP address will require all LAN hosts to be in the same subnet and use the new address to access this GUI.
+:|lanSettingsEnd|:
+
+:|lanDhcpReservedIps|:
+This page allows user to configure the reserved IP Addresses for the DHCP Server configuration.In order to ensure certain LAN devices always receive the same IP address when DHCP is enabled on the LAN, bind the LAN device's MAC address to a preferred IP address. This IP address will only be assigned to the matching MAC address.
+:|lanDhcpReservedIpsEnd|:
+
+:|lanDhcpReservedIps500|:
+This page allows user to configure the reserved IP Addresses for the DHCP Server configuration.In order to ensure certain LAN devices always receive the same IP address when DHCP is enabled on the LAN, bind the LAN device's MAC address to a preferred IP address. This IP address will only be assigned to the matching MAC address.
+:|lanDhcpReservedIps500End|:
+
+:|lanDhcpReservedIpsEcona|:
+This page allows user to configure the reserved IP Addresses for the DHCP Server configuration.In order to ensure certain LAN devices always receive the same IP address when DHCP is enabled on the LAN, bind the LAN device's MAC address to a preferred IP address. This IP address will only be assigned to the matching MAC address.
+:|lanDhcpReservedIpsEconaEnd|:
+
+:|lanDhcpReservedIpsAC|:
+This page allows user to configure the reserved IP Addresses for the DHCP Server configuration.In order to ensure certain LAN devices always receive the same IP address when DHCP is enabled on the LAN, bind the LAN device's MAC address to a preferred IP address. This IP address will only be assigned to the matching MAC address.
+:|lanDhcpReservedIpsACEnd|:
+
+:|ipMacBinding|:
+The table lists all the currently defined IP/MAC Bind rules and allows several operations on the rules.This feature allows protection against spoofed IP addresses by enforcing the gateway to validate the source traffic's IP address with the unique MAC Address of the configured LAN node. In the event of a violation (i.e. the traffic's source IP address doesn't match up with the expected MAC address having the same IP address) the packets will be dropped and can be logged for diagnosis. 
+:|ipMacBindingEnd|:
+
+:|igmpSetup|:
+ The IGMP Proxy page allows user to enable IGMP proxy. The proxy contains many downstream interfaces and a unique upstream interface explicitly configured. It performs the host side of the IGMP protocol on its upstream interface and the router side of the IGMP protocol on its downstream interfaces. 
+:|igmpSetupEnd|:
+ 
+:|igmpSetupEcona|:
+ The IGMP Proxy page allows user to enable IGMP proxy. The proxy contains many downstream interfaces and a unique upstream interface explicitly configured. It performs the host side of the IGMP protocol on its upstream interface and the router side of the IGMP protocol on its downstream interfaces. 
+:|igmpSetupEconaEnd|:
+ 
+ :|igmpSnooping|:
+ This page allows to enable global IGMP snooping and supports configuration of IGMP snooping over different ports for a particular VLAN.   
+:|igmpSnoopingEnd|:
+
+:|upnp|:
+UPnP (Universal Plug and Play) is a feature that allows for automatic discovery of devices that can communicate with this security appliance.UPnP is useful for auto-configuring application rules, where internal/external ports for the traffic protocol required by a detected network device are opened without user intervention. The UPnP Port Map Table has the details of UPnP devices that respond to the router's advertisements, and thereby don't require corresponding application (port forwarding) rules to be configured. 
+:|upnpEnd|:
+
+:|jumboFrame|:
+This page allows user to enable/disable jumbo frames and set MTU for jumbo frames in the router.Jumbo Frames option is available to exchange traffic containing Jumbo Frames on LAN side Devices.
+:|jumboFrameEnd|:
+
+:|jumboFrame_ac|:
+This page allows user to enable/disable jumbo frames and set MTU for jumbo frames in the router.Jumbo Frames option is available to exchange traffic containing Jumbo Frames on LAN side Devices.
+:|jumboFrame_acEnd|:
+
+:|vlanSettings|:
+The router supports virtual network isolation on the LAN with the use of VLANs. LAN devices can be configured to communicate in a subnetwork defined by VLAN identifiers. 
+:|vlanSettingsEnd|:
+
+:|vlanSettings_econa|:
+The router supports virtual network isolation on the LAN with the use of VLANs. LAN devices can be configured to communicate in a subnetwork defined by VLAN identifiers. 
+:|vlanSettings_econaEnd|:
+
+:|portVlan|:
+This page allows user to configure the port VLANs. A user can choose ports and can add them into a VLAN.In order to tag all traffic through a specific LAN port with a VLAN ID, you can associate a VLAN to a physical port. The VLAN Port table displays the port identifier, the mode setting for that port and VLAN membership information. Go to the Available VLAN page to configure a VLAN membership that can then be associated with a port 
+:|portVlanEnd|:
+
+:|macBasedVlan|:
+This MAC-VLAN page displays the currently configured MAC-based VLANs on this router. It allows you to add a new MAC-based VLAN or delete or modify a currently configured MAC-based VLAN.MAC-based VLANs allow all LAN traffic from a specified source MAC address to be classified into a VLAN. 
+:|macBasedVlanEnd|:
+
+:|voiceVlan|:
+This Voice-VLAN page displays the currently configured Voice VLANs on this router. It allows you to add a new Voice VLAN or delete or modify a currently configured Voice VLAN. Voice VLANs allow all LAN VOIP traffic to be either classified into a VLAN, or have the priority of such traffic to be elevated.
+:|voiceVlanEnd|:
+
+:|protocolBasedVlan|:
+This Protocol-VLAN page displays the currently configured Protocol-based VLANs on this router. It allows you to add a new Protocol-based VLAN or delete or modify a currently configured Protocol-based VLAN.Protocol-based VLANs allow all LAN traffic with a specified ethertype (IP, ARP or IPX) to be classified into a VLAN. 
+:|protocolBasedVlanEnd|:
+
+:|doubleVlan|:
+This Double-VLAN page displays the status of Double VLAN Setting on this router. It allows you to enable or disable the double VLANs.Enabling double VLANs will force all LAN traffic to have two VLAN tags attached to them. 
+:|doubleVlanEnd|:
+
+:|gvrp|:
+This GVRP page allows you to configure the GVRP protocol feature on the DWC-1000 
+:|gvrpEnd|:
+
+:|ipv4Wan1Settings|:
+This page allows you to set up your Internet connection. Ensure that you have the Internet connection information such as the IP Addresses, Account Information etc. This information is usually provided by your ISP or network administrator. 
+:|ipv4Wan1SettingsEnd|:
+
+:|ipv4Wan2DmzSetting|:
+This page allows you to set up your Internet connection. Ensure that you have the Internet connection information such as the IP Addresses, Account Information etc. This information is usually provided by your ISP or network administrator. 
+:|ipv4Wan2DmzSettingEnd|:
+
+|wan3Settings|:
+This page allows user to configure the ISP settings for connecting to a Mobile Internet service. Please check the USB card status on Status->System Information->USB Status page.
+:|wan3SettingsEnd|:
+
+|wan3Settings_econa|:
+This page allows user to configure the ISP settings for connecting to a Mobile Internet service. Please check the USB card status on Status->System Information->USB Status page.
+:|wan3Settings_econaEnd|:
+
+:|wanMode_1000|:
+This page allows user to configure the policies on the three WAN ports for Internet connection.By configuring both WANs, there are two ways for the router to access the internet. Load balancing allows traffic to and from the internet to be shared across both configured links to ensure one ISP is not excessively overloaded. Auto-Rollover uses a backup link to preserve internet connectivity for the LAN if the main ISP configured on the primary WAN fails for any reason. 
+:|wanMode_1000End|:
+
+:|wanMode_500|:
+This page allows user to configure the policies on the two WAN ports for Internet connection.By configuring both WANs, there are two ways for the router to access the internet. Load balancing allows traffic to and from the internet to be shared across both configured links to ensure one ISP is not excessively overloaded. Auto-Rollover uses a backup link to preserve internet connectivity for the LAN if the main ISP configured on the primary WAN fails for any reason.
+:|wanMode_500End|:
+
+:|wanMode_econa|:
+This page allows user to configure the policies on the two WAN ports for Internet connection.By configuring both WANs, there are two ways for the router to access the internet. Load balancing allows traffic to and from the internet to be shared across both configured links to ensure one ISP is not excessively overloaded. Auto-Rollover uses a backup link to preserve internet connectivity for the LAN if the main ISP configured on the primary WAN fails for any reason.
+:|wanMode_econaEnd|:
+
+:|simCard|:
+This page allows you to unlock the SIM card by entering the SIM PIN 
+:|simCardEnd|:
+
+:|routing|:
+This page allows user to configure different routing modes like NAT, Classical Routing and Transparent.The Routing mode determines how traffic is handled when received on one physical interface. NAT is the most common application for most routers, and allows you to hide internal LAN IP addresses from internet devices. Transparent mode does not perform NAT and lets you bridge traffic between the LAN and WAN.
+:|routingEnd|:
+
+:|routing_octeon|:
+This page allows user to configure different routing modes like NAT or Classical, Transparent and Bridge Routing.The Routing mode determines how traffic is handled when received on one physical interface. NAT or Classical is the most common application for most routers, and allows you to hide internal LAN IP addresses from internet devices. Transparent mode does not perform NAT and lets you bridge traffic between the LAN and WAN.In Bridge Mode traffic between LAN1 and WAN2 is bridged and NAT will be done for WAN1 and rest of the LAN ports.
+:|routing_octeonEnd|:
+
+
+:|ipAliasing|:
+This page displays the configured IP Aliases on WAN interfaces . User can also add, delete and edit the IP Alias also.A single WAN Ethernet port can be accessed via multiple IP addresses by adding a alias to the port. This is done by configuring IP Alias.
+:|ipAliasingEnd|:
+
+:|dmzSettings|:
+The De-Militarized Zone (DMZ) is a network which, when compared to the LAN, has fewer firewall restrictions, by default. This zone can be used to host servers and give public access to them.DMZ setup is similar to the LAN TCP/IP options. The network subnet for the DMZ can be different from the LAN, and firewall/VPN policies can be customized for the DMZ. The DMZ is typically used for network devices that you wish to expose to the internet, such as FTP or mail servers. 
+:|dmzSettingsEnd|:
+
+:|dmzDhcpReservedIPs|:
+This page allows user to configure the reserved IP Addresses for the DHCP Server configuration.In order to ensure certain DMZ devices always receive the same IP address when DHCP is enabled on the DMZ, bind the DMZ device's MAC address to a preferred IP address. This IP address will only be assigned to the matching MAC address. 
+:|dmzDhcpReservedIPsEnd|:
+
+:|dynamicDnsWan1Settings_econa|:
+Dynamic DNS (DDNS) is an Internet service that allow routers with varying public IP addresses to be located using Internet domain names. To use DDNS, you must setup an account with a DDNS provider such as DynDNS, D-Link DDNS, Oray etc.
+:|dynamicDnsWan1Settings_econaEnd|:
+
+:|dynamicDnsWan1Settings_octeon|:
+Dynamic DNS (DDNS) is an Internet service that allow routers with varying public IP addresses to be located using Internet domain names. To use DDNS, you must setup an account with a DDNS provider such as DynDNS, D-Link DDNS, Oray etc.
+:|dynamicDnsWan1Settings_octeonEnd|:
+
+:|dynamicDnsWan2Settings|:
+Dynamic DNS (DDNS) is an Internet service that allow routers with varying public IP addresses to be located using Internet domain names. To use DDNS, you must setup an account with a DDNS provider such as DynDNS, D-Link DDNS, Oray etc.
+:|dynamicDnsWan2SettingsEnd|:
+
+:|dynamicDnsWan3Settings|:
+Dynamic DNS (DDNS) is an Internet service that allow routers with varying public IP addresses to be located using Internet domain names. To use DDNS, you must setup an account with a DDNS provider such as DynDNS, D-Link DDNS, Oray etc.
+:|dynamicDnsWan3SettingsEnd|:
+
+:|bandwidthProfiles|:
+This page shows the list of configured bandwidth profiles. These profiles then can be used with the traffic selectors. 
+:|bandwidthProfilesEnd|:
+
+:|trafficSelectors|:
+This page shows a list of traffic selectors. Traffic selectors are service based rules to which user can attach bandwidth profiles.
+:|trafficSelectorsEnd|:
+
+:|bridgeBandwidthProfiles|:
+	 This page shows the list of configured bridge bandwidth profiles. These profiles then can be used with the bridge traffic selectors.
+  
+	With Bridge bandwidth profiles you can shape and regulate the bridge traffic. This is useful to ensure that low priority users do not monopolize the available Bridge bandwidth for cost-savings or bandwidth-priority-allocation purposes.
+:|bridgeBandwidthProfilesEnd|:
+
+:|bridgeTrafficSelectors|:
+	 This page shows the list of static routes configured on the router. User can also add, delete and edit the configured routes.Use this page to define static routes. Be sure to enter a destination address, subnet mask, gateway and metric foreach configured static route. The Interface dropdown menu will show all available configured wired interfaces on the router as options.
+	Once a bridge bandwidth profile has been created it can then be associated with a traffic flow from the LANPort-1 toDMZ. Bridge traffic selectors are elements like IP addresses or services that require their outbound traffic to be regulated.
+	
+:|bridgeTrafficSelectorsEnd|:
+
+:|bandwidthManagement|:
+This page configure the bandwidth rule on wan interface . 
+:|bandwidthManagementEnd|:
+
+:|staticRoutesAC|:
+This page shows the list of static routes configured on the router. User can also add, delete and edit the configured routes.Use this page to define static routes. Be sure to enter a destination address, subnet mask, gateway and metric for each configured static route. The Interface dropdown menu will show all available configured wired interfaces on the router as options.
+:|staticRoutesACEnd|:
+
+:|sessionLimit|:
+This page shows the list of configured session limiting Profiles.It allows user to limit number of sessions through the device per an IP/range of IP's/interface.
+:|sessionLimitEnd|:
+
+:|sessionLimitStatus|:
+Use this page to monitor the runtime authentication or current sessions that are active on particular session limiting Profile with total Sessions Configured in the Profile with Profile Name and Source.
+:|sessionLimitStatusEnd|:
+
+:|staticRoutes|:
+This page shows the list of static routes configured on the router. User can also add, delete and edit the configured routes.Use this page to define static routes. Be sure to enter a destination address, subnet mask, gateway and metric for each configured static route. The Interface dropdown menu will show all available configured wired interfaces on the router as options.
+:|staticRoutesEnd|:
+
+:|staticRoutesEcona|:
+This page shows the list of static routes configured on the router. User can also add, delete and edit the configured routes.Use this page to define static routes. Be sure to enter a destination address, subnet mask, gateway and metric for each configured static route. The Interface dropdown menu will show all available configured wired interfaces on the router as options.
+:|staticRoutesEconaEnd|:
+
+:|rip|:
+This page allows to configure the RIP (Routing Information Protocol).
+:|ripEnd|:
+
+:|ospf|:
+This page shows the OSPFv2 parameters configured on the router.User can also edit the OSPFv2 configured parameters.
+:|ospfEnd|:
+
+:|ProtocolBinding|:
+This page shows the configured protocol bindings. A user can also add, delete, edit, enable or disable the protocol bindings.Protocol bindings are required when the Load Balancing feature is in use, and are only applicable when two WAN links are configured. This feature lets you assign a service to a particular WAN link to ensure the high priority services are sent to the more reliable or less expensive ISP.
+:|ProtocolBindingEnd|:
+
+:|lanQosPriority|:
+Enabling QoS on LAN is an advanced configuration, which is required only if you expect congestion on the traffic on the LAN ports.
+:|lanQosPriorityEnd|:
+
+:|trustModeSettings|:
+Enabling QoS on LAN is an advanced configuration, which is required only if you expect congestion on the traffic on the LAN ports.
+:|trustModeSettingsEnd|:
+
+:|8021pPriority|:
+Port CoS Mapping enables you to change the priority of the PCP value.Port CoS Mapping enables you to assign the priority to the traffic for the CoS value. 
+:|8021pPriorityEnd|:
+
+:|ipDscpSettings|:
+This page defines the map between the DSCP value in the packet and the associated priority it gets while traveling through the LAN switch.There are four priority values (Lowest, Low, Medium, Highest)that can be choosen from. 
+:|ipDscpSettingsEnd|:
+
+:|portShapingRate|:
+Set the Egress rate for the Ports on the LAN.Changes here affect the cumulative Bandwidth of the traffic that is egressed on the ports of LAN switch. 
+:|portShapingRateEnd|:
+
+:|policyBasedQoS|:
+The QoS Policy allows you to configure the priority of the traffic based on the matching criteria on the LAN.Changes here affect the traffic that is egressed on the ports of LAN switch. Note that a change to the priority can affect the priority of th egress traffic. 
+:|policyBasedQoSEnd|:
+
+:|flowControl|:
+The Flow Based QoS Policy allows you to limit the Bandwidth for a particular service.Changes here affect the traffic of a configured service that is egressed on the ports of LAN switch. 
+:|flowControlEnd|:
+
+:|autoVoIp|:
+Enables the QoS rule for prioritizing.Changes here affect the SIP and H.323 traffic priority in the LAN. 
+:|autoVoIpEnd|:
+
+:|queueScheduler|:
+The scheduling algorithm for the LAN switch can be configured here. The supported algorithms are strict and weighted round robin only.The device will be programmed to handle the traffic using the algorithm configured here. 
+:|queueSchedulerEnd|
+
+:|queueManagement|:
+This page shows the current queue management algorithm that is used in the LAN switch.We currently do not support configuration of queue management algorithm. 
+:|queueManagementEnd|:
+
+:|optionQoS|:
+Bandwidth management controls the rate and priority of the traffic on your Internet link, allowing you to effeciently utilize the Internet bandwidth.You can set the WAN configuration, add/modify bandwidth profile here. 
+:|optionQoSEnd|:
+
+:|optionTrafficShaping|:
+After you create a bandwidth profile, you can associate it with a traffic flow.The table lists the Traffic Selectors for this device and allows several operations on the Traffic Selectors. 
+:|optionTrafficShapingEnd|:
+
+:|cosDscpMarking|:
+Remarking CoS to DSCP is an advanced QoS configuration, where the Layer 2 quality of service field is translated to a Layer 3 QoS field in the packet, so that upstream routers can make a QoS decision based on the DSCP field set in the packet.Once you enable CoS to DSCP marking by choosing the check box, you can choose the appropriate value of the DSCP for a given CoS value. 
+:|cosDscpMarkingEnd|:
+
+:|ipMode|:
+This page allows user to configure the IP protocol version to be used on the router.In order to support IPv6 on the LAN, you must set the router to be in IPv4 / IPv6 mode. This mode will allow IPv4 nodes to communicate with IPv6 devices through this router. 
+:|ipModeEnd|:
+
+:|ipv6Wan1Settings|:
+This page allows user to IPv6 related WAN1 configurations.This router can have a static IPv6 address or receive connection information when configured as a DHCPv6 client or connect to ISP using username and password (PPPoE). The DHCPv6 client on the gateway can be either stateless or stateful. If a stateful client is selected the gateway will connect to the ISP's DHCPv6 server for a leased address. For stateless DHCP there need not be a DHCPv6 server available at the ISP, rather ICMPv6 discover messages will originate from this gateway and will be used for auto configuration. 
+:|ipv6Wan1SettingsEnd|:
+
+:|ipv6Wan2Settings|:
+This page allows user to IPv6 related WAN2 configurations.This router can have a static IPv6 address or receive connection information when configured as a DHCPv6 client or connect to ISP using username and password(PPPoE). The DHCPv6 client on the gateway can be either stateless or stateful. If a stateful client is selected the gateway will connect to the ISP's DHCPv6 server for a leased address. For stateless DHCP there need not be a DHCPv6 server available at the ISP, rather ICMPv6 discover messages will originate from this gateway and will be used for auto configuration. 
+:|ipv6Wan2SettingsEnd|:
+
+:|ipv6StaticRouting|:
+This page shows a list of IPv6 static routes added. A user can add, delete and edit the routes also.
+:|ipv6StaticRoutingEnd|:
+
+:|ospfv3|:
+This page shows the OSPFv3 parameters configured on the router.User can also edit the OSPFv3 configured parameters.OSPF(Open Shortest Path First) version 3 is a routing protocol for IPv6 Networks (OSPFv3) described in RFC2740.OSPF is an IGP (Interior Gateway Protocol) used to distribute routing information within a single Autonomous System. Compared with RIP, OSPF can provide scalable network support and faster convergence times.OSPF can be used to design and build large and complicated networks.
+:|ospfv3End|:
+
+:|6to4Tunneling|:
+This page allows user to enable/disable the 6 to 4 tunneling.With this option enabled IPv4 address information is embedded in IPv6 addresses on the LAN. This option is very common in network that use both IPv4 and IPv6 nodes. 
+:|6to4TunnelingEnd|:
+
+:|isatapTunnels|:
+This page shows the list of available ISATAP tunnels. A user can also add, delete and edit ISATAP tunnels from this page.ISATAP is available to provide connectivity between IPv6 nodes within the LAN, as it treats the IPv4 network as a single IPv6 local link. 
+:|isatapTunnelsEnd|:
+
+:|ipv6LanSettings|:
+This page allows user to IPv6 related LAN configurations.The IPv6 address is 128 bits, with a default 64 bit prefix that defines the network and is common among all LAN hosts. Changes here affect all devices connected to the router's LAN switch. Note that a change to the defaul LAN IP address will require all LAN hosts to be in the same network prefix and use the new address to access this GUI. 
+:|ipv6LanSettingsEnd|:
+
+:|ipv6AddressPools|:
+This Page allow user to create/add/delete/edit Address Pools List for IPv6 configuration.
+:|ipv6AddressPoolsEnd|:
+
+:|ipv6PrefixLength|:
+This Page allow user to create/add/delete/edit Prefix Delegaion Pools List for IPv6 configuration.
+:|ipv6PrefixLengthEnd|:
+
+:|routerAdvertisement|:
+This page allows user to configure Router Advertisement Daemon (RADVD) related configurations.Router Advertisements are analogous to IPv4 DHCP assignments for LAN clients. With this the router will perform stateless auto configuration of LAN nodes by assigning an IP address and supporting network information to devices that are configured to accept such details. By configuring the Router Advertisement Daemon on this router, the device will listen on the LAN for router solicitations and respond to these LAN hosts with router advertisements. 
+:|routerAdvertisementEnd|:
+
+:|advertisementPrefixes|:
+This page allows user to configure IPv6 prefixes which will be used while advertisement.The router advertisements configured with advertisement prefixes allow this router to inform hosts how to perform stateless address auto configuration. Router advertisements contain a list of subnet prefixes that allow the router to determine neighbors and whether the host is on the same link as the router.
+:|advertisementPrefixesEnd|:
+
+:|ipv6TunnelStatus|:
+This page shows the status of IPv6 tunnels.
+:|ipv6TunnelStatusEnd|:

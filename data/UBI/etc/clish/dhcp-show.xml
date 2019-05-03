@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+    <!--===================================================-->
+<COMMAND name="show net lan dhcp" help="."/>
+<COMMAND name="show net lan dhcp reserved_ip" help="."/>
+<COMMAND name="show net lan dhcp reserved_ip setup"
+	     help="Show list of DHCP Reserved Addresses.">
+	<DETAIL>
+This command shows the list of DHCP Reserved Addresses in the system.
+
+&lt;IP Address&gt;: The IP address reserved for a particular device. This should not be in the DHCP range defined in the DHCP Setup.
+&lt;MAC Address&gt;: The MAC Address of the LAN device is the unique identifier that binds the desired IP address to the LAN side device. 
+	</DETAIL>
+        <ACTION>lua clishCmdExec (dhcpReservedIPSetupGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net lan dhcp leased_clients" help="."/>
+    <COMMAND name="show net lan dhcp leased_clients list"
+	     help="Show list of Available DHCP Leased Clients.">
+	<DETAIL>
+This command shows the list of Available DHCP Leased Clients in the system.
+
+&lt;Device Name&gt;:The hostname for Windows nodes is displayed; for other operating systems the device name will display as “unknown”.
+&lt;IP Address&gt;:DHCP leased IP address assigned to the LAN node.
+&lt;MAC Address&gt;:MAC address identifying the LAN node that has been granted a DHCP lease.
+       </DETAIL>
+       <ACTION>lua clishCmdExec (dhcpLeasedListGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+</CLISH_MODULE> 

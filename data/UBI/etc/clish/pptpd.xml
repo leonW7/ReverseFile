@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="pptp-server-config" prompt="pptp-server-config[policy]> "> 
+    <COMMAND name="save" help="Save pptp server configuration changes.">
+        <ACTION>lua clishCfgObjExec("pptpd")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back pptp server configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+             help="Save pptp server configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("pptpd")</ACTION>
+    </COMMAND>
+    <COMMAND name="enable_v4"
+             help="enable/disable PPTP server in IPv4 mode only.">
+     <PARAM name="pptpserver_enable_v4" 
+            help="enable/disable PPTP server in IPv4 mode only."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.pptpdEnable","${pptpserver_enable_v4}")
+         </ACTION>
+     </COMMAND>
+
+    <COMMAND name="enable_v6"
+        help="enable/disable PPTP server in IPv4/IPv6 mode.">
+     <PARAM name="pptpserver_enable_v6" 
+            help="enable/disable PPTP server in IPv4/IPv6 mode."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.pptpd6Enable","${pptpserver_enable_v6}")
+         </ACTION>
+     </COMMAND>
+
+    <COMMAND name="Routing_Mode"
+             help="Select Routing mode">
+     <PARAM name="nat_enable" 
+            help="Select PPTP NAT routingmode"
+            ptype="ROUTE_MODE"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.pptpRoutingMode","${nat_enable}")
+         </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="start_address"
+             help="PPTP server starting IP address.">
+     <PARAM name="pptpserver_startaddress" 
+            help="PPTP server starting IP address."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.startIPAddress","${pptpserver_startaddress}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="end_address"
+             help="PPTP server ending IP address.">
+     <PARAM name="pptpserver_endaddress" 
+            help="PPTP server ending IP address."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.endIPAddress","${pptpserver_endaddress}")
+         </ACTION>
+     </COMMAND>
+
+    <COMMAND name="ipv6_prefix"
+             help="PPTP server IPv6 Prefix">
+     <PARAM name="pptpserver_ipv6_prefix" 
+            help="PPTP Server IPv6 prefix."
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.pptpdIpv6PrefixInit","${pptpserver_ipv6_prefix}")
+         </ACTION>
+     </COMMAND>
+
+       <COMMAND name="ipv6_prefix_length"
+             help="PPTP server IPv6 Prefix length">
+     <PARAM name="ipv6_prefix_length" 
+            help="PPTP Server IPv6 prefix length"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.pptpdIpv6PrefixLenghtInit","${ipv6_prefix_length}")
+         </ACTION>
+     </COMMAND>
+   
+    <COMMAND name="Authentication_type"
+             help="Authentication type">
+     <PARAM name="auth_type" 
+            help="PPTP Server IPv6 prefix."
+            ptype="AUTHENTICATION_TYPE"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.AuthenticationType","${auth_type}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="pap_enable"
+             help="PPTP server PAP authentication ">
+     <PARAM name="pap_enable" 
+            help="PPTP server PAP."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.PapEnable","${pap_enable}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="chap_enable"
+             help="PPTP server CHAP authentication ">
+     <PARAM name="chap_enable" 
+            help="PPTP server CHAP"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.ChapEnable","${chap_enable}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="mschap_enable"
+             help="PPTP server MSCHAP authentication ">
+     <PARAM name="mschap_enable" 
+            help="PPTP server MSCHAP"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.MSChapEnable","${mschap_enable}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="mschapv2_enable"
+             help="PPTP server MSCHAPV2 authentication ">
+     <PARAM name="mschapv2_enable" 
+            help="PPTP server MSCHAPV2"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.MSChapv2Enable","${mschapv2_enable}")
+         </ACTION>
+     </COMMAND>
+
+      <COMMAND name="Mppe40Enable"
+             help="PPTP server Mppe40  ">
+     <PARAM name="mppe40_enable" 
+            help="PPTP server Mppe40"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.Mppe40Enable","${mppe40_enable}")
+         </ACTION>
+    </COMMAND>
+
+      <COMMAND name="Mppe128Enable"
+             help="PPTP server Mppe128  ">
+     <PARAM name="mppe128_enable" 
+            help="PPTP server Mppe128"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.Mppe128Enable","${mppe128_enable}")
+         </ACTION>
+    </COMMAND>
+
+      <COMMAND name="MppeStatefulEnable"
+             help="PPTP server MppeStateful">
+     <PARAM name="mppe_statefull_enable" 
+            help="PPTP server MppeStatefulEnable"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.MppeStatefullEnable","${mppe_statefull_enable}")
+         </ACTION>
+    </COMMAND>
+
+     <COMMAND name="UserTimeOut"
+             help="PPTP server User TimeOut">
+     <PARAM name="user_timeout" 
+            help="PPTP server UserTimeOut"
+            ptype="PPTP_USER_TIMEOUT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.UserTimeOut","${user_timeout}")
+         </ACTION>
+     </COMMAND>
+
+     <COMMAND name="Enable_Netbios"
+             help="Enable the Netbios">
+     <PARAM name="enable_netbios" 
+            help="PPTP server UserTimeOut"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.netbiosEnable","${enable_netbios}")
+         </ACTION>
+     </COMMAND>
+
+     <COMMAND name="Primary_Wins_Server"
+             help="Enter primary Wins server Ip Address">
+     <PARAM name="Primary_wins_server" 
+            help="Primary wins server ip address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.primWinsServerIp","${Primary_wins_server}")             </ACTION>
+     </COMMAND>
+
+     <COMMAND name="Secondary_Wins_Server"
+             help="Secondary Wins server ip address">
+     <PARAM name="Secondary_wins_server" 
+            help="Secondary Wins server ip address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("pptpd", "pptpServerIPRange.secWinsServerIp","${Secondary_wins_server}")
+         </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<COMMAND name="vpn pptp" help="vpn policy mode."/>
+<COMMAND name="vpn pptp server" help="vpn policy mode."/>
+    <COMMAND name="vpn pptp server configure"
+             help="pptp server configuration mode"
+             view="pptp-server-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("pptpd", 
+                                       pptpServerCfgInit, 
+                                       pptpServerCfgSave,
+                                       pptpServerInputVal)
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn pptp" help="show pptp server details"/>
+<!--=======================================================-->
+<COMMAND name="show vpn pptp server" help="show pptp server details"/>
+<!--=======================================================-->
+    <COMMAND name="show vpn pptp server setup"
+	     help="Display pptp server setup.">
+	     <ACTION>lua clishCmdExec (pptpdtGet)
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show vpn pptp server connections"
+	     help="Display pptp server stats.">
+	     <ACTION>lua clishCmdExec (pptpdtclientGet)
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

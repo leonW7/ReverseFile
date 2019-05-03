@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# vlanInit - post initialization script for vlan
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+/pfrm2.0/bin/sqlite3 /tmp/system.db << SQL_ENTR_TAG_1
+  BEGIN;
+  insert into dbUpdateRegisterTbl values ("UMI_COMP_PLATFORM",1,1,"ethernet", 0, 1,1,1);
+  insert into dbUpdateRegisterProgram values ('/pfrm2.0/bin/vlanDBConfig',1,1,'ethernet', 0, 1,1,1);
+  insert into dbUpdateRegisterProgram values ('/pfrm2.0/bin/vlanDBConfig',1,1,'dot11VAP', 0, 1,1,1);
+  COMMIT;
+SQL_ENTR_TAG_1
+

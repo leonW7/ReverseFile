@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# For adding the default ipv6 prefix of eth1 into the db
+WAN1_IP6ADDR=`ifconfig eth1| grep inet6 | awk '{print $3}' | cut -d '/' -f1`
+WAN1_PREFIX_LEN=`ifconfig eth1| grep inet6 | awk '{print $3}' | cut -d '/' -f2`
+
+# For adding the default ipv6 prefix of eth2 into the db
+WAN2_IP6ADDR=`ifconfig eth0| grep inet6 | awk '{print $3}' | cut -d '/' -f1`
+WAN2_PREFIX_LEN=`ifconfig eth0| grep inet6 | awk '{print $3}' | cut -d '/' -f2`
+
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into ipAddressTable values ('WAN1',10,0,'$WAN1_IP6ADDR',NULL,'$WAN1_PREFIX_LEN',NULL); 
+insert into ipAddressTable values ('WAN2',10,0,'$WAN2_IP6ADDR',NULL,'$WAN2_PREFIX_LEN',NULL);
+COMMIT;
+SQL_ENTR_TAG_1
+
+# DHCP over IPsec: Making a proc entry for LAN name
+echo "bdg1" > /proc/sys/net/ipsec4/landev_name
+
+#we can add below if we have any new requirement which should be done after all inits

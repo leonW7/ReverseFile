@@ -1,0 +1,215 @@
+<?lua
+      	PAGE_HELP = "omniSSL"
+	PAGE_HELP_SECTION = "omniSslPackage"
+
+        local clientURL,clientOS,is_64BIT = 0
+        local client_openvpn_uninstall_URL
+        local statusMessage
+        local ismobile = 0 
+        local DLINK_HOSTED_SERVER_IP = "mydsr.dlink.com.tw/OmniSSL/"
+        local ua = os.getenv("HTTP_USER_AGENT")
+
+ -- To detect mobile from browser string
+       local strings={"alcatel","amoi","android","avantgo","blackberry","benq","cell","cricket","docomo","elaine","htc","iemobile","iphone","ipad","ipaq","ipod","j2me","java","midp","mini","mmp","mobi","motorola","nec","nokia","palm","panasonic","philips","phone","sagem","sharp","sie","smartphone","sony","symbian","t-mobile","telus","up.browser","up.link","vodafone","wap","webos","wireless","xda","xoom","zte"}
+
+       if (ua) then
+           ua=string.lower(ua)
+           for k,v in pairs(strings) do
+              for w in string.gmatch (ua, "%w+") do
+                  if (w == v) then
+                      ismobile = 1
+                      clientOS = v
+                      break
+                  end
+               end
+           end
+           if((string.find(ua, "x64")) or (string.find(ua, "wow64"))) then
+               is_64BIT = 1
+           else
+               is_64BIT = 0
+           end
+           -- To detect clientOS from browser string
+           if((string.find(ua, "machintosh")) or (string.find(ua, "mac"))) then
+               if(clientOS ~= "ipad") then
+                   clientOS = "macos"
+                   if(is_64BIT == tonumber("1")) then
+                       clientURL = "https://"..DLINK_HOSTED_SERVER_IP.."/Tunnelblick_Installer.dmg" 
+                   else
+                       clientURL = "https://"..DLINK_HOSTED_SERVER_IP.."/Tunnelblick_Installer.dmg"
+                   end
+               client_openvpn_uninstall_URL = "https://"..DLINK_HOSTED_SERVER_IP.."/Tunnelblick_Uninstaller.dmg"
+              end
+           elseif(string.find(ua, "linux")) then
+               if(clientOS ~= "android") then
+                   clientOS="linux"
+               end
+               if(is_64BIT == tonumber("1")) then
+                   clientURL = "https://"..DLINK_HOSTED_SERVER_IP.."/openvpn_2.3.2-7~bpo70+2_i386.deb" 
+               else
+                   clientURL = "https://"..DLINK_HOSTED_SERVER_IP.."/openvpn_2.3.2-7~bpo70+2_i386.deb"                         
+		end
+           elseif(string.find(ua, "windows nt 6")) then
+               clientOS="windows"
+               if(is_64BIT == tonumber("1")) then
+                   clientURL = "https://"..DLINK_HOSTED_SERVER_IP.."openvpn-install-win64.exe" 
+               else
+                   clientURL = "https://"..DLINK_HOSTED_SERVER_IP.."/openvpn-install-win32.exe"                                 
+               end
+           elseif((string.find(ua, "windows nt 5.1")) or (string.find(ua, "windows nt 5.2")) ) then
+               clientOS="windows"
+               if(is_64BIT == tonumber("1")) then
+                   clientURL = "https://"..DLINK_HOSTED_SERVER_IP.."/openvpn-install-winXP64.exe" 
+               else
+                   clientURL = "https://"..DLINK_HOSTED_SERVER_IP.."/openvpn-install-winXP32.exe"                                 
+               end
+           end
+       end
+       cgilua.header("Content-Type","text/html; charset=UTF-8")
+?>
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<!--
+		Copyright (c) 2014 TeamF1, Inc. (www.TeamF1.com)
+		All rights reserved.
+		-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+
+	</head>
+
+	<body>
+	
+		<!-- Section for Pop up dialog ends -->
+		<script>
+			/*****
+			 For Main Menu Highlight.
+			 *****/
+			function mmSel(mmSelId) {
+				var identity = document.getElementById(mmSelId);
+				identity.id = "Selected";
+			}
+		</script>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				 <td class="header" valign="top" align="center">
+				<?lua web.includeMenu("OmniSSLheader.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+  				<div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+					<h1>OmniSSL Client Portal</h1>
+					<div class="midArea">
+				<form name="tf1_frmOmniSslInstall"  method="post" id="tf1_frmOmniSslInstall" action="platform.cgi">
+ 
+				<input type="hidden" name="thispage" id="thispage" value="omniSslPackage.html">
+							<div class="configRow">
+                                      <?lua
+                                          if((clientOS == "windows") or (clientOS == "macos"))then ?>
+								<label>OmniSSL Client Package</label>
+                                       <?lua end ?>
+								<div>
+								<!--	<input type="submit" value="Download" class="btnSubmit" onclick="window.open('http://10.10.8.32/openvpn-install-2.3.6-I601-i686.exe','_self')"> -->
+								<?lua if ((clientOS == "windows") or (clientOS == "macos")) then ?>                   
+<input type="button" value="Download" class="btnSubmit" onclick="window.open('$| clientURL |$')" name="button.download.omniSslPacckage.omniSslPackage">
+                                                                <?lua elseif((clientOS ~= "linux") and (clientOS ~= "android") and (clientOS ~= "ipad") and (clientOS ~= "ipod") and (clientOS ~= "iphone")) then ?>
+                                                    <p> OmniSSL support is not available for this OS </p>
+                                                                <?lua end ?>
+								</div>
+							</div>
+							<div class="break" >
+								&nbsp;
+							</div>
+                                                        <div class="configRow">
+                                                        <?lua if(clientOS == "macos")then ?>
+							<label>OmniSSL Uninstall Package</label>
+						      <div>
+						   <input type="button" value="Download" class="btnSubmit" onclick="window.open('$| client_openvpn_uninstall_URL |$')" name="button.download.omniSslPacckage.omniSslPackage">
+                                                                                                                                                                           </div>
+                                                 <?lua end ?>
+						</div>
+						<div class="break" >
+							&nbsp;
+						</div>
+                                                       </form>
+							<div class="configRow">
+								<label>OmniSSL Client Configuration</label>
+								 
+			
+                                  <?lua
+                                      if(clientOS == "windows") then
+                                  ?> 
+ 				<form name="tf1_omniSslClientConfig" id="tf1_omniSslClientConfig"  action="platform.cgi?action=ovpnWinClientConfig" method="post">
+                                       <input type="hidden" name="thispage" id="thispage" value="omniSslPackage.html">
+               	<input type="submit" class="btnSubmit" title="" value="Download" id="btsave">
+                                    </form>
+                                  <?lua
+                                         elseif(clientOS == "linux") then
+                                  ?>
+                                         	<form name="tf1_omniSslClientConfig" id="tf1_omniSslClientConfig"  action="platform.cgi?action=ovpnLinuxClientConfig" method="post">
+                                       <input type="hidden" name="thispage" id="thispage" value="omniSslPackage.html">
+               	<input type="submit" class="btnSubmit" title="" value="Download" id="btsave">
+                                    </form>
+                                  <?lua
+                                      elseif(clientOS == "android") then
+                                  ?>
+                                         	<form name="tf1_omniSslClientConfig" id="tf1_omniSslClientConfig"  action="platform.cgi?action=ovpnAndroidClientConfig" method="post">
+                                       <input type="hidden" name="thispage" id="thispage" value="omniSslPackage.html">
+               	<input type="submit" class="btnSubmit" title="" value="Download" id="btsave">
+                                    </form>
+                                   <?lua
+                                      elseif((clientOS == "ipad") or (clientOS ~= "ipod") or (clientOS ~= "iphone")) then
+                                  ?>
+                                         	<form name="tf1_omniSslClientConfig" id="tf1_omniSslClientConfig"  action="platform.cgi?action=ovpniPadClientConfig" method="post">
+                                       <input type="hidden" name="thispage" id="thispage" value="omniSslPackage.html">
+               	<input type="submit" class="btnSubmit" title="" value="Download" id="btsave">
+                                    </form>
+                                 <?lua
+                                      elseif(clientOS == "macos") then
+                                  ?>
+                                         	<form name="tf1_omniSslClientConfig" id="tf1_omniSslClientConfig"  action="platform.cgi?action=ovpnMacOsClientConfig" method="post">
+                                       <input type="hidden" name="thispage" id="thispage" value="omniSslPackage.html">
+               	<input type="submit" class="btnSubmit" title="" value="Download" id="btsave">
+                                    </form>
+                                    <?lua
+                                         else
+                                    ?>
+<p> OmniSSL support is not available for this OS </p>
+                                  <?lua end ?>  
+                                                        </div>
+ 
+							<div class="break" >
+								&nbsp;
+							</div>							
+						
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			mmSel("mainMenu2");
+		</script>
+	</body>
+
+</html>
+

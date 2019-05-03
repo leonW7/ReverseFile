@@ -1,0 +1,398 @@
+<?lua
+require "teamf1lualib/bl_interfaces"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/wirelessStatistics_bl"
+
+PAGE_HELP = "status"
+if( UNIT_NAME == "DSR-1000" ) then
+    PAGE_HELP_SECTION = "interfaces_1000"
+elseif ( UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+    PAGE_HELP_SECTION = "interfaces_1000N"
+elseif ( UNIT_NAME == "DSR-500" ) then
+    PAGE_HELP_SECTION = "interfaces_500"
+elseif ( UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then
+    PAGE_HELP_SECTION = "interfaces_500N"
+else
+    if( UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-250N" ) then
+        PAGE_HELP_SECTION = "interfaces_EWL"
+    else    
+        PAGE_HELP_SECTION = "interfaces_Econa"
+    end
+end
+
+
+local statistics = require("com.teamf1.bl.traffic.statistics")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local wirelessStats = require("com.teamf1.bl.wireless.statistics")
+
+local vlanCookie = "vlan"
+local lanCookie  = "LAN"
+    errorCode, cookie, lanStatistics = statistics.lanInfoGet (lanCookie)
+    wan1Cookie = "WAN1"
+    errorCode, cookie, wan1Statistics = statistics.lanInfoGet (wan1Cookie)
+    wan2Cookie = "WAN2"
+    errorCode, cookie, wan2Statistics = statistics.lanInfoGet (wan2Cookie)
+    if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or 
+       PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+    wan3Cookie = "WAN3"
+    errorCode, cookie, wan3Statistics = statistics.lanInfoGet (wan3Cookie)
+    end
+    if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or 
+       UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or
+       PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then
+        returnCode, wirelessStatistics = 
+        wirelessStats.wirelessStatisticsSectionGetAll ()  
+    end
+    errorCode, cookie, icmpReceived, activeVPnTunnels, availableVlans,
+    activeInterfaces = statistics.activeInfoGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "30029,11515,30014,30015,30016,30017,10777,10702,30018,11175,11880,10823,10827,13272,12467,13653,10664,11885,10433,13143,12636,13136,12634,10075,10605,11137,10091,10345,10078"
+?> 
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgInfo">
+                    <p>Status Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>
+                    <div class="FL2">
+                        <p class="hint"> $| helpHintText |$</p>
+                    </div>
+                    <h1>$| LANG_LOCALE['30029'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name action="cgi-action.html">
+                                <h2>$| LANG_LOCALE['11515'] |$</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData3">
+                                            <thead>
+                                                <tr>
+                                                <?lua
+												local wan1DispName
+												local wan2DispName
+												if(UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+                                                    wan1DispName = LANG_LOCALE['30015']
+													wan2DispName = LANG_LOCALE['30017']
+												else
+													wan1DispName = LANG_LOCALE['30015']
+													wan2DispName = LANG_LOCALE['30017']
+												end
+ ?>
+                                                    <th>$| LANG_LOCALE['10702'] |$</th>
+                                                    <th>$| LANG_LOCALE['11515'] |$</th>
+                                                    <th>$|wan1DispName|$</th>
+                                                    <th>$|wan2DispName|$ / $| LANG_LOCALE['10777'] |$</th>
+                                                <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                                    <th>$| LANG_LOCALE['30018'] |$</th>
+                                                <?lua end?>
+                                                </tr>
+                                            </thead>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['11175'] |$</td>
+                                                <td> $| lanStatistics["rxPackets"] or '' |$ </td>
+                                                <td> $| wan1Statistics["rxPackets"] or '' |$ </td>
+                                                <td> $| wan2Statistics["rxPackets"] or '' |$ </td>
+                                                <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                                 <td> $| wan3Statistics["rxPackets"] or '' |$ </td>
+                                                <?lua end?>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['11880'] |$</td>
+                                                <td> $| lanStatistics["txPackets"] or '' |$ </td>
+                                                <td> $| wan1Statistics["txPackets"] or '' |$ </td>
+                                                <td> $| wan2Statistics["txPackets"] or '' |$ </td>
+                                                <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                                <td> $| wan3Statistics["txPackets"] or '' |$ </td>
+                                                <?lua end?>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['10823'] |$</td>
+                                                <td> $| lanStatistics["rxPacketsDrop"] or '' |$ </td>
+                                                <td> $| wan1Statistics["rxPacketsDrop"] or '' |$ </td>
+                                                <td> $| wan2Statistics["rxPacketsDrop"] or '' |$ </td>
+                                                <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+						<td> $| wan3Statistics["rxPacketsDrop"] or '' |$ </td>
+                                                <?lua end?>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['10827'] |$</td>
+                                                <td> $| lanStatistics["txPacketsDrop"] or '' |$  </td>
+                                                <td> $| wan1Statistics["txPacketsDrop"] or '' |$ </td>
+                                                <td> $| wan2Statistics["txPacketsDrop"] or '' |$  </td>
+                                                <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                                <td> $| wan3Statistics["txPacketsDrop"] or '' |$  </td> 
+                                                <?lua end?>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['13272'] |$</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                            <thead>
+                                                <tr>
+                                                    <th>$| LANG_LOCALE['12467'] |$</th>
+                                                    <th>$| LANG_LOCALE['11175'] |$</th>
+                                                    <th>$| LANG_LOCALE['11880'] |$</th>
+                                                    <th>$| LANG_LOCALE['10823'] |$</th>
+                                                    <th>$| LANG_LOCALE['10827'] |$</th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            returnCode, cookie, vlanInterfaces = statistics.vlanStatisticsGet (vlanCookie)
+                                            if (vlanInterfaces ~= nil and #vlanInterfaces ~= 0) then
+                                                for k,v in pairs (vlanInterfaces) do
+                                                    if (v["networkInterface.interfaceName"] ~= "bdg1") then
+                                                        interface1 = v["networkInterface.interfaceName"]
+                                                        errorFlag, status, intStatsRow = statistics.vlanStatisticsGetNext ('',interface1)
+                                                        if (intStatsRow == nil) then
+                                                            intStatsRow = {}
+                                                        end
+                                            ?>
+                                            <tr class="gradeA">
+                                                <td> $| v["networkInterface.LogicalIfName"] or '' |$ </td>
+                                                <td> $|
+                                                    intStatsRow["interfaceStats.rx_packets"]
+                                                    or "0" |$ </td>
+                                                <td> $| intStatsRow["interfaceStats.tx_packets"] or "0" |$ </td>
+                                                <td> $| intStatsRow["interfaceStats.rx_dropped"] or "0" |$ </td>
+                                                <td> $| intStatsRow["interfaceStats.tx_dropped"] or "0" |$ </td>
+                                            </tr>
+                                            <?lua
+                                                    end
+                                                 end
+                                             end
+                                            ?>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- Table 2 Started -->
+                                <div class="break2">
+                                    &nbsp;
+                                </div>
+                                <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then?>
+                                <h2>$| LANG_LOCALE['13653'] |$</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData2">
+                                            <thead>
+                                                <tr>
+                                                    <th>$| LANG_LOCALE['10664'] |$</th>
+                                                    <th>$| LANG_LOCALE['11885'] |$</th>
+                                                    <th>$| LANG_LOCALE['10433'] |$</th>
+                                                </tr>
+                                            </thead>
+                                            <?lua 
+                                                     i = 0
+                                                     local TR_PACKETS = 0
+                                                     local TR_BYTES   = 0
+                                                     local RCV_PACKETS = 0
+                                                     local RCV_BYTES  = 0
+                                                     local TR_DROP_PACKETS = 0
+                                                     local TR_DROP_BYTES = 0
+                                                     local RCV_DROP_PACKETS = 0
+                                                     local RCV_DROP_BYTES = 0
+                                                     local TR_ERR_PACKETS = 0
+                                                     local TR_ERR_BYTES = "N/A"
+                                                     local RCV_ERR_PACKETS = 0
+                                                     local RCV_ERR_BYTES = "N/A"
+                                                     for k,v in pairs(wirelessStatistics) do
+                                                         i = i+1
+                                                         TR_PACKETS = 
+                                                            TR_PACKETS + tonumber(wirelessStatistics[i]["tx_packets"])
+                                                         TR_BYTES = 
+                                                            TR_BYTES + tonumber(wirelessStatistics[i]["tx_bytes"])
+                                                         RCV_PACKETS = 
+                                                            RCV_PACKETS + tonumber(wirelessStatistics[i]["rx_packets"])
+                                                         RCV_BYTES = 
+                                                            RCV_BYTES + tonumber(wirelessStatistics[i]["rx_bytes"])
+                                                         TR_DROP_PACKETS = 
+                                                            TR_DROP_PACKETS + tonumber(wirelessStatistics[i]["tx_dropped"])
+                                                         TR_ERR_PACKETS = 
+                                                            TR_ERR_PACKETS + tonumber(wirelessStatistics[i]["tx_errors"])
+                                                         RCV_DROP_PACKETS = 
+                                                            RCV_DROP_PACKETS + tonumber(wirelessStatistics[i]["rx_dropped"])
+                                                         RCV_ERR_PACKETS = 
+                                                            RCV_ERR_PACKETS + tonumber(wirelessStatistics[i]["rx_errors"])
+                                                         TR_DROP_BYTES = 
+                                                            TR_DROP_BYTES + tonumber(wirelessStatistics[i]["tx_dropped"])
+                                                         RCV_DROP_BYTES = 
+                                                            RCV_DROP_BYTES + tonumber(wirelessStatistics[i]["rx_dropped"])
+                                                         
+                                                     end   
+                                            ?>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['13143'] |$</td>
+                                                <td> $| TR_PACKETS or '' |$ </td>
+                                                <td> $| TR_BYTES or '' |$ </td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['12636'] |$</td>
+                                                <td> $| RCV_PACKETS or '' |$ </td>
+                                                <td> $| RCV_BYTES or '' |$ </td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['13136'] |$</td>
+                                                <td> $| TR_DROP_PACKETS or '' |$ </td>
+                                                <td> $| TR_DROP_BYTES or '' |$ </td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['12634'] |$</td>
+                                                <td> $| RCV_DROP_PACKETS or '' |$ </td>
+                                                <td> $| RCV_DROP_BYTES or '' |$ </td>
+                                            </tr>
+			<?lua if(PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then ?>
+                                            <tr class="gradeA">
+                                                <td> Transmit Errors </td>
+                                                <td> $| TR_ERR_PACKETS or '' |$ </td>
+                                                <td> $| TR_ERR_BYTES or '' |$ </td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td> Receive Errors </td>
+                                                <td> $| RCV_ERR_PACKETS or '' |$ </td>
+                                                <td> $| RCV_ERR_BYTES or '' |$ </td>
+                                            </tr>
+			<?lua end ?>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="break2">
+                                    &nbsp;
+                                </div>
+                                 <?lua end?>
+                                <h2>$| LANG_LOCALE['10075'] |$</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData4">
+                                            <thead>
+                                                <tr>
+                                                    <th>$| LANG_LOCALE['10702'] |$</th>
+                                                    <th>$| LANG_LOCALE['10605'] |$</th>
+                                                </tr>
+                                            </thead>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['11137'] |$</td>
+                                                <td> $| icmpReceived or "0" |$ </td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['10091'] |$</td>
+                                                <td> $| activeVpnTunnels or "0" |$ </td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['10345'] |$</td>
+                                                <td> $| availableVlans or "0" |$ </td>
+                                            </tr>
+                                            <tr class="gradeA">
+                                                <td>$| LANG_LOCALE['10078'] |$</td>
+                                                <td> $| activeInterfaces or "0" |$ </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+            });
+        </script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData2').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+                oTable = $('#recordsData3').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+                oTable = $('#recordsData4').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+</html>
+<?lua ?>
+

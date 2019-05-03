@@ -1,0 +1,25 @@
+#!/bin/sh
+
+SERIP="$1";
+USERNAME="$2";
+PASSWORD="$3";
+IDLETIME="$4"
+MPPE="$5"
+NETWORK=$6
+NETMASK=$7
+
+echo "Establishing pptp connection... "
+
+MPPESUPPORT="require-mppe"
+
+if [ $5 -ne 0 ]; then
+/pfrm2.0/bin/pppd updetach lcp-echo-failure 10 lcp-echo-interval 5 user $USERNAME password $PASSWORD mtu 1460 linkname 100 unit 100 idle $IDLETIME usepeerdns plugin "pptp.so" pptp_server $SERIP $MPPESUPPORT refuse-eap nodeflate nobsdcomp
+else
+/pfrm2.0/bin/pppd updetach lcp-echo-failure 10 lcp-echo-interval 5 user $USERNAME password $PASSWORD mtu 1460 linkname 100 unit 100 idle $IDLETIME usepeerdns plugin "pptp.so" pptp_server $SERIP refuse-eap nodeflate nobsdcomp
+fi
+
+if [ -n "$NETWORK" -a "$NETMASK" ]; then
+if [ -e "/var/run/ppp100.pid" ]; then
+/sbin/route add -net $NETWORK/$NETMASK dev ppp100
+fi
+fi

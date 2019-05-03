@@ -1,0 +1,277 @@
+<?lua
+require "teamf1lualib/profileConfig_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "wireless"
+    if (UNIT_NAME == "DSR-1000AC") then
+        PAGE_HELP_SECTION = "profiles_1000ac"
+    elseif (UNIT_NAME == "DSR-500AC") then
+        PAGE_HELP_SECTION = "profiles_500ac"
+    else
+        PAGE_HELP_SECTION = "profiles"
+    end
+	
+
+local guiProfile = require("com.teamf1.bl.wireless.profile")
+local errorMap     = require ("com.teamf1.core.errorMap")
+local returnCodes  = require ("com.teamf1.core.returnCodes")
+
+local profileTbl, errorCode
+errorCode, statusMessage, profileTbl = guiProfile.wirelessProfileGetAll ()
+
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (statusMessage)
+    -- errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "config") then
+    local configRow = web.cgiToLuaTable(cgi)
+    if(RowId == "-1") then
+        local errorCode, statusMessage = guiProfile.wirelessProfileEditSet (configRow, "add")
+        if (errorCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (statusMessage)
+        else
+            statusErrorMessage = errorMap.errorStringGet (statusMessage)
+        end
+    else
+        -- pass the rowid
+        configRow["dot11Profile.rowID"] = RowId;
+        local errorCode, statusMessage = guiProfile.wirelessProfileEditSet (configRow, "edit")
+        if (errorCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (statusMessage)
+        else
+            statusErrorMessage = errorMap.errorStringGet (statusMessage)
+        end
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "delete") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local cookieTbl = {}
+    local tempVar   = 1
+    if (type(cgi["profiles.checkbox"]) == "string") then
+        cookieTbl[tempVar] = configRow["profiles.checkbox"]
+    else
+        for k, v in pairs(cgi["profiles.checkbox"]) do
+            cookieTbl[tempVar] = v
+            tempVar = tempVar + 1
+        end
+    end
+
+    local errorCode, statusMessage = guiProfile.wirelessProfileDeleteAll (cookieTbl)
+    --TODO if (errorCode =1 then we are deleteing default profile.)
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (statusMessage)
+    else
+        statusErrorMessage = errorMap.errorStringGet (statusMessage)
+    end
+    web.goToPage(NextPage, true, true)
+
+else    
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE =
+"12564,12560,12918,10412,10148,30055,12920,11565,10414,13362,13420,13430,13103,30057,30058,30059,30060,30061,30062,11820,12851,30063,30064,30065,30066,13364,12348,12177,12423,12422,12920,13426,30067,30068,30069,30070,30071,30444,30445,30446,30056,12795,10862,10695,12792,10916,13449,11789,13524,10751,12598,50125,50126,50127,50128"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmProfiles" id="tf1_frmProfiles">        
+            <input type="hidden" name="thispage" id="thispage" value="profiles.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center" height="23">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'edit');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes 
+                    -->
+                     <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['12564'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_profiles">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['12560'] |$</th>
+                                        <th>$| LANG_LOCALE['12918'] |$</th>
+                                        <th>$| LANG_LOCALE['10412'] |$</th>
+                                        <th>$| LANG_LOCALE['12792'] |$</th>
+                                        <th>$| LANG_LOCALE['10916'] |$</th>
+                                        <th>$| LANG_LOCALE['13449'] |$</th>
+                                        <?lua if (UNIT_NAME == "DSR-1000AC") then?>
+                                        <th>$| LANG_LOCALE['12598'] |$</th>
+                                        <?lua end?>
+                                    </tr>
+                                </thead>
+                                <?lua
+                                    if (profileTbl ~= nil) then
+                                    local profileName
+                                    local profNameTitle
+                                    local profNameLen
+                                        for k, v in pairs (profileTbl) do
+                                            local row = profileTbl[k]
+                                            profNameTitle = row["dot11Profile.profileName"] or ''
+                                            profNameLen = #(row["dot11Profile.profileName"])
+                                            if (profNameLen > 32) then
+                                                profileName = string.sub(row["dot11Profile.profileName"],1,32) .. "..."
+                                            else
+                                                profileName = row["dot11Profile.profileName"]
+                                            end
+					    -- We map encryption and authentication here
+					    local encryption = row["dot11Profile.pairwiseCiphers"] or ""
+                        		    local authentication = row["dot11Profile.authMethods"] or ""
+                        		    local broadcastSSID = row["dot11Profile.broadcastSSID"] or ""
+                                    local Radio_Mode    = row["dot11Profile.radioMode"] or ""
+					    if (row["dot11Profile.security"] == "OPEN")  then
+                            			encryption = LANG_LOCALE['11789']
+                                        authentication = LANG_LOCALE['11789']
+                                        row["dot11Profile.security"] = LANG_LOCALE['30056']
+                        		    elseif (row["dot11Profile.security"] == "WEP") then
+                            			encryption = row["dot11Profile.groupCipher"] or ""
+                            			authentication = row["dot11Profile.wepAuth"] or ""
+                                        end
+
+                        if (row["dot11Profile.radioMode"] == "b")  then
+                               Radio_Mode = "2.4 Ghz"
+                        elseif (row["dot11Profile.radioMode"] == "a")  then
+                               Radio_Mode = "5 Ghz"
+                        elseif (row["dot11Profile.radioMode"] == "dual")  then
+                               Radio_Mode = "Both"
+                        end
+                                      
+					    if (row["dot11Profile.broadcastSSID"] == "1")  then
+                            		  	broadcastSSID = LANG_LOCALE['13524']
+					    else
+					        broadcastSSID = LANG_LOCALE['10751']
+                                            end
+                                            ?>
+                                            <tr class="gradeA" id="$| row["dot11Profile._ROWID_"] |$">
+                                                <td title="$| profNameTitle |$">$| profileName or '' |$</td>
+                                                <td>$| row["dot11Profile.ssid"] or '' |$</td>
+                                                <td>$| broadcastSSID |$</td>
+                                                <td>$| row["dot11Profile.security"] or '' |$</td>
+                                                <td>$| encryption |$</td>
+                                                <td>$| authentication |$</td>
+                                                <?lua if (UNIT_NAME == "DSR-1000AC") then?>
+                                                <td>$| Radio_Mode |$</td>
+                                                <?lua end?>
+                                            </tr>
+                                            <?lua
+                                        end
+                                    end
+                                 ?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModal">
+                        <input type="button" id="btSave" value="$| LANG_LOCALE['10148'] |$" title="$| LANG_LOCALE['10148'] |$" class="btnSubmit" onclick="openForm('button.add.profiles.profiles',-1,'tf1_dialog','profiles','profilesForm.html', 'tf1_profilesDailogContent','onLoadProfilesFn');">
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <?lua
+        -- we can validate this if the radioMode is either "na" or "ng" or "n only" mode.
+            local radioMode, puren = guiProfile.getRadioOptionMode ()
+        ?>
+        <input type="hidden" id="hdRadioMode" value="$| radioMode or "" |$" />
+        <input type="hidden" id="hdPuren" value="$| puren or "" |$" />
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/md5.js"></script>
+        <script type="text/javascript" language="javascript" src="js/profiles.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#tf1_profiles .gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'editMenu' : function(t, e, rowId) {
+                            openForm('button.edit.profiles.profiles',rowId,'tf1_dialog','profiles','profilesForm.html', 'tf1_profilesDailogContent','onLoadProfilesFn');
+                        },
+                        'deleteMenu' : function(t, e, rowId) {
+                            deleteRows('button.delete.profiles.profiles', 'tf1_frmProfiles', rowId, 'optionSelectAll', 'tf1_dialog', 'profiles', 'profiles');
+                        },
+                    }
+
+                });
+
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });                
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

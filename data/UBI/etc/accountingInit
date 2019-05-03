@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# captivePortalInit - initialization script for captivePortal.
+#
+# Copyright (c) 2015, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,31Mar15,abd  written.
+#
+# DESCRIPTION
+# This script is the initialization script for accounting component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_ACCOUNTING" = "y" ]; then
+    echo -n "Starting accounting daemon... "
+    $ACCOUNTING_INSTALL_PATH/bin/usrAccountingd $DB_FILENAME &
+    echo "Done"
+
+    #module suffix 
+    MODULES_DIR=$ACCOUNTING_INSTALL_PATH/lib/modules/accounting/
+    MOD_SUFFIX=ko
+
+    # insert the module
+    [ -f $MODULES_DIR/accounting.$MOD_SUFFIX ] && { insmod $MODULES_DIR/accounting.$MOD_SUFFIX; }
+    ACC_MODULE="traffic_accounting"
+    ACC_DEVICE="traffic_accounting"
+    ACC_DEVICE_MODE="666"
+
+    # remove stale nodes
+    rm -f /dev/${ACC_DEVICE}
+
+    # get the dynamically allocated device number
+    ACC_DEVICE_MAJOR=`cat /proc/devices | awk "\\$2==\"$ACC_MODULE\" {print \\$1}"`
+
+    # mknod the char device
+    mknod /dev/${ACC_DEVICE} c $ACC_DEVICE_MAJOR 0
+
+    # give appropriate group/permissions
+    chmod $ACC_DEVICE_MODE  /dev/${ACC_DEVICE}
+
+    # execute radius accouting routeTblUpdate
+    /pfrm2.0/bin/lua /pfrm2.0/bin/radAcctRouteTblUpdate.lua $DB_FILENAME
+fi

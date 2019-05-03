@@ -1,0 +1,351 @@
+<?lua 
+    require "teamf1lualib/firewallRules_bl"
+    require "teamf1lualib/vpnPassthrough_bl"
+    errorFlag, defaultStatus = firewallRulesDefaultPolicyGet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    errorFlag, cookie, ipsecPassThroughStatus, pptpPassThroughStatus, 
+           l2tpPassThroughStatus = vpnPassthroughGet (inputTable)
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1Wizard_securityWizardDailogContent">
+  <div class="topBgWizard">
+    <h1 data-localize="12794">Security Wizard</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard">
+  
+	<form id="tf1Wizard_securityForm">
+<input type="hidden" name="button.securityWizardConfig.wizard" value="save">
+ <input type="hidden" name="thispage" id="tf1Wizard_thispage" value="wizard.html">
+    
+    <!-- Step1 starts -->
+    <div id="tf1Wizard_divStep1" class="divStep">
+    
+    <div class="wizardMessage">
+        <p><span data-localize="30382">Current Outbound Policy is</span> <?lua if (defaultStatus == "1") then ?>
+        <span data-localize="10214">Allow</span>
+<?lua else?>
+        <span data-localize="10389">Block</span>
+<?lua end?>
+        </p>
+    </div>
+    <div class="wizardBlock">
+      <h1 data-localize="10689" id="tf1Wizard_headingDefaultOutbound">Default Outbound Policy for IPv4</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard" >
+            <label data-localize="10223">Always </label>
+            <select size="1" name="fwDefaultOutBoundPolicy.DefaultPolicyStatus" headingId="tf1Wizard_headingDefaultOutbound" class="wizardField" field-type="select" id="tf1Wizard_DefaultOtboundPolicyStatusForIPV4">
+              <option data-localize="10214" $| web.dropdownSelected(defaultStatus == "1") |$ value="1">Allow</option>
+              <option data-localize="10389" $| web.dropdownSelected(defaultStatus == "2") |$ value="2">Block</option>
+            </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock"> &nbsp; </div>
+      </div>
+      <h1 data-localize="30011" id="tf1Wizard_headingVPNPassthrough">VPN Passthrough</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label data-localize="11419">IPSec</label>
+            <?lua if (ipsecPassThroughStatus == "1") then
+                statusStr="enable-disable-on"
+                 statusVar = "1"
+                  else
+                 statusStr="enable-disable-off"
+                 statusVar = "0"
+               end?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_chkEnable1" style="margin-right:0 !important"></a>
+            <input type="hidden" name="vpnPassthrough.ipsecPassThroughStatus" value="$| statusVar |$" headingId="tf1Wizard_headingVPNPassthrough" class="wizardField" field-type="on-off">
+            <div class="description"><span data-localize="10906">Enable this to allow IPsec tunnels to pass through the route</span>.</div>
+                 
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="11502">L2TP</label>
+            <?lua if (l2tpPassThroughStatus == "1") then
+                statusStr="enable-disable-on"
+                 statusVar = "1"
+                  else
+                 statusStr="enable-disable-off"
+                 statusVar = "0"
+               end?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_chkEnable2" style="margin-right:0 !important"></a>
+            <input type="hidden" name="vpnPassthrough.l2tpPassThroughStatus" value="$| statusVar |$" headingId="tf1Wizard_headingVPNPassthrough" class="wizardField" field-type="on-off">
+            <div data-localize="10907" class="description">Enable this to allow L2TP tunnels to pass through the router.</div>                 
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label data-localize="12509">PPTP</label>
+            <?lua if (pptpPassThroughStatus == "1") then
+                statusStr="enable-disable-on"
+                 statusVar = "1"
+                  else
+                 statusStr="enable-disable-off"
+                 statusVar = "0"
+               end?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_chkEnable3" style="margin-right:0 !important"></a>
+            <input type="hidden" name="vpnPassthrough.pptpPassThroughStatus" value="$| statusVar |$" headingId="tf1Wizard_headingVPNPassthrough" class="wizardField" field-type="on-off">
+            <div class="description"><span data-localize="10908">Enable this to allow PPTP tunnels to pass through the router. To make this work, enable PPTP ALG also</span>.</div>
+                 
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+          <div class="pageList"><span data-localize="13008">Step</span>: [1 <span data-localize="13836">of</span> <dt class="lastStep">3</dt>] <span>&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wizardForm.html', 'tf1Wizard_dashboardWizardDailogContent','');">
+          <input data-localize="11779" type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext" onclick="openWizardSecurityStep2()" >
+        </div>
+      </div>
+    </div>
+    
+</div>
+
+<!-- Step1 ends -->
+
+<!-- Step2 starts -->
+    <div id="tf1Wizard_divStep2" class="divStep" style="display:none">
+    
+    <div class="wizardMessage">
+        <p><span data-localize="14138">Configure VPN Type and Remote & Local Addresses</span></p>
+    </div>
+    <div class="wizardBlock">
+    
+      <h1 data-localize="14137" id="tf1Wizard_headingVPNType">Select VPN Type for your VPN Network</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label data-localize="14136">Select VPN Type</label>
+            <select id="tf1Wizard_selVPNType" name="policies.tunnelType" size="1" onchange="wizardPeerOnChange()" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="select">
+                <option data-localize="14134" value="1">Site-to-Site</option>
+                <option data-localize="14135" value="2">Remote Access</option>                            
+            </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="11412">IP Protocol Version</label>
+            <?lua 
+                 require "teamf1lualib/ipv6_mode"
+                 local ipv6Mode = require("com.teamf1.core.ipv6.mode")
+                 returnCode, cookie, ipMode = ipv6Mode.ipv6ModeGet ()?>
+            <select id="tf1Wizard_selProtocolVer" name="policies.addressFamily" size="1" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="select">
+                                                         <option data-localize="14132" value="1">Ipv4</option>
+                                                        <?lua if(ipMode == "3") then?>
+                                                        <option data-localize="14133" value="2">Ipv6</option>
+                                                        <?lua end?>                            
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          
+          <div class="configRowWizard">
+            <label data-localize="11158">IKE Version</label>
+            <select id="tf1Wizard_selIKEVer" name="policies.policyVersion" size="1" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="select">
+                <option data-localize="14130" value="1">IKEv1</option>
+                <option data-localize="14131" value="2">IKEv2</option>                            
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          
+              
+        </div>
+        <div class="rightBlock">
+        	<div class="configRowWizard">
+            <label data-localize="14129">Connection Name</label>
+            	<input type="text" maxlength="49" id="tf1Wizard_connectionName" name="policies.policyName" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="text" onKeyPress="return alphaNumericCheck (event,'')">
+          </div>
+          <div class="break"> &nbsp; </div> 
+           <div class="configRowWizard">
+            <label data-localize="12532">Pre-Shared Key</label>
+            <input type="text" maxlength="49" id="tf1Wizard_preSharedKey" name="policies.presharedKey" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1Wizard_presharedkey', 8, 49, LANG_LOCALE['11323']);}" onkeypress="return alphaNumericCheck (event, '`~!@#$%^&*()-_+=|{}[]:;.,<>?/\'')" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          
+          <div class="configRowWizard">
+            <label data-localize="11595">Local Gateway</label>
+            <select id="tf1Wizard_localGateway" name="policies.localGateway" size="1" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="select">
+             <?lua
+             local locWan1Name
+             local locWan2Name
+             local locWan3Name
+
+             wan1DispName = "Dedicated WAN"
+             locWan1Name = "data-localize='30014'"
+                  if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+                  wan2DispName = "Configurable WAN"
+                  locWan2Name = "data-localize='30154'"
+		        if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+                wan3DispName = "Mobile Internet"
+                locWan3Name = "data-localize='30132'"
+		        end
+                  else
+                  wan2DispName = "Rollover WAN (Mobile Internet)"
+                  locWan2Name = "data-localize='30436'"
+                  end
+                  ?>
+                                                         <option $| locWan1Name |$ value="1">$| wan1DispName |$</option>
+                                                         
+                                                          <option $| locWan2Name |$ value="2">$| wan2DispName |$</option>
+							<?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+	                    					<option $| locWan3Name |$ value="3">$| wan3DispName |$</option>
+		        <?lua end ?>
+                                                          
+                                                                
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+           
+        </div>
+        
+      </div>
+      
+      <h1 data-localize="30383" id="tf1Wizard_headingRemoteOptionAddr">Remote & Local WAN Addresses</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label data-localize="14127">Remote Gateway Type</label>
+            <select id="tf1Wizard_remoteGatewayType" name="policies.remoteIdentifierType" size="1" headingId="tf1Wizard_headingRemoteOptionAddr" class="wizardField" field-type="select">
+                <option data-localize="11387" value="1">IP Address</option>
+                <option data-localize="14125" value="2">FQDN</option>
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="14126">Local Gateway Type</label>
+            <select id="tf1Wizard_localGatewayType" name="policies.localIdentifierType" size="1" headingId="tf1Wizard_headingRemoteOptionAddr" class="wizardField" field-type="select">
+                                                         <option data-localize="11387" value="1">IP Address</option>
+                                                         <option data-localize="14125" value="2">FQDN</option>
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label data-localize="30384">Remote WAN's IP Address / FQDN</label>
+            <input type="text" maxlength="64" id="tf1Wizard_remoteIpAddr" name="policies.remoteIdentifier" onkeydown="if (event.keyCode == 9) { return IPorFQDNCheckRemote () }" headingId="tf1Wizard_headingRemoteOptionAddr" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          
+           <div class="configRowWizard">
+            <label data-localize="30385">Local WAN's IP Address / FQDN</label>
+            <input type="text" maxlength="64" id="tf1Wizard_localIpAddr" name="policies.localIdentifier" onkeydown="if (event.keyCode == 9) { return IPorFQDNCheckLocal() }" headingId="tf1Wizard_headingRemoteOptionAddr" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+      
+      
+      <div class="pagination">
+        <div class="pageList"><span data-localize="13008">Step</span>: [2 <span data-localize="13836">of</span> <dt class="lastStep">3</dt>] <span id="tf1Wizard_step2StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="showWizardDiv('tf1Wizard_divStep1','')">
+          <input data-localize="11779" type="button" id="tf1Wizard_btNextStep2" value="Next" title="Next" class="wizardBtnNext" onClick="openWizardSecurityStep3()" >
+        </div>
+      </div>
+    </div>
+    
+</div>
+
+<!-- Step 3 starts -->
+
+<div id="tf1Wizard_divStep3" class="divStep" style="display:none">
+    
+    <div class="wizardMessage">
+        <p><span data-localize="14122">Secure Connection Accessibility</span></p>
+    </div>
+    <div class="wizardBlock">
+    
+      <h1 data-localize="14121" id="tf1Wizard_headingSecureConnection">Configure Secure Connection Accessibility</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label data-localize="14120">Remote Network IP Address</label>
+            <input type="text" maxlength="15" id="tf1Wizard_remoteNetworkIp" name="policies.remoteStartAddress" headingId="tf1Wizard_headingSecureConnection" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return localSubnetIpCheck (this.id); }">
+          </div>
+          <div class="break" id="break_remoteNetworkIp_div"> &nbsp; </div>
+
+          <div class="configRowWizard" id="tf1Wizard_remotePrefixLength_div">
+            <label data-localize="14119">Remote Prefix Length</label>            
+           <input type="text" maxlength="3" id="tf1Wizard_remotePrefixLength" name="policies.remotePrefixLength" headingId="tf1Wizard_headingSecureConnection" class="wizardField one" field-type="text" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 128, true, LANG_LOCALE['11335'], ''); }"><!--<dl>[Range: 0 - 128]</dl>-->
+          </div>
+          <div class="break" id="break_remotePrefixLength_div"> &nbsp; </div>
+          
+           <div class="configRowWizard" id="tf1Wizard_localNetIPAddr_div">
+            <label data-localize="14118">Local Network IP Address</label>
+            <input type="text" maxlength="15" id="tf1Wizard_localNetIPAddr" name="policies.localStartIP" headingId="tf1Wizard_headingSecureConnection" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return localSubnetIpCheck (this.id); }">
+          </div>
+          <div class="break" id="break_localNetIPAddr_div"> &nbsp; </div>
+              
+        </div>
+        <div class="rightBlock">
+        	<div class="configRowWizard" id="tf1Wizard_remoteNetSubnetMask_div">
+            <label data-localize="14117">Remote Network Subnet Mask</label>
+            	<input type="text" maxlength="15" id="tf1Wizard_remoteNetSubnetMask" name="policies.remoteSubnetmask" headingId="tf1Wizard_headingSecureConnection" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return checkAndSetNetworkIp ('tf1Wizard_remoteNetworkIp', this.id); }">
+          </div>
+          <div class="break" id="break_remoteNetSubnetMask_div"> &nbsp; </div> 
+
+          <div class="configRowWizard" id="tf1Wizard_localNetSubnetMask_div">
+            <label data-localize="14116">Local Network Subnet Mask</label>
+           <input type="text" maxlength="15" id="tf1Wizard_localNetSubnetMask" name="policies.localSubnetmask" headingId="tf1Wizard_headingSecureConnection" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return checkAndSetNetworkIp ('tf1Wizard_localNetIPAddr', this.id); }">
+          </div>
+          <div class="break" id="break_localNetSubnetMask_div"> &nbsp; </div>          
+          
+          <div class="configRowWizard" id="tf1Wizard_localNetPrefixLength_div">
+            <label data-localize="14115">Local Prefix Length</label>
+           	<input type="text" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 128, true, '', ''); }" onkeypress="return numericValueCheck (event)" maxlength="3" id="tf1Wizard_localNetPrefixLength" name="policies.localPrefixLength" headingId="tf1Wizard_headingSecureConnection" class="wizardField one" field-type="text" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 128, true, LANG_LOCALE['11294'], ''); }" class="one"><!--<dl>[Range: 0 - 128]</dl>-->
+          </div>
+          <div class="break" id="break_localNetPrefixLength_div"> &nbsp; </div>
+           
+        </div>
+        
+      </div>
+      
+      <div class="pagination">
+        <div class="pageList"><span data-localize="13008">Step</span>: [3 <span data-localize="13836">of</span> <dt class="lastStep">3</dt>] <span id="tf1Wizard_step3SecurityStatusMsg">&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="showWizardDiv('tf1Wizard_divStep2','')">
+          <input data-localize="12758" type="button" id="btSave" value="Save" title="Save" class="wizardBtnNext" onclick="wizardSecuritySave()" >
+        </div>
+      </div>
+    </div>
+    
+</div>
+
+<!-- Step 3 ends -->
+
+
+
+</form>
+
+<!-- Preview -->
+    
+    <div id="tf1Wizard_previewDiv" style="display:none;">
+    
+    	<div class="wizardMessage">
+            <p><span data-localize="14114">Security Configuration Saved Successfully</span></p>
+    </div>
+    <div class="wizardBlock" id="tf1Wizard_previewBlock">
+    
+     
+    </div>
+    
+ 
+ 
+  <div class="pagination">
+    <div class="pageList"><span>&nbsp;</span></div>
+    <div class="prevNext">
+      <input data-localize="14066" type="button" id="btSave" value="Finish" title="

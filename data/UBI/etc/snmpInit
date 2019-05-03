@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# snmpInit - initialization script for snmpd
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,01aug08,chd removed copy command for snmpd.conf, since configuration file 
+#                 already being created from default snmpTrap and system table.
+# 01a,10oct07,chd written
+
+MODEL_ID_CONFIG=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+
+if [ "$INCLUDE_SNMP" = "y" ]; then
+
+mkdir -p /var/snmp
+mkdir -p /var/run
+mkdir -p /usr/local/etc
+ln -s /var/snmp /usr/local/etc/snmp
+echo -n "starting SNMP Daemon..."
+$SNMP_INSTALL_PATH/bin/snmpd -p /var/run/snmp.pid &
+if [ "$MODEL_ID_CONFIG" == "DSR-1000AC" ] || [ "$MODEL_ID_CONFIG" == "DSR-500AC" ]; then
+$SNMP_INSTALL_PATH/bin/ssdk_sh mib status set enable
+fi
+echo "Done"
+     sh $SNMP_INSTALL_PATH/bin/snmpKeepAlive.sh &
+fi

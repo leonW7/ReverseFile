@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# l2tpdInit - initialization script for xl2tpd-l2tp server
+#
+# Copyright (c) 2009, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,13nov09, rd written
+
+if [ "$INCLUDE_L2TPD" = "y" ]; then
+    echo "Copying necessary files for L2TP Server... "
+mkdir -p /usr/local/sbin
+mkdir -p /etc/xl2tpd
+
+cp -f /pfrm2.0/bin/xl2tpd /usr/local/sbin/xl2tpd
+cp -f /pfrm2.0/bin/l2tp-control /usr/local/sbin/l2tp-control
+
+MODULES_DIR=$L2TPD_INSTALL_PATH/lib/modules/xl2tpd/
+
+
+[ -f $MODULES_DIR/pppol2tp.$MOD_SUFFIX ] && { insmod $MODULES_DIR/pppol2tp.$MOD_SUFFIX; }
+
+mkdir -p /var/run/xl2tpd
+
+ln -s /usr/local/sbin/l2tp-control /var/run/xl2tpd/l2tp-control
+
+echo "Done"
+fi
+

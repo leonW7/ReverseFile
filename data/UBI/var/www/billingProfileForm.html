@@ -1,0 +1,423 @@
+<?lua
+require "teamf1lualib/billingProfile_bl"
+require "teamf1lualib/bl_payment"
+require "teamf1lualib/returnCodes"
+
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+local gui_paymentGW = require("com.teamf1.bl.captiveportal.payment")
+local payMentGWProcessor, errorCode
+errorCode, payMentGWProcessor = gui_paymentGW.cpCurrencyForBillingProfile ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    payMentGWProcessor = {}
+end
+local gui_billing = require("com.teamf1.bl.captiveportal.billing")
+
+    local inputCookie = cgi["configRowId"]
+    local profileTable = {}
+    if (ButtonType and ButtonType == "edit") then
+        returnCode, cookie, profileTable  =  gui_billing.profileGetRow (inputCookie)
+    end    
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_billingProfileDailogContent">
+                <div class="topBg">
+                    <h1>Captive Portal Billing Profile Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <h2>Profile Details</h2>
+                        <label> Profile Name </label>
+                           <?lua if (ButtonType == "edit") then ?>
+                           <input type="hidden" name="profileTable.profile" value="$|profileTable["tempCPUserProfiles.ProfileName"] or '' |$" id="tf1_profileName">$|profileTable["tempCPUserProfiles.ProfileName"] or '' |$
+                           <?lua else
+                           ?>
+                           <input type="text" name="profileTable.profile" maxlength="32" value="$|profileTable["tempCPUserProfiles.ProfileName"] or '' |$" id="tf1_profileName">
+                           <?lua end ?>
+                    </div>
+                    <div class="break" id="break1_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label> Profile Description </label>
+                        <input type="text" name="profileTable.description" maxlength="944" value="$|profileTable["tempCPUserProfiles.ProfileDesc"] or '' |$" id="tf1_profileDescription">
+                    </div>
+                    <div class="break" id="break2_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_allowMultipleLogin_div">
+                        <label> Allow Multiple Login </label>
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+
+                                     if (profileTable["tempCPUserProfiles.MultiLogin"] == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar =
+                                                                "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar =
+                                                                "0"
+                                                                    end
+                                     ?>
+
+
+                            <a class="$|statusStr |$" alt="" src="$|statusStr|$"  id="tf1_allowMultipleLogin"></a>
+                            <input type="hidden" name="profileTable.multiLogin"
+                            value="$|statusVar or ''|$">
+                    </div>
+                    <div class="break" id="break3_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_allowCustomizedAccount_div">
+                        <label> Allow Customized Account
+                            <br/>
+                            on Front Desk </label>
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+                                     if (profileTable["tempCPUserProfiles.ModifyAccount"] == "1") then
+                                         statusStr="enable-disable-on"
+                                         statusVar = "1"
+                                     else
+                                        statusStr="enable-disable-off"
+                                         statusVar = "0"
+                                     end
+                                     ?>
+                    <a class="$|statusStr |$" alt="" src="$|statusStr|$"  id="tf1_allowCustomizedAccount"></a>
+                            <input type="hidden"
+                            name="profileTable.customizedAccount"
+                            value="$|statusVar or '' |$">
+                    </div>
+                    <div class="break" id="break4_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_allowBatchGeneration_div">
+                        <label> Allow Batch Generation on
+                            <br/>
+                            Front Desk </label>
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+                            if (profileTable["tempCPUserProfiles.BatchGen"] == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                statusVar = "1"
+                                                                   else
+                                                                  statusStr="enable-disable-off"
+                                                                   statusVar ="0"
+                                                                    end
+                                     ?>
+                        <a class="$|statusStr |$" alt="" src="$|statusStr|$"  id="tf1_allowBatchGeneration"></a>
+                            <input type="hidden"
+                            name="profileTable.batchGeneration" value="$|
+                            statusVar or '' |$">
+                    </div>
+                    <div class="break" id="break5_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_sessionIdleTimeout_div">
+                        <label> Session Idle Timeout </label>
+                        <input class="one" type="text" name="profileTable.sessionTimeout"
+                        value="$|profileTable["tempCPUserProfiles.IdleTimeout"] or '' |$"  maxlength="2" value="10" id="tf1_sessionIdleTimeout" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1,60, true, 'Invalid Session Idle Timeout', ''); }">
+                        <dl>
+                            [Default: 10,  Range: 1 - 60] Minutes
+                        </dl>
+                    </div>
+                    <div class="break" id="break6_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_alertMsgLogin_div">
+                        <label> Show Alert Message on Login
+                            <br/>
+                            Page while Rest of Usage
+                            <br/>
+                            Time / Traffic under </label>
+                        <input type="text" name="profileTable.alertLimit"
+                        value="$|profileTable["tempCPUserProfiles.AlertValue"] or '' |$" class="one" maxlength="4" value="100" id="tf1_alertMsgLogin" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0,9999, true, 'Invalid Show alert messsage on login', ''); }">
+                        <select class="two" name="profileTable.alertType"  id="tf1_alertMsgLoginSelect" name="tf1_alertMsgLoginSelect">
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.AlertType"] ==
+                            "0") |$ value="1">Hour</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.AlertType"] ==
+                            "1") |$ value="2">Day</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.AlertType"] ==
+                            "2") |$ value="3">MB</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.AlertType"] ==
+                            "3") |$ value="4">GB</option>
+                        </select>
+    </div>
+                    <div class="break" id="break7_div">
+                        &nbsp;
+                    </div>
+                    <h2>Basic Limit by Duration</h2>
+                    <div class="configRow" id="tf1_validBeginEndTime_div">
+                        <label> Valid with Begin and End Time </label>                        
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+                                     if (profileTable["tempCPUserProfiles.ValidDurationCheck"] == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar = "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar = "0"
+                                                                    end
+                                     ?>
+                            <a class="$| statusStr |$" alt=""  id="tf1_validBeginEndTime"></a>
+              <input type="hidden" name="profileTable.timed" value="$| statusVar |$" id="tf1_hidvalidBeginEndTime">
+                    </div>
+                    <div class="break" id="break8_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_validBeginSelect_div">
+                        <label> Valid Begin </label>
+                        <select id="tf1_validBeginSelect" name="profileTable.startType" onchange="changeValidBeginLimit('tf1_validBeginSelect')">
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.DurationType"] ==
+                            "0") |$ value="1">Start while Account Created</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.DurationType"] ==
+                            "1") |$ value="2">Start while Account Login</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.DurationType"] ==
+                            "2") |$ value="3">Begin From</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break9_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_startWhileAccCreated_div">
+                        <label> Start while Account Created </label>
+                        <input type="text" name="profileTable.timeLimit"
+                        value="$|profileTable["tempCPUserProfiles.StartTimeValue"] or '' |$"  maxlength="4" id="tf1_startWhileAccCreated" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0,9999, true, 'Invalid Start while account created', ''); }" class="one">
+                        <select class="two" name="profileTable.timeType"  id="tf1_startWhileAccCreatedSelect">
+    <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.StartTimeType"] ==
+                            "0") |$ value="1">Hours</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.StartTimeType"] ==
+                            "1") |$ value="2">Days</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break10_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_startWhileAccLogin_div">
+                        <label> Start while Account Login </label>
+                        <input type="text" name="profileTable.timeLimit"
+                        value="$|profileTable["tempCPUserProfiles.StartTimeValue"] or '' |$"  maxlength="4" id="tf1_startWhileAccLogin" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0,9999, true, 'Invalid Start while account login', ''); }" class="one">
+                        <select class="two" name="profileTable.timeType"  id="tf1_startWhileAccLoginSelect">
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.StartTimeType"] ==
+                            "0") |$ value="1">Hours</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.StartTimeType"] ==
+                            "1") |$ value="2">Days</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break11_div">
+                        &nbsp;
+                    </div>                    
+                    <div  id="tf1_beginFrom_div">
+	                    <div class="configRow">
+							<label>  Begin From  </label>
+						    <input type="text" name="profileTable.customStartTime" value="$|profileTable["tempCPUserProfiles.BeginDate"] or ''|$" id="tf1_beginFromValue" maxlength="30" readonly>
+						</div>
+						<div class="break">&nbsp;</div>
+						<div class="configRow">
+							<label>&nbsp; </label>
+						    <input type="hidden" id="tf1_beginFrom"  onChange="onchangeValue()" readonly>
+						    <div id="tf1_beginFrom"></div>
+						</div>	
+					</div>				
+                    <div class="break" id="break12_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_allowfrontDesk_div">
+                        <label> Allow Front Desk to Modify
+                            <br/>
+                            Duration </label>
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+                                     if (profileTable["tempCPUserProfiles.ModifyDuration"] == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar =
+                                                                "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar =
+                                                                "0"
+                                                                    end
+                                     ?>
+                            <a class="$|statusStr |$" alt="" src="$|statusStr|$"  id="tf1_allowfrontDesk"></a>
+                            <input type="hidden"
+                            name="profileTable.customizeTime" value="$|statusVar
+                            or ''|$">
+                    </div>
+                    <div class="break" id="break13_div">
+                        &nbsp;
+                    </div>
+                    <h2>Basic limit by usage</h2>
+                    <div class="configRow">
+                        <label> Maximum Usage Time </label>
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+                                     if
+                                     (profileTable["tempCPUserProfiles.MaxUsageTimeCheck"]
+                                     == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar =
+                                                                "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar =
+                                                                "0"
+                                                                    end
+                                     ?>
+                            <a class="$|statusStr |$" alt="" src="$|statusStr|$"  id="tf1_maxUsageTime"></a>
+                            <input type="hidden"
+                            name="profileTable.maxUsageTimeCheck"
+                            value="$|statusVar or ''|$" id="tf1_hidmaxUsageTimeCheck">
+                    </div>
+                    <div class="configRow" id="tf1_maxUsageTimeText_div">
+                        <input type="text"  name="profileTable.maxUsageTime"
+                        value="$|profileTable["tempCPUserProfiles.MaxUsageTimeValue"] or '' |$" class="one" maxlength="4" id="tf1_maxUsageTimeText" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0,9999, true, 'Invalid Maximum Usage Time', ''); }">
+                        <select class="two" name="profileTable.usageTimeType"  id="tf1_maxUsageTimeSelect">
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.MaxUsageTimeType"] ==
+                            "0") |$ value="1">Hours</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.MaxUsageTimeType"] ==
+                            "1") |$ value="2">Days</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break14_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label> Maximum Usage Traffic </label>
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+                                     if
+                                     (profileTable["tempCPUserProfiles.MaxUsageTrafficCheck"]
+                                     == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar =
+                                                                "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar =
+                                                                "0"
+                                                                    end
+                                     ?>
+
+
+                            <a class="$|statusStr |$" alt="" src="$|statusStr|$"  id="tf1_maxUsageTraffic"></a>
+                            <input type="hidden"
+                            name="profileTable.maxTrafficUsageCheck"
+                            value="$|statusVar or ''|$" id="tf1_hidmaxTrafficUsageCheck">
+                    </div>
+                    <div class="configRow" id="tf1_maxUsageTrafficText_div">
+                        <input type="text"  name="profileTable.maxTrafficUsage"
+                        value="$|profileTable["tempCPUserProfiles.MaxUsageTrafficValue"] or '' |$" class="one" maxlength="4" id="tf1_maxUsageTrafficText" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0,9999, true, 'Invalid Maximum Usage Traffic', ''); }">
+                        <select class="two" name="profileTable.trafficUsageType"  id="tf1_maxUsageTrafficSelect">
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.MaxUsageTrafficType"] ==
+                            "2") |$ value="3">MB</option>
+                            <option $|
+                            web.dropdownSelected(profileTable["tempCPUserProfiles.MaxUsageTrafficType"] ==
+                            "3") |$ value="4">GB</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break15_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_allowFrontDesktoModify_div">
+                        <label> Allow Front Desk to Modify
+                            <br/>
+                            Usage </label>
+                        <?lua 
+                                      local statusStr
+                                     local statusVar
+                                     if
+                                     (profileTable["tempCPUserProfiles.ModifyUsage"]
+                                     == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar =
+                                                                "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar =
+                                                                "0"
+                                                                    end
+                                     ?>
+
+
+                            <a class="$|statusStr |$" alt="" src="$|statusStr|$" id="tf1_allowFrontDesktoModify"></a>
+                            <input type="hidden"
+                            name="profileTable.customizeUsage"
+                            value="$|statusVar or ''|$">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <h2>Unit Price</h2>
+      <div class="configRow" id="tf1_setPrice_div">
+          <label> Set Price</label>
+          <?lua 
+          local statusStr
+          local statusVar
+          if (profileTable["tempCPUserProfiles.setPriceEnable"] == "1") then
+              statusStr = "enable-disable-on"
+              statusVar = "1"
+          else
+              statusStr = "enable-disable-off"
+              statusVar = "0"
+          end
+          ?>
+          <a class="$|statusStr |$" alt="" src="$|statusStr|$" id="tf1_setPrice"></a>
+          <input type="hidden" name="profileTable.setPriceEnable" value="$| statusVar or ''|$" id="tf1_hidSetPrice">
+      </div>
+      <div class="break" id="break_setPrice_div"> &nbsp;</div>
+      <div class="configRow" id="tf1_price_div">
+        <label>Price</label>
+        <input type="text" id="tf1_price" name="profileTable.price"
+        value="$|profileTable["tempCPUserProfiles.price"] or ''|$"  onkeypress="return numericValueCheck (event, '.')">
+      </div>
+      <div class="break" id="break_price_div"> &nbsp;</div>
+      <div class="configRow" id="tf1_monetaryUnit_div">
+        <label>Monetary Unit</label>
+        <select id="tf1_monetaryUnit" name="profileTable.currency">
+              <?lua
+               if (payMentGWProcessor ~= nil) then
+                for k, v in pairs (payMentGWProcessor) do
+                local row = payMentGWProcessor[k]
+                ?>
+                <option $| web.dropdownSelected(profileTable["tempCPUserProfiles.currency"] ==
+         row.currencyId ) |$ value="$| row.currencyId |$"> $| row.currencyName |$ </option>
+                <?lua
+                end
+                end
+                ?>
+        </select>
+      </div>
+      <div class="break" id="break_monetaryUnit_div"> &nbsp;</div>
+                </div>
+                <div class="dialogSubmitRow">
+                <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    <?lua if(cgi["configRowId"] == "-1") then?>
+                    <input type="submit" name="button.add.billingProfile" onclick="return ssidBillingProfileFormValidate('tf1_billingProfileDailogContent')" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua else ?>
+                    <input type="submit" name="button.edit.billingProfile" onclick="return ssidBillingProfileFormValidate('tf1_billingProfileDailogContent')" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua end ?>
+                </div>
+            </div>

@@ -1,0 +1,211 @@
+<?lua 
+
+if(true) then
+	local defPortal = "SSLVPN"
+	local cookie    = cgilua.cookies.get("TeamF1Login") or ""
+	local groupName = db.getAttribute ("SSLVPNActiveUsers", "Cookie", cookie, "GroupName") or ""
+	local domainName = db.getAttribute ("UserGroups", "GroupName", groupName, "DomainName") or ""
+	local portalName = db.getAttribute ("USERDBDomains", "DomainName", domainName, "PortalLayoutName") or ""
+	if(portalName ~= "") then
+		defPortal = portalName
+	end
+	local portalRow = db.getRow("SSLVPNPortalLayout","PortalLayoutName",defPortal) or {}
+	local width = "139"
+	local alignTab = ""
+	if(portalRow["SSLVPNPortalLayout.EnableVPNTunnel"] == "0" and portalRow["SSLVPNPortalLayout.EnablePortForwarding"] == "0") then
+		width = "232"
+		alignTab = "center"
+	elseif (portalRow["SSLVPNPortalLayout.EnableVPNTunnel"] == "0" or portalRow["SSLVPNPortalLayout.EnablePortForwarding"] == "0") then
+		width = 174
+		alignTab = "center"
+	end
+ ?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<!--
+Copyright (c) 2009 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+<link rel="stylesheet" type="text/css" href="../css/style.css" />
+<link rel="stylesheet" type="text/css" href="../css/buttons.css" />
+<link rel="stylesheet" type="text/css" href="../css/menu.css" />
+<script type="text/javascript" language="javascript" src="../js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" language="javascript" src="../js/mis.js"></script>
+<script language="JavaScript" src="../js/menu.js" type="text/javascript"></script>
+
+<style>
+.helppgTxt { padding:20px;}
+</style>
+</head>
+
+<body>
+<table cellspacing="0" cellpadding="0" border="0" width="100%">
+	<tr><td>
+<div align="center">
+<div class="midWidth">
+<div class="FL2">
+  <p class="hint">
+</p>
+					</div>
+					<h1>Help</h1>
+	
+<div class="midArea">
+		<div class="btxt bg4 br1">
+		<div class="helppg help1">
+		<ul style="margin:30px 0 0 30px">
+		<li><a href="#Help_PortalInfo">Portal Information</a></li>
+		<?lua
+			if(portalRow["SSLVPNPortalLayout.EnableVPNTunnel"] == "1") then			
+		?>
+		<li><a href="#Help_VPNTUN">VPN Tunnel</a></li>
+		<?lua
+			end 
+			if(portalRow["SSLVPNPortalLayout.EnablePortForwarding"] == "1") then			
+		?>
+		<li><a href="#Help_PTForward">Port Forwarding</a></li>
+		<?lua
+			end
+		?>
+		<li><a href="#Help_ChngPW">Change password</a></li>
+		</ul>
+		</div>
+		<!-- <div class="btxt2">Description...</div> -->
+		</div>
+		<!-- Section Begion -->		
+		<div class="h2 bg2" id="Help_PortalInfo">
+		<h1 style="border-bottom: 1px solid #CCCCCC;text-align:left; display:block; float:none; width:100%; margin:10px">Help Portal Information</h1></div>
+		<div class="br2">
+			<table width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="lbl2">
+						<div class="helpBg helppgTxt">
+						    <p style="line-height:30px">VPN</p>
+						    <p style="line-height:30px">SSL VPN Portal</p>
+						    <p style="line-height:30px">Portal Info</p>
+						   
+	<p class="hint"> This client portal provides remote access to the corporate network through the following features.</p>
+						    <p class="hint">'SSL VPN Tunnel' facilitates in creating an encrypted tunnel to the corporate network.</p>
+						    <p class="hint">'Port Forwarding' facilitates creating an encrypted tunnel for pre-defined applications on the corporate network.</p><br>
+                                                   <div class="configRow"><label>
+                                                   <strong>Note:</strong></br>
+						    1. <strong>'Change Password'<strong> section is available ONLY for users belonging to local data base.<br/>
+						    2. Please contact your administrator incase any/all of the above mentioned features are NOT enabled.<br/>
+						    3. <strong>Java, Java Script, Active-X controls </strong>MUST be <b>Enabled/Allowed</b> in your browser settings.
+                                                </label>
+                                                </div>
+						</div>	
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- section end -->
+			
+			<!-- Section Begion -->
+		<?lua
+			if(portalRow["SSLVPNPortalLayout.EnableVPNTunnel"] == "1") then			
+		?>	
+		<div class="blank5">&nbsp;</div>
+		<div class="h2 bg2" id="Help_VPNTUN"><h1 style="border-bottom: 1px solid #CCCCCC;text-align:left; display:block; float:none; width:100%; margin:10px">Help VPN Tunnel</h1></div>
+		<div class="br2">
+			<table width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="lbl2">
+						<div class="helpBg helppgTxt">
+						    <p style="line-height:30px">VPN </p>
+						    <p style="line-height:30px">SSL VPN Portal</p>
+						    <p style="line-height:30px">VPN Tunnel</p>
+                                                    <div> 
+						    
+<p class="hint">An SSL VPN tunnel client provides a point-to-point connection between the remote client machine and the gateway of the corporate network. When a SSL VPN client is launched, a "network adapter" with an IP address, DNS and WINS settings is automatically created, which allows local applications to talk to services on the private network without any special network configuration on the remote SSLVPNClient machine.
+						    <br>This feature is presently supported on windows, Linux, MacOS X platforms.
+						    <br>
+						    <br><strong>Note:</strong>
+						    <br>* If you reload your browser, SSL VPN Tunnel Client will disconnect and then reconnect to the remote network.
+						    <br>* Installation/Uninstallation can be done only as &quot;root&quot;.
+						    <br><strong>* Java, Java Script, Active-X controls </strong>MUST be <strong>Enabled/Allowed</strong> in your browser settings.
+						    <br><br><strong>Recommendations :</strong>
+						    <br>* Always follow the sequence : unInstall any active clients, logout and then close the browser. It is safe, easy to maintain the client, and can avoid errors during client 
+<span style="font-size: 12.0pt; font-family: Times New Roman">installations</span>, if recommendations are followed.</p> 
+                                                   </div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<?lua
+			end
+			if(portalRow["SSLVPNPortalLayout.EnablePortForwarding"] == "1" ) then
+		?>
+		<!-- section end -->
+			
+			<!-- Section Begion -->
+		<div class="blank5">&nbsp;</div>
+		<div class="h2 bg2" id="Help_PTForward"><h1 style="border-bottom: 1px solid #CCCCCC;text-align:left; display:block; float:none; width:100%; margin:10px">Help Port Forwarding</h1></div>
+		<div class="br2">
+			<table width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="lbl2">
+						<div class="helpBg helppgTxt">
+						    <p style="line-height:30px">VPN </p>
+						    <p style="line-height:30px">SSL VPN Portal</p>
+						    <p style="line-height:30px">Port Forwarding</p>
+<p class="hint">
+						    <br>Port Forwarding is a light weight tunnel with port based encryption. 
+							Launching Port Forwarding allows to detect and re-route data sent from 
+							remote hosts to the
+							<span style="font-size: 12.0pt; font-family: Times New Roman">corporate
+							</span>&nbsp;SSL VPN gateway and hence to predefined applications running on private corporate networks. 
+						    This feature is currently supported only on Windows platforms.
+						    <br>
+						    <br><strong>Note:</strong><br>
+						    * The active <span style="font-size: 12.0pt; font-family: Times New Roman">
+							connections </span>can still persist even when browser is closed without uninstalling the 
+							<span style="font-size: 12.0pt; font-family: Times New Roman">port 
+							Forwarding </span>client.<br>
+						    * <strong>Java, Java Script, Active-X controls </strong>MUST be <strong>Enabled/Allowed</strong> in your browser settings.
+						
+						    <br><br><strong>Recommendations :</strong><br>
+						    * Always follow the sequence : unInstall any active clients, logout and then close the browser. It is safe, easy to maintain the client, and avoid errors during client installtions, if recommendations are followed. 
+					</p>	
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- section end -->
+		<?lua
+			end
+		?>
+			
+			<!-- Section Begion -->
+		<div class="blank5">&nbsp;</div>
+		<div class="h2 bg2" id="Help_ChngPW"><h1 style="border-bottom: 1px solid #CCCCCC;text-align:left; display:block; float:none; width:100%; margin:10px">Help Change Password</h1></div>
+		<div class="br2">
+			<table width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="lbl2">
+						<div class="helpBg helppgTxt">
+						    <p style="line-height:30px">VPN </p>
+						    <p style="line-height:30px">SSL VPN Portal</p>
+						    <p style="line-height:30px">Change Password</p>
+                                                    <div>
+                                                     <p class="hint">
+						   This section updates the password. After successful update the current login session will expire and the user needs to re-login with new password.</p>
+</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- section end -->			
+		
+</div> </div>
+</div>
+
+</td>
+	</tr>
+</table>
+</body>
+</html>
+<?lua end ?>

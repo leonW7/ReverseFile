@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="net-dynamic-routing-config" prompt="net-config[dynamic-routing]> "> 
+    <COMMAND name="save" help="Save dynamic route changes.">
+	     <ACTION>lua clishCfgObjExec("rip")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save dynamic routes changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("rip")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back rip configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="direction" help="rip direction None, In only, Out only, Both.">
+	<PARAM name="direction" 
+	       help="rip direction ."
+	       ptype="RIP_DIRECTION"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.Direction","${direction}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="version" help="Rip version">
+	<PARAM name="version" 
+	       help="Rip version"
+	       ptype="RIP_VERSION"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.Version","${version}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="authentication_enable" help="Enable/Disable Authentication for RIP-2B/2M">
+	<PARAM name="authType" 
+	       help="Enable/Disable Authentication for RIP-2B/2M"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.AuthenticationType","${authType}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key" help="first MD5 key"/>
+    <COMMAND name="first_key id_number" help="First MD5 Key Id">
+	<PARAM name="firstKeyId" 
+	       help="First MD5 Key Id"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyId","${firstKeyId}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key authentication_id" help="First MD5 Authentication Key">
+	<PARAM name="firstAuthKeyId" 
+	       help="First MD5 Authentication Key"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstAuthenticationKeyId","${firstAuthKeyId}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_from" help="First MD5 Key Not Valid Before entered date"/>
+    <COMMAND name="first_key valid_from month" help="month in which md5 authentication key validity starts">
+	<PARAM name="firstKeyStartDate1" 
+	       help="First MD5 Key Not Valid Before"
+	       ptype="MONTH_MM"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyFrom1","${firstKeyStartDate1}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_from day" help="day in which md5 authentication key validity starts">
+	<PARAM name="firstKeyStartDate2" 
+	       help="First MD5 Key Not Valid Before"
+	       ptype="DAY_DD"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyFrom2","${firstKeyStartDate2}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_from year" help="year in which md5 authentication key validity starts">
+	<PARAM name="firstKeyStartDate3" 
+	       help="First MD5 Key Not Valid Before"
+	       ptype="YYYY_YEAR"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyFrom3","${firstKeyStartDate3}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_from hour" help="hour in which md5 authentication key validity starts">
+	<PARAM name="firstKeyStartDate4" 
+	       help="First MD5 Key Not Valid Before"
+	       ptype="TIME_HH"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyFrom4","${firstKeyStartDate4}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_from minute" help="minute in which md5 authentication key validity starts">
+	<PARAM name="firstKeyStartDate5" 
+	       help="First MD5 Key Not Valid Before"
+	       ptype="TIME_MM"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyFrom5","${firstKeyStartDate5}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_from second" help="second in which md5 authentication key validity starts">
+	<PARAM name="firstKeyStartDate6" 
+	       help="First MD5 Key Not Valid Before"
+	       ptype="TIME_SS"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyFrom6","${firstKeyStartDate6}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_to" help="First MD5 Key is Not Valid After entered date"/>
+    <COMMAND name="first_key valid_to month" help="month in which md5 authentication key validity ends">
+	<PARAM name="firstKeyEndDate1" 
+	       help="First MD5 Key Not Valid After"
+	       ptype="MONTH_MM"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyTo1","${firstKeyEndDate1}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_to day" help="day in which md5 authentication key validity ends">
+	<PARAM name="firstKeyEndDate2" 
+	       help="First MD5 Key Not Valid After"
+	       ptype="DAY_DD"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyTo2","${firstKeyEndDate2}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_to year" help="year in which md5 authentication key validity ends">
+	<PARAM name="firstKeyEndDate3" 
+	       help="First MD5 Key Not Valid After"
+	       ptype="YYYY_YEAR"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyTo3","${firstKeyEndDate3}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_to hour" help="hour in which md5 authentication key validity ends">
+	<PARAM name="firstKeyEndDate4" 
+	       help="First MD5 Key Not Valid After"
+	       ptype="TIME_HH"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyTo4","${firstKeyEndDate4}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_to minute" help="minute in which md5 authentication key validity ends">
+	<PARAM name="firstKeyEndDate5" 
+	       help="First MD5 Key Not Valid After"
+	       ptype="TIME_MM"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyTo5","${firstKeyEndDate5}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="first_key valid_to second" help="second in which md5 authentication key validity ends">
+	<PARAM name="firstKeyEndDate6" 
+	       help="First MD5 Key Not Valid After"
+	       ptype="TIME_SS"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.FirstKeyTo6","${firstKeyEndDate6}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key" help="Second MD5 Key Parameters"/>
+    <COMMAND name="second_key id_number" help="Second MD5 Key Id">
+	<PARAM name="secondKeyId" 
+	       help="Second MD5 Key Id"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyId","${secondKeyId}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key authentication_id" help="Second MD5 Authentication Key">
+	<PARAM name="secondAuthKeyId" 
+	       help="Second MD5 Authentication Key"
+               ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondAuthenticationKeyId","${secondAuthKeyId}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_from" help="Second MD5 Key Not Valid Before Entered date"/>
+    <COMMAND name="second_key valid_to" help="Second MD5 Key Not Valid After entered date"/>
+    <COMMAND name="second_key valid_from month" help="month in which md5 authentication key validity starts">
+	<PARAM name="secondKeyStartDate1" 
+	       help="Second MD5 Key Not Valid Before"
+	       ptype="MONTH_MM"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyFrom1","${secondKeyStartDate1}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_from day" help="day in which md5 authentication key validity starts">
+	<PARAM name="secondKeyStartDate2" 
+	       help="Second MD5 Key Not Valid Before"
+	       ptype="DAY_DD"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyFrom2","${secondKeyStartDate2}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_from year" help="year in which md5 authentication key validity starts">
+	<PARAM name="secondKeyStartDate3" 
+	       help="Second MD5 Key Not Valid Before"
+	       ptype="YYYY_YEAR"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyFrom3","${secondKeyStartDate3}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_from hour" help="hour in which md5 authentication key validity starts">
+	<PARAM name="secondKeyStartDate4" 
+	       help="Second MD5 Key Not Valid Before"
+	       ptype="TIME_HH"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyFrom4","${secondKeyStartDate4}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_from minute" help="minute in which md5 authentication key validity starts">
+	<PARAM name="secondKeyStartDate5" 
+	       help="Second MD5 Key Not Valid Before"
+	       ptype="TIME_MM"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyFrom5","${secondKeyStartDate5}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_from second" help="second in which md5 authentication key validity starts">
+	<PARAM name="secondKeyStartDate6" 
+	       help="Second MD5 Key Not Valid Before"
+	       ptype="TIME_SS"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyFrom6","${secondKeyStartDate6}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_to month" help="month in which md5 authentication key validity ends">
+	<PARAM name="secondKeyEndDate1" 
+	       help="Second MD5 Key Not Valid After"
+	       ptype="MONTH_MM"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyTo1","${secondKeyEndDate1}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_to day" help="day in which md5 authentication key validity ends">
+	<PARAM name="secondKeyEndDate2" 
+	       help="Second MD5 Key Not Valid After"
+	       ptype="DAY_DD"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyTo2","${secondKeyEndDate2}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_to year" help="year in which md5 authentication key validity ends">
+	<PARAM name="secondKeyEndDate3" 
+	       help="Second MD5 Key Not Valid After"
+	       ptype="YYYY_YEAR"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyTo3","${secondKeyEndDate3}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_to hour" help="hour in which md5 authentication key validity ends">
+	<PARAM name="secondKeyEndDate4" 
+	       help="Second MD5 Key Not Valid After"
+	       ptype="TIME_HH"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyTo4","${secondKeyEndDate4}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_to minute" help="minute in which md5 authentication key validity ends">
+	<PARAM name="secondKeyEndDate5" 
+	       help="Second MD5 Key Not Valid After"
+	       ptype="TIME_MM"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyTo5","${secondKeyEndDate5}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="second_key valid_to second" help="second in which md5 authentication key validity ends">
+	<PARAM name="secondKeyEndDate6" 
+	       help="Second MD5 Key Not Valid After"
+	       ptype="TIME_SS"/>
+	<ACTION>lua clishCfgObjAdd ("rip", "Rip.SecondKeyTo6","${secondKeyEndDate6}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net routing dynamic" license_support="Y" help="Configure the routes dynamically."/>
+    <COMMAND name="show net routing dynamic" license_support="Y" help="Show dynamic routing setup"/>
+<!--=======================================================-->
+    <COMMAND name="net routing dynamic configure"
+             help="configure the routes dynamically."
+             view="net-dynamic-routing-config" viewid="">
+            <ACTION>lua clishCfgObjNew("rip", ripCfgInit, ripCfgSave, 
+                ripCfgInputVal)
+	    </ACTION>
+    </COMMAND>
+ <!--=======================================================-->
+    <COMMAND name="show net routing dynamic setup"
+	     help="Show dynamic routing Setup.">
+	<DETAIL>
+This command shows the Dynamic Routing Setup.
+
+&lt;RIP Direction&gt;: 
+&lt;RIP Version&gt;: 
+&lt;Authentication Type for RIP-2B/2M &gt;: 
+&lt;If Authentication is enabled then First Key Parameters&gt;: 
+&lt;If Authentication is enabled then Second Key Parameters&gt;: 
+&lt;RPING Status&gt;: 
+	</DETAIL>
+        <ACTION>lua clishCmdExec (ripConfigGet)</ACTION>
+    </COMMAND>
+ <!--=======================================================-->
+</CLISH_MODULE>

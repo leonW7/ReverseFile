@@ -1,0 +1,295 @@
+<?lua
+require "teamf1lualib/bl_wlanAssociatedClients"
+require "teamf1lualib/bl_dettectedClients"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "status"
+	PAGE_HELP_SECTION = "wlanAssociatedClients"
+
+local wlanClients = require("com.teamf1.bl.wlan.vaps")
+local guiDetectedClients = require("com.teamf1.bl.wlan.detectedclients")
+local returnCodes = require("com.teamf1.core.returnCodes")
+local errorMap    = require ("com.teamf1.core.errorMap")
+
+local configRowId 
+local configRow = {}
+if(ButtonType and ButtonType == "disconnect") then
+local inputTable = web.cgiToLuaTable (cgi)
+    if(type(cgi["associatedClients.checkbox"]) == "string") then
+        --local inputTable = web.cgiToLuaTable (cgi)
+        local returnCode = 
+            wlanClients.wlanAssociatedClientsDissociate(cgi["associatedClients.checkbox"])
+            if (returnCode ~= returnCodes.SUCCESS) then
+                 statusErrorMessage = errorMap.errorStringGet (returnCode)
+            elseif(returnCode == returnCodes.SUCCESS)then
+                   statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            end
+            web.goToPage(NextPage, true, true)
+    elseif(type(cgi["associatedClients.checkbox"]) == "table")then
+    local returnCode = 
+            wlanClients.wlanassociatedclientsDisassociateAll()
+            if (returnCode ~= returnCodes.SUCCESS) then
+                 statusErrorMessage = errorMap.errorStringGet (returnCode)
+            elseif(returnCode == returnCodes.SUCCESS)then
+                   statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            end
+    end 
+
+elseif (ButtonType and ButtonType == "purgeRoam") then
+    errorCode = guiDetectedClients.wlanRoamDelete (cgi["associatedClients.checkbox"])
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    end    
+    web.goToPage(NextPage, true, true)
+
+else
+    local returnCode
+    returnCode, configRow = wlanClients.wlanAssociatedClientsGet()
+    if (returnCode ~= returnCodes.SUCCESS and returnCode ~= returnCodes.FAILURE) then
+                 statusInfoMessage = returnCode
+    elseif(returnCode ~= returnCodes.SUCCESS)then
+                 statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+
+	<body>
+
+		<!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>				
+		<form action="platform.cgi" method="post" name="tf1_frmVaps" id="tf1_frmVaps">		
+			<input type="hidden" name="thispage" id="thispage" value="associatedClients.html">			
+			<div id="tf1_dialog" class="configDialog"></div>		
+		</form>
+		
+		<!-- Section for Pop up dialog ends -->	
+
+		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+			<ul>
+				<li id="disconnect">
+					Disconnect
+				</li>
+				<li id="details">
+					Details
+				</li>
+				<li id="distributed">
+					Distributed Tunneling
+				</li>
+				<li id="neighbourap">
+					Neighbor AP Status
+				</li>
+				<li id="clientStatistics">
+					Client Statistics
+				</li>				
+				<li id="romaHistoryDetails">Roam History Details</li>
+				<li id="purgeHistory">Purge Roam History</li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu1");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgInfo">
+					<p>Status Message Place Holder.</p>
+					</div>
+					-->
+                                         <?lua if ( statusInfoMessage ~= returnCodes.NIL) then
+                                          ?>
+                                         <div class="msgInfo">
+                                             <p>$| statusInfoMessage |$</p>
+                                         </div>
+                                         <?lua elseif ( statusErrorMessage ~= returnCodes.NIL) then
+                                          ?>
+                                         <div class="msgError">
+                                             <p>$| statusErrorMessage |$</p>
+                                         </div>
+                                         <?lua else if(statusSuccessMessage ~= returnCodes.NIL) then
+                                         ?>
+                                        <div class="msgSuccess">
+                                              <p>$| statusSuccessMessage |$</p>
+                                        </div>
+                                        <?lua end end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+								<a href="?page=associatedClientsGlobalStatus.html">Global 
+								Status</a></li>
+								<li class="current"><a href="?page=associatedClients.html">Associated 
+								Client</a> </li>
+								<li><a href="?page=adHocClients.html">Ad Hoc Clients</a>
+								</li>
+								<li><a href="?page=detectedClients.html">Detected Clients</a>
+								</li>
+				            </ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+							$| helpHintText |$
+						</p>
+					</div>
+					<h1>WLAN Associated Clients List</h1>
+					<div class="CLR">
+						<div class="demo_jui" id="tf1_vaps">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th>Client MAC Address </th>
+										<th>Client IP Address </th>
+										<th>SSID </th>
+										<th>BSSID </th>
+										<th>AP MAC Address </th>
+									</tr>
+								</thead>
+                                                                <?lua
+                                                                   local row = {}
+ 							           local routerType = ''
+                                                                   if (configRow ~= nil) then
+                                                                   for k, v in pairs(configRow) do 
+                                                                        row = configRow[k]
+									if(row.routerType == 0) then
+										routerType = "*"
+									else
+       										routerType = ''
+ 									end
+                                                                ?>
+								<tr class="gradeA" id="associatedClients$| row["clientMacAddr"] |$">
+									<td>$| routerType .. row["clientMacAddr"] |$</td>
+									<td>$| row["clientIpAddr"] |$ </td>
+									<td>$| row["ssid"] |$ </td>
+									<td>$| row["bssid"] |$ </td>
+									<td>$| row["apMacAddr"] |$ </td>
+								</tr>
+                                                           <?lua end ?>
+                                                         <?lua end ?>
+							</table>
+						</div>
+					</div>
+                                             <div class="buttonsRow" id="tf1_btnShowModal">
+                                        </div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#tf1_vaps .gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'disconnectMenu' : function(t, e, rowId) {							
+							
+                                                   changeRowStauts('disconnect',
+                                            'tf1_frmVaps',
+                                            rowId, 'tf1_dialog',
+                                            'associatedClients',
+                                            'associatedClients',
+                                            'associatedClients');
+						},
+						'detailsMenu' : function(t, e, rowId) {
+							openPreviewForm('button.details.associatedClients.associatedClients', 'MAC', rowId,'tf1_dialog','associatedClients','associatedClientsForm.html', 'tf1_vapsDetailsDailogContent','');	
+						},
+						'clientStatisticsMenu' : function(t, e, rowId) {
+							openPreviewForm('button.statistic.associatedClients.associatedClients', 'MAC', rowId,'tf1_dialog','associatedClients','associatedClientsForm.html', 'tf1_clientStatisticsDailogContent','');	
+						},
+						'distributedMenu' : function(t, e, rowId) {
+							openPreviewForm('button.distributed.associatedClients.associatedClients', 'MAC', rowId,'tf1_dialog','associatedClients','associatedClientsForm.html', 'tf1_vapsDistributeDailogContent','');
+						},
+						'neighbourapMenu' : function(t, e, rowId) {
+							openPreviewForm('button.neighbourap.associatedClients.associatedClients', 'MAC', rowId,'tf1_dialog','associatedClients','associatedClientsForm.html', 'tf1_vapsNeighbourAPDailogContent','onloadVapsFn');
+						},
+                        'romaHistoryDetailsMenu' : function(t, e, rowId) {
+                        	openPreviewForm('button.roam.associatedClients.associatedClients', 'VAPID', rowId,'tf1_dialog','associatedClients','associatedClientsForm.html', 'tf1_roamHistoryDailogContent','onloadRoamHistoryFn');
+                        },
+                        'purgeHistoryMenu' : function(t, e, rowId) {
+                            changeRowStauts('purgeRoam',
+                                            'tf1_frmVaps',
+                                            rowId, 'tf1_dialog',
+                                            'associatedClients',
+                                            'associatedClients',
+                                            'associatedClients');
+                        }
+					}
+				});
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				
+				dataRightClick(true);
+				$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+			   	});
+
+
+			});
+
+            function onloadRoamHistoryFn(){
+                oTable = $('#recordsData3').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+            }
+
+			function onloadVapsFn(){
+				oTable = $('#recordsData2').dataTable({
+					"bJQueryUI" : true,
+					"bPaginate" : false,
+					"bLengthChange" : false,
+					"bFilter" : false,
+					"bSort" : false,
+					"bInfo" : false,
+					"bAutoWidth" : false
+				});
+			}
+		</script>
+	</body>
+
+</html>
+<?lua end ?>

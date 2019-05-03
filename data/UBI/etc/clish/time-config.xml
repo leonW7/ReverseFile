@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="system-time-config" prompt="system-config[time]> "> 
+    <COMMAND name="save" help="Save time configuration changes.">
+	     <ACTION>lua clishCfgObjExec("time")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Save time configuration changes and current mode."
+    	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("time")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back time configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="time_zone" help="Specify timezone">
+	     <PARAM name="tz"
+		    help="Timezone"
+		    ptype="TZ_NAME"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.timezone", "${tz}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="enable_daylight_saving" help="Specify whether you want to enable daylight saving">
+	     <PARAM name="auto_daylight"
+		    help="Login timeout (in minutes)"
+		    ptype="CHOICE_INT"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.autoDaylight", "${auto_daylight}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="configure_ntp_servers" help="Specify whether to use ntpp servers or user will set date and time">
+	     <PARAM name="ntp_enabled"
+             help="Enable/Disable use of ntp servers"
+		    ptype="CHOICE_INT"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.enabled", "${ntp_enabled}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="use_default_servers" help="Specify whether to use system default NTP servers or custom NTP servers.">
+	     <PARAM name="enable"
+		    help="Enable/Disable use of default NTP servers."
+		    ptype="CHOICE_INT"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.useDefServers", "${enable}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="primary_ntp_server" help="Set Primary NTP server.">
+	     <PARAM name="ntp_server"
+		    help="Primary NTP Server  Name / IP Address"
+		    ptype="STRING"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.server1", "${ntp_server}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary_ntp_server" help="Set Secondary NTP server">
+	     <PARAM name="ntp_server"
+		    help="Secondry NTP Server  Name / IP Address"
+		    ptype="STRING"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.server2", "${ntp_server}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ntp_year" help="Set year for the date">
+	     <PARAM name="ntp_year"
+		    help="Year to be set for the date"
+		    ptype="YYYY_YEAR"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.year", "${ntp_year}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ntp_month" help="Set month for the date">
+	     <PARAM name="ntp_month"
+		    help="month to be set for the date"
+		    ptype="MONTH_MM"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.month", "${ntp_month}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ntp_day" help="Set Day for the date">
+	     <PARAM name="ntp_day"
+		    help="day to be set for the date"
+		    ptype="DAY_DD"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.date", "${ntp_day}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ntp_hour" help="Set hour for the date">
+	     <PARAM name="ntp_hour"
+		    help="hour to be set for the date"
+		    ptype="TIME_HH"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.hours", "${ntp_hour}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ntp_minutes" help="Set minutes for the date">
+	     <PARAM name="ntp_minutes"
+		    help="minutes to be set for the date"
+		    ptype="TIME_MM"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.minutes", "${ntp_minutes}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ntp_seconds" help="Set seconds for the date">
+	     <PARAM name="ntp_seconds"
+		    help="seconds to be set for the date"
+		    ptype="TIME_SS"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.seconds", "${ntp_seconds}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ntp_sync_interval" help="Set sync interval (in minutes)">
+	     <PARAM name="ntp_sync_interval"
+		    help="interval after which resynchronization will happen"
+		    ptype="UINT"/>
+	     <ACTION>lua clishCfgObjAdd ("time", "ntp.reSyncNtpVal", "${ntp_sync_interval}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="system time" 
+	     access="admin"
+	     help="System time configuration mode"/>
+    <!--=======================================================-->
+    <COMMAND name="system time configure"
+             help="System time configuration mode"
+             view="system-time-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("time", timeConfigInit, timeConfigSave, 
+			 timeConfigInputVal)
+             </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

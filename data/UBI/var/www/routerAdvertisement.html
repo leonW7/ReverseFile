@@ -1,0 +1,291 @@
+<?lua
+require "teamf1lualib/ipv6_radvd_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/ipv6_mode_bl"
+require "teamf1lualib/vlan_vlan"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "routerAdvertisement"
+
+local radvd = require("com.teamf1.bl.ipv6.radvd")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require("com.teamf1.core.returnCodes")
+local mode6 = require("com.teamf1.bl.ipv6.mode")
+local vlan_vlan = require ("com.teamf1.core.vlan.vlan")
+
+ENABLE = 3
+
+local errMsg, cookie, ipMode = mode6.ipModeSectionGet()
+
+if (tonumber(ipMode) ~= ENABLE) then
+   statusInfoMessage = errorMap.errorStringGet (13605)
+end
+
+local routerAdvTbl = {}
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable["radvd.cookie"] = RowId
+    errMsg, cookie = radvd.radvdAdvSectionSet(inputTable)
+    if (errMsg ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errMsg)
+    elseif(errMsg == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errMsg)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif( ButtonType and ButtonType == "disable" ) then
+       local inputTable = web.cgiToLuaTable (cgi)
+       if (type(cgi["routerAdvertisement.checkbox"]) == "string") then
+          inputTable["radvd.cookie"] = cgi["routerAdvertisement.checkbox"] 
+          errMsg, cookie = radvd.radvdAdvSectionDisable (inputTable)
+       elseif (type(cgi["routerAdvertisement.checkbox"]) == "table") then
+               errMsg = radvd.radvdAdvSectionDisableAll (cgi["routerAdvertisement.checkbox"])
+       end
+
+       if (errMsg == returnCodes.SUCCESS) then
+           statusSuccessMessage = errorMap.errorStringGet (errMsg)
+       else 
+           statusErrorMessage = errorMap.errorStringGet (errMsg)
+	   end
+       web.goToPage(NextPage, true, true)
+       
+elseif( ButtonType and ButtonType == "enable" ) then
+       local inputTable = web.cgiToLuaTable (cgi)
+       if (type(cgi["routerAdvertisement.checkbox"]) == "string") then
+          inputTable["radvd.cookie"] = cgi["routerAdvertisement.checkbox"] 
+          errMsg, cookie = radvd.radvdAdvSectionEnable(inputTable)
+          elseif (type(cgi["routerAdvertisement.checkbox"]) == "table") then
+               errMsg = radvd.radvdAdvSectionEnableAll (inputTable)
+       end
+
+       if (errMsg == returnCodes.SUCCESS) then
+           statusSuccessMessage = errorMap.errorStringGet (errMsg)
+       else 
+           statusErrorMessage = errorMap.errorStringGet (errMsg)
+	   end
+       web.goToPage(NextPage, true, true)
+else
+    errMsg, configRow = radvd.radvdAdvSectionGetAll ()
+    if(errMsg ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errMsg)
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+
+    LANG_LOCALE = "11455,11445,12529,12727,10192,12728,10189,13189,13177,10188,11206,12732,12586,11661,11871,12730,13659,11705,11113,11733,11309,12729,11967,12061,12106,11343,13004,12627,12758,11187,13524,10751,10749,10875,50105,50106"
+?>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>				
+		<form name action="platform.cgi" method="post" name="tf1_frmrouterAdvertisement" id="tf1_frmrouterAdvertisement">	
+			<input type="hidden" name="thispage" id="thispage" value="routerAdvertisement.html">	
+			<div id="tf1_dialog" class="configDialog"></div>
+        </form>
+        <!-- Section for Pop up dialog ends -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <!-- Right click Div Start -->
+		    <div class="contextMenu" id="contextMenu">
+			<ul>
+				<li>
+					<input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'edit');"/>
+					&nbsp;$| LANG_LOCALE['12795'] |$
+				</li>
+				<li id="edit">
+					$| LANG_LOCALE['10862'] |$
+				</li>
+				<li id="enable">
+					$| LANG_LOCALE['10875'] |$
+				</li>
+				<li id="disable">
+					$| LANG_LOCALE['10749'] |$
+				</li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu3");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+                                         <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=ipv6LanSettings.html">$| LANG_LOCALE['11455'] |$</a>
+								</li>
+								<li>
+									<a href="?page=ipv6AddressPools.html">$| LANG_LOCALE['11445'] |$</a>
+								</li>
+								<li>
+									<a href="?page=ipv6PrefixLength.html">$| LANG_LOCALE['12529'] |$</a>
+								</li>
+								<li class="current">
+									<a href="?page=routerAdvertisement.html">$| LANG_LOCALE['12727'] |$</a>
+								</li>
+								<li>
+                                    <?lua 
+                                    if (langVal == "ru") then
+                                        local advPrefix = LANG_LOCALE['10192']
+                                        local advPrefixTitle = LANG_LOCALE['10192']
+                                        local advPrefixLen = #LANG_LOCALE['10192']
+                                        if (advPrefixLen > 12) then
+                                            advPrefix = string.sub(advPrefix, 1, 12) .. "..."
+                                        end
+                                    ?>
+									<a title="$| advPrefixTitle |$" href="?page=advertisementPrefixes.html">$| advPrefix |$</a>
+                                    <?lua else ?>
+									<a href="?page=advertisementPrefixes.html">$| LANG_LOCALE['10192'] |$</a>
+                                    <?lua end ?>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+							$| helpHintText |$						</p>
+					</div>
+                    <h1>$| LANG_LOCALE['12727'] |$</h1>
+                    <div class="CLR">
+						<div class="demo_jui" id="tf1_routerAdvertisement">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th>$| LANG_LOCALE['13004'] |$</th>
+										<th>$| LANG_LOCALE['11187'] |$</th>
+									</tr>
+                                </thead>
+                                <?lua
+                                    local status
+                                    for k, v in pairs(configRow) do
+                                    local outputTable = {}
+                                    outputTable = configRow[k]
+                                    local rowId = outputTable["_ROWID_"]
+                                    if (outputTable["isEnabled"] == "1") then
+                                        status = LANG_LOCALE['13524']
+                                    else
+                                        status = LANG_LOCALE['10751']
+                                    end
+                                    local interface = outputTable["LogicalIfName"]
+                                    if (interface ~= NIL and interface ~= "LAN") then
+                                        vlanId = interface:sub (4)
+                                        ret,interface = vlan_vlan.vlanNameByIdGet (vlanId)
+                                   else 
+                                        if (interface == "LAN") then
+                                          interface = "Default"
+                                        end
+                                   end
+                                ?>
+								<tr class="gradeA" id="routerAdvertisement$| rowId |$" statusVal = "$| outputTable["isEnabled"] |$">
+									<td>$| status or ''|$</td>
+                                    <td>$| interface or ''|$</td>
+                                </tr>
+                                <?lua end ?>
+							</table>
+						</div>
+					</div>
+                </div>
+                </td>
+            </tr>
+			<tr>
+				<td><?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/routerAdvertisement.js"></script>
+        <script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+			$('#tf1_routerAdvertisement .gradeA').contextMenu('contextMenu', {
+				bindings : {
+				'editMenu' : function(t, e, rowId) {
+					openForm('button.edit.routerAdvertisement.routerAdvertisement',rowId,'tf1_dialog','routerAdvertisement','routerAdvertisementForm.html','tf1_routerAdvertisementDailogContent','onLoadCallRouterAdvertisement');									
+                },
+                'disableMenu' : function(t, e, rowId) {
+					changeRowStauts('disable', 'tf1_frmrouterAdvertisement', rowId, 'tf1_dialog', 'routerAdvertisement', 'routerAdvertisement', 'routerAdvertisement.routerAdvertisement', 'optionSelectAll');
+				},
+				'enableMenu' : function(t, e, rowId) {
+					changeRowStauts('enable', 'tf1_frmrouterAdvertisement', rowId, 'tf1_dialog', 'routerAdvertisement', 'routerAdvertisement', 'routerAdvertisement.routerAdvertisement', 'optionSelectAll');
+				}
+			},
+                onShowMenu: function(e,menu,rowId) {
+				    if ($("#"+rowId).attr("statusVal") == "1"){
+						$('#enableMenu', menu).remove();
+					} else {
+						$('#disableMenu', menu).remove();
+					}
+					return menu;
+				}
+			});
+
+
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+				$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+			   	});
+			});
+
+		</script>
+	</body>
+</html>
+<?lua end ?>

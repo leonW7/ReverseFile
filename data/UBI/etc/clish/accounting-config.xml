@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<!--=======================================================-->
+<VIEW name="Radius-Accounting-Settings" prompt="Radius-Accounting-Settings> "> 
+    <COMMAND name="save" help="Save RADIUS Accounting configuration changes.">
+        <ACTION>lua clishCfgObjExec("radiusAcc")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+        help="Save RADIUS Accounting configuration changes and exit current mode." 
+        view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("radiusAcc")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="captivePortal" help="Enable or Disable Radius Accounting for captivePortal feature.">
+        <PARAM name="captivePortalAcc" 
+            help="Enable or Disable Radius Accounting for captivePortal feature."
+            ptype="ACC_STATUS"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAcc", "userAccountingEnable.captivePortal", 
+            "${captivePortalAcc}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="radius-accounting-interim-interval" help="Set Radius Accounting Interim Interval Period.">
+        <PARAM name="interim_interval" 
+            help=" Radius Accounting Interim Interval Period in seconds."
+            ptype="ACCOUNTING_INTERIM_INTERVAL"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAcc", "userAccountingEnable.interimInterval", 
+            "${interim_interval}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="nas-interface" help="Select the nas interface out of available wan Interfaces in load balance mode">
+        <PARAM name="nas_interface" 
+            help="Radius NAS interface selection in load balance case."
+            ptype="WAN_INTERFACE_TYPE"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAcc", "userAccountingEnable.routeIfaceName", 
+            "${nas_interface}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+
+    <COMMAND name="system Radius-Accounting-Settings"
+        help="Configure Radius-Accounting-Settings."
+        view="Radius-Accounting-Settings" viewid="" check_supported="Y">
+        <ACTION>lua clishCfgObjNew ("radiusAcc", radiusAccCfgInit, 
+            radiusAccCfgSave, radiusAccCfgInputVal)
+        </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

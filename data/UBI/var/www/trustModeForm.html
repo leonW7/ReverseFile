@@ -1,0 +1,80 @@
+<?lua
+require "teamf1lualib/bl_trustMode"
+require "teamf1lualib/routingMode_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local guiTrustMode = require("com.teamf1.bl.lanqos.trustmode")
+local routingMode  = require("com.teamf1.bl.wan.routingmode")
+local errorMap     = require ("com.teamf1.core.errorMap")
+local returnCodes  = require ("com.teamf1.core.returnCodes")
+
+local configRow = cgi
+local cookie = {}
+cookie["trustMode.cookie"] = configRow["configRowId"]
+
+local errorCode, trustModeInfo = guiTrustMode.trustModeGetInfo (cookie)
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+local transParentMode = "3"
+local errorCode , dummyCookie, routingModeInfo = routingMode.routingModeSectionGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<div id="tf1_trustModeDailogContent">
+				<div class="topBg">
+					<h1>Trust Mode Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+				<div class="dialogMidArea">
+					<div class="configRow">
+						<label> LAN Port </label>
+                        <select name="trustMode.cookie">
+							<option $|
+                            web.dropdownSelected(trustModeInfo["portNum"] ==
+                            "1") |$ value="1">Port 1</option>
+							<option $| web.dropdownSelected(trustModeInfo["portNum"] == "2") |$
+                            value="2">Port 2</option>
+							<option $| web.dropdownSelected(trustModeInfo["portNum"] == "3") |$
+                            value="3">Port 3</option>
+                            <option $|
+                            web.dropdownSelected(trustModeInfo["portNum"] == "4") |$
+                            value="4">Port 4</option>
+                            <?lua if (routingModeInfo == transParentMode) then
+                            ?>
+                            <option $|
+                            web.dropdownSelected(trustModeInfo["portNum"] == "5") |$
+                            value="5">Port 5</option>
+                            <?lua end?>
+						</select>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label> Classify Using </label>
+                        <p>
+							<input type="radio" name="trustMode.trustMode" $|
+                            web.radioSelected(trustModeInfo["trustMode"] == "1") |$ value="1" id="tf1_COS" checked="checked">
+							CoS
+						</p>
+						<p>
+							<input type="radio" name="trustMode.trustMode" $| web.radioSelected(trustModeInfo["trustMode"] ==
+                                        "2") |$ value="2" id="tf1_DSCP" >
+							DSCP
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+				</div>
+				<div class="dialogSubmitRow">
+					<input type="submit" name="button.edit.trustMode" class="btnSubmit" title="Save" value="Save" id="btSave">
+				</div>
+			</div>

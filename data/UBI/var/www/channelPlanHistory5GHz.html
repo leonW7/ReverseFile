@@ -1,0 +1,199 @@
+<?lua
+require "teamf1lualib/channelPlanHistory5GHz_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "channelPlanHistory5GHz"
+	
+local returnCodes = require("com.teamf1.core.returnCodes")
+local channelPlanHistory5 = require("com.teamf1.bl.wlan.channelPlanHistory5")
+local errorMap    = require ("com.teamf1.core.errorMap")
+
+local configRowId 
+local configRow = {}
+local returnCode, operationalStatus, lastIteration, lastAlgTime
+returnCode, operationalStatus, lastIteration, lastAlgTime, configRow = channelPlanHistory5.channelPlanHistoryGet()
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (tonumber(returnCode))
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu2");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+                                        <?lua if ( statusErrorMessage ~= returnCodes.NIL) then
+                                          ?>
+                                         <div class="msgInfo">
+                                             <p>$| statusErrorMessage |$</p>
+                                         </div>
+                                         <?lua end
+                                         ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=channelAlgorithm5GHz.html">Channel Setting</a>
+								</li>
+								<li>
+									<a href="?page=manualChannelPlan5GHz.html">Manual Channel Plan</a>
+								</li>
+								<li class="current">
+									<a href="?page=channelPlanHistory5GHz.html">Channel Plan History</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$
+						</p>
+					</div>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li class="current">
+									<a href="?page=channelPlanHistory5GHz.html">5 GHz</a>
+								</li>
+								<li>
+									<a href="?page=channelPlanHistory2-4GHz.html">2.4 GHz</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+
+					<h1>Channel Plan History 5 GHz</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmChannelPlanHistory5GHz" id="tf1_frmChannelPlanHistory5GHz-4GHz" action="platform.cgi">
+							<input type="hidden" name="thispage" id="thispage" value="channelPlanHistory5GHz.html">
+								<div class="configRow">
+									<label> Operational Status </label>
+									<p>
+                                                                            <?lua
+                                                                                if (operationalStatus == 1) then
+									            operationalStatus = "Active"
+                                                                                else
+                                                                                    operationalStatus
+                                                                                    =
+                                                                                    "Inactive"
+                                                                                end
+                                                                            ?>
+                                                                              $|operationalStatus|$
+									</p>
+                                </div>
+                                <?lua if (operationalStatus == "Active") then ?>
+                                
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> Last Iteration </label>
+									<p>
+										$|lastIteration|$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> Last Algorithm Time </label>
+									<p>
+										$|lastAlgTime|$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<h2>Iterations List</h2>
+								<div class="CLR">
+									<div class="demo_jui">
+										<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+											<thead>
+												<tr>
+													<th> AP MAC Address </th>
+													<th> Location </th>
+													<th> Iteration </th>
+													<th> Channel </th>
+												</tr>
+											</thead>
+                                                                                        <?lua
+                                                                                          local row = {}
+if (configRow ~= nil) then
+                                                                                          for k, v in pairs(configRow) do 
+                                                                                              row = configRow[k]
+                                                                                        ?>
+											<tr class="gradeA" id=history$|row[1]|$>
+												<td> $|row[1]|$ </td>
+												<td> $|row[2]|$ </td>
+												<td> $|row[3]|$ </td>
+												<td> $|row[4]|$ </td>
+											</tr>
+  <?lua end ?>
+                                                                                    <?lua end ?>
+										</table>
+									</div>
+                                </div>
+                                <?lua end ?>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(false);
+			});
+		</script>
+	</body>
+</html>

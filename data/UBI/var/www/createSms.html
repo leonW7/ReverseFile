@@ -1,0 +1,146 @@
+<?lua
+require "teamf1lualib/createSms_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/threeg_returnCodes"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "createSms"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local createSmsReturnCodes = require("com.teamf1.core.threeg.threeg_returnCodes")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag  = createSmsSet (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+else
+local errorFlag, returnCode, enableState 
+returnCode, enableState = createSmsGet ()
+if(returnCode ~= returnCodes.SUCCESS) then
+        if (returnCode == createSmsReturnCodes.THREEG_NOT_AVAILABLE) then
+            statusInfoMessage = errorMap.errorStringGet (returnCode)
+        end
+end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "10548,12637,13058,12814,11170,10617,30415,12060,12199,30416,30613"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+         <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmCreateSms" id="tf1_frmCreateSms">        
+            <input type="hidden" name="thispage" id="thispage" value="createSms.html">
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                        <?lua if (statusInfoMessage ~= returnCodes.NIL) then ?>
+			<div class="msgInfo">
+                        <p>$| statusInfoMessage or '' |$</p>
+			</div>
+			<?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                   <div align="left">
+			<nav class="nav-bg">
+			<ul class="menu">
+			    <li>
+				<a href="?page=inbox.html">$| LANG_LOCALE['11170'] |$</a>
+			    </li>
+			    <li class="current">
+				<a href="?page=createSms.html">$| LANG_LOCALE['10617'] |$</a>
+			    </li>
+			</ul>
+			</nav>
+		   </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+			<h1>$| LANG_LOCALE['10548'] |$</h1>
+			<div class="midArea">
+				<div align="left">
+					<form name="tf1_frmCreateSms" method="post" id="tf1_frmCreateSms" action="platform.cgi">
+						<input type="hidden" name="thispage" id="thispage" value="createSms.html">
+							<div class="configRow">
+								<label>$| LANG_LOCALE['12637'] |$</label>
+								<input type="text"
+                                                name="createSms.receiver" maxlength="12" id="tf1_receiver" value="" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', true, '', '');}">
+								</div>
+							<div class="break">&nbsp;</div>
+								<div class="configRow">
+								<label>$| LANG_LOCALE['13058'] |$</label>
+								<textarea id="tf1_textMessage" name="createSms.text" value=""></textarea>								
+								</div>
+							<div class="break">&nbsp;</div>
+
+						<div class="submitRow">
+							<input type="submit" name="button.config.createSms.createSms" onclick="return createSmsValidations()" class="btnSubmit" title="$| LANG_LOCALE['12814'] |$" value="$| LANG_LOCALE['12814'] |$" id="btSave">
+							<input type="Reset" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave">
+						</div>
+						<div class="break">&nbsp;</div>
+					</form>					
+				</div>
+			</div>
+		</div>
+		</td>
+	</tr>
+	<tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <input type="hidden" value="$| enableState or '' |$" id="hdStatus" />
+    <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/createSms.js"></script>
+</body>
+
+</html>
+<?lua end ?>

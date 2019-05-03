@@ -1,0 +1,299 @@
+<?lua
+require "teamf1lualib/radioConfig_bl"
+require "teamf1lualib/accessPoints_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "wireless"
+    if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000AC") then
+    PAGE_HELP_SECTION = "radioConfig_1000N"
+    elseif(UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500AC") then
+    PAGE_HELP_SECTION = "radioConfig_500N"
+    elseif(UNIT_NAME == "DSR-250N" and (HW_SER ~= "Ax")) then
+    PAGE_HELP_SECTION = "radioConfig_250N_B1"
+    elseif(UNIT_NAME == "DSR-250N") then
+    PAGE_HELP_SECTION = "radioConfig_250N"
+    else 
+    PAGE_HELP_SECTION = "radioConfig_150N"
+    end
+
+regionInfo  = db.getAttribute ("unitInfo","_ROWID_", "1", "regionInfo") or '';
+REGION_INFO = regionInfo
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local wRadioConfig = require("com.teamf1.bl.wireless.radio")
+local accessPoint = require("com.teamf1.bl.wireless.accesspoints")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    
+    inputTable["dot11Radio.radioNumber"] = "1"
+    if (UNIT_NAME == "DSR-1000AC") then
+        inputTable["dot11Radio.band"] = "b"
+        inputTable["dot11Radio.radioNumber"] = "2"
+    end   
+    
+    local returnCode, statusMessage = 
+            wRadioConfig.wirelessRadioConfigSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+
+else
+    local cardNumber = 1
+    if (PRODUCT_ID == "DSR-1000AC_Ax") then
+        cardNumber = 2
+    end
+    
+    local returnCode, statusMessage, wRadioConfigTab = 
+    wRadioConfig.wirelessRadioConfigGet ( cardNumber )
+
+    local currentTime = os.time() or '0'
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    LANG_LOCALE = "12603,12648,30072,11829,11720,10487,30073,13205,11634,10623,10477,10692,13138,13134,30074,30076,30077,30078,30079,30080,12627,10333"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+</head>
+<body>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes 
+                    -->
+                     <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua if (UNIT_NAME == "DSR-1000AC") then ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+
+                            <ul class="menu">
+                                <li class="current">
+                                    <a href="?page=radioConfig.html">2.4 GHz</a>
+                                </li> 
+                                <li>
+                                    <a href="?page=radioConfig5GHz.html">5 GHz</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                    </div>
+                    <?lua end?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <?lua if (UNIT_NAME == "DSR-1000AC") then ?>
+                    <h1>$| LANG_LOCALE['12603'] |$ - 2.4 GHz</h1>
+                    <?lua else?>
+                    <h1>$| LANG_LOCALE['12603'] |$</h1>
+                    <?lua end ?>
+                        <div class="midArea">
+                            <div align="left">
+                                <form name="tf1_frmradioSettings" id="tf1_frmradioSettings" action="platform.cgi" method="post">
+                                <input type="hidden" name="thispage" id="thispage" value="radioConfig.html">
+                                <div class="hide" id="tf1_selRegions_div">
+                                    <label>$| LANG_LOCALE['12648'] |$</label>
+                                    <select name="REGION" id="tf1_selRegions" onChange="updateCountries ()">
+                                    </select>
+                                </div>
+                                <div class="hide" id="break_selRegions_div">&nbsp;</div>
+				<div class="hide" id="tf1__div">
+				    <label>$| LANG_LOCALE['30072'] |$</label>
+                                    <select name="dot11GlobalConfig.country" id="tf1_selCountry" onChange="updateOperationFrequency ()">
+                                    </select>
+                                </div>
+                                <div class="hide" id="break__div">&nbsp;</div>
+                                <?lua if (UNIT_NAME == "DSR-1000AC") then?>
+                                <div class="configRow" id="tf1__div" style="display:none">
+                                    <label>$| LANG_LOCALE['11829'] |$</label>
+                                    <select name="dot11Radio.band" id="tf1_selOpFrq" size="1" onChange="updateMode ()">
+                                    </select>
+                                </div>
+                                <?lua else?>
+                                <div class="configRow" id="tf1__div">
+                                    <label>$| LANG_LOCALE['11829'] |$</label>
+                                    <select name="dot11Radio.band" id="tf1_selOpFrq" size="1" onChange="updateMode ()">
+                                    </select>
+                                </div>
+                                <?lua end?>
+                                <div class="break" id="break__div">&nbsp;</div>
+                                <div class="configRow" id="tf1__div">
+                                    <label>$| LANG_LOCALE['11720'] |$</label>
+                                    <select name="dot11Radio.opMode" id="tf1_selMode" onChange="updateChannelSpacing ();">
+                                    </select>
+                                </div>
+                                <div class="break" id="break__div">&nbsp;</div>
+                                <div class="configRow" id="tf1__div">
+				    <label>$| LANG_LOCALE['10487'] |$</label>
+                                    <select name="dot11Radio11n.chanWidth" id="tf1_selChannelWidth" onChange="updateChannel ()">
+				
+                                    </select>
+                                </div>
+						<div class="break" id="break__div">&nbsp;</div>
+						
+						<div class="configRow" id="tf1_selSideBand_div">
+							<label>$| LANG_LOCALE['30073'] |$</label>
+							<select name="dot11Radio11n.ctlSideBand" class="txt1" id="tf1_selSideBand" onChange="updateChannel ()">
+								<option $| web.dropdownSelected(wRadioConfigTab["dot11Radio11n.ctlSideBand"] == "Lower") |$ value="Lower">$| LANG_LOCALE['13205'] |$</option>
+                                <option $| web.dropdownSelected(wRadioConfigTab["dot11Radio11n.ctlSideBand"] == "Upper") |$ value="Upper">$| LANG_LOCALE['11634'] |$</option>
+                            </select>
+						</div>
+						<div class="break" id="break_selSideBand_div">&nbsp;</div>
+
+						<div class="configRow" id="tf1_div">
+							<label>$| LANG_LOCALE['10623'] |$</label>
+							<p id="tdCurChan">&nbsp;</p>
+						</div>
+						<div class="break" id="break_div">&nbsp;</div>
+
+						<div class="configRow" id="tf1__div">
+							<label>$| LANG_LOCALE['10477'] |$</label>
+							<select name="dot11Radio.configuredChannel" class="txt1" id="tf1_selChannels">
+							</select>
+						</div>
+						<div class="break" id="break__div">&nbsp;</div>
+<?lua if(UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-1000N" or UNIT_NAME ==
+"DSR-500N" or UNIT_NAME == "DSR-1000AC" or UNIT_NAME == "DSR-500AC" or
+(UNIT_NAME == "DSR-250N" and (HW_SER ~= "Ax"))) then?>						
+						<div class="configRow" id="tf1__div">
+							<label>$| LANG_LOCALE['10692'] |$</label>
+							<input type="text" maxlength="2" name="dot11Radio.txPower" value="$| wRadioConfigTab["dot11Radio.txPower"] |$" class="one" id="tf1_txtDefTransPwr" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return txPowerValueRangeCheck ();}"><dl> [$| LANG_LOCALE['12627'] |$: 1 - 31] dBm</dl>
+						</div>
+						<div class="break" id="break__div">&nbsp;</div>
+						<div class="configRow" id="tf1__div">
+							<label>$| LANG_LOCALE['13138'] |$</label>
+                            <p id="txPowerValId">&nbsp;</p>
+						</div>
+						<div class="break" id="break__div">&nbsp;</div>
+<?lua elseif(UNIT_NAME == "DSR-250N" and (HW_SER == "Ax")) then?>
+                    <?lua
+                        local vapStatus =  accessPoint.accessPointsStatus();
+                        if ( vapStatus == 0 ) then
+                           local txPowerVal = "0";
+?>
+                                                <div class="configRow" id="tf1_txPower_vapDown_div">
+                                                        <label>$| LANG_LOCALE['13138'] |$</label>
+                                                        <p>$| txPowerVal or '' |$ dBm</p>
+                                                </div>
+                                                <div class="break" id="break_txPower_vapDown_div">&nbsp;</div>
+<?lua
+                        else 
+                           local txPowerVal = "10-14";
+                    ?>                        
+                                               <div class="configRow" id="tf1_txPower_vapUp_div">
+                                                       <label>$| LANG_LOCALE['13138'] |$</label>
+                                                       <p>$| txPowerVal or '' |$ dBm</p>
+                                               </div>
+                                               <div class="break" id="break_txPower_vapUp_div">&nbsp;</div>
+<?lua end end ?>
+						<div class="configRow" id="tf1__div">
+                            <label>$| LANG_LOCALE['13134'] |$</label>
+                            <select name="dot11Radio.txRate" class="txt1" id="selTransmitRate"></select>
+                            <input type="hidden" id="tf1_hid_selTransmitRate" value="$| wRadioConfigTab["dot11Radio.txRate"] or '' |$">
+					</div>
+					<div class="break" id="break__div">&nbsp;</div>
+						
+						<div class="submitRow">
+							<input type="submit" name="button.config.radioConfig" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" onclick="return radioValidate()">
+							<input type="button" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="radioConfigReset ();">
+							</div>
+						<div class="break">&nbsp;</div>
+						</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+		</table>
+      <!-- Hidden Valus -->
+		<input type="hidden" id="hdWlanCountry" value="US">
+		<input type="hidden" id="hdWlanCountry1" value="$| wRadioConfigTab["dot11GlobalConfig.country"] or '' |$">
+		<input type="hidden" id="hdWlanOpFrq" value="$| wRadioConfigTab["dot11Radio.band"] or '' |$">
+		<input type="hidden" id="hdWlanMode" value="$| wRadioConfigTab["dot11Radio.opMode"] or '' |$">
+		<input type="hidden" id="hdWlanChannelWidth" value="$| wRadioConfigTab["dot11Radio11n.chanWidth"] or '' |$">
+		<input type="hidden" id="hdWlanChannel" value="$| wRadioConfigTab["dot11Radio.configuredChannel"] or '' |$">
+		<input type="hidden" id="hdWlanAutoChannel" value="$| wRadioConfigTab["dot11Radio.currentChannel"] or '' |$">	
+		<input type="hidden" id="hdEncType" value="$| wRadioConfigTab["dot11Profile.pairwiseCiphers"] or '' |$">
+        <input type="hidden" id="tf1_unitName" value="$| UNIT_NAME |$">
+        <input type="hidden" id="hdCountry" value="$| wRadioConfigTab["configuredCountry"] |$">
+        <input type="hidden" id="hdTxPowerMax" value="$| wRadioConfigTab["txPowerMax"] or '' |$"> 
+        <input type="hidden" id="hdVapWepCount" value="$|  wRadioConfigTab["count"] |$">
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <?lua if (UNIT_NAME == "DSR-1000AC") then?>
+        <script > var radioCardNo = 2 </script>
+        <?lua end?>
+        <?lua if (UNIT_NAME == "DSR-1000AC" or UNIT_NAME == "DSR-500AC") then ?>
+        <script type="text/javascript" language="javascript" src="js/wlNwDataAC.js?updated='$| currentTime |$'"></script>
+        <script type="text/javascript" language="javascript" src="js/wlNwAC.js?updated='$| currentTime |$'"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                 var modelIdObjVal = $("#tf1_unitName").val ();
+                 if(modelIdObjVal == "DSR-500AC"){
+                    cntIdx = getCountryIndex ();
+                    /* if opFrqSt 0 and opFrqEnd 0 then you need to show only 2.4GHz in dropdown starts*/
+                    if(wlNwObjLst[cntIdx].opFrqSt == 0 && wlNwObjLst[cntIdx].opFrqEnd == 0){
+                            $("#tf1_selOpFrq option[value='a']").remove();
+                    }
+                    /* if opFrqSt 0 and opFrqEnd 0 then you need to show only 2.4GHz. dropdown ends */
+
+                     /* if opFrqSt 1 and opFrqEnd 1 then you need to show only 5GHz in dropdown starts*/
+                    if(wlNwObjLst[cntIdx].opFrqSt == 1 && wlNwObjLst[cntIdx].opFrqEnd == 1){
+                            $("#tf1_selOpFrq option[value='b']").remove();
+                    }
+                    /* if opFrqSt 1 and opFrqEnd 1 then you need to show only 5GHz. dropdown ends */
+                }
+                
+            });
+        </script>
+        <?lua else ?>
+        <input type="hidden" id="hdhwVer" value="$| HW_SER |$">
+        <script type="text/javascript" language="javascript" src="js/wlNwData.js?updated='$| currentTime |$'"></script>
+        <script type="text/javascript" language="javascript" src="js/wlNw.js?updated='$| currentTime |$'"></script>
+        <?lua end ?>
+    </body>
+</html>
+<?lua end ?>

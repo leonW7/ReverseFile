@@ -1,0 +1,19 @@
+<meta http-equiv="X-Frame-Options" content="deny">
+<style>
+html {
+	display: none;
+}
+.supported {
+    font-size: 12px;
+    text-align:  center;
+    color: #006699;
+}
+</style>
+<script>
+       if(self == top) {
+           document.documentElement.style.display = 'block'; 
+       } else {
+           top.location = self.location; 
+       }
+</script>
+

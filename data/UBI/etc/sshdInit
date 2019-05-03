@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# sshdInit - initialization script for sshd
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,28nov07,chd written
+
+
+if [ "$INCLUDE_SSHD" = "y" ]; then
+mkdir -p /var/ssh
+cp -rf $SSHD_INSTALL_PATH/etc/ssh/* /var/ssh/
+fi

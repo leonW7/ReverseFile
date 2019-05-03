@@ -1,0 +1,5 @@
+# Disabling ipv6 uptil bridge comes to forwarding state
+echo "2">/proc/sys/net/ipv6/conf/bdg1/accept_dad
+echo "0">/proc/sys/net/ipv6/conf/bdg1/router_solicitations
+echo "0">/proc/sys/net/ipv6/conf/bdg1/accept_ra
+echo "1">/proc/sys/net/ipv6/conf/bdg1/disable_ipv6

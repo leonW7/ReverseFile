@@ -1,0 +1,258 @@
+<?lua
+require "teamf1lualib/channelAlg2_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "channelAlgorithm2.4GHz"
+
+
+
+local channelAlgorithm2 = require("com.teamf1.bl.wlan.channelAlgorithm2")
+local returnCodes = require("com.teamf1.core.returnCodes")
+local errorMap    = require ("com.teamf1.core.errorMap")
+
+local configRowId 
+local configRow = {}
+local channelPlanMode, channelPlanHistoryDepth, channelPlanInterval,
+channelPlanFixedTime, channelPlanFixedTime, channelChangeThreshold, ignoreUnmanagedAps, channelConflictThreshold
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    local returnCode = channelAlgorithm2.channelAlgorithm2Set(inputTable)
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    elseif(returnCode == returnCodes.SUCCESS)then
+           statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local returnCode, channelAlgTbl = channelAlgorithm2.channelAlgorithm2Get()
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    if (channelAlgTbl ~= nil) then
+        channelPlanMode = channelAlgTbl[1]["channelPlan2Mode"]
+        if (channelPlanMode == 2) then
+            channelPlanInterval = channelAlgTbl[1]["channelPlan2Interval"]
+        end
+        if (channelPlanMode == 3) then
+            channelPlanFixedTime = channelAlgTbl[1]["channelPlan2FixedTime"]
+        end
+        channelChangeThreshold = channelAlgTbl[1]["channelChangeThreshold"]
+        ignoreUnmanagedAps = channelAlgTbl[1]["ignoreUnmanagedAps"]
+        channelConflictThreshold = channelAlgTbl[1]["channelConflictThreshold"]
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+
+	<body>
+
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu2");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+                                         <?lua if ( statusErrorMessage ~= returnCodes.NIL) then
+                                          ?>
+                                         <div class="msgError">
+                                             <p>$| statusErrorMessage |$</p>
+                                         </div>
+                                         <?lua else if(statusSuccessMessage ~= returnCodes.NIL) then
+                                         ?>
+                                        <div class="msgSuccess">
+                                              <p>$| statusSuccessMessage |$</p>
+                                        </div>
+                                        <?lua end end ?>
+
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li class="current">
+									<a href="?page=channelAlgorithm5GHz.html">Channel
+									Setting</a>
+								</li>
+								<li>
+									<a href="?page=manualChannelPlan5GHz.html">Manual
+									Channel Plan </a>
+								</li>
+								<li>
+									<a href="?page=channelPlanHistory5GHz.html">Channel
+									Plan History</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$
+						</p>
+					</div>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=channelAlgorithm5GHz.html">5 GHz</a>
+								</li>
+								<li class="current">
+									<a href="?page=channelAlgorithm2-4GHz.html">2.4 GHz</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<h1>RF Channel 2.4 GHz Settings</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmChannelAlgorithm2-4GHz" id="tf1_frmChannelAlgorithm2-4GHz" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="channelAlgorithm2-4GHz.html">
+								<div class="configRow">
+									<label>Radio </label>
+									<p>
+										2.4 GHz (802.11 b/g/n)
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>Channel Plan Mode </label>
+									<p>
+										<input type="radio" value="1" name="channelAlgo2.channelPlan2Mode" $| web.radioSelected(channelPlanMode == 1) |$  id="tf1_channelPlanModeManual" check="checked" onclick="changeChannelPlanMode('tf1_channelPlanModeManual')" checked>
+										Manual
+									</p>
+									<p>
+										<input type="radio" value="2" name="channelAlgo2.channelPlan2Mode" $| web.radioSelected(channelPlanMode == 2) |$ id="tf1_channelPlanModeInterval" check="checked" onclick="changeChannelPlanMode('tf1_channelPlanModeInterval')">
+										Interval
+									</p>
+									<p>
+										<input type="radio" value="3" name="channelAlgo2.channelPlan2Mode" $| web.radioSelected(channelPlanMode == 3) |$ id="tf1_channelPlanModeFixed" check="checked" onclick="changeChannelPlanMode('tf1_channelPlanModeFixed')">
+										Fixed Time
+									</p>
+								</div>
+								<div class="break" id="break1_div">
+									&nbsp;
+								</div>
+								<!--<div class="configRow" id="tf1_channelPlanHistoryDepth_div">
+									<label>Channel Plan History Depth </label>
+									<input class="one" type="text" value="$| channelPlanHistoryDepth or '' |$" name="channelAlgo2.channelPlan2HistoryDepth"  id="tf1_channelPlanHistoryDepth" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 10, true, 'Invalid Channel Plan History Depth', '');}" maxlength="2">
+									<dl>
+										[Default: 5, Range: 0 - 10]
+									</dl>
+								</div>
+								<div class="break" id="break2_div">
+									&nbsp;
+                                </div>-->
+								<div class="configRow" id="tf1_channelPlanInterval_div">
+									<label>Channel Plan Interval </label>
+									<input class="one" type="text" value="$| channelPlanInterval or '6' |$" name="channelAlgo2.channelPlan2Interval"  id="tf1_channelPlanInterval" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 24, true, 'Invalid Channel Plan Interval', '');}" maxlength="2">
+									<dl>
+										[Default: 6, Range: 6 - 24] Hours
+									</dl>
+								</div>
+								<div class="break" id="break3_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_channelPlanFixedTime_div">
+									<label>Channel Plan Fixed Time </label>
+									<input class="one" type="text" id="tf1_channelPlanFixedTime" value="$| channelPlanFixedTime or '00:00' |$" name="channelAlgo2.channelPlan2FixedTime" maxlength="5" onkeypress="return numericValueCheck (event,':')">
+									<dl>
+										[Range: 00:00 - 23:59] Hours and Seconds
+									</dl>
+								</div>
+								<div class="break">
+									&nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Ignore Unmanaged Aps </label>
+                                    <?lua if (ignoreUnmanagedAps  == 1) then
+                                    statusStr="enable-disable-on"
+                                    statusVar = 1
+                                    else
+                                    statusStr="enable-disable-off"
+                                    statusVar = 0
+                                    end
+                                    ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                    <input type="hidden" name="channelAlgo2.ignoreUnmanagedAps" value="$| statusVar |$">
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                                <div class="configRow">
+									<label> Channel Change Threshold </label>
+									<input class="one" type="text" value="$|
+                                    channelChangeThreshold or '' |$"
+                                    name="channelAlgo2.channelChangeThreshold">
+									<dl>
+										[Default: -82,  Range: -99 to -1]
+									</dl>
+								</div>
+								<div class="break">
+									&nbsp;
+                                </div>
+                                <div class="configRow">
+									<label> Managed AP CH Conflict Threshold </label>
+									<input class="one" type="text" value="$|
+                                    channelConflictThreshold or '' |$"
+                                    name="channelAlgo2.channelConflictThreshold">
+									<dl>
+										[Default: -56,  Range: -99 to -1]
+									</dl>
+								</div>
+								<div class="break">
+									&nbsp;
+                                </div>
+								<div class="submitRow">
+									<input type="submit" name="button.config.channelAlgorithm2-4GHz" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return channelConfigValidate('tf1_frmChannelAlgorithm2-4GHz')">
+									<input type="reset" id="btSave" value="Cancel" title="Cancel" class="btnReset" onclick="this.form.reset(); channelAlgOnrest('tf1_frmChannelAlgorithm2-4GHz')">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/channel.js"></script>
+	</body>
+
+</html>
+<?lua end ?>

@@ -1,0 +1,1381 @@
+<?lua
+require "teamf1lualib/bl_apProfilesRadio"
+require "teamf1lualib/util"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local guiApProfileRadio = require("com.teamf1.bl.wlan.approfileradio")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local apRadioInfo = {}
+local supportedChannels = {}
+local rateSets = {}
+local ENABLE = 1
+local DISABLE = 0
+local apModeChange = true
+local bwModeChange = true
+local countryInfo = {}
+if (ButtonType and ButtonType == "edit") then
+    local configRow = cgi
+    local cookieTbl = {}
+    local cookieInfo = util.split (cgi.configRowId, "-")
+    cookieTbl.profileId = cookieInfo[1]
+    cookieTbl.radioIndex = cookieInfo[2]
+    local radioIndex = cookieInfo[2]
+    local profileId = cookieInfo[1] 
+    local profileName = cookieInfo[1] .. "-" .. cookieInfo[3]
+    local radioMode = cookieInfo[2] .. "-" .. cookieInfo[4]
+    local errorCode
+    errorCode, apRadioInfo, supportedChannels, rateSets, countryInfo = guiApProfileRadio.apProfileRadioCurrentGet (cookieTbl)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    if (cgi["apProfilesRadio.CHANNELBANDWIDTH"] ~= returnCodes.NIL and
+    cgi["apProfilesRadio.OPERTINGMODE"] ~= returnCodes.NIL and
+    cgi["apProfilesRadio.PRIMARYCHANNEL"] ~= returnCodes.NIL) then
+    cgi["apProfilesRadio.profileId"] = profileId
+    cgi["apProfilesRadio.radioIndex"] = radioIndex
+    apRadioInfo.CHANNELBANDWIDTH = tonumber(cgi["apProfilesRadio.CHANNELBANDWIDTH"])
+    apRadioInfo.PRIMARYCHANNEL = tonumber(cgi["apProfilesRadio.PRIMARYCHANNEL"])
+    apRadioInfo.OPERTINGMODE = tonumber(cgi["apProfilesRadio.OPERTINGMODE"])
+    local page = "apProfilesRadio"
+    local prefix = page .. "."
+    local configRow = web.cgiToLuaTable(cgi)
+    configRow = util.removePrefix (configRow, prefix)
+    errorCode , supportedChannels = guiApProfileRadio.apProfileEligibleChannelGet (configRow)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    end
+    if (apRadioInfo.OPERTINGMODE == 1 or apRadioInfo.OPERTINGMODE == 2) then 
+        apRadioInfo.CHANNELBANDWIDTH = 1
+        apModeChange = false
+    end
+    if (apRadioInfo.CHANNELBANDWIDTH == 1) then
+        apRadioInfo.PRIMARYCHANNEL = 2
+        bwModeChange = false
+    end
+    if (apRadioInfo.totalEligibleChannels == DISABLE) then
+        apRadioInfo.AUTOCHANNEL = DISABLE
+    end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+?>
+<!-- Section for Pop up dialog starts -->
+            <div id="tf1_apProfileRadioDailogContent">
+                <div class="topBg">
+                    <h1>AP Profile Radio Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label> AP Profile </label>
+                        <p>
+                            $| profileName or '' |$
+                            <input type="hidden"
+                            name="apProfilesRadio.profileId" value="$| profileId |$">
+                            <input type="hidden" name="configRowId.hidden" id="tf1_refreshConfigRowId" value="$|cgi.configRowId|$">
+                        </p>
+                    </div>
+                    <div class="break" id="break1_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label> Radio Mode </label>
+
+                        <p>
+                            $| radioMode or '' |$
+                            <input type="hidden"
+                            name="apProfilesRadio.radioIndex" value="$| radioIndex |$">
+                        </p>
+
+                    </div>
+                    <div class="break" id="break2_div">
+                        &nbsp;
+                    </div>
+                    <h2>Radio Configuration</h2>
+                    <div class="configRow" id="tf1_state_div">
+                        <label> State </label>
+                        <?lua if ( apRadioInfo.STATE == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_state"></a>
+                        <input type="hidden" name="apProfilesRadio.STATE" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break3_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_radioRTSThreshold_div">
+                        <label>RTS Threshold </label>
+                        <input class="one" type="text" name="apProfilesRadio.RTSTHRESHOLD" value="$| apRadioInfo.RTSTHRESHOLD |$" id="tf1_radioRTSThreshold" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 2347, true, 'Invalid RTS Threshold.', 'Bytes');}">
+                        <dl>
+                            [Range: 0 - 2347] Bytes
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRTSThreshold_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioLoadBalancing_div">
+                        <label>Load Balancing </label>
+                        <?lua if ( apRadioInfo.LOADBALANCING == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioLoadBalancing"></a>
+                        <input type="hidden" name="apProfilesRadio.LOADBALANCING" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioLoadBalancing_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioLoadValue_div">
+                        <label>Load Utilization </label>
+                        <input class="one" name="apProfilesRadio.LOADUTILIZATION" value="$| apRadioInfo.LOADUTILIZATION |$" type="text" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 100, true, 'Invalid Load Balancing.', '%');}" id="tf1_radioLoadValue">
+                        <dl>
+                            [Range: 1% - 100%]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioLoadValue_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioMaxClients_div">
+                        <label>Maximum Clients </label>
+                        <input class="one" type="text" name="apProfilesRadio.MAXCLIENTS" value="$| apRadioInfo.MAXCLIENTS |$" id="tf1_radioMaxClients" maxlength="3" id="tf1_maxClients" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 200, true, 'Invalid Maximum Clients.', '');}">
+                        <dl>
+                            [Range: 0 - 200]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioMaxClients_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScan_div">
+                        <label>RF Scan Other Channels </label>
+                        <?lua if ( apRadioInfo.RFSCANOTHERCHANNELS == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioRFScan"></a>
+                        <input type="hidden" name="apProfilesRadio.RFSCANOTHERCHANNELS" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioRFScan_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanSentry_div">
+                        <label>RF Scan Sentry </label>
+                        <?lua if ( apRadioInfo.RFSCANSENTRY == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioRFScanSentry"></a>
+                        <input type="hidden" name="apProfilesRadio.RFSCANSENTRY" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioRFScanSentry_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioIEEEMode_div">
+                        <label>Mode </label> 
+                         <input type="hidden" id="tf1_previousRadioMode" value="$|apRadioInfo.OPERTINGMODE|$">
+                        <?lua if ( radioIndex == "1") then ?>
+                     
+
+                        <p <?lua if(countryInfo.AMODE ~= 1 and
+                        apRadioInfo.OPERTINGMODE ~= 1) then ?>
+                        style="display:none" <?lua else ?> style="letter-spacing:0px;" <?lua end?>>
+                            
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.OPERTINGMODE == 1) |$ value="1" name="apProfilesRadio.OPERTINGMODE" checked="checked"  id="tf1_apProfilesOperatingMode" onchange="changeRadioMode()" >
+                            IEEE 802.11a
+                        </p>
+                        <p <?lua if(countryInfo.ANMODE ~= 1 and
+                        apRadioInfo.OPERTINGMODE ~= 3) then ?>
+                        style="display:none" <?lua else ?>style="letter-spacing:0px;" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.OPERTINGMODE == 3) |$
+                            value="3" name="apProfilesRadio.OPERTINGMODE"  onchange="changeRadioMode()">
+                            IEEE
+                            802.11a/n
+                        </p>
+                        <p <?lua if(countryInfo.fiveAMODE ~= 1 and
+                        apRadioInfo.OPERTINGMODE ~= 5) then ?>
+                        style="display:none" <?lua else ?>style="letter-spacing:0px;" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.OPERTINGMODE == 5) |$
+                            value="5" name="apProfilesRadio.OPERTINGMODE"  onchange="changeRadioMode()">
+                            5GHz IEEE
+                            802.11n
+                            </p>
+                            <br> <label >&nbsp;</label> 
+                            <p <?lua if(countryInfo.ANACMODE ~= 1 and
+                        apRadioInfo.OPERTINGMODE ~= 7) then ?>
+                        style="display:none" <?lua else ?>style="letter-spacing:0px;" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.OPERTINGMODE == 7) |$
+                            value="7" name="apProfilesRadio.OPERTINGMODE"  onchange="changeRadioMode()">
+                            IEEE
+                            802.11 a/n/ac
+                            </p>
+                            <p <?lua if(countryInfo.NACMODE ~= 1 and
+                        apRadioInfo.OPERTINGMODE ~= 8) then ?>
+                        style="display:none" <?lua else ?>style="letter-spacing:0px;" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.OPERTINGMODE == 8) |$
+                            value="8" name="apProfilesRadio.OPERTINGMODE"  onchange="changeRadioMode()">
+                            IEEE
+                            802.11n/ac
+                            </p>
+                            <?lua else ?>
+
+                            <p <?lua if(countryInfo.BGMODE ~= 1 and apRadioInfo.OPERTINGMODE ~= 2) then ?> style="display:none" <?lua else ?>style="letter-spacing:0px;" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.OPERTINGMODE == 2) |$
+                            value="2" name="apProfilesRadio.OPERTINGMODE"
+                            checked="checked" id="tf1_apProfilesOperatingMode"  onchange="changeRadioMode()">
+                            IEEE 802.11b
+                        </p>
+                        <p <?lua if(countryInfo.BGNMODE ~= 1 and apRadioInfo.OPERTINGMODE ~= 4) then ?> style="display:none" <?lua else ?>style="letter-spacing:0px;" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.OPERTINGMODE == 4) |$
+                            value="4" name="apProfilesRadio.OPERTINGMODE"  onchange="changeRadioMode()">
+                            IEEE
+                            802.11b/g/n
+                        </p>
+                        <p <?lua if(countryInfo.twoBgMODE ~= 1 and apRadioInfo.OPERTINGMODE ~= 6) then ?> style="display:none" <?lua else ?>style="letter-spacing:0px;" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.OPERTINGMODE == 6) |$
+                            value="6" name="apProfilesRadio.OPERTINGMODE"  onchange="changeRadioMode()">
+                            2.4GHz IEEE
+                            802.11n
+                            </p>
+                            <?lua end?>
+                    </div>
+                    <div class="break" id="break_radioIEEEMode_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioDTIMPeriod_div">
+                        <label>DTIM Period </label>
+                        <input class="one" type="text" name="apProfilesRadio.DTIMPERIOD" value="$| apRadioInfo.DTIMPERIOD |$" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid DTIM Period.', 'Beacons');}" id="tf1_radioDTIMPeriod">
+                        <dl>
+                            [Range: 1 - 255] Beacons
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioDTIMPeriod_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioBeaconInterval_div">
+                        <label>Beacon Interval </label>
+                        <input class="one" type="text" name="apProfilesRadio.BEACONINTERVAL" value="$| apRadioInfo.BEACONINTERVAL |$" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 20, 2000, true, 'Invalid Beacon Interval.', 'M. Sec.');}" id="tf1_radioBeaconInterval">
+                        <dl>
+                            [Range: 20 - 2000] M. Sec.
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioBeaconInterval_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioAutomaticChannel_div">
+                        <label>Automatic Channel </label> 
+                        <?lua if ( apRadioInfo.AUTOCHANNEL == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioAutomaticChannel"></a>
+                        <input type="hidden" name="apProfilesRadio.AUTOCHANNEL" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioAutomaticChannel_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioAutomaticPower_div">
+                        <label>Automatic Power </label>
+                        <?lua if ( apRadioInfo.AUTOPOWER == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioAutomaticPower"></a>
+                        <input type="hidden" name="apProfilesRadio.AUTOPOWER" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioAutomaticPower_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioInitialPower_div">
+                        <label>Initial Power </label>
+                        <input class="one" type="text" name="apProfilesRadio.INITIALPOWER" value="$| apRadioInfo.INITIALPOWER |$" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 100, true, 'Invalid Initial Power.', '%');}" id="tf1_radioInitialPower">
+                        <dl>
+                            [Range: 1% - 100%]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioInitialPower_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_radioMinimumPower_div">
+                        <label>Minimum Power </label>
+                        <input class="one" type="text" name="apProfilesRadio.MINIMUMPOWER" value="$| apRadioInfo.MINIMUMPOWER |$" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 100, true, 'Invalid Minimum Power.', '%');}" id="tf1_radioMinimumPower">
+                        <dl>
+                            [Range: 1% - 100%]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioMinimumPower_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioAPSDMode_div">
+                        <label>APSD Mode </label>
+                        <?lua if ( apRadioInfo.APSDMODE == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioAPSDMode"></a>
+                        <input type="hidden" name="apProfilesRadio.APSDMODE" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioAPSDMode_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanInterval_div">
+                        <label>RF Scan Interval</label>
+                        <input class="one" type="text" name="apProfilesRadio.RFSCANINTERVAL" value="$| apRadioInfo.RFSCANINTERVAL |$" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 30, 120, true, 'Invalid RF Scan Interval.', 'secs');}" id="tf1_radioRFScanInterval">
+                        <dl>
+                            [Range: 30 - 120] Seconds
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRFScanInterval_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioFragThreshold_div">
+                        <label>Frag Threshold </label>
+                        <input class="one" type="text" name="apProfilesRadio.FRAGTHRESHOLD" value="$| apRadioInfo.FRAGTHRESHOLD |$" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 256, 2346, true, 'Invalid Frag Threshold.', 'bytes');}" id="tf1_radioFragThreshold">
+                        <dl>
+                            [Range: 256 - 2346] Bytes
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioFragThreshold_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanSentryChannel1_div">
+                        <label>RF Scan Sentry Channels </label>
+                        <?lua if ( apRadioInfo.RFSCANSENTRYCHANNEL_A == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioRFScanSentryChannel1"></a>
+                        <input type="hidden" name="apProfilesRadio.RFSCANSENTRYCHANNEL_A" value="$|
+                        statusVar |$">
+                        <p>
+                            802.11a
+                        </p>
+                        <?lua if ( apRadioInfo.RFSCANSENTRYCHANNEL_B == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioRFScanSentryChannel2"></a>
+                        <input type="hidden" name="apProfilesRadio.RFSCANSENTRYCHANNEL_B" value="$|
+                        statusVar |$">    
+                        <p>
+                            802.11b/g
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioRFScanSentryChannel1_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioShortRetries_div">
+                        <label>Short Retries </label>
+                        <p>
+                            $| apRadioInfo.SHORTRETRIES |$
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioShortRetries_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanDuration_div">
+                        <label>RF Scan Duration </label>
+                        <input class="one" type="text" name="apProfilesRadio.RFSCANDURATION" value="$| apRadioInfo.RFSCANDURATION |$" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 10, 2000, true, 'Invalid RF Scan Duration.', 'M. Sec.');}" id="tf1_radioRFScanDuration">
+                        <dl>
+                            [Range: 10 - 2000] M. Sec.
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRFScanDuration_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioLongRetries_div">
+                        <label>Long Retries </label>
+                        <p>
+                            $| apRadioInfo.LONGRETRIES |$
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioLongRetries_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRateLimiting_div">
+                        <label>Rate Limiting </label>
+                        <?lua if ( apRadioInfo.RATELIMITING == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioRateLimiting"></a>
+                        <input type="hidden" name="apProfilesRadio.RATELIMITING" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioRateLimiting_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioTransmitLifetime_div">
+                        <label>Transmit Lifetime </label>
+                        <p>
+                            $| apRadioInfo.TRANSITLIFETIME |$
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioTransmitLifetime_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRateLimit_div">
+                        <label>Rate Limit </label>
+                        <input class="one" type="text" name="apProfilesRadio.RATELIMITPKTS" value="$| apRadioInfo.RATELIMITPKTS |$" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 50, true, 'Invalid Rate Limit.', 'pkts/sec');}" id="tf1_radioRateLimit">
+                        <dl>
+                            [Range: 1 - 50] Pkts/Sec
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRateLimit_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioReceiveLifetime_div">
+                        <label>Receive Lifetime </label>
+                        <p>
+                            $| apRadioInfo.RECIEVELIFETIME |$
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioReceiveLifetime_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRateLimitBurst_div">
+                        <label>Rate Limit Burst </label>
+                        <input class="one" type="text" name="apProfilesRadio.RATELIMITPKTSBURST" value="$| apRadioInfo.RATELIMITPKTSBURST |$" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 75, true, 'Invalid Rate Limit Burst.', 'pkts/sec');}" id="tf1_radioRateLimitBurst">
+                        <dl>
+                            [Range: 1 - 75] Pkts/Sec
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRateLimitBurst_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioStationIsolation_div">
+                        <label>Station Isolation </label>
+                        <?lua if ( apRadioInfo.STATIONISOLATION == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioStationIsolation"></a>
+                        <input type="hidden" name="apProfilesRadio.STATIONISOLATION" value="$|
+                        statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioStationIsolation_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioChannelBandwidth_div">
+                        <label>Channel Bandwidth </label>
+                        <p>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.CHANNELBANDWIDTH == 1) |$
+                            value="1" name="apProfilesRadio.CHANNELBANDWIDTH"
+                            checked= "checked" onclick="changeChannelBandWidth()">
+                            20 MHz
+                        </p>
+                        <p <?lua if(not(apModeChange)) then ?> style="display:none" <?lua end?>>
+                            <input type="radio" $| web.radioSelected(apRadioInfo.CHANNELBANDWIDTH == 2) |$  value="2" name="apProfilesRadio.CHANNELBANDWIDTH" onclick="changeChannelBandWidth()">
+                            40 MHz
+                        </p>
+                        <p <?lua if(apRadioInfo.OPERTINGMODE ~= 7 and
+                        apRadioInfo.OPERTINGMODE ~= 8) then ?> style="display:none" <?lua end?>>
+                            <input type="radio" $| web.radioSelected(apRadioInfo.CHANNELBANDWIDTH == 3)
+                            |$  value="3" name="apProfilesRadio.CHANNELBANDWIDTH" onclick="changeChannelBandWidth()">
+                            80 MHz
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioChannelBandwidth_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioPrimaryChannel_div">
+                        <label>Primary Channel </label>
+                        <p <?lua if(not(bwModeChange) or
+                        (apRadioInfo.OPERTINGMODE == 7 or
+                        apRadioInfo.OPERTINGMODE == 8)) then ?> style="display:none" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.PRIMARYCHANNEL == 1) |$ value="1"
+                            name="apProfilesRadio.PRIMARYCHANNEL" checked="checked" onclick="changePrimaryChannel()">
+                            Upper
+                        </p>
+                        <p>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.PRIMARYCHANNEL == 2) |$ value="2" name="apProfilesRadio.PRIMARYCHANNEL" onclick="changePrimaryChannel()">
+                            Lower
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioPrimaryChannel_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioProtection_div">
+                        <label>Protection </label>
+                        <p  <?lua if(not(apModeChange) and apRadioInfo.PROTECTION == 2) then ?> style="display:none" <?lua end?>>
+                            <input type="radio" $| web.radioSelected(apRadioInfo.PROTECTION == 1) |$ value="1"
+                            name="apProfilesRadio.PROTECTION" checked="checked">
+                            Auto
+                        </p>
+                        <p <?lua if(not(apModeChange) and apRadioInfo.PROTECTION == 1) then ?> style="display:none" <?lua end?>>
+                            <input type="radio" $|
+                            web.radioSelected(apRadioInfo.PROTECTION == 2) |$ value="2" name="apProfilesRadio.PROTECTION">
+                            Off
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioProtection_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioShortGuard_div">
+                        <label>Short Guard Interval </label>
+                        <?lua if ( apRadioInfo.SGI == ENABLE) then
+                                  if(not(apModeChange)) then
+                                      statusStr = "enable-disable-on-noclick"
+                                  else
+                                      statusStr="enable-disable-on"
+                                  end    
+                                  statusVar = ENABLE
+                              else
+                                  if(not(apModeChange)) then
+                                      statusStr = "enable-disable-off-noclick"
+                                  else
+                                       statusStr="enable-disable-off"
+                                  end    
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioShortGuard"></a>
+                        <input type="hidden" name="apProfilesRadio.SGI" value="$|
+                        statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioShortGuard_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioSpaceTimeBlockCode_div">
+                        <label>Space Time Block Code </label>
+                        <?lua if ( apRadioInfo.STBC == ENABLE) then
+                                  if(not(apModeChange)) then
+                                      statusStr = "enable-disable-on-noclick"
+                                  else
+                                      statusStr="enable-disable-on"
+                                  end
+                                  statusVar = ENABLE
+                              else
+                                  if(not(apModeChange)) then
+                                      statusStr = "enable-disable-off-noclick"
+                                  else
+                                       statusStr="enable-disable-off"
+                                  end  
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioSpaceTimeBlockCode"></a>
+                        <input type="hidden" name="apProfilesRadio.STBC" value="$|
+                        statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioSpaceTimeBlockCode_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioResourceMgmt_div">
+                        <label>Radio Resource
+                            <br />
+                            Management </label>
+                        <?lua if ( apRadioInfo.RRM == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioResourceMgmt"></a>
+                        <input type="hidden" name="apProfilesRadio.RRM" value="$|
+                        statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioResourceMgmt_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioNoAck_div">
+                        <label>No ACK </label>
+                        <?lua if ( apRadioInfo.NOACK == ENABLE) then
+                                  statusStr="enable-disable-on"
+                                  statusVar = ENABLE
+                              else
+                                  statusStr="enable-disable-off"
+                                  statusVar = DISABLE
+                              end
+                        ?>
+                        <a class="$| statusStr |$" alt="" id="tf1_radioNoAck"></a>
+                        <input type="hidden" name="apProfilesRadio.NOACK" value="$|
+                        statusVar |$">
+                    </div>
+                    <div class="break" id="break_radioNoAck_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_multicastRate_div">
+                        <label>Multicast Tx Rate (Mbps) </label>
+                        <select size="1" id="tf1_multicastRate" name="apProfilesRadio.MULTICASTTXRATE">
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            0) |$ value="0">Auto</option>
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            60) |$ value="60">6</option>
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            90) |$ value="90">9</option>
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            120) |$ value="120">12</option>
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            180) |$ value="180">18</option>
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            240) |$ value="240">24</option>
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            360) |$ value="360">36</option>
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            480) |$ value="480">48</option>
+                            <option $|
+                            web.dropdownSelected(apRadioInfo.MULTICASTTXRATE ==
+                            540) |$ value="540">54</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break_multicastRate_div">
+                        &nbsp;
+                    </div>
+                    <h2>Channels</h2>
+                    <div id="channelBlock20_div">
+                        <div class="configRow" id="tf1_autoEligibleChannel20_div">
+                            <label>Auto Eligible Channels</label>
+                            <select multiple id="tf1_autoEligibleChannel20"
+                                class="multiTwo" name="apProfilesRadio.autoEligibleChannels">
+                                <?lua if (supportedChannels ~= returnCodes.NIL) then 
+                                for k, v in pairs (supportedChannels) do ?>
+                                <option value="$| v[1] |$" <?lua if (v[2] == 1)
+                                then?> SELECTED <?lua end?>>$| v[1] |$</option>
+                                <?lua end end ?>
+                            </select>
+                        </div>
+                        <div class="break" id="break_autoEligibleChannel20_div">
+                            &nbsp;
+                        </div>
+
+                        <div class="configRow" id="tf1_basicRateSetChannel20_div">
+                            <label>Basic Rate Set (Mbps)</label>
+
+                             <select multiple id="tf1_basicRateSetChannel20_hidden"
+                                class="multiTwo"
+                                name="apProfilesRadio.basicRateSetsTmp" style="display:none">
+                                <?lua if (rateSets ~= returnCodes.NIL) then 
+                                for k, v in pairs (rateSets) do ?>
+                                <option value="$| v[1] |$" <?lua if (v[2] == 1)
+                                then?> SELECTED <?lua end?>>$| v[1] |$</option>
+                                <?lua end end ?>
+                            </select>
+
+                            <select multiple id="tf1_basicRateSetChannel20"
+                                class="multiTwo"
+                                name="apProfilesRadio.basicRateSets" onclick="checkBasicRateSet()">
+                                <?lua if (rateSets ~= returnCodes.NIL) then 
+                                for k, v in pairs (rateSets) do ?>
+                                <option value="$| v[1] |$" <?lua if (v[2] == 1)
+                                then?> SELECTED <?lua end?>>$| v[1] |$</option>
+                                <?lua end end ?>
+                            </select>
+                        </div>
+                        <div class="break" id="break_basicRateSetChannel20_div">
+                            &nbsp;
+                        </div>
+
+                        <div class="configRow" id="tf1_supportedRateSetChannel20_div">
+                            <label>Supported Rate Set (Mbps)</label>
+                                <select multiple id="tf1_supportedRateSetChannel20_hidden" class="multiTwo" name="apProfilesRadio.supportRateSetsTmp"  style="display:none">
+                                <?lua if (rateSets ~= returnCodes.NIL) then 
+                                for k, v in pairs (rateSets) do ?>
+                                <option value="$| v[1] |$" <?lua if (v[3] == 1)
+                                then?> SELECTED <?lua end?>>$| v[1] |$</option>
+                                <?lua end end ?>
+                            </select>
+                            <select multiple id="tf1_supportedRateSetChannel20" class="multiTwo" name="apProfilesRadio.supportRateSets" onclick="checkSupportRateSet()">
+                                <?lua if (rateSets ~= returnCodes.NIL) then 
+                                for k, v in pairs (rateSets) do ?>
+                                <option value="$| v[1] |$" <?lua if (v[3] == 1)
+                                then?> SELECTED <?lua end?>>$| v[1] |$</option>
+                                <?lua end end ?>
+                            </select>
+                        </div>
+                        <div class="break" id="break_supportedRateSetChannel20_div">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <!--<div id="channelBlock40_div">
+                        <div class="configRow" id="tf1_autoEligibleChannel40_div">
+                            <label>Auto Eligible Channels</label>
+                            <select multiple id="tf1_autoEligibleChannel40" class="multiTwo">
+                                <option value="36">36</option>
+                                <option value="44">44</option>
+                                <option value="149">149</option>
+                                <option value="157">157</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_autoEligibleChannel40_div">
+                            &nbsp;
+                        </div>
+
+                        <div class="configRow" id="tf1_basicRateSetChannel40_div">
+                            <label>Basic Rate Set (Mbps)</label>
+                            <select multiple id="tf1_basicRateSetChannel40" class="multiTwo">
+                                <option value="6">6</option>
+                                <option value="9">9</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_basicRateSetChannel40_div">
+                            &nbsp;
+                        </div>
+
+                        <div class="configRow" id="tf1_supportedRateSetChannel40_div">
+                            <label>Supported Rate Set (Mbps)</label>
+                            <select multiple id="tf1_supportedRateSetChannel40" class="multiTwo">
+                                <option value="6">6</option>
+                                <option value="9">9</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_supportedRateSetChannel40_div">
+                            &nbsp;
+                        </div>
+                    </div> -->
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="submit" name="button.config.apProfilesRadio" id="btSave" name="button.config.apProfilesRadio" value="Save" title="Save" class="btnSubmit" onclick="return apProfilesRadioFormValidate('tf1_frmApProfileRadio')">
+                </div>
+            </div>
+        <!-- Section for Pop up dialog ends -->
+<?lua
+else
+
+
+?>
+        <!-- Section for Pop up dialog Edit2 starts -->
+            <!--<div id="tf1_apProfileRadioEdit2DailogContent">
+                <div class="topBg">
+                    <h1>AP Profile Radio Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label> AP Profile </label>
+                        <p>
+                            AP Profile 1-Default
+                        </p>
+                    </div>
+                    <div class="break" id="break1_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label> Radio Mode </label>
+
+                        <p>
+                            802.11b/g/n
+                        </p>
+
+                    </div>
+                    <div class="break" id="break2_div">
+                        &nbsp;
+                    </div>
+                    <h2>Radio Configuration</h2>
+                    <div class="configRow" id="tf1_stateEdit2_div">
+                        <label> State </label>
+                        <a class="enable-disable-off" alt="" id="tf1_stateEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break3_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_radioRTSThresholdEdit2_div">
+                        <label>RTS Threshold </label>
+                        <input class="one" type="text" id="tf1_radioRTSThresholdEdit2" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 2347, true, 'Invalid RTS Threshold.', 'Bytes');}">
+                        <dl>
+                            [Range: 0 - 2347] Bytes
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRTSThresholdEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioLoadBalancingEdit2_div">
+                        <label>Load Balancing </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioLoadBalancingEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioLoadBalancingEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioLoadValueEdit2_div">
+                        <label>Load Utilization </label>
+                        <input class="one" type="text" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 100, true, 'Invalid Load Balancing.', '%');}" id="tf1_radioLoadValueEdit2">
+                        <dl>
+                            [Range: 1% - 100%]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioLoadValueEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioMaxClientsEdit2_div">
+                        <label>Maximum Clients </label>
+                        <input class="one" type="text" id="tf1_radioMaxClientsEdit2" maxlength="3" id="tf1_maxClientsEdit2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 200, true, 'Invalid Maximum Clients.', '');}">
+                        <dl>
+                            [Range: 0 - 200]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioMaxClientsEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanEdit2_div">
+                        <label>RF Scan Other Channels </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioRFScanEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioRFScanEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanSentryEdit2_div">
+                        <label>RF Scan Sentry </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioRFScanSentryEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioRFScanSentryEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioIEEEModeEdit2_div">
+                        <label>Mode </label>
+                        <p>
+                            <input type="radio" value="1" name="tf1_radioIEEEModeEdit2" checked >
+                            IEEE 802.11a
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="tf1_radioIEEEModeEdit2">
+                            IEEE
+                            802.11a/n
+                        </p>
+                        <p>
+                            <input type="radio" value="3" name="tf1_radioIEEEModeEdit2">
+                            IEEE
+                            802.11a/n
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioIEEEModeEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioDTIMPeriodEdit2_div">
+                        <label>DTIM Period </label>
+                        <input class="one" type="text" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, 'Invalid DTIM Period.', 'Beacons');}" id="tf1_radioDTIMPeriodEdit2">
+                        <dl>
+                            [Range: 1 - 255] Beacons
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioDTIMPeriodEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioBeaconIntervalEdit2_div">
+                        <label>Beacon Interval </label>
+                        <input class="one" type="text" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 20, 2000, true, 'Invalid Beacon Interval.', 'M. Sec.');}" id="tf1_radioBeaconIntervalEdit2">
+                        <dl>
+                            [Range: 20 - 2000] M. Sec.
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioBeaconIntervalEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioAutomaticChannelEdit2_div">
+                        <label>Automatic Channel </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioAutomaticChannelEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioAutomaticChannelEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioAutomaticPowerEdit2_div">
+                        <label>Automatic Power </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioAutomaticPowerEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioAutomaticPowerEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioInitialPowerEdit2_div">
+                        <label>Initial Power </label>
+                        <input class="one" type="text" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 100, true, 'Invalid Initial Power.', '%');}" id="tf1_radioInitialPowerEdit2">
+                        <dl>
+                            [Range: 1% - 100%]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioInitialPowerEdit2_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_radioMinimumPowerEdit2_div">
+                        <label>Minimum Power </label>
+                        <input class="one" type="text" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 100, true, 'Invalid Minimum Power.', '%');}" id="tf1_radioMinimumPowerEdit2">
+                        <dl>
+                            [Range: 1% - 100%]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioMinimumPowerEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioAPSDModeEdit2_div">
+
+                    <div class="configRow" id="tf1_radioAPSDModeEdit2_div">
+                        <label>APSD Mode </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioAPSDModeEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioAPSDModeEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanIntervalEdit2_div">
+                        <label>RF Scan Interval</label>
+                        <input class="one" type="text" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 30, 120, true, 'Invalid RF Scan Interval.', 'secs');}" id="tf1_radioRFScanIntervalEdit2">
+                        <dl>
+                            [Range: 30 - 120] Seconds
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRFScanIntervalEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioFragThresholdEdit2_div">
+                        <label>Frag Threshold </label>
+                        <input class="one" type="text" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 256, 2346, true, 'Invalid Frag Threshold.', 'bytes');}" id="tf1_radioFragThresholdEdit2">
+                        <dl>
+                            [Range: 256 - 2346] Bytes
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioFragThresholdEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanSentryChannel1Edit2_div">
+                        <label>RF Scan Sentry Channels </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioRFScanSentryChannel1Edit2"></a>
+                            <input type="hidden" name="" value="0">
+                        <p>
+                            802.11a
+                        </p>
+                        <a class="enable-disable-off" alt="" id="tf1_radioRFScanSentryChannel2Edit2"></a>
+                            <input type="hidden" name="" value="0">
+                        <p>
+                            802.11b/g
+                        <p>
+                    </div>
+                    <div class="break" id="break_radioRFScanSentryChannel1Edit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioShortRetriesEdit2_div">
+                        <label>Short Retries </label>
+                        <p>
+                            7
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioShortRetriesEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRFScanDurationEdit2_div">
+                        <label>RF Scan Duration </label>
+                        <input class="one" type="text" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 10, 2000, true, 'Invalid RF Scan Duration.', 'M. Sec.');}" id="tf1_radioRFScanDurationEdit2">
+                        <dl>
+                            [Range: 10 - 2000] M. Sec.
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRFScanDurationEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioLongRetriesEdit2_div">
+                        <label>Long Retries </label>
+                        <p>
+                            4
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioLongRetriesEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRateLimitingEdit2_div">
+                        <label>Rate Limiting </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioRateLimitingEdit2"></a>
+                        <input type="hidden" name="" value="0">
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioRateLimitingEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioTransmitLifetimeEdit2_div">
+                        <label>Transmit Lifetime </label>
+                        <p>
+                            512 M. Sec.
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioTransmitLifetimeEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRateLimitEdit2_div">
+                        <label>Rate Limit </label>
+                        <input class="one" type="text" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 50, true, 'Invalid Rate Limit.', 'pkts/sec');}" id="tf1_radioRateLimitEdit2">
+                        <dl>
+                            [Range: 1 - 50] Pkts/Sec
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRateLimitEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioReceiveLifetimeEdit2_div">
+                        <label>Receive Lifetime </label>
+                        <p>
+                            512 M. Sec.
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioReceiveLifetimeEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioRateLimitBurstEdit2_div">
+                        <label>Rate Limit Burst </label>
+                        <input class="one" type="text" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 75, true, 'Invalid Rate Limit Burst.', 'pkts/sec');}" id="tf1_radioRateLimitBurstEdit2">
+                        <dl>
+                            [Range: 1 - 75] Pkts/Sec
+                        </dl>
+                    </div>
+                    <div class="break" id="break_radioRateLimitBurstEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioStationIsolationEdit2_div">
+                        <label>Station Isolation </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioStationIsolationEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioStationIsolationEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioChannelBandwidthEdit2_div">
+                        <label>Channel Bandwidth </label>
+                        <p>
+                            <input type="radio" value="1" name="tf1_radioChannelBandwidthEdit2" checked onclick="ChannelBandwidthType('tf1_radioChannelBandwidthEdit2','channelBlock40Edit2','channelBlock20Edit2')">
+                            20 MHz
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="tf1_radioChannelBandwidthEdit2" onclick="ChannelBandwidthType('tf1_radioChannelBandwidthEdit2','channelBlock20Edit2','channelBlock40Edit2')">
+                            40 MHz
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioChannelBandwidthEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioPrimaryChannelEdit2_div">
+                        <label>Primary Channel </label>
+                        <p>
+                            <input type="radio" value="1" name="tf1_radioPrimaryChannelEdit2" checked>
+                            Upper
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="tf1_radioPrimaryChannelEdit2">
+                            Lower
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioPrimaryChannelEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioProtectionEdit2_div">
+                        <label>Protection </label>
+                        <p>
+                            <input type="radio" value="1" name="tf1_radioProtectionEdit2" checked>
+                            Auto
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="tf1_radioProtectionEdit2">
+                            Off
+                        </p>
+                    </div>
+                    <div class="break" id="break_radioProtectionEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioShortGuardEdit2_div">
+                        <label>Short Guard Interval </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioShortGuardEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioShortGuardEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioSpaceTimeBlockCodeEdit2_div">
+                        <label>Space Time Block Code </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioSpaceTimeBlockCodeEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioSpaceTimeBlockCodeEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioResourceMgmtEdit2_div">
+                        <label>Radio Resource
+                            <br />
+                            Management </label>
+                            <a class="enable-disable-off" alt="" id="tf1_radioResourceMgmtEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioResourceMgmtEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_radioNoAckEdit2_div">
+                        <label>No ACK </label>
+                        <a class="enable-disable-off" alt="" id="tf1_radioNoAckEdit2"></a>
+                            <input type="hidden" name="" value="0">
+                    </div>
+                    <div class="break" id="break_radioNoAckEdit2_div">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow" id="tf1_multicastRateEdit2_div">
+                        <label>Multicast Tx Rate (Mbps) </label>
+                        <select size="1" id="tf1_multicastRateEdit2">
+                            <option selected value="0">Auto</option>
+                            <option value="60">6</option>
+                            <option value="90">9</option>
+                            <option value="120">12</option>
+                            <option value="180">18</option>
+                            <option value="240">24</option>
+                            <option value="360">36</option>
+                            <option value="480">48</option>
+                            <option value="540">54</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break_multicastRateEdit2_div">
+                        &nbsp;
+                    </div>
+                    <h2>Channels</h2>
+                    <div id="channelBlock20Edit2_div">
+                        <div class="configRow" id="tf1_autoEligibleChannel20Edit2_div">
+                            <label>Auto Eligible Channels</label>
+                            <select multiple id="tf1_autoEligibleChannel20Edit2" class="multiTwo">
+                                <option value="36">36</option>
+                                <option value="40">40</option>
+                                <option value="44">44</option>
+                                <option value="48">48</option>
+                                <option value="149">149</option>
+                                <option value="153">153</option>
+                                <option value="157">157</option>
+                                <option value="161">161</option>
+                                <option value="165">165</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_autoEligibleChannel20Edit2_div">
+                            &nbsp;
+                        </div>
+
+                        <div class="configRow" id="tf1_basicRateSetChannel20Edit2_div">
+                            <label>Basic Rate Set (Mbps)</label>
+                            <select multiple id="tf1_basicRateSetChannel20Edit2" class="multiTwo">
+                                <option value="6">6</option>
+                                <option value="9">9</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_basicRateSetChannel20Edit2_div">
+                            &nbsp;
+                        </div>
+
+                        <div class="configRow" id="tf1_supportedRateSetChannel20Edit2_div">
+                            <label>Supported Rate Set (Mbps)</label>
+                            <select multiple id="tf1_supportedRateSetChannel20Edit2" class="multiTwo">
+                                <option value="6">6</option>
+                                <option value="9">9</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_supportedRateSetChannel20Edit2_div">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div id="channelBlock40Edit2_div">
+                        <div class="configRow" id="tf1_autoEligibleChannel40Edit2_div">
+                            <label>Auto Eligible Channels</label>
+                            <select multiple id="tf1_autoEligibleChannel40Edit2" class="multiTwo">
+                                <option value="36">36</option>
+                                <option value="44">44</option>
+                                <option value="149">149</option>
+                                <option value="157">157</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_autoEligibleChannel40Edit2_div">
+                            &nbsp;
+                        </div>
+
+                        <div class="configRow" id="tf1_basicRateSetChannel40Edit2_div">
+                            <label>Basic Rate Set (Mbps)</label>
+                            <select multiple id="tf1_basicRateSetChannel40Edit2" class="multiTwo">
+                                <option value="6">6</option>
+                                <option value="9">9</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_basicRateSetChannel40Edit2_div">
+                            &nbsp;
+                        </div>
+
+                        <div class="configRow" id="tf1_supportedRateSetChannel40Edit2_div">
+                            <label>Supported Rate Set (Mbps)</label>
+                            <select multiple id="tf1_supportedRateSetChannel40Edit2" class="multiTwo">
+                                <option value="6">6</option>
+                                <option value="9">9</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                            </select>
+                        </div>
+                        <div class="break" id="break_supportedRateSetChannel40Edit2_div">
+                            &nbsp;
+                        </div>
+                    </div>
+
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="submit" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return apProfilesRadioFormValidateEdit2('tf1_frmApProfileRadio')">
+                </div>
+            </div>-->
+            <!-- Section for Pop up dialog ends -->
+             <?lua end ?>

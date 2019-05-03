@@ -1,0 +1,167 @@
+<?lua 
+require "teamf1lualib/users_bl"
+require "teamf1lualib/errorMap"
+
+userDBStatusFile = "/tmp/gUserdbStatus.txt"
+errorStatusFile  = "/tmp/errorStatusForUserDB.txt"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "getUserDb"
+
+local errorMap   = require ("com.teamf1.core.errorMap")
+local gui_users  = require ("com.teamf1.bl.userdb.users")
+
+if (ButtonType and ButtonType == "upload") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local fileName   = cgilua.cookies.get("TeamF1Login")
+    errorFlag, userDbStatus = gui_users.userDBUpload (inputTable, fileName)
+    local opStatus = ''
+    local userDbStatus = ""
+    local rowNumber = ""
+    local atRowLoc
+    local f = io.open(userDBStatusFile, "r")
+
+    if(f) then
+      userDbStatus = f:read("*all")
+      userDbStatus = tonumber(userDbStatus)
+      if (userDbStatus == 0) then
+	    statusSuccessMessage = errorMap.errorStringGet (0)
+        opStatus = 0
+      else
+	    statusErrorMessage = errorMap.errorStringGet (1)
+        opStatus = 1
+      end
+      f:close()
+    end
+
+    if (statusErrorMessage ~= nil) then
+        f = io.open(errorStatusFile,"r")
+        if(f) then
+        rowNumber = f:read("*all") 
+          atRowLoc = errorMap.errorStringGet (30574)
+	      statusErrorMessage = statusErrorMessage .." " .. atRowLoc .. " ".. rowNumber			
+        end
+    end 
+   os.execute("echo 1 > /tmp/gUserdbStatus.txt")
+    spUrlStr="1" 
+    web.goToPage(NextPage, true, true)
+else
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+LANG_LOCALE = "11088,11067,13243,12806,13194,13441,13473,12429,13474,13442,30414,13443"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li class="current">
+                                    <a href="?page=getUsersDb.html">$| LANG_LOCALE['11067'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=groups.html">$| LANG_LOCALE['11088'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=users.html">$| LANG_LOCALE['13243'] |$</a>
+                                </li>
+                                <!---
+                                <li>
+                                    <a href="?page=knownClients.html">MAC Authentication</a>
+                                </li>
+                                -->
+                               <!-- <li>
+                                    <a href="?page=passwordRules.html">Password Rules</a>
+                                    </li>-->
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11067'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmGetUsersDb"
+                                id="tf1_frmGetUsersDb" action="platform.cgi" enctype="multipart/form-data" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="getUsersDb.html">
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12806'] |$ </label>
+                                    <input type="file" name="GetUsersDb.GetUsersDbFile" id="tf1_txtUploadFile" size="25">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit"
+                                    name="button.upload.getUsersDb" onclick="return checkFileTypeValid('tf1_txtUploadFile','csv',2)" class="btnSubmit" title="$| LANG_LOCALE['13194'] |$" value="$| LANG_LOCALE['13194'] |$" id="btSave">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/getUsersDb.js"></script>
+    </body>
+</html>
+<?lua end ?>
+

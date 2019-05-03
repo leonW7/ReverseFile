@@ -1,0 +1,257 @@
+<?lua 
+require "teamf1lualib/dynamicDns_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "dynamicDnsOption1Settings"
+	
+local dnsConfig =  require("com.teamf1.bl.services.ddns")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+dynamicDns = {}
+dynamicDnsStatus = {}
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["dynamicDns.cookie"] ="1"
+    returnCode, cookie = dnsConfig.ddnsSectionSet (inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    returnCode, cookie, optionMode = dnsConfig.optionModeGet()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    returnCode, cookie, dynamicDns, dynamicDnsStatus = dnsConfig.dynamicDnsGetAll()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    returnCode, option1Status, option2Status = dnsConfig.optionStatusGet()
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li class="current">
+                                    <a href="?page=dynamicDns.html">Dynamic DNS WAN1 Settings</a>
+                                </li>
+                                <li>
+                                    <a href="?page=dynamicDnsOption2Settings.html">Dynamic DNS WAN2 Settings</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>Dynamic DNS WAN1 Settings</h1>
+                    <div class="midArea">
+                        <?lua if (option1Status == "0") then ?>
+                        <h1> WAN1 Link is Down </h1>
+                        <?lua else ?>
+                        <div align="left">
+                            <form name="tf1_frmDynamicDns"
+                                id="tf1_frmDynamicDns" action="platform.cgi"
+                                method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="dynamicDns.html">
+                                <h2>WAN Mode</h2>
+                                <div class="configRow">
+                                    <label> Current WAN Mode </label>
+                                    <p>
+                                        $| optionMode |$
+
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>WAN 1</h2>
+                                <div class="configRow">
+                                    <label> Dynamic DNS Service Type </label>
+                                    <p>
+                                        <input type="radio" $|
+                                        web.radioSelected(dynamicDns["ddns.ddnsService"] == "1") |$ value="1" name="dynamicDns.ntpServerType" id="tf1_NTPDynDNS" onClick="selectDdnsOption1 ('tf1_NTPDynDNS');">
+                                        DynDNS
+                                    </p>
+                                    <p>
+                                        <input type="radio" $|
+                                        web.radioSelected(dynamicDns["ddns.ddnsService"]
+                                        == "4") |$ value="2" name="dynamicDns.ntpServerType" id="tf1_NTPORAY" onClick="selectDdnsOption1 ('tf1_NTPORAY');">
+                                        ORAY
+                                    </p>
+                                    <p>
+                                        <input type="radio" $|
+                                        web.radioSelected(dynamicDns["ddns.ddnsService"] == "3") |$ value="3" name="dynamicDns.ntpServerType" id="tf1_NTPDLINKDDNS" onClick="selectDdnsOption1 ('tf1_NTPDLINKDDNS');">
+                                        DLINKDDNS
+                                    </p>
+                                    <p>
+                                        <input type="radio" $|
+                                        web.radioSelected(dynamicDns["ddns.ddnsService"]
+                                        == "0") |$ value="4" name="dynamicDns.ntpServerType" id="tf1_NTPNone" onClick="selectDdnsOption1 ('tf1_NTPNone');">
+                                        None
+                                    </p>
+                                </div>
+                                <div class="break" id="break1_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_userName1_div">
+                                    <label> User Name </label>
+                                    <input name="dynamicDns.userName"
+                                    value="$| dynamicDns["ddns.username"] or '' |$" type="text" id="tf1_userName1" maxlength="64">
+                                </div>
+                                <div class="break" id="break3_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_domainName1_div">
+                                    <label> Domain Name </label>
+                                    <input type="text"
+                                    name="dynamicDns.domainName" value="$| dynamicDns["ddns.hostname"] or ''|$" id="tf1_domainName1" maxlength="64">
+                                </div>
+                                <div class="break" id="break5_div"> &nbsp; </div>
+                                <div class="configRow" id="tf1_Status1_div">
+                                    <label> Status </label>
+                                    <p> $| dynamicDnsStatus["ddnsStatus.Status"] or '' |$ </p>
+                                </div>
+                                <div class="break" id="break6_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_Password1_div">
+                                    <label> Password </label>
+                                    <input type="password"
+                                    name="dynamicDns.password" value = "$| dynamicDns["ddns.password"] or '' |$" id="tf1_Password1" maxlength="64">
+                                </div>
+                                <div class="break" id="break7_div">
+                                    &nbsp;
+                                </div>
+                                <div id="tf1_oray_div">
+                                <div class="configRow"  id="tf1_orayUserType_div">
+                                    <label>Oray User Type </label>
+                                     <p>$| dynamicDnsStatus["ddnsStatus.orayType"] or '' |$</p>
+                                </div>
+                                <div class="break"  id="break100_div">&nbsp;</div>
+                                <div class="configRow"  id="tf1_orayDomain_div">
+                                    <label> Oray Domain</label>
+                                     <p>$| dynamicDnsStatus["ddnsStatus.orayDomain"] or '' |$</p>
+                                </div>
+                                <div class="break" id="break101_div">&nbsp;</div>
+                                <div class="configRow"  id="tf1_orayStatus_div">
+                                    <label> Oray Status </label>
+                                     <p>$| dynamicDnsStatus["ddnsStatus.Status"] or '' |$</p>
+                                </div>
+                                <div class="break" id="break102_div">&nbsp;</div>
+                                </div>
+                                <div class="configRow" id="tf1_wildCard_div">
+                                    <label> Allow Wildcards </label>
+                                    <?lua
+                                    if (dynamicDns["ddns.wildflag"] == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                               ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_wildCard"></a>
+                                        <input type="hidden" value="$| statusVar |$" name="dynamicDns.allowWildCards">
+                                </div>
+                                <div class="break" id="break8_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_updatePeriodically_div">
+                                    <label> Update Periodically</label>
+                                    <?lua
+                                    if (dynamicDns["ddns.timePeriod"] == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                               ?>
+
+                                    <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="dynamicDns.periodicUpdate"><dl>30 Days </dl>
+                                </div>
+
+                                <div class="break" id="break9_div">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit"
+                                    name="button.config.dynamicDns" onClick="return ddnsValidate ('tf1_frmDynamicDns')" class="btnSubmit" title="Save" value="Save" id="btSave">
+                                    <input type="reset" class="btnReset" title="Cancel" value="Cancel" id="btSave" onClick="this.form.reset(); resetImgOnOff('tf1_frmDynamicDns'); dynamicDnsOnReset();">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                        <?lua end ?>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/dynamicDns.js"></script>
+    </body>
+</html>
+<?lua end ?>

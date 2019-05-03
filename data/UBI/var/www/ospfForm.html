@@ -1,0 +1,154 @@
+<?lua
+require "teamf1lualib/ospf_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+local routing_ospf  = require("com.teamf1.bl.routing.ospf")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap    = require ("com.teamf1.core.errorMap")
+if(ButtonType == "edit") then
+    
+
+    configRowId = cgi["configRowId"]
+    returnCode, cookie, interface, configure, areaId, priority, 
+           helloInterval, deadInterval, cost, authenticationType, 
+           textAuthenticationKey, md5KeyId, md5AuthenticationKey, lanEnable = routing_ospf.ospfSectionGetCur(configRowId)
+           
+   
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_ospfDailogContent">
+    <div class="topBg">
+        <h1 data-localize="11864">OSPFv2 Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+    	<div class="configRow">
+    		<label data-localize="11865">OSPFv2 Enable</label>
+            <?lua 
+                                                 
+                if (configure == "1") then
+                    statusStr="enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr="enable-disable-off"
+                    statusVar = "0"
+                end
+                                        ?>
+    		<a class="$| statusStr |$" alt="" id="tf1_enableOspfv3"></a>
+    		<input type="hidden" name="ospf.configure" value="$| statusVar |$">
+    	</div>
+    	<div class="break">&nbsp;</div>
+    	
+        <div class="configRow" id="tf1_interface_div">
+            <label data-localize="11187">Interface </label>
+            <p>$|interface|$ </p>
+    		<input type="hidden" name = "ospf.interface" value="$| interface |$" id = "tf1_Interface">
+        </div>
+        <div class="break" id="break2_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_area_div">
+            <label data-localize="10291">Area</label>
+            <input maxlength="3" name="ospf.areaId" value="$|areaId or ''|$" id="tf1_area" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 200, true, LANG_LOCALE['11219']+': ', '');}" class="one">
+            <dl>
+                [<span data-localize="12627">Range</span>: 0 - 200]
+            </dl>
+        </div>
+        <div class="break" id="break3_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_priority_div">
+            <label data-localize="12546">Priority</label>
+            <input maxlength="3" name="ospf.priority" value="$|priority or ''|$" id="tf1_priority" value="1" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 255, true, LANG_LOCALE['11325']+': ', '');}" class="one">
+            <dl>
+                [<span data-localize="10683">Default</span>:1, <span data-localize="12627">Range</span>: 0 - 255]
+            </dl>
+        </div>
+        <div class="break" id="break4_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_helloInterval_div">
+            <label data-localize="11108">Hello Interval</label>
+            <input maxlength="5" name="ospf.helloInterval" value="$|helloInterval or ''|$" id="tf1_helloInterval" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11271']+': ', '');}" class="one">
+            <dl>
+                [<span data-localize="10683">Default</span>:10, <span data-localize="12627">Range</span>: 1 - 65535]
+            </dl>
+        </div>
+        <div class="break" id="break5_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_deadInterval_div">
+            <label data-localize="10674">Dead Interval </label>
+            <input maxlength="5" name="ospf.deadInterval" value="$|deadInterval or ''|$" id="tf1_deadInterval" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11241']+': ', '');}" class="one">
+            <dl>
+                [<span data-localize="10683">Default</span>:40, <span data-localize="12627">Range</span>: 1 - 65535]
+            </dl>
+        </div>
+        <div class="break" id="break6_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_cost_div">
+            <label data-localize="10604">Cost</label>
+            <input maxlength="5" name="ospf.cost" id="tf1_cost" value="$|cost or ''|$" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11238']+': ', '');}" class="one">
+            <dl>
+                [<span data-localize="10683">Default</span>:10, <span data-localize="12627">Range</span>: 1 - 65535]
+            </dl>
+        </div>
+        <div class="break" id="break7_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_selAuthType_div">
+            <label data-localize="10330">Authentication Type </label>
+            <select name="ospf.authenticationType" id="tf1_selAuthType" onchange="checkAuthenticationType('tf1_selAuthType')" class="two">
+            <option data-localize="11789" $| web.dropdownSelected(authenticationType == "1") |$ value="1">None</option>
+            <option data-localize="13684" $| web.dropdownSelected(authenticationType == "2") |$ value="2">Simple</option>
+            <option data-localize="11701" $| web.dropdownSelected(authenticationType == "3") |$ value="3">MD5</option>
+            </select> </div>
+        <div class="break" id="break8_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtAuthKeyId_div">
+            <label data-localize="13683">Authentication Key </label>
+            <input name="ospf.textAuthenticationKey" value="$|textAuthenticationKey or ''|$" id="tf1_txtAuthKeyId" maxlength="8" type="text">
+        </div>
+        <div class="break" id="break9_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtMd5KeyId_div">
+            <label data-localize="11704">MD5 Key ID </label>
+            <input name="ospf.md5KeyId" value="$|md5KeyId or ''|$" id="tf1_txtMd5KeyId" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, LANG_LOCALE['30175']+': ', '');}" type="text" class="one">
+            <dl>
+                [<span data-localize="12627">Range</span>: 1 - 255]
+            </dl>
+        </div>
+        <div class="break" id="break10_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtMd5AuthKeyId_div">
+            <label data-localize="11702">MD5 Authentication Key </label>
+            <input name="ospf.md5AuthenticationKey" value="$|md5AuthenticationKey or ''|$" id="tf1_txtMd5AuthKeyId" maxlength="16" type="text">
+        </div>
+        <div class="break">
+&nbsp; </div>
+
+            <?lua
+            local starts, ends = interface:find ("WAN")
+            if (starts == 1 and ends == 3) then ?>
+<div class="configRow" id="tf1_lanEnable_div">
+    		<label data-localize='50217'>LAN Route Exchange</label>
+            <?lua 
+                                                 
+                if (lanEnable == "1") then
+                    statusStr="enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr="enable-disable-off"
+                    statusVar = "0"
+                end
+                                        ?>
+    		<a class="$| statusStr |$" alt="" id="tf1_lanEnable"></a>
+    		<input type="hidden" name="ospf.lanEnable" value="$| statusVar |$">
+    	</div>
+        <div class="break" id="break11_div">
+&nbsp; </div>
+<?lua end ?>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.config.ospf.ospf.$| configRowId |$" onclick="return pageValidate('tf1_frmOspf

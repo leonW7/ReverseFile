@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# rebootInit - initialization script for reboot
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_REBOOT" = "y" ]; then
+
+$REBOOT_INSTALL_PATH/bin/rebootd  $DB_FILENAME &
+
+fi

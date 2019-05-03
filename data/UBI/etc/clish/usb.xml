@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<COMMAND name="system usb" help="USB Configuration."/>
+<COMMAND name="system usb usb1" help="USB1 Configuration."/>
+<!--===================================================-->  
+<COMMAND name="system usb safelyRemoveUsb" help="safely removing the USB."/>
+<!--=======================================================-->
+    <COMMAND name="system usb SafelyRemoveUSB usb1"
+             help="To Unmount usb1"> 
+                 <ACTION>lua usbcfgUnmount ("usb2")
+                   </ACTION> 
+    </COMMAND>
+
+<!--=======================================================-->
+<COMMAND name="show system usb-status" 
+	     help="Display USB Configuration">
+         <ACTION>lua usbCfgGet ()
+         </ACTION>
+</COMMAND>
+<!--===================================================-->     
+
+<VIEW name="system-usb-usb1-config" prompt="usb-config[usb1-settings]> "> 
+    <COMMAND name="save" help="Save USB1 Settings  settings.">
+	     <ACTION>lua clishCfgObjExec("Usb2")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save USB1 settings and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Usb2")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Configurable USB1 changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable" help="Enable USB1">
+         <PARAM name="enable"
+            help="Enable USB1"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("Usb2", "USB.USBStatus","${enable}")
+             </ACTION>
+     </COMMAND>
+	 <COMMAND name="printer_enable" help="Enable printer">
+         <PARAM name="Printserver"
+            	help="Enable USB1 printer server"
+            	ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("Usb2", "USB.PrintServer","${Printserver}")
+             </ACTION>
+     </COMMAND>	
+
+	 <COMMAND name="Storage_enable" help="Enable USB1">
+         <PARAM name="Storageserver"
+            	help="Enable USB1 Storage server"
+            	ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("Usb2", "USB.StorageServer","${Storageserver}")
+             </ACTION>
+     </COMMAND>	
+
+     <COMMAND name="usb_type" help="Select the USB type Mobile_Internet_USB_ADAPTOR/USB_Disc">
+         <PARAM name="usbType"
+            help="Select the USB type Mobile_Internet_USB_ADAPTOR/USB_Disc"
+            ptype="USB_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("Usb2", "USB.USBType","${usbType}")
+         </ACTION>
+     </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="system usb usb1 configure"
+             help="USB1 Configuration."
+             view="system-usb-usb1-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("Usb2", 
+                              usb2CfgInit, usb2CfgSave, 
+				       usb2CfgInputVal)
+                   </ACTION>
+    </COMMAND>
+<!--===================================================-->     
+<VIEW name="system-usb-shareport-config" prompt="shareport-config[vlan-settings]> "> 
+    <COMMAND name="save" help="Save SharePort on vlan settings.">
+	     <ACTION>lua clishCfgObjExec("SharePortVlan")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save shareport on vlan settings and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("SharePortVlan")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back shareport on vlan changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+	<COMMAND name="printer_sharing" help="Enable printer">
+        <PARAM name="printerSharing"
+               help="Enable printer sharing"
+                ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("SharePortVlan", "SharePortVlan.printerSharing","${printerSharing}")
+            </ACTION>
+    </COMMAND>	
+	<COMMAND name="storage_sharing" help="Enable USB1">
+        <PARAM name="storageSharing"
+           	   help="Enable Storage sharing"
+           	   ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("SharePortVlan", "SharePortVlan.storageSharing","${storageSharing}")
+            </ACTION>
+    </COMMAND>	
+</VIEW>    
+<!--=======================================================-->    
+<COMMAND name="system usb shareport_vlan"  help="USB SharePort settings."/>
+<!--=======================================================-->
+    <COMMAND name="system usb shareport_vlan configure"
+             help="SharePort on vlan configuration."
+             view="system-usb-shareport-config" viewid="">
+    <PARAM name="row_id" 
+	       help=" Row Id Of the vlan configuration to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("SharePortVlan", 
+                              ShareportVlanCfgInit, ShareportVlanCfgSave, 
+				       ShareportVlanCfgInputVal, "${row_id}")
+                   </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="system usb shareport_vlan show"
+             help="SharePort on vlan status.">
+                   <ACTION>lua shareportStats ()
+                   </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

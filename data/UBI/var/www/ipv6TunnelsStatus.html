@@ -1,0 +1,173 @@
+<?lua if(true) then
+require "teamf1lualib/errorMap"
+
+local errorMap    = require ("com.teamf1.core.errorMap")
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "ipv6TunnelStatus"
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+LANG_LOCALE = "11470,13161,11448"
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+  		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+
+				setOnclickDialogs('tf1_btnShowModal', 'btnClose', 'tf1_dialog', 'tf1_overlay');
+
+				dataRightClick(false);
+			});
+        </script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu3");
+                    </script>
+                    <?lua
+	    		local ipMode = db.getAttribute ("networkInfo", "_ROWID_", "1", "netWorkMode") or ''
+		    	if (ipMode == "1") then
+			    	statusInfoMessage = errorMap.errorStringGet (13605)
+    			end
+                ?>
+                <?lua if (statusInfoMessage ~= nil and statusInfoMessage ~= "") then
+                ?>
+                <div class="msgInfo"><p>$| statusInfoMessage |$</p></div>
+                <?lua end ?>                    
+					<div class="FL">
+						<p class="hint">
+							$| helpHintText |$	
+						</p>
+                    </div>
+					<h1>$| LANG_LOCALE['11470'] |$</h1>
+					<div class="CLR">
+						<div class="demo_jui">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th>$| LANG_LOCALE['13161'] |$</th>
+										<th>$| LANG_LOCALE['11448'] |$</th>
+									</tr>
+                                </thead>
+                                <?lua
+						local i = 0
+						local table = db.getRowsWhere ("networkInterface","ifType='tunnel'")
+						for k,v in pairs(table) do
+							i = i + 1
+							local row = table[i]
+							local wanmode = db.getAttribute ("WanMode","_ROWID_","1","DedicatedLogicalIfName") or ''
+							if (wanmode == "WAN1") then 
+							wanmode = "sit0-WAN1"
+							else 
+							wanmode = "sit0-WAN2"
+							end
+							local tunnelName = row["networkInterface.LogicalIfName"] or ''
+							local table1 = db.getRowsWhere ("ipAddressTable","LogicalIfName='" .. tunnelName .. "'")
+							local ipaddr = ""
+							local j = 0
+							if(tunnelName == "sit0-WAN1" or tunnelName == "sit0-WAN2") then
+							if (wanmode == tunnelName) then 
+							for m,n in pairs(table1) do
+								j = j + 1
+								local row1 = table1[j]
+								if (ipaddr == "") then
+									ipaddr = row1["ipAddressTable.ipAddress"] .. " / " .. row1["ipAddressTable.ipv6PrefixLen"]
+								else
+									ipaddr = ipaddr .. ", " .. row1["ipAddressTable.ipAddress"] .. " / " .. row1["ipAddressTable.ipv6PrefixLen"]
+								end
+							end
+							end
+							else 
+							for m,n in pairs(table1) do
+								j = j + 1
+								local row1 = table1[j]
+								if (ipaddr == "") then
+									ipaddr = row1["ipAddressTable.ipAddress"] .. " / " .. row1["ipAddressTable.ipv6PrefixLen"]
+								else
+									ipaddr = ipaddr .. ", " .. row1["ipAddressTable.ipAddress"] .. " / " .. row1["ipAddressTable.ipv6PrefixLen"]
+								end
+							end
+							end
+                            if(UNIT_NAME == "DWC-1000") then
+							tunnelName = string.gsub (tunnelName, "WAN", "Option")
+                            end
+					?>
+								<tr class="gradeA">
+									<td>$|tunnelName|$ </td>
+									<td>$|ipaddr|$ </td>
+                                </tr>
+                                <?lua
+						end
+                        if (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or
+                            PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+                            -- While Merging super-ac, below part of code related to super-ac code
+                            local function file_exists(file)
+                                local f = io.open(file, "rb")
+                                if f then f:close() end
+                                    return f ~= nil
+                            end
+
+                            local function lines_from(file)
+                                if not file_exists(file) then return {} end
+                                lines = {}
+                                for line in io.lines(file) do 
+                                    lines[#lines + 1] = line
+                                end
+                                return lines
+                            end
+                        
+                            local teredoTunnel = {}
+                            local f = lines_from("/etc/miredo/teredoStatus")
+                            if (#f ~= 0 ) then
+                               teredoTunnel[f[2]] = f[1] 
+                            end
+                            for k, v in pairs (teredoTunnel) do
+					        ?>
+                            <tr class="gradeA">
+							    <td>$|k|$ </td>
+							    <td>$|v|$ </td>
+                            </tr>
+                        <?lua end 
+                        end
+                        ?>
+							</table>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				 <?lua web.includeMenu("footer.html")?></td>
+			</tr>
+        </table>
+        		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+	</body>
+</html>
+<?lua end ?>

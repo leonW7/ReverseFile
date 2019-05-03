@@ -1,0 +1,831 @@
+<?lua
+require "teamf1lualib/sslAdmin"
+
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/validations" 
+local validations = require ("com.teamf1.core.validations")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local portalConfig = {}
+local portalName = ""
+local PASSWD_CHANGED_MSG = "Password changed. please login with new password"
+local script_tag         = "<script>"
+local stuMsgStatus       = "stuMsg"
+local portalVar          = "portal"
+local ERROR_PAGE_NAME    = "errorPage"
+if (cgi[portalVar] ~= returnCodes.NIL) then
+	portalName = cgi[portalVar]
+end
+if (cgi[stuMsgStatus] ~= returnCodes.NIL and cgi[stuMsgStatus] ~= '') then
+   if (cgi[stuMsgStatus] ~= PASSWD_CHANGED_MSG) then -- if stuMsg coming from sslvpn binary
+      cgi[stuMsgStatus] = returnCodes.NIL
+      web.goToPage(ERROR_PAGE_NAME, false, true) 
+      return
+   end
+end
+
+-- check for vulnerabilities 
+-- call validation function to check any attack tag in url
+local status = validations.validateUrl (cgi)
+if (status == 1) then
+    portalName = returnCodes.NIL
+    web.goToPage(ERROR_PAGE_NAME, false, true) 
+    return
+end
+
+
+-- check portal name is correct or not.
+if (cgi[portalVar] ~= returnCodes.NIL) then
+    portalName = cgi[portalVar]
+
+    -- apply escape on portal Name 
+    portalName = sslAdmin.portalNameEscapeValidate(portalName)
+
+    -- check portal exists or not #vulnerabilities 
+    local existsPortal = sslAdmin.portalNameValidate(portalName)
+    if (existsPortal == 1) then
+        portalName = returnCodes.NIL
+        web.goToPage(ERROR_PAGE_NAME, false, true) 
+        return
+    end
+end
+cgilua.cookies.set ("TeamF1PortalName", portalName)
+if(spUrlStr ~= "FORCED_LOGIN_SEC") then
+	if (cgi["stuMsg"] ~= nil) then
+		statusMessage = cgi["stuMsg"]
+	end
+
+	local isPortalExists = "0"
+	local isUsersExists = "0"
+	portalConfig = db.getRow ("SSLVPNPortalLayout", "PortalLayoutName", portalName) or {}
+	if (portalConfig["SSLVPNPortalLayout.PortalLayoutName"] ~= nil) then
+		isPortalExists = "1"
+		local dmnsTable = db.getRowsWhere ("USERDBDomains", "PortalLayoutName = '" .. portalName .. "'")
+		for k,v in pairs (dmnsTable) do
+                    if (v["USERDBDomains.AuthenticationType"] == "local") then
+			local grpsTable = db.getRowsWhere ("UserGroups", "DomainName = '" .. v["USERDBDomains.DomainName"] .. "'")
+			for m,n in pairs (grpsTable) do
+				local usersTable = db.getRowsWhere ("Users", "GroupId = '" .. n["UserGroups.GroupId"] .. "'")
+				if (usersTable ~= nil and #usersTable ~= 0) then
+					isUsersExists = "1"
+					break
+				end
+			end
+			if (isUsersExists == "1") then
+				break
+			end
+                    else
+                        isUsersExists = "1" -- external auth assume user exists
+                    end
+		end
+	end
+	-- logout
+	local result = sslAdmin.logout(cgilua.cookies.get("TeamF1Login"), SAPI.Request.servervariable("REMOTE_ADDR"))
+	--if success, delete cookie
+	if (result == 0) then
+		util.appendDebugOut("SUCCESSFULLY LOGGED OUT!<br>")
+	end
+end
+-- if login button
+if (ButtonType and ButtonType == "portalLogin") then
+	local inputTable = web.cgiToLuaTable(cgi)
+	portalName = inputTable["Login.Portal"]
+	local profName = db.getAttribute ("SSLVPNPortalLayout", "PortalLayoutName", portalName, "profileName") or ""
+	local errMessage = db.getAttribute("LoginProfiles", "configurationName", profName, "errorMessage") or ""
+	-- authenticate and login
+	local status,statusMsg,loginConf = sslAdmin.login (inputTable)
+        if (statusMsg == "13309") then
+            statusMsg = "Provided user name is not a part of Administrator/Guest/SSL-VPN."
+        elseif (statusMsg == "13310") then
+            statusMsg = "Blocked to Login by Admin"
+        elseif (statusMsg == "13311") then
+            statusMsg = "Blocked to Login From WAN side."
+        elseif (statusMsg == "13312") then
+            statusMsg = "Blocked to Login From this IP Address."
+        elseif (statusMsg == "13313") then
+            statusMsg = "Browser Not Supported!."
+        elseif (statusMsg == "13314") then
+            statusMsg = "Blocked to Login From this Browser."
+        end
+	if (status == 0) then
+		util.appendDebugOut("VALID LOGIN!<br>")
+		util.appendDebugOut("NORMAL LOGIN!<br>")
+		if (inputTable["Users.UserName"] == "admin" )then
+			util.appendDebugOut("DENY ADMIN LOGIN FOR SSLVPN PAGE!<br>")
+			util.appendDebugOut("REDIRECT TO SSLVPN PAGE!<br>")
+			web.goToPage(SSL_PORTAL_PAGE, false, true)
+		end
+	elseif (status == 1) then 
+		util.appendDebugOut("REPEAT LOGIN!<br>")
+		statusMessage = statusMsg
+		loginInfo = loginConf
+		errorFlag = "OK"
+		spUrlStr = "FORCED_LOGIN_SEC"
+                cpStatusMsgClass = "msgError"
+		web.goToPage("portalLogin", true, true)
+	elseif (status == 2) then
+		util.appendDebugOut("SSL LOGIN!<br>")
+                web.goToPage(SSL_PORTAL_PAGE, false, true)
+	elseif (status == 3) then 
+		util.appendDebugOut("REPEAT LOGIN!<br>")
+		statusMessage = statusMsg
+		errorFlag = "OK"
+                cpStatusMsgClass = "msgError"
+                web.goToPage("portalLogin", true, true)
+                --cgilua.relRedirect ("/scgi-bin/platform.cgi?page=" .. Page .. "&portal=" .. portalName .. "&stuMsg=" .. (statusMsg or errMessage))
+	else
+		util.appendDebugOut("INVALID LOGIN. TRY AGAIN!<br>")
+                 
+		statusMessage = db.getAttribute("stringsMap", "stringId", statusMsg, LANGUAGE) or statusMsg
+                cpStatusMsgClass = "msgError"
+                web.goToPage("portalLogin", true, true)
+                --cgilua.relRedirect ("/scgi-bin/platform.cgi?page=" .. Page .. "&portal=" .. portalName .. "&stuMsg=" .. (statusMessage or errMessage))
+	end
+elseif (ButtonType and ButtonType == "logout") then
+	-- go to next page - which will be login page
+	local inputTable = web.cgiToLuaTable(cgi)
+	portalName = inputTable["Login.Portal"]
+        web.goToPage("portalLogin", true, true)
+       -- cgilua.relRedirect ("/scgi-bin/platform.cgi?page=" .. Page .. "&portal=" .. portalName)
+elseif (ButtonType and ButtonType == "continue") then
+	local inputTable = web.cgiToLuaTable(cgi) 
+	portalName = inputTable["Login.Portal"]
+	-- When security is high
+	local status, statusMsg = sslAdmin.forcedLogin(inputTable)
+	if (status == 2) then
+               web.goToPage(SSL_PORTAL_PAGE, false, true) 
+	else
+		statusMessage = db.getAttribute("stringsMap", "stringId", statusMsg, LANGUAGE) or statusMsg
+                cpStatusMsgClass = "msgError"
+                -- go back to login page
+                web.goToPage("portalLogin", true, true)
+                --cgilua.relRedirect ("/scgi-bin/platform.cgi?page=" .. Page .. "&portal=" .. portalName .. "&stuMsg=" .. statusMessage)
+	end
+else
+	if(portalConfig["SSLVPNPortalLayout.profileName"] ~= nil) then
+		configRow = db.getRowWhere("LoginProfiles", "configurationName='" .. portalConfig["SSLVPNPortalLayout.profileName"] .. "'") or {}
+	end
+	if (configRow == nil or configRow["LoginProfiles.configurationName"] == nil) then
+		configRow = db.getDefaults (true, "LoginProfiles")
+	end
+	local cpAdFont = ""
+	local cpAdFontSize = ""
+	local cpAdFontColor = ""
+	local cpFooterFontColor = ""
+	local cpHeadBgColor = ""
+	local cpHeaderFontColor = ""
+	local cpHeaderFontSize = ""
+	local cpHeaderFont = ""
+	local cpBgColor = ""
+	local adStyle = "background-color: #eee;   border: 1px solid #aaa;  border-radius: 8px; color: #333;   font-family: Arial;  font-size: 16px;   padding: 15px;  text-align: center;"
+	local footerStyle = "font-family: Arial,sans-serif; text-align:center; color:#ffffff; font-size:12px;"
+	
+	if (configRow["LoginProfiles.AdEnable"] == "1") then
+
+	-- To get Font-family
+		if (configRow["LoginProfiles.AdFont"] == "1") then
+			cpAdFont = "Tahoma"
+		elseif (configRow["LoginProfiles.AdFont"] == "2") then
+			cpAdFont = "Times New Roman"
+		elseif (configRow["LoginProfiles.AdFont"] == "3") then
+			cpAdFont = "Verdana"
+		elseif (configRow["LoginProfiles.AdFont"] == "4") then
+			cpAdFont = "Arial"
+		end
+
+		-- To get Font Size
+		if (configRow["LoginProfiles.AdFontSize"] == "1") then
+			cpAdFontSize = "10px"
+		elseif (configRow["LoginProfiles.AdFontSize"] == "2") then
+			cpAdFontSize = "12px"
+		elseif (configRow["LoginProfiles.AdFontSize"] == "3") then
+			cpAdFontSize = "16px"
+		end
+
+		-- To get Font Color
+		if (configRow["LoginProfiles.AdFontColor"] == "1") then
+			cpAdFontColor = "ff0000"
+			elseif (configRow["LoginProfiles.AdFontColor"] == "2") then
+			cpAdFontColor = "000000"
+		elseif (configRow["LoginProfiles.AdFontColor"] == "3") then
+			cpAdFontColor = "00ff00"
+		elseif (configRow["LoginProfiles.AdFontColor"] == "4") then
+			cpAdFontColor = "0000ff"
+		end
+
+        adStyle = "background-color: #eee;   border: 1px solid #aaa; border-radius: 8px; color:#" .. cpAdFontColor .. ";   font-family:" .. cpAdFont .. ";  font-size:" .. cpAdFontSize ..";  padding: 15px;  text-align: center;"
+	   
+	end
+
+	-- To get Font-family
+	if (configRow["LoginProfiles.headerFont"] == "1") then
+		cpHeaderFont = "Tahoma"
+	elseif (configRow["LoginProfiles.headerFont"] == "2") then
+		cpHeaderFont = "Times New Roman"
+	elseif (configRow["LoginProfiles.headerFont"] == "3") then
+		cpHeaderFont = "Verdana"
+	elseif (configRow["LoginProfiles.headerFont"] == "4") then
+		cpHeaderFont = "Arial"
+	end
+  
+	-- To get Font Size
+	if (configRow["LoginProfiles.headerFontSize"] == "1") then
+		cpHeaderFontSize = "10px"
+	elseif (configRow["LoginProfiles.headerFontSize"] == "2") then
+		cpHeaderFontSize = "12px"
+	elseif (configRow["LoginProfiles.headerFontSize"] == "3") then
+		cpHeaderFontSize = "16px"
+	end
+
+	-- To get Font Color
+	if (configRow["LoginProfiles.headerFontColor"] == "1") then
+		cpHeaderFontColor = "ff0000"
+	elseif (configRow["LoginProfiles.headerFontColor"] == "2") then
+		cpHeaderFontColor = "000000"
+	elseif (configRow["LoginProfiles.headerFontColor"] == "3") then
+		cpHeaderFontColor = "00ff00"
+	elseif (configRow["LoginProfiles.headerFontColor"] == "4") then
+		cpHeaderFontColor = "0000ff"
+	end
+ 
+	-- To get Font Color
+	if (configRow["LoginProfiles.headerBackColor"] == "1" ) then
+		cpHeadBgColor = "ffffff"
+	elseif (configRow["LoginProfiles.headerBackColor"] == "2") then
+		cpHeadBgColor = "ff0000"
+	elseif (configRow["LoginProfiles.headerBackColor"] == "3") then
+		cpHeadBgColor = "00ff00"
+	elseif (configRow["LoginProfiles.headerBackColor"] == "4") then
+		cpHeadBgColor = "0000ff"
+	elseif (configRow["LoginProfiles.headerBackColor"] == "5") then
+		cpHeadBgColor = configRow["LoginProfiles.headerCustomColor"]
+	end
+
+	-- To get Font Color
+	if (configRow["LoginProfiles.BackGroundColor"] == "1" ) then
+		cpBgColor = "ffffff"
+	elseif (configRow["LoginProfiles.BackGroundColor"] == "2") then
+		cpBgColor = "ff0000"
+	elseif (configRow["LoginProfiles.BackGroundColor"] == "3") then
+		cpBgColor = "00ff00"
+	elseif (configRow["LoginProfiles.BackGroundColor"] == "4") then
+		cpBgColor = "0000ff"
+	elseif (configRow["LoginProfiles.BackGroundColor"] == "5") then
+		cpBgColor = configRow["LoginProfiles.CustomColor"]
+	end
+
+	if (configRow["LoginProfiles.FooterEnable"] == "1") then
+	-- To get Font Color
+		if (configRow["LoginProfiles.FooterFontColor"] == "1" ) then
+			cpFooterFontColor = "ffffff"
+		elseif (configRow["LoginProfiles.FooterFontColor"] == "2") then
+			cpFooterFontColor = "ff0000"
+		elseif (configRow["LoginProfiles.FooterFontColor"] == "3") then
+			cpFooterFontColor = "00ff00"
+		elseif (configRow["LoginProfiles.FooterFontColor"] == "4") then
+			cpFooterFontColor = "0000ff"
+		elseif (configRow["LoginProfiles.FooterFontColor"] == "5") then
+			cpFooterFontColor = "000000"
+		end
+
+		footerStyle = "font-family: Arial,sans-serif; text-align:center; color:#" .. cpFooterFontColor .. "; font-size:12px;"
+	end
+
+    local bodyStyle = ""
+    if (configRow["LoginProfiles.pageBackgroundStyleSelector"] == "1" ) then
+       local backgroundimageId = configRow["LoginProfiles.pageBackgroundImgConfigRow"] or ''
+       local backgroundImageName = ''
+       if (backgroundimageId == '' or backgroundimageId == nil) then --TODO:we can remove this check once we support background images
+           backgroundimageId = '1'
+       end
+
+       if (backgroundimageId ~= '') then
+           backgroundImageName = db.getAttribute("pageBackgroundImage", "pageBackgroundImage._ROWID_", backgroundimageId, "imageName")
+       end
+       bodyStyle = "background-color: #" .. cpBgColor ..";" .."background-image:url('images/capPort/" .. backgroundImageName .. "?page=portalLogin.html')" .. ";"
+     else
+	 bodyStyle = "background-color: #" .. cpBgColor ..";"
+     end
+     
+	local headerStyle = ""
+
+	if (configRow["LoginProfiles.headerBackground"] == "1" ) then
+        local imageId = configRow["LoginProfiles.headerImage"]
+        if (imageId == "1") then
+            logoEnable = "1"
+        else
+            logoEnable = "0" 
+        end
+
+		local imageName = db.getAttribute("LoginImageDetails", "LoginImageDetails._ROWID_", imageId, "name")
+		headerStyle = "border-top: 1px solid #333333; height: 90px;background: #ffffff url('images/login/" .. imageName .. "') repeat scroll 0 0; font-family: " .. cpHeaderFont .. "; text-align:center; color:#" .. cpHeaderFontColor .. "; font-size:" .. cpHeaderFontSize .. "; padding-top: 15px;"
+    else
+        logoEnable = "0"
+		headerStyle = "background-color: #" .. cpHeadBgColor .."; border-top: 1px solid #333333; border-bottom: 1px solid #333333; height: 90px; font-family: " .. cpHeaderFont .. "; text-align:center; color:#" .. cpHeaderFontColor .. "; font-size:" .. cpHeaderFontSize .. "; padding-top: 15px;"
+	end
+	local welcomeMessage = configRow["LoginProfiles.welcomeMessage"] or ''
+	local bannerTitle = ""
+	local bannerMessage = ""
+	if (portalConfig ~= nil) then
+		if (portalConfig["SSLVPNPortalLayout.DisplayBanner"] == "1") then
+		    bannerTitle = portalConfig["SSLVPNPortalLayout.BannerTitle"] or ''
+		    bannerMessage = portalConfig["SSLVPNPortalLayout.BannerMessage"] or ''
+		end
+	end
+	local len = #bannerMessage
+	local portalBannerMessage = ""
+	if (len > 64) then
+		portalBannerMessage = bannerMessage
+		bannerMessage = string.sub(bannerMessage,1,64) .. "..."
+	end
+
+	local portalSiteTitle = ""
+	if (portalConfig ["SSLVPNPortalLayout.PortalSiteTitle"] ~= nil and 
+                  string.len(portalConfig ["SSLVPNPortalLayout.PortalSiteTitle"]) > 0) then
+		portalSiteTitle = portalConfig ["SSLVPNPortalLayout.PortalSiteTitle"]
+	else
+		portalSiteTitle = configRow["LoginProfiles.title"] or ''
+	end
+
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+LANG_LOCALE = "12144,12074,13239,11899,11617,11152,10582,10449,14381,14382,20012,20005,14383,14391,14392"
+
+?>
+<!DOCTYPE html>
+<html style="position: relative !important; min-height: 100% !important;">
+    <head>
+<!-- <meta http-equiv="Content-Type" content="text/html; charset=windows-1252"> -->
+<title>$| portalSiteTitle |$</title>
+<!--
+Copyright (c) 2009 TeamF1, Inc. (www.TeamF1.com)
+copyright (c) 2014-2015, TeamF1 Networks Pvt. Ltd. 
+(Subsidiary of D-Link India)
+All rights reserved.
+-->
+<style type="text/css">
+* { margin:0; padding:0; }
+h1 { color: #006699; float: left; font-size: 16px; font-weight: normal; letter-spacing: 1px; padding: 0 0 5px; text-align: left; width: 75%; }
+
+.midWidth { min-width: 980px; width: 980px; } /* With width property you can change middle area width to full screen! */
+.midWidth2 { min-width: 600px; width: 600px; }
+div.msgError, div.msgInfo, div.msgSuccess { color: #FFFFFF; font-size: 16px; letter-spacing: 1px; padding: 12px; width: 455px;
+	-moz-border-radius: 6px 6px 6px 6px;
+	-webkit-border-radius: 6px 6px 6px 6px;
+	border-radius: 6px 6px 6px 6px;
+}
+div.msgError {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#ff9999',EndColorStr='#ff0202');
+	background:#ff9999;
+	background:-ms-linear-gradient(top,#ff9999,#ff0202);
+	background:-webkit-gradient(linear,left top,left bottom,from(#ff9999),to(#ff0202));
+	background:-moz-linear-gradient(top,#ff9999,#ff0202);
+	background:-o-linear-gradient(top,#ff9999,#ff0202);
+}
+div.msgInfo {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#0096af',EndColorStr='#045d93');
+	background:#0096af;
+	background:-ms-linear-gradient(top,#0096af,#045d93);
+	background:-webkit-gradient(linear,left top,left bottom,from(#0096af),to(#045d93));
+	background:-moz-linear-gradient(top,#0096af,#045d93);
+	background:-o-linear-gradient(top,#0096af,#045d93);
+}
+div.msgSuccess {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#32af00',EndColorStr='#95f931');
+	background:#32af00;
+	background:-ms-linear-gradient(top,#32af00,#95f931);
+	background:-webkit-gradient(linear,left top,left bottom,from(#32af00),to(#95f931));
+	background:-moz-linear-gradient(top,#32af00,#95f931);
+	background:-o-linear-gradient(top,#32af00,#95f931);
+}
+
+div.msgError > p, div.msgInfo > p, div.msgSuccess > p {
+ background: url("images/play.gif?page=captivePortal.html") no-repeat scroll 0 1px transparent;
+ line-height: 18px;
+ padding-left: 10px;
+ text-align: center;
+}
+
+.midArea {
+ background: none repeat scroll 0 0 #FFFFFF;
+ border-radius: 8px 8px 8px 8px;
+	-moz-box-shadow: 0 0 6px #999999;
+	-webkit-box-shadow: 0 0 6px #999999;
+	box-shadow: 0 0 6px #999999;
+ clear: both;
+ min-height: 280px;
+ margin: 0 0 25px 0;
+ padding: 15px;
+ width: auto;
+}
+
+.configLogin{
+	margin: 20px;
+}
+
+.configRow {
+	padding: 0 5px;
+}
+.configRow > label, .configRow > p {
+ color: #333333;
+ float: left;
+ font-size: 12px;
+ letter-spacing: 0.1em;
+ line-height: 22px;
+ min-width: 30%;
+ padding: 0 10px;
+ text-align: left;
+}
+
+.configRow > label.three{
+width:25%;
+min-width:10%;
+}
+
+.configRow > p.three{
+width:15%;
+min-width:10%;
+}
+
+.configRow > label.half {
+ min-width: 50%;
+}
+
+.configRow > p {
+ color: #006699;
+ letter-spacing: 1px;
+ min-width: 0;
+}
+.midMsg { font-size: 14px; margin: 20px 20px; color: #006699; text-align: center; }
+
+.configRow > input, select, textarea {
+ border: 1px solid #999999;
+ color: #006699;
+ float: left;
+ font-size: 11px;
+ height: 16px;
+ letter-spacing: 1px;
+ margin: 0 10px;
+ padding: 2px 4px;
+ width: 178px;
+}
+
+.configRow > input.one {
+    width: 66px;
+}
+
+.submitRow2 {
+	padding-left: 35%;
+}
+
+td > select {
+	height: 23px;
+}
+
+.configRow > p > input[type="checkbox"], .configRow > p > input[type="radio"] {
+/*	border: medium none; */
+}
+
+.configRow > textarea {
+ border: thin solid #999999;
+ height: 200px;
+	width: 400px;
+}
+
+.break {
+ clear: both;
+ line-height: 8px;
+}
+
+.btnSubmit, .btnReset {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#64b1d9',EndColorStr='#1876a6');
+	background:#1876a6;
+	background:-ms-linear-gradient(top,#64b1d9,#1876a6);
+	background:-webkit-gradient(linear,left top,left bottom,from(#64b1d9),to(#1876a6));
+	background:-moz-linear-gradient(top,#64b1d9,#1876a6);
+	background:-o-linear-gradient(top,#64b1d9,#1876a6);
+	color: #FCFCFC;
+	border: 1px solid #ffffff;
+	border-radius: 2px 2px 2px 2px; 
+	box-shadow: 0 1px 2px #666666;
+	-moz-box-shadow: 0 1px 2px #666666;
+	-webkit-box-shadow: 0 1px 2px #666666;	
+	cursor: pointer; 
+	font-size: 14px;
+	float: left;
+	letter-spacing: 1px;
+	line-height: 18px;
+	margin: 5px 10px 5px 5px;
+	min-width: 104px;
+	padding: 4px 12px;
+	text-align: center;
+}
+
+.logo { background: url("images/logo.png") no-repeat scroll 10px 16px
+transparent; color: #86C2FD; font-size: 14px; letter-spacing: 1px; padding: 54px
+10px 10px; text-align: center; margin-top: -2%;}
+
+/* for sticky footer */
+body {
+    margin: 0 0 68px;
+ }
+ 
+.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 48px;
+    width: 100%;
+    line-height:48px;
+    text-align: center;
+    margin-top:20px !important;
+}
+/* for sticky footer Ends */
+
+.supportBrowser {
+    margin-top: 60px;
+}
+.supported {
+    bottom: 20px;
+    color: #006699;
+    font-size: 12px;
+    left: 120px;
+    position: absolute;
+    text-align: center;
+}
+.capLogin {
+    position: relative
+}
+</style>
+<?lua web.includeMenu("dictionary.html") ?>
+<script language="javascript" type="text/javascript">
+function loginValidate ()
+    {
+    var txtFieldIdArr = new Array ();
+    txtFieldIdArr[0] = "tf1_username,"+LANG_LOCALE['12144'];
+    txtFieldIdArr[1] = "tf1_password,"+LANG_LOCALE['12074'];
+    if (txtFieldArrayCheck (txtFieldIdArr) == false)
+        return false;
+
+    if (document.getElementById ('hdUserAgent'))
+        document.getElementById ('hdUserAgent').value = navigator.userAgent;
+
+    return true;
+    }
+function loginInit ()
+    {
+    var isPortal = "$| isPortalExists or '' |$"
+    var isUsers = "$| isUsersExists or '' |$"
+    var statusMsgObj = document.getElementById ('infoMsg');
+    if (!isNaN (isPortal) && parseInt (isPortal, 10) == 0)
+        {
+        if (statusMsgObj)
+            statusMsgObj.innerHTML = LANG_LOCALE['14391'];
+        else
+            alert(LANG_LOCALE['14391']);
+        }
+    else if (!isNaN (isUsers) && parseInt (isUsers, 10) == 0)
+       {
+       if (statusMsgObj)
+           statusMsgObj.innerHTML = LANG_LOCALE['14392'];
+       else
+          alert(LANG_LOCALE['14392']);
+       }
+    else
+       {
+       var usrObj = document.getElementById ('tf1_username');
+       if (!usrObj) return;
+       usrObj.focus ();
+       }
+    }
+</script>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+<script language="JavaScript" src="js/textValidations.js" type="text/javascript"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body style="$| bodyStyle |$" onload="loginInit ()">
+        <div style="$| headerStyle |$">&nbsp;$| configRow["LoginProfiles.headerCaption"] or '' |$
+        <?lua if (logoEnable == "1") then?>     
+        <div class="logo"> </div>
+        <?lua end?>
+        </div>   
+
+    <div align="center">
+		<?lua 
+		if(spUrlStr ~= "FORCED_LOGIN_SEC") then
+		?>
+		<form method="post" action="platform.cgi">
+        <input type="hidden" name="thispage" value="portalLogin.html">
+        <input type="hidden" name="page" value="portalLogin.html">
+        <input type="hidden" name="portal" value="$| portalName or ''|$">
+		<input type="hidden" name="Login.PortalName" value="$| portalName or ''|$">
+		<?lua 
+			if (configRow["LoginProfiles.AdEnable"] == "0") then
+		?>
+        <div class="midWidth2">
+            <div class="break" style="margin-top:30px;">&nbsp;</div>
+            <div class="break">&nbsp;</div>
+            <?lua if (statusMessage ~= nil and statusMessage ~= '') then ?>
+			<div class= $| cpStatusMsgClass or 'msgError'|$>
+		        <p>$| statusMessage or '' |$</p>
+		    </div>
+			<div class="break"> &nbsp; </div>
+            <?lua else?>
+            <div class= msgInfo>
+		        <p>$| welcomeMessage or '' |$</p>
+		    </div>
+			<div class="break"> &nbsp; </div>               
+            <?lua  end ?>
+            <div class="break"> &nbsp; </div>
+            <div id="trLoginTbl">
+                <div class="midArea capLogin">
+                    <h1> $| configRow["LoginProfiles.LoginBoxTitle"] or '' |$  </h1>
+				    <h1> $| bannerTitle |$ </h1>
+  				    <h1> $| bannerMessage |$ </h1>
+                    <div class="configLogin">
+                        <div class="break"> &nbsp; </div>
+                        <div class="configRow">
+                            <label>$| LANG_LOCALE['13239'] |$</label>
+                            <input name="Users.UserName" type="text" id="tf1_username" maxlength="24">
+                        </div>
+                        <div class="break"> &nbsp; </div>
+                        <div class="configRow">
+                            <label>$| LANG_LOCALE['11899'] |$</label>
+                            <input name="Users.Password" type="password" id="tf1_password" maxlength="128">
+                        </div>
+                        <div class="break"> &nbsp; </div>
+                        <div class="submitRow2">
+                            <input type="submit" value="$| LANG_LOCALE['11617'] |$" name="button.portalLogin.Users.dashboard" class="btnSubmit" title="$| LANG_LOCALE['11617'] |$" id="loginBt" onclick="return loginValidate ()">
+						</div>
+                        <div class="break"> &nbsp; </div>
+                    </div>
+                    <div class="break"> &nbsp; </div>
+                    <div class="supportBrowser">
+                        <p class="supported"> <b>$| LANG_LOCALE['14381'] |$: </b>$| LANG_LOCALE['14382'] |$ 9+, $| LANG_LOCALE['20012'] |$ 20+, $| LANG_LOCALE['20005'] |$ 25+, $| LANG_LOCALE['14383'] |$ 5+ </p>
+                    </div>
+                    <div class="break"> &nbsp; </div>
+			    </div>
+            </div>
+        </div>
+
+			<?lua
+				elseif (configRow["LoginProfiles.AdPlace"] == "2") then
+			?>
+            <div id="trLoginTbl">
+                <div class="midWidth2">
+                    <div class="break" style="margin-top:30px;">&nbsp;</div>
+                    <div class="break">&nbsp;</div>
+                    <?lua if (statusMessage ~= nil and statusMessage ~= '') then ?>
+					<div class= $|cpStatusMsgClass or 'msgError'|$>
+		                <p>$| statusMessage or '' |$</p>
+		            </div>
+					<div class="break"> &nbsp; </div>
+                    <?lua else?>
+                    <div class= msgInfo>
+		                <p>$| welcomeMessage or '' |$</p>
+		            </div>
+					<div class="break"> &nbsp; </div>      
+                    <?lua  end ?>
+                    <div class="break"> &nbsp; </div>
+                    <div class="midArea capLogin">
+                        <h1> $| configRow["LoginProfiles.LoginBoxTitle"] or '' |$  </h1>
+				        <h1> $| bannerTitle |$ </h1>
+  				        <h1> $| bannerMessage |$ </h1>
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['13239'] |$</label>
+                                <input name="Users.UserName" type="text" id="tf1_username" maxlength="32">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['11899'] |$</label>
+                                <input name="Users.Password" type="password" id="tf1_password" maxlength="128">
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="submitRow2">
+                                <input type="submit" value="$| LANG_LOCALE['11617'] |$" name="button.portalLogin.Users.dashboard" class="btnSubmit" title="$| LANG_LOCALE['11617'] |$" id="loginBt" onclick="return loginValidate ()">
+						    </div>
+                            <div class="break"> &nbsp; </div>
+                        </div>
+                        <div class="break"> &nbsp; </div>
+                        <div class="break"> &nbsp; </div>
+                        <div class="break"> &nbsp; </div>
+                       	<div style="$| adStyle |$">$| configRow["LoginProfiles.AdContent"] |$</div>
+                        <div class="break"> &nbsp; </div>
+                        <div class="supportBrowser">
+                            <p class="supported"> <b>$| LANG_LOCALE['14381'] |$: </b>$| LANG_LOCALE['14382'] |$ 9+, $| LANG_LOCALE['20012'] |$ 20+, $| LANG_LOCALE['20005'] |$ 25+, $| LANG_LOCALE['14383'] |$ 5+ </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<?lua
+				else
+			?>
+            <div id="trLoginTbl">
+                <div class="midWidth2">
+                    <div class="break" style="margin-top:30px;">&nbsp;</div>
+				    <div class="break"> &nbsp; </div>
+                        <?lua if (statusMessage ~= nil and statusMessage ~= '') then ?>
+						<div class= $|cpStatusMsgClass or 'msgError'|$>
+		                  	<p>$| statusMessage or '' |$</p>
+		                </div>
+						<div class="break"> &nbsp; </div>
+                        <?lua else?>
+                        <div class= msgInfo>
+		                  	<p>$| welcomeMessage or '' |$</p>
+		                </div>
+						<div class="break"> &nbsp; </div>   
+                        <?lua  end ?>
+                        <div class="break"> &nbsp; </div>
+                        <div class="midArea capLogin">
+                            <div style="$| adStyle |$">$| configRow["LoginProfiles.AdContent"] |$</div>
+                            <div class="break"> &nbsp; </div>
+                            <div class="break"> &nbsp; </div>
+                            <h1> $| configRow["LoginProfiles.LoginBoxTitle"] or '' |$  </h1>
+				            <h1> $| bannerTitle |$ </h1>
+  				            <h1> $| bannerMessage |$ </h1>
+                            <div class="configLogin">             
+                                <div class="break"> &nbsp; </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['13239'] |$</label>
+                                    <input name="Users.UserName" type="text" id="tf1_username" maxlength="32">
+                                </div>
+                                <div class="break"> &nbsp; </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['11899'] |$</label>
+                                    <input name="Users.Password" type="password" id="tf1_password" maxlength="128">
+                                </div>
+                                <div class="break"> &nbsp; </div>
+                                <div class="submitRow2">
+                                    <input type="submit" value="$| LANG_LOCALE['11617'] |$" name="button.portalLogin.Users.dashboard"  class="btnSubmit" title="$| LANG_LOCALE['11617'] |$" id="loginBt" onclick="return loginValidate ()">
+								</div>
+                            </div>
+                            <div class="supportBrowser">
+                                <p class="supported"> <b>$| LANG_LOCALE['14381'] |$: </b>$| LANG_LOCALE['14382'] |$ 9+, $| LANG_LOCALE['20012'] |$ 20+, $| LANG_LOCALE['20005'] |$ 25+, $| LANG_LOCALE['14383'] |$ 5+ </p>
+                            </div>
+                            <div class="break"> &nbsp; </div>
+                        </div>
+                    </div>
+                </div>
+			<?lua end ?>
+			<input type="hidden" name="Login.userAgent" id="hdUserAgent">
+			<input type="hidden" name="Login.Portal" id="portalName" value="$| portalName or ''|$">
+			</form>
+			<?lua			  
+			else
+			?>
+            <div id="trForcedLoginTbl">
+                <div class="midWidth2">
+                    <div class="break" style="margin-top:30px;">&nbsp;</div>
+                	<div class="break">&nbsp;</div>
+                    <div class="midArea">
+                        <div class="break"> &nbsp; </div>
+                        <h1>$| configRow["LoginProfiles.LoginBoxTitle"] or '' |$ </h1>
+                        <div class="configLogin">
+                            <div class="break"> &nbsp; </div>
+                            <p style="color: #333333; float: left;">$| LANG_LOCALE['11152'] |$</p>
+                            <div class="break"> &nbsp; </div>
+                            <div class="submitRow2">
+                                <form method="post" action="platform.cgi?portal=$| portalName or ''|$">
+                                    <input type="hidden" name="thispage" value="portalLogin.html">
+                                    <input type="hidden" name="Users.UserName" value="$| loginInfo["Users.UserName"] or '' |$">
+                                    <input type="hidden" name="Users.Password" value="$| loginInfo["Users.Password"] or '' |$">
+                                    <input type="hidden" name="Login.userAgent" value="$| loginInfo["Login.userAgent"] or '' |$">
+                                    <input type="hidden" name="Login.Portal" value="$| loginInfo["Login.Portal"] or '' |$">
+					            <input type="submit" value="$| LANG_LOCALE['10582'] |$" name="button.continue.portalInformation" class="btnSubmit" title="$| LANG_LOCALE['10582'] |$">
+                                <input type="submit" value="$| LANG_LOCALE['10449'] |$" name="button.logout.portalLogin" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			<?lua
+				end
+			?>
+		</div>
+<?lua
+	if (configRow["LoginProfiles.FooterEnable"] == "0") then
+?>
+	<div class="footer">$| COPYRIGHTS |$</div>
+<?lua
+	else
+?>
+	<div class="footer" style="$| footerStyle |$">$| configRow["LoginProfiles.FooterContent"] or '' |$</div>
+<?lua	
+	end
+?>
+</body>
+</html>
+<?lua end ?>

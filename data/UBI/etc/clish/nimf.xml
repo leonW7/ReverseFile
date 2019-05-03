@@ -1,0 +1,2890 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+    <!--===================================================-->
+<VIEW name="net-wan-wan1-ipv4-config" prompt="net-config[wan1-ipv4]>"> 
+    <COMMAND name="save" help="Save ipv4 wan configuration changes.">
+	     <ACTION>lua clishCfgObjExec("NimfConf")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ipv4 wan configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Exit from the current configuration."        
+    	     view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("NimfConf")</ACTION>             
+    </COMMAND>
+    <COMMAND name="isp_connection_type" 
+            help="Select among the options: STATIC, DHCP Client, PPPoE, PPTP, L2TP, Russian PPTP, Russian L2TP, Japanese Multiple PPPoE, Dual Access Pppoe">
+         <PARAM name="connectionType"
+            help="Select among the options: STATIC, DHCP Client, PPPoE, PPTP, L2TP, Russian PPTP, Russian L2TP, Japanese Multiple PPPoE, Dual Access Pppoe"
+            ptype="ISP_TYPE_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IspType","${connectionType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc" help="If ISP Type selected is DHCPC, this field gives you options to configure DHCPC credentials"/>
+    <COMMAND name="dhcpc get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using DHCP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="dhcpc mac_type" help="Select the Mac Address Source">
+         <PARAM name="dhcp_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${dhcp_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc mac_address" help="Valid MAC address">
+         <PARAM name="macAddress"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${macAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc hostname" help="Enter the hostname">
+         <PARAM name="hostname"
+            help="Set Host Name"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.HostName","${hostname}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="static" help="If ISP Type selected is STATIC, this field gives you options to configure STATIC credentials"/>
+    <COMMAND name="static ip_address" help="If your ISP has assigned a fixed (static or permanent) IP address, fill this fields with Static IP address assigned to you. This will identify the router to your ISP.">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static subnet_mask" help="IPv4 Subnet Mask. This is usually provided by the ISP or your network administrator.">
+         <PARAM name="ipAddress"
+            help="IPv4 Subnet Mask. This is usually provided by the ISP or your network administrator."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static gateway_address" help="IP address of the ISP’s gateway. This is usually provided by the ISP or your network administrator.">
+         <PARAM name="ipAddress"
+            help="IP address of the ISP’s gateway. This is usually provided by the ISP or your network administrator."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.GwIpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Valid primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Valid secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+
+    <COMMAND name="static mac_type" help="Select the Mac Address Source">
+         <PARAM name="static_mac"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${static_mac}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static mac_address" help="enter Valid MAC address">
+         <PARAM name="macaddress2"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${macaddress2}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="pppoe" help="If ISP Type selected is PPPoE, this field gives you options to configure PPPoE credentials"/>
+    <COMMAND name="pppoe username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UserName","${Username}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Password","${password}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="pppoe service" help="Enter the password to authenticate">
+         <PARAM name="service"
+            help="Enter the password to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Service","${service}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the password to log in"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.AuthOpt","${authOpt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe connectivity_type" help="Enter the connectivity type">
+         <PARAM name="connType"
+            help="Enter the connectivity type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PppoeIdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe idletime" help="Enter the idle time">
+         <PARAM name="idleTime"
+            help="Enter the idle time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PppoeIdleTimeOutValue","${idleTime}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPPOE network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an IP address to the router using PPPOE network protocol. Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PIsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe static_ip" help="Valid IP Address">
+         <PARAM name="staticIP"
+            help="Set Valid IP address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PIpAddr","${staticIP}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe subnet_mask" help="Valid subnet mask">
+         <PARAM name="subnetMask"
+            help="Set subnetMask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PSnetMask","${subnetMask}")
+             </ACTION>
+         </COMMAND>    
+
+     <COMMAND name="pppoe mac_type" help="Select the Mac Address Source">
+         <PARAM name="pppoe_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${pppoe_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe mac_address" help="enter Valid MAC address">
+         <PARAM name="pppoe_mac"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${pppoe_mac}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="pptp" help="If ISP Type selected is PPTP, this field gives you options to configure PPTP credentials"/>
+    <COMMAND name="pptp username" help="Enter the username to log in">
+         <PARAM name="pptpUsername"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.LoginName","${pptpUsername}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp password" help="Enter the password to log in">
+         <PARAM name="pptpPassword"
+            help="Enter the password to log in"
+            ptype="STRING16"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.LoginPassword","${pptpPassword}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp subnet_mask" help="If Address Mode is Static,give subnet mask">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp Static_DNS_IP" help="If Address Mode is Static, give static DNS IP.">
+         <PARAM name="StaticDNS"
+            help="If Address Mode is Static, give static DNS IP. It should be in same subnet of Gateway IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.StaticDNS","${StaticDNS}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address.Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp mmpe_encryption" help="Enter the MMPE Encryption">
+         <PARAM name="mmpe"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MppeEncryptSupport", "${mmpe}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="pptp split_tunnel" help="select the split_tunnel">
+         <PARAM name="splitTunnel"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SplitTunnel", "${splitTunnel}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp gateway" help="Gateway assigned by the ISP to make a connection with the ISP server">
+         <PARAM name="pptpgateway"
+            help="Gateway assigned by the ISP to make a connection with the ISP server"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Gateway","${pptpgateway}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp server_address" help="IP address / FQDN of the PPTP server (if applicable)">
+         <PARAM name="pptpServerAddr"
+            help="IP address / FQDN  of the PPTP server (if applicable)"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SvrIpAddr","${pptpServerAddr}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="pptp get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPTP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND> 
+
+      
+     <COMMAND name="pptp mac_type" help="Select the Mac Address Source">
+         <PARAM name="pptp_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${pptp_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp mac_address" help="enter Valid MAC address">
+         <PARAM name="pptp_mac"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${pptp_mac}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="russ_pptp" help="If ISP Type selected is Russian dual access PPTP ,this field gives you options to configure credentials"/>
+    <COMMAND name="russ_pptp username" help="Enter the username to log in">
+         <PARAM name="pptpUsername"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.LoginName","${pptpUsername}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp password" help="Enter the password to log in">
+         <PARAM name="pptpPassword"
+            help="Enter the password to log in"
+            ptype="STRING16"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.LoginPassword","${pptpPassword}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp mmpe_encryption" help="Enter the MMPE Encryption">
+         <PARAM name="mmpe"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MppeEncryptSupport", "${mmpe}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp split_tunnel" help="select the split_tunnel">
+         <PARAM name="splitTunnel"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SplitTunnel", "${splitTunnel}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp server_address" help="IP address / FQDN of the PPTP server (if applicable)">
+         <PARAM name="pptpServerAddr"
+            help="IP address / FQDN  of the PPTP server (if applicable)"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SvrIpAddr","${pptpServerAddr}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp subnet_mask" help="If Address Mode is Static,give subnet mask">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp gateway" help="Gateway assigned by the ISP to make a connection with the ISP server">
+         <PARAM name="pptpgateway"
+            help="Gateway assigned by the ISP to make a connection with the ISP server"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Gateway","${pptpgateway}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp Static_DNS_IP" help="If Address Mode is Static, give static DNS IP.">
+         <PARAM name="StaticDNS"
+            help="If Address Mode is Static, give static DNS IP. It should be in same subnet of Gateway IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.StaticDNS","${StaticDNS}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="russ_pptp get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address.Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPTP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+
+
+    <COMMAND name="russ_pptp mac_type" help="Select the Mac Address Source">
+         <PARAM name="russ_pptp_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${russ_pptp_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp mac_address" help="enter Valid MAC address">
+         <PARAM name="russ_pptp_mac"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${russ_pptp_mac}")
+             </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="l2tp" help="If ISP Type selected is L2TP, this field gives you options to configure L2TP credentials"/>
+    <COMMAND name="l2tp username" help="Enter the username to log in">
+         <PARAM name="l2tpUsername"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.LoginName","${l2tpUsername}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp password" help="Enter the password to log in">
+         <PARAM name="l2tpPassword"
+            help="Enter the password to log in"
+            ptype="STRING16"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.LoginPassword","${l2tpPassword}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="l2tp secret" help="Enter the secret to log in">
+         <PARAM name="l2tpSecret"
+            help="Enter the secret to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Secret","${l2tpSecret}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="l2tp split_tunnel" help="select the split_tunnel">
+         <PARAM name="splitTunnel"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SplitTunnel", "${splitTunnel}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp gateway" help="Gateway assigned by the ISP to make a connection with the ISP server">
+         <PARAM name="l2tpgateway"
+            help="IP address assigned by the ISP to make a connection with the ISP server (if applicable)"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Gateway","${l2tpgateway}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp server_address" help="IP address / FQDN of the L2TP server (if applicable)">
+         <PARAM name="l2tpServerAddr"
+            help="IP address / FQDN of the L2TP server (if applicable)"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SvrIpAddr","${l2tpServerAddr}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp subnet_mask" help="If Address Mode is Static,give subnet mask">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp Static_DNS_IP" help="If Address Mode is Static, give static DNS IP.">
+         <PARAM name="StaticDNS"
+            help="If Address Mode is Static, give static DNS IP. It should be in same subnet of Gateway IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.StaticDNS","${StaticDNS}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address.Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using L2TP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>      
+
+     
+    <COMMAND name="l2tp mac_type" help="Select the Mac Address Source">
+         <PARAM name="l2tp_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${l2tp_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp mac_address" help="enter Valid MAC address">
+         <PARAM name="l2tp_mac"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${l2tp_mac}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="russ_l2tp" help= "If ISP Type selected is Russian Dual Access L2TP, this field gives you options to                                              configure Russian L2TP credentials"/>
+    <COMMAND name="russ_l2tp username" help="Enter the username to log in">
+         <PARAM name="l2tpUsername"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.LoginName","${l2tpUsername}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp password" help="Enter the password to log in">
+         <PARAM name="l2tpPassword"
+            help="Enter the password to log in"
+            ptype="STRING16"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.LoginPassword","${l2tpPassword}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp secret" help="Enter the secret to log in">
+         <PARAM name="l2tpSecret"
+            help="Enter the secret to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Secret","${l2tpSecret}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp split_tunnel" help="select the split_tunnel">
+         <PARAM name="splitTunnel"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SplitTunnel", "${splitTunnel}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp server_address" help="IP address / FQDN of the L2TP server (if applicable)">
+         <PARAM name="l2tpServerAddr"
+            help="IP address / FQDN of the L2TP server (if applicable)"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SvrIpAddr","${l2tpServerAddr}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp gateway" help="Gateway assigned by the ISP to make a connection with the ISP server">
+         <PARAM name="l2tpgateway"
+            help="Gateway assigned by the ISP to make a connection with the ISP server"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Gateway","${l2tpgateway}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="russ_l2tp subnet_mask" help="If Address Mode is Static,give subnet mask">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp Static_DNS_IP" help="If Address Mode is Static, give static DNS IP.">
+         <PARAM name="StaticDNS"
+            help="If Address Mode is Static, give static DNS IP. It should be in same subnet of Gateway IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.StaticDNS","${StaticDNS}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address.Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using L2TP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+
+    <COMMAND name="russ_l2tp mac_type" help="Select the Mac Address Source">
+         <PARAM name="russ_l2tp_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${russ_l2tp_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp mac_address" help="enter Valid MAC address">
+         <PARAM name="russ_l2tp_mac"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${russ_l2tp_mac}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="japanese_pppoe" help= "If ISP Type selected is japanese multiple pppoe,this field gives you options to configure credentials"/>
+    <COMMAND name="japanese_pppoe primary_profile" help="configure the primary pppoe profile"/>
+    <COMMAND name="japanese_pppoe primary_profile username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UserName","${Username}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Password","${password}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile service" help="Enter the password to authenticate">
+         <PARAM name="service"
+            help="Enter the password to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Service","${service}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the password to log in"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.AuthOpt","${authOpt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile connectivity_type" help="Enter the connectivity type">
+         <PARAM name="connType"
+            help="Enter the connectivity type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PppoeIdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile idletime" help="Enter the idle time">
+         <PARAM name="idleTime"
+            help="Enter the idle time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PppoeIdleTimeOutValue","${idleTime}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPPOE network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an IP address to the router using PPPOE network protocol. Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PIsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile static_ip" help="Valid IP Address">
+         <PARAM name="staticIP"
+            help="Set Valid IP address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PIpAddr","${staticIP}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile subnet_mask" help="Valid subnet mask">
+         <PARAM name="subnetMask"
+            help="Set subnetMask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PSnetMask","${subnetMask}")
+             </ACTION>
+    </COMMAND>                            
+    <COMMAND name="japanese_pppoe secondary_profile" help="configure the secondary pppoe profile"/>
+    <COMMAND name="japanese_pppoe secondary_profile username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JUserName","${Username}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JPassword","${password}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile service" help="Enter the password to authenticate">
+         <PARAM name="service"
+            help="Enter the password to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JService","${service}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the password to log in"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JAuthOpt","${authOpt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile connectivity_type" help="Enter the connectivity type">
+         <PARAM name="connType"
+            help="Enter the connectivity type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JPppoeIdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile idletime" help="Enter the idle time">
+         <PARAM name="idleTime"
+            help="Enter the idle time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JPppoeIdleTimeOutValue","${idleTime}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPPOE network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JIsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JPriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JSecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an IP address to the router using PPPOE network protocol. Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JIsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile static_ip" help="Valid IP Address">
+         <PARAM name="staticIP"
+            help="Set Valid IP address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JIpAddr","${staticIP}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile subnet_mask" help="Valid subnet mask">
+         <PARAM name="subnetMask"
+            help="Set subnetMask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.JSnetMask","${subnetMask}")
+             </ACTION>
+         </COMMAND> 
+
+    <COMMAND name="japanese_pppoe mac_type" help="Select the Mac Address Source">
+         <PARAM name="japanese_pppoe_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${japanese_pppoe_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe mac_address" help="enter Valid MAC address">
+         <PARAM name="japanese_pppoe_mac"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${japanese_pppoe_mac}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="dual_pppoe" help="If ISP Type selected is Dual PPPoE, this field gives you options to configure Dual Access PPPoE credentials"/>
+    <COMMAND name="dual_pppoe username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UserName","${Username}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Password","${password}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="dual_pppoe service" help="Enter the service to authenticate">
+         <PARAM name="service"
+            help="Enter the service"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.Service","${service}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the authentication protocol to be used"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.AuthOpt","${authOpt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe connectivity_type" help="Enter the connectivity type">
+         <PARAM name="connType"
+            help="Enter the connectivity type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PppoeIdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe idletime" help="Enter the idle time">
+         <PARAM name="idleTime"
+            help="Enter the idle time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PppoeIdleTimeOutValue","${idleTime}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static Dns address. The ISP will automatically assign an DNS address to the router using PPPOE network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an IP address to the router using PPPOE network protocol. Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PIsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe static_ip" help="Valid IP Address">
+         <PARAM name="staticIP"
+            help="Set Valid IP address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PIpAddr","${staticIP}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe subnet_mask" help="Valid subnet mask">
+         <PARAM name="subnetMask"
+            help="Set subnetMask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PSnetMask","${subnetMask}")
+             </ACTION>
+         </COMMAND>   
+    
+    <COMMAND name="dual_pppoe mac_type" help="Select the Mac Address Source">
+         <PARAM name="japanese_pppoe_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.UseMac","${japanese_pppoe_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe mac_address" help="enter Valid MAC address">
+         <PARAM name="japanese_pppoe_mac"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.MacAddr","${japanese_pppoe_mac}")
+             </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="dual_pppoe get_ip_from_phy" help="Enter Yes to get ip on physical interface from dhcp server in the internal isp network. Otherwise Enter No and give valid static IP address, subnet mask and gateway">
+         <PARAM name="getIpFromIspPhy"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.GetIpFromIspPhy","${getIpFromIspPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe static_ip_phy" help="Valid IP Address of physical
+        interface">
+         <PARAM name="staticIPPhy"
+            help="Set Valid IP address of physical interface"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.StaticIpPhy","${staticIPPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe subnet_mask_phy" help="Valid subnet mask of
+        physical network">
+         <PARAM name="subnetMaskPhy"
+            help="Set subnetMask of physical interface"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.NetMaskPhy","${subnetMaskPhy}")
+             </ACTION>
+    </COMMAND>    
+    <COMMAND name="dual_pppoe gateway_phy" help="Valid gateway of physcial
+        network">
+         <PARAM name="GatewayPhy"
+            help="Set gateway of physical interface"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.GatewayPhy","${GatewayPhy}")
+             </ACTION>
+    </COMMAND>    
+    <COMMAND name="dual_pppoe get_dns_from_isp_phy" help="Enter Yes to get dns dynamically from interal ISP if you have not been assigned any static Dns address. The internal ISP will automatically assign an DNS address to the router using Dhcp network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIspPhy"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.GetDnsFromIspPhy","${getDnsFromIspPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe primary_dns_phy" help="Valid primary DNS Server IP Address of physical network">
+         <PARAM name="primaryDnsPhy"
+            help="Set primary DNS Server IP Address for physical network"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.PrimaryDnsPhy","${primaryDnsPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe secondary_dns_phy" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDnsPhy"
+            help="Set secondary DNS Server IP Address for physical network"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.SecondaryDnsPhy","${secondaryDnsPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="enable_vlan_tag" help="Enable vlan on wan1">
+         <PARAM name="enable_vlan_tag"
+    	   help="Disable or Enable vlan on wan1 side"
+   	       ptype="CHOICE_INT"/>
+    	 <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.vlanWan1Status","${enable_vlan_tag}")
+    	    </ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_Id" help="Enter  Vlan Id">
+         <PARAM name="vlanId"
+           help="Enter Vlan Id"
+           ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Wan.wanVlanId","${vlanId}")
+             </ACTION>
+   </COMMAND>	             
+</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net wan wan1" help="wan configuration mode"/>
+    <COMMAND name="net wan wan1 ipv4" help="ipv4 wan configuration mode"/>
+    <!--=======================================================-->
+    <COMMAND name="net wan wan1 ipv4 configure"
+             help="ipv4 wan wan1 configuration mode"
+             view="net-wan-wan1-ipv4-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("NimfConf", nimfCfgInit, nimfCfgSave, nimfCfgInputVal)
+                 </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net wan wan1" help="."/>
+    <COMMAND name="show net wan wan1 ipv4" help="."/>
+    <COMMAND name="show net wan wan1 ipv4 status"
+	     help="Display ipv4 wan1 Information.">
+	     <ACTION>lua clishCmdExec (wanStatusGet)
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net wan wan1 ipv4 setup"
+	     help="Display Wan1 Setup Information.">
+	     <ACTION>lua clishCmdExec (wanSetupGet)
+             </ACTION>
+         </COMMAND>
+    <!--===================================================-->
+<VIEW name="net-wan-wan2-ipv4-config" prompt="net-config[wan2-ipv4]>"> 
+    <COMMAND name="save" help="Save ipv4 wan configuration changes.">
+	     <ACTION>lua clishCfgObjExec("NimfConfWan2")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ipv4 wan configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Exit from the current configuration."        
+    	     view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("NimfConfWan2")</ACTION>
+    </COMMAND>
+    <COMMAND name="isp_connection_type" 
+             help="Select among the options: STATIC, DHCP Client, PPPoE, PPTP, L2TP, Russian PPTP, Russian L2TP, Japanese Multiple PPPoE, Dual Access Pppoe, Mobile Internet">
+         <PARAM name="connectionType"
+             help="Select among the options: STATIC, DHCP Client, PPPoE, PPTP, L2TP, Russian PPTP, Russian L2TP, Japanese Multiple PPPoE, Dual Access Pppoe, Mobile Internet"
+            ptype="ISP_TYPE_WAN2"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IspType","${connectionType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc" help="If ISP Type selected is DHCPC, this field gives you options to configure DHCPC credentials"/>
+    <COMMAND name="dhcpc get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using DHCP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="dhcpc mac_type" help="Select Mac Address source">
+         <PARAM name="mac_type2"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UseMac","${mac_type2}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc mac_address" help="Valid MAC address">
+         <PARAM name="macAddress"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MacAddr","${macAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc hostname" help="Enter the hostname">
+         <PARAM name="hostname"
+            help="Set Host Name"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.HostName","${hostname}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="static" help="If ISP Type selected is STATIC, this field gives you options to configure STATIC credentials"/>
+    <COMMAND name="static ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static subnet_mask" help="IPv4 Subnet Mask. This is usually provided by the ISP or your network administrator.">
+         <PARAM name="ipAddress"
+            help="IPv4 Subnet Mask. This is usually provided by the ISP or your network administrator."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static gateway_address" help="IP address of the ISP’s gateway. This is usually provided by the ISP or your network administrator.">
+         <PARAM name="ipAddress"
+            help="IP address of the ISP’s gateway. This is usually provided by the ISP or your network administrator."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.GwIpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Valid primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Valid secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+
+         <COMMAND name="static mac_type" help="Select the Mac Address Source">
+         <PARAM name="static_mac2"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UseMac","${static_mac2}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static mac_address" help="enter Valid MAC address">
+         <PARAM name="macaddress2"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MacAddr","${macaddress2}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="pppoe" help="If ISP Type selected is PPPoE, this field gives you options to configure PPPoE credentials"/>
+    <COMMAND name="pppoe username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UserName","${Username}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Password","${password}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="pppoe service" help="Enter the password to authenticate">
+         <PARAM name="service"
+            help="Enter the password to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Service","${service}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the password to log in"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.AuthOpt","${authOpt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe connectivity_type" help="Enter the connectivity type">
+         <PARAM name="connType"
+            help="Enter the connectivity type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PppoeIdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe idletime" help="Enter the idle time">
+         <PARAM name="idleTime"
+            help="Enter the idle time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PppoeIdleTimeOutValue","${idleTime}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPPOE network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="enable_vlan_tag" help="Enable vlan on wan2">
+         <PARAM name="enable_vlan_tag"
+    	   help="Disable or Enable vlan on wan2 side"
+   	       ptype="CHOICE_INT"/>
+    	 <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.vlanWan2Status","${enable_vlan_tag}")
+    	    </ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_Id" help="Enter  Vlan Id">
+         <PARAM name="vlanId"
+           help="Enter Vlan Id"
+           ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.wanVlanId","${vlanId}")
+             </ACTION>
+   </COMMAND>	             
+    <COMMAND name="pppoe get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an IP address to the router using PPPOE network protocol. Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PIsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe static_ip" help="Valid IP Address">
+         <PARAM name="staticIP"
+            help="Set Valid IP address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PIpAddr","${staticIP}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe subnet_mask" help="Valid subnet mask">
+         <PARAM name="subnetMask"
+            help="Set subnetMask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PSnetMask","${subnetMask}")
+             </ACTION>
+         </COMMAND>     
+
+          <COMMAND name="pppoe mac_type" help="Select the Mac Address Source">
+         <PARAM name="pppoe_mactype2"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2","Wan.UseMac","${pppoe_mactype2}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe mac_address" help="enter Valid MAC address">
+         <PARAM name="pppoe_mac2"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MacAddr","${pppoe_mac2}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="pptp" help="If ISP Type selected is PPTP, this field gives you options to configure PPTP credentials"/>
+    <COMMAND name="pptp username" help="Enter the username to log in">
+         <PARAM name="pptpUsername"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.LoginName","${pptpUsername}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp password" help="Enter the password to log in">
+         <PARAM name="pptpPassword"
+            help="Enter the password to log in"
+            ptype="STRING16"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.LoginPassword","${pptpPassword}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="pptp mmpe_encryption" help="Enter the MMPE Encryption">
+         <PARAM name="mmpe"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MppeEncryptSupport", "${mmpe}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="pptp split_tunnel" help="select the split_tunnel">
+         <PARAM name="splitTunnel"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SplitTunnel", "${splitTunnel}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp gateway" help="Gateway assigned by the ISP to make a connection with the ISP server">
+         <PARAM name="pptpgateway"
+            help="IP address assigned by the ISP to make a connection with the ISP server"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2","Wan.Gateway","${pptpgateway}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp server_address" help="IP address / FQDN of the PPTP server (if applicable)">
+         <PARAM name="pptpServerAddr"
+            help="IP address / FQDN of the PPTP server (if applicable)"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SvrIpAddr","${pptpServerAddr}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp subnet_mask" help="If Address Mode is Static,give subnet mask">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp Static_DNS_IP" help="If Address Mode is Static, give static DNS IP.">
+         <PARAM name="StaticDNS"
+            help="If Address Mode is Static, give static DNS IP. It should be in same subnet of Gateway IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.StaticDNS","${StaticDNS}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address.Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>    
+    <COMMAND name="pptp get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPTP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>    
+
+    <COMMAND name="pptp mac_type" help="Select the Mac Address Source">
+         <PARAM name="pptp_mactype2"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UseMac","${pptp_mactype2}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pptp mac_address" help="enter Valid MAC address">
+         <PARAM name="pptp_mac2"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MacAddr","${pptp_mac2}")
+             </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="russ_pptp" help="If ISP Type selected is Russian dual access PPTP , this field gives you options to configure  credentials"/>
+    <COMMAND name="russ_pptp username" help="Enter the username to log in">
+         <PARAM name="pptpUsername"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.LoginName","${pptpUsername}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp password" help="Enter the password to log in">
+         <PARAM name="pptpPassword"
+            help="Enter the password to log in"
+            ptype="STRING16"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.LoginPassword","${pptpPassword}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp mmpe_encryption" help="Enter the MMPE Encryption">
+         <PARAM name="mmpe"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MppeEncryptSupport", "${mmpe}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp split_tunnel" help="select the split_tunnel">
+         <PARAM name="splitTunnel"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SplitTunnel", "${splitTunnel}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp server_address" help="IP address / FQDN of the PPTP server (if applicable)">
+         <PARAM name="pptpServerAddr"
+            help="IP address / FQDN of the PPTP server (if applicable)"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SvrIpAddr","${pptpServerAddr}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp subnet_mask" help="If Address Mode is Static,give subnet mask">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp gateway" help="Gateway assigned by the ISP to make a connection with the ISP server">
+         <PARAM name="pptpgateway"
+            help="Gateway assigned by the ISP to make a connection with the ISP server"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Gateway","${pptpgateway}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp Static_DNS_IP" help="If Address Mode is Static, give static DNS IP.">
+         <PARAM name="StaticDNS"
+            help="If Address Mode is Static, give static DNS IP. It should be in same subnet of Gateway IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.StaticDNS","${StaticDNS}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="russ_pptp get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address.Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPTP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND> 
+
+    <COMMAND name="russ_pptp mac_type" help="Select the Mac Address Source">
+         <PARAM name="russ_pptp_mactype2"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2","Wan.UseMac","${russ_pptp_mactype2}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_pptp mac_address" help="enter Valid MAC address">
+         <PARAM name="russ_pptp_mac2"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MacAddr","${russ_pptp_mac2}")
+             </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="l2tp" help="If ISP Type selected is L2TP, this field gives you options to configure L2TP credentials"/>
+    <COMMAND name="l2tp username" help="Enter the username to log in">
+         <PARAM name="l2tpUsername"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.LoginName","${l2tpUsername}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp password" help="Enter the password to log in">
+         <PARAM name="l2tpPassword"
+            help="Enter the password to log in"
+            ptype="STRING16"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.LoginPassword","${l2tpPassword}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="l2tp secret" help="Enter the secret to log in">
+         <PARAM name="l2tpSecret"
+            help="Enter the secret to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Secret","${l2tpSecret}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="l2tp split_tunnel" help="select the split_tunnel">
+         <PARAM name="splitTunnel"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SplitTunnel", "${splitTunnel}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp gateway" help="IP address assigned by the ISP to make a connection with the ISP server">
+         <PARAM name="l2tpgateway"
+            help="IP address assigned by the ISP to make a connection with the ISP server"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2","Wan.Gateway","${l2tpgateway}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp server_address" help="IP address / FQDN of the L2TP server (if applicable)">
+         <PARAM name="l2tpServerAddr"
+            help="IP address / FQDN of the L2TP server (if applicable)"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SvrIpAddr","${l2tpServerAddr}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>     
+    <COMMAND name="l2tp ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp subnet_mask" help="If Address Mode is Static,give subnet mask">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address.Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>                 
+    <COMMAND name="l2tp Static_DNS_IP" help="If Address Mode is Static, give static DNS IP.">
+         <PARAM name="StaticDNS"
+            help="If Address Mode is Static, give static DNS IP. It should be in same subnet of Gateway IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.StaticDNS","${StaticDNS}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using L2TP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+
+    
+    <COMMAND name="l2tp mac_type" help="Select the Mac Address Source">
+         <PARAM name="l2tp_mactype2"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UseMac","${l2tp_mactype2}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="l2tp mac_address" help="enter Valid MAC address">
+         <PARAM name="l2tp_mac2"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MacAddr","${l2tp_mac2}")
+             </ACTION>
+    </COMMAND>
+
+
+
+    <COMMAND name="russ_l2tp" help="If ISP Type selected is Russian DualAccessL2TP, this field gives you options to configure L2TP credentials"/>
+    <COMMAND name="russ_l2tp username" help="Enter the username to log in">
+         <PARAM name="l2tpUsername"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.LoginName","${l2tpUsername}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp password" help="Enter the password to log in">
+         <PARAM name="l2tpPassword"
+            help="Enter the password to log in"
+            ptype="STRING16"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.LoginPassword","${l2tpPassword}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp secret" help="Enter the secret to log in">
+         <PARAM name="l2tpSecret"
+            help="Enter the secret to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Secret","${l2tpSecret}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp split_tunnel" help="select the split_tunnel">
+         <PARAM name="splitTunnel"
+            help="Enter the choice"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SplitTunnel", "${splitTunnel}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp server_address" help="IP address / FQDN of the L2TP server (if applicable)">
+         <PARAM name="l2tpServerAddr"
+            help="IP address / FQDN of the L2TP server (if applicable)"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SvrIpAddr","${l2tpServerAddr}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp ip_address" help="If Address Mode is Static,give static ip">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give static ip"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IpAddr","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp subnet_mask" help="If Address Mode is Static,give subnet mask">
+         <PARAM name="ipAddress"
+            help="If Address Mode is Static,give subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SnetMask","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp gateway" help="Gateway assigned by the ISP to make a connection with the ISP server">
+         <PARAM name="l2tpgateway"
+            help="Gateway assigned by the ISP to make a connection with the ISP server"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Gateway","${l2tpgateway}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp Static_DNS_IP" help="If Address Mode is Static, give static DNS IP.">
+         <PARAM name="StaticDNS"
+            help="If Address Mode is Static, give static DNS IP. It should be in same subnet of Gateway IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.StaticDNS","${StaticDNS}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="russ_l2tp get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address.Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using L2TP network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>    
+
+     <COMMAND name="russ_l2tp mac_type" help="Select the Mac Address Source">
+         <PARAM name="russ_l2tp_mactype2"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2","Wan.UseMac","${russ_l2tp_mactype2}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="russ_l2tp mac_address" help="enter Valid MAC address">
+         <PARAM name="russ_l2tp_mac2"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MacAddr","${russ_l2tp_mac2}")
+             </ACTION>
+    </COMMAND>
+
+
+
+    <COMMAND name="japanese_pppoe" help= "If ISP Type selected is japanese multiple pppoe,this field gives you options to   configure credentials"/>                                
+    <COMMAND name="japanese_pppoe primary_profile" help="configure the primary pppoe profile"/>
+    <COMMAND name="japanese_pppoe primary_profile username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UserName","${Username}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Password","${password}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile service" help="Enter the password to authenticate">
+         <PARAM name="service"
+            help="Enter the password to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Service","${service}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the password to log in"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.AuthOpt","${authOpt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile connectivity_type" help="Enter the connectivity type">
+         <PARAM name="connType"
+            help="Enter the connectivity type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PppoeIdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile idletime" help="Enter the idle time">
+         <PARAM name="idleTime"
+            help="Enter the idle time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PppoeIdleTimeOutValue","${idleTime}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPPOE network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an IP address to the router using PPPOE network protocol. Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PIsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile static_ip" help="Valid IP Address">
+         <PARAM name="staticIP"
+            help="Set Valid IP address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PIpAddr","${staticIP}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe primary_profile subnet_mask" help="Valid subnet mask">
+         <PARAM name="subnetMask"
+            help="Set subnetMask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PSnetMask","${subnetMask}")
+             </ACTION>
+    </COMMAND> 
+    <COMMAND name="japanese_pppoe secondary_profile" help="configure the secondary pppoe profile"/>
+    <COMMAND name="japanese_pppoe secondary_profile username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JUserName","${Username}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JPassword","${password}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile service" help="Enter the password to authenticate">
+         <PARAM name="service"
+            help="Enter the password to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JService","${service}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the password to log in"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JAuthOpt","${authOpt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile connectivity_type" help="Enter the connectivity type">
+         <PARAM name="connType"
+            help="Enter the connectivity type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JPppoeIdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile idletime" help="Enter the idle time">
+         <PARAM name="idleTime"
+            help="Enter the idle time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JPppoeIdleTimeOutValue","${idleTime}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using PPPOE network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JIsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JPriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JSecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an IP address to the router using PPPOE network protocol. Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JIsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile static_ip" help="Valid IP Address">
+         <PARAM name="staticIP"
+            help="Set Valid IP address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JIpAddr","${staticIP}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe secondary_profile subnet_mask" help="Valid subnet mask">
+         <PARAM name="subnetMask"
+            help="Set subnetMask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.JSnetMask","${subnetMask}")
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="japanese_pppoe mac_type" help="Select the Mac Address Source">
+         <PARAM name="japanese_pppoe_mactype2"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2","Wan.UseMac","${japanese_pppoe_mactype2}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="japanese_pppoe mac_address" help="enter Valid MAC address">
+         <PARAM name="japanese_pppoe_mac2"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2","Wan.MacAddr","${japanese_pppoe_mac2}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="dual_pppoe" help="If ISP Type selected is Dual PPPoE, this field gives you options to configure Dual Access PPPoE credentials"/>
+    <COMMAND name="dual_pppoe username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UserName","${Username}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Password","${password}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="dual_pppoe service" help="Enter the service to authenticate">
+         <PARAM name="service"
+            help="Enter the service"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Service","${service}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the authentication protocol to be used"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.AuthOpt","${authOpt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe connectivity_type" help="Enter the connectivity type">
+         <PARAM name="connType"
+            help="Enter the connectivity type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PppoeIdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe idletime" help="Enter the idle time">
+         <PARAM name="idleTime"
+            help="Enter the idle time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PppoeIdleTimeOutValue","${idleTime}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static Dns address. The ISP will automatically assign an DNS address to the router using PPPOE network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe get_ip_from_isp" help="Enter Yes to get IP dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an IP address to the router using PPPOE network protocol. Otherwise Enter No and give valid static IP address">
+         <PARAM name="getIpFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PIsGetIpDyn","${getIpFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe static_ip" help="Valid IP Address">
+         <PARAM name="staticIP"
+            help="Set Valid IP address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PIpAddr","${staticIP}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe subnet_mask" help="Valid subnet mask">
+         <PARAM name="subnetMask"
+            help="Set subnetMask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PSnetMask","${subnetMask}")
+             </ACTION>
+         </COMMAND>   
+
+        <COMMAND name="dual_pppoe mac_type" help="Select the Mac Address Source">
+         <PARAM name="japanese_pppoe_mactype"
+            help="Set Mac Address source"
+            ptype="NIMF_MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UseMac","${japanese_pppoe_mactype}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe mac_address" help="enter Valid MAC address">
+         <PARAM name="japanese_pppoe_mac"
+            help="SET MAC ADDRESS"
+            ptype="MAC_ADDR_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.MacAddr","${japanese_pppoe_mac}")
+             </ACTION>
+    </COMMAND>
+
+    <COMMAND name="dual_pppoe get_ip_from_phy" help="Enter Yes to get ip on physical interface from dhcp server in the internal isp network. Otherwise Enter No and give valid static IP address, subnet mask and gateway">
+         <PARAM name="getIpFromIspPhy"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.GetIpFromIspPhy","${getIpFromIspPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe static_ip_phy" help="Valid IP Address of physical
+        interface">
+         <PARAM name="staticIPPhy"
+            help="Set Valid IP address of physical interface"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.StaticIpPhy","${staticIPPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe subnet_mask_phy" help="Valid subnet mask of
+        physical network">
+         <PARAM name="subnetMaskPhy"
+            help="Set subnetMask of physical interface"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.NetMaskPhy","${subnetMaskPhy}")
+             </ACTION>
+    </COMMAND>    
+    <COMMAND name="dual_pppoe gateway_phy" help="Valid gateway of physcial
+        network">
+         <PARAM name="GatewayPhy"
+            help="Set gateway of physical interface"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.GatewayPhy","${GatewayPhy}")
+             </ACTION>
+    </COMMAND>    
+    <COMMAND name="dual_pppoe get_dns_from_isp_phy" help="Enter Yes to get dns dynamically from interal ISP if you have not been assigned any static Dns address. The internal ISP will automatically assign an DNS address to the router using Dhcp network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIspPhy"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDynPhy","${getDnsFromIspPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe primary_dns_phy" help="Valid primary DNS Server IP Address of physical network">
+         <PARAM name="primaryDnsPhy"
+            help="Set primary DNS Server IP Address for physical network"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PrimaryDnsPhy","${primaryDnsPhy}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dual_pppoe secondary_dns_phy" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDnsPhy"
+            help="Set secondary DNS Server IP Address for physical network"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecondaryDnsPhy","${secondaryDnsPhy}")
+             </ACTION>
+         </COMMAND>
+
+
+
+     <COMMAND name="mobile_internet" help="If ISP Type selected is mobile internet, this field gives you options to configure mobile internet credentials" check_supported="Y"/>
+    <COMMAND name="mobile_internet username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING256"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.UserName","${Username}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="mobile_internet password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING256"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.Password","${password}")
+             </ACTION>
+    </COMMAND>
+     <COMMAND name="mobile_internet dial_number" help="Enter the dail number to connect">
+         <PARAM name="dial"
+            help="Enter the dial number to connect"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.DialNumber","${dial}")
+             </ACTION>
+         </COMMAND>
+      <COMMAND name="mobile_internet authMethod" help="Enter the auth type to connect">
+         <PARAM name="authType"
+            help="Enter the auth type to connect"
+            ptype="MOBILE_INTERNET_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.AuthMethod","${authType}")
+             </ACTION>
+    </COMMAND>   
+    <COMMAND name="mobile_internet apn" help="Enter the apn to connect">
+         <PARAM name="apn"
+            help="Enter the apn to connect"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.APN","${apn}")
+             </ACTION>
+    </COMMAND>   
+    <COMMAND name="mobile_internet connectivity_type" help="Set ISP Type">
+         <PARAM name="connType"
+            help="Set ISP Type"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="mobile_internet idle_time" help="Set ISP Type">
+         <PARAM name="idle_time"
+            help="Set ISP Type"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="mobile_internet get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using mobile internet network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Set ISP Type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="mobile_internet primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="mobile_internet secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Set ISP Type"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan2", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+
+   </VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net wan wan2" license_support="Y" check_supported="Y" help="wan configuration mode"/>
+    <COMMAND name="net wan wan2 ipv4" help="ipv4 wan configuration mode"/>
+    <!--=======================================================-->
+    <COMMAND name="net wan wan2 ipv4 configure"
+             help="ipv4 wan wan2 configuration mode"
+             view="net-wan-wan2-ipv4-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("NimfConfWan2", nimfCfgInitWan2, nimfCfgSaveWan2, nimfCfgInputValWan2)
+                 </ACTION>
+    </COMMAND>
+   <!--===================================================-->
+    <COMMAND name="show net wan wan2" license_support="Y" check_supported="Y" help="."/>
+    <COMMAND name="show net wan wan2 ipv4" help="."/>
+    <COMMAND name="show net wan wan2 ipv4 status"
+	     help="Display ipv4 wan2 Information.">
+	     <ACTION>lua clishCmdExec (wanStatusGetWan2)
+             </ACTION>
+    </COMMAND>
+   <!--===================================================-->
+    <COMMAND name="show net wan wan2 ipv4 setup"
+	     help="Display wan2 Setup Information.">
+	     <ACTION>lua clishCmdExec (wanSetupGetWan2)
+             </ACTION>
+        </COMMAND>
+<!--===================================================-->
+
+
+<VIEW name="net-wan-wan3-mobile_internet-config" prompt="net-config[wan3-mobile_internet]>"> 
+    <COMMAND name="save" help="Save  wan3 mobile internet configuration changes.">
+	     <ACTION>lua clishCfgObjExec("NimfConfWan3")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back wan3 mobile internet configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Save wan3 mobile internet configuration changes and current mode."
+    	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("NimfConfWan3")</ACTION>
+    </COMMAND>
+   
+    <COMMAND name="Username" help="Enter the username required to log in to the ISP.">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING256"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.UserName","${Username}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="Password" help="Enter the password required to login to the ISP">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING256"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.Password","${password}")
+             </ACTION>
+    </COMMAND>
+     <COMMAND name="Dial_number" help="Enter the number to dial to the ISP">
+         <PARAM name="dial"
+            help="Enter the dial number to connect"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.DialNumber","${dial}")
+             </ACTION>
+         </COMMAND>
+      <COMMAND name="AuthMethod" help="Select one of None, PAP or CHAP Authentication Protocols to connect to the ISP">
+         <PARAM name="authType"
+            help="Enter the auth type to connect"
+            ptype="THREEG_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.AuthMethod","${authType}")
+             </ACTION>
+    </COMMAND>   
+    <COMMAND name="Apn" help="Enter the APN(Access Point Name) provided by the ISP">
+         <PARAM name="apn"
+            help="Enter the apn to connect"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.APN","${apn}")
+             </ACTION>
+    </COMMAND>   
+    <COMMAND name="Reconnect_mode" help="Select Always On: The connection is always on OR On Demand :The connection will close after time specified in Idle_time field">
+         <PARAM name="connType"
+            help="Select the reconnect mode"
+            ptype="ISP_CONNECTIVITY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.IdleTimeOutFlag","${connType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Idle_time" help="The connection is automatically ended if it is idle for a specified number of minutes">
+         <PARAM name="idle_time"
+            help="Enter time in minutes"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.IdleTime","${idle_time}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Get_dns_from_isp" help="Enter Yes to get dns dynamically from ISP if you have not been assigned any static IP address. The ISP will automatically assign an DNS address to the router using mobile internet network protocol. Otherwise Enter No and give valid static dns addresses">
+         <PARAM name="getDnsFromIsp"
+            help="Enter the DNS type"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.IsDNSDyn","${getDnsFromIsp}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="primaryDns"
+            help="Enter primary DNS"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.PriDnsIpAddr","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="Secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="secondaryDns"
+            help="Enter secondary DNS"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConfWan3", "Wan.SecDnsIpAddr","${secondaryDns}")
+             </ACTION>
+         </COMMAND>
+    </VIEW>
+
+<!--=======================================================-->
+    <COMMAND name="net wan wan3" check_supported="Y" help="wan3 configuration mode"/>
+    <COMMAND name="net wan wan3 mobile_internet" help="wan3 configuration mode"/>
+ <!--=======================================================-->
+    <COMMAND name="net wan wan3 mobile_internet configure"
+             help="mobile internet wan wan3 configuration mode"
+             view="net-wan-wan3-mobile_internet-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("NimfConfWan3", nimfCfgInitWan3,nimfCfgSaveWan3, nimfCfgInputValWan3)
+                 </ACTION>
+    </COMMAND>
+<!--===================================================-->
+
+<!--===================================================-->
+    <COMMAND name="show net wan wan3" check_supported="Y" help="Display the wan3
+        configuration"/>
+    <COMMAND name="show net wan wan3 mobile_internet" help="Show mobile internet Information"/>
+    <COMMAND name="show net wan wan3 mobile_internet setup"
+	     help="Display mobile internet Configuration.">
+	     <ACTION>lua clishCmdExec (wanSetupGetWan3)
+             </ACTION>
+    </COMMAND>
+<!--===================================================-->
+    <COMMAND name="show net wan wan3 mobile_internet status"
+	     help="Display mobile internet status.">
+	     <ACTION>lua clishCmdExec (wanStatusGetWan3)
+             </ACTION>
+    </COMMAND>
+<!--===================================================-->
+<VIEW name="net-wan-mode-config" prompt="net-config[wan-mode]>"> 
+    <COMMAND name="save" help="Save wan mode configuration changes.">
+	     <ACTION>lua clishCfgObjExec("WanMode")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ipv4 wan configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Save wan mode configuration changes and current mode."
+    	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("WanMode")</ACTION>
+    </COMMAND>
+    <COMMAND name="wan_mode_type" help="Select among the options: SINGLE_WAN, LOAD_BALANCING, AUTO_ROLLOVER">
+         <PARAM name="modeType"
+            help="Select among the options: SINGLE_WAN, LOAD_BALANCING, AUTO_ROLLOVER"
+            ptype="WAN_MODE_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.Wanmode","${modeType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="loadbalancing" help="If Mode Type selected is LOAD_BALANCING, this field gives you options to configure LOAD_BALANCING credentials"/>
+    <COMMAND name="loadbalancing algo" help="Enter the type of LoadBalancing Algo">
+         <PARAM name="algo"
+            help="Set ISP Type"
+            ptype="LOAD_BALANCE_ALGO_T"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.LoadBal","${algo}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="loadbalancing failover_method" help="Select the Fail Over detection method"/>
+		<COMMAND name="loadbalancing spillover" help="Spill Over Configuration Parameters"/>
+		<COMMAND name="loadbalancing spillover load_tolerance" help="Percentage of max bandwidth after which the router switches to secondary WAN">
+         <PARAM name="load"
+            help="Please enter valid Load Tolerance value between 20 to 80"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.LoadTolerance","${load}")
+             </ACTION>
+         </COMMAND>
+        <COMMAND name="loadbalancing spillover max_bandwidth" help="Sets the maximum bandwidth tolerable by the Primary WAN.If the bandwidth goes below the load tolerance value of configured Max Bandwidth, the router switches to secondary WAN.">
+         <PARAM name="value"
+            help="Please enter valid Maximum Bandwidth value between 512bps to 8192bps"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.MaxBandwidth","${value}")
+             </ACTION>
+         </COMMAND>
+<COMMAND name="loadbalancing spillover max_bandwidth_unit" help="Sets the maximum bandwidth unit tolerable by the Primary WAN.If the bandwidth goes below the load tolerance value of configured Max Bandwidth, the router switches to secondary WAN.">
+         <PARAM name="value"
+            help="Please enter valid Maximum Bandwidth Unit"
+            ptype="MAX_BW_UNIT_T"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.Unit","${value}")
+             </ACTION>
+         </COMMAND>
+
+        <COMMAND name="loadbalancing failover_method type" help="Select the Fail Over detection method">
+         <PARAM name="detectionType"
+            help="Set detection Type"
+            ptype="FAILOVER_DETECTION_T"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.FailureDetectionMeth","${detectionType}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="loadbalancing failover_method dns" help=""/>
+        <COMMAND name="loadbalancing failover_method dns ipaddr_wan1" help="">
+         <PARAM name="dnsWan1"
+            help="Set WAN1 DNS IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.DnsIp","${dnsWan1}")
+             </ACTION>
+         </COMMAND>
+        <COMMAND name="loadbalancing failover_method dns ipaddr_wan2" help="">
+         <PARAM name="dnsWan2"
+            help="Set WAN2 DNS IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.DnsIp1","${dnsWan2}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="loadbalancing failover_method dns ipaddr_wan3" check_supported="Y" help="">
+         <PARAM name="dnsWan3"
+            help="Set WAN3 DNS IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.DnsIp2","${dnsWan3}")
+             </ACTION>
+         </COMMAND>
+
+         <COMMAND name="loadbalancing failover_method ping" help=""/>
+        <COMMAND name="loadbalancing failover_method ping ipaddr_wan1" help="">
+         <PARAM name="pingWan1"
+            help="Set WAN1 PING IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.PingIp","${pingWan1}")
+             </ACTION>
+         </COMMAND>
+        <COMMAND name="loadbalancing failover_method ping ipaddr_wan2" help="">
+         <PARAM name="pingWan2"
+            help="Set WAN2 PING IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.PingIp1","${pingWan2}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="loadbalancing failover_method ping ipaddr_wan3" check_supported="Y" help="">
+         <PARAM name="pingWan3"
+            help="Set WAN3 PING IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.PingIp2","${pingWan3}")
+             </ACTION>
+         </COMMAND>
+
+        <COMMAND name="loadbalancing failover_method retry_interval" help="">
+         <PARAM name="time"
+            help="Set retry time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.RetryTime","${time}")
+             </ACTION>
+         </COMMAND>
+
+         <COMMAND name="loadbalancing failover_method retry_attempts" help="">
+         <PARAM name="failover"
+            help="Set failover attempts"
+            ptype="FAILOVER_ATTEMPTS"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.RetryAttempts","${failover}")
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="rollover" help="Wan Mode in Auto Rollover"/>
+    <COMMAND name="rollover wan_port" help="Select the Auto rollover WAN port">
+         <PARAM name="wanPort"
+            help="Set Primary WAN Type"
+            ptype="WAN_INTERFACE_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.FailoverPriLogicalIfName","${wanPort}")
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="rollover wan_port_Sec" help="Select the Auto rollover WAN port">
+         <PARAM name="wanSecPort"
+            help="Set Secondary WAN Type"
+            ptype="WAN_INTERFACE_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.FailoverSecLogicalIfName","${wanSecPort}")
+             </ACTION>
+         </COMMAND>
+
+         <COMMAND name="rollover failover_method" help="Select the Fail Over detection method"/>
+        <COMMAND name="rollover failover_method type" help="Select the Fail Over detection method">
+         <PARAM name="detectionType"
+            help="Set detection Type"
+            ptype="FAILOVER_DETECTION_T"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.FailureDetectionMeth","${detectionType}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="rollover failover_method dns" help=""/>
+            
+        <COMMAND name="rollover failover_method dns ipaddr_wan1" help="">
+         <PARAM name="dnsWan1"
+            help="Set WAN1 DNS IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.DnsIp","${dnsWan1}")
+             </ACTION>
+         </COMMAND>
+        <COMMAND name="rollover failover_method dns ipaddr_wan2" help="">
+         <PARAM name="dnsWan2"
+            help="Set WAN2 DNS IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.DnsIp1","${dnsWan2}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="rollover failover_method dns ipaddr_wan3" check_supported="Y" help="">
+         <PARAM name="dnsWan3"
+            help="Set WAN3 DNS IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.DnsIp2","${dnsWan3}")
+             </ACTION>
+         </COMMAND>
+        
+         <COMMAND name="rollover failover_method ping" help=""/>
+
+        <COMMAND name="rollover failover_method ping ipaddr_wan1" help="">
+         <PARAM name="pingWan1"
+            help="Set WAN1 PING IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.PingIp","${pingWan1}")
+             </ACTION>
+         </COMMAND>
+        <COMMAND name="rollover failover_method ping ipaddr_wan2" help="">
+         <PARAM name="pingWan2"
+            help="Set WAN2 PING IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.PingIp1","${pingWan2}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="rollover failover_method ping ipaddr_wan3" check_supported="Y" help="">
+         <PARAM name="pingWan3"
+            help="Set WAN3 PING IP"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanFailure.PingIp2","${pingWan3}")
+             </ACTION>
+         </COMMAND>
+
+        <COMMAND name="rollover failover_method retry_interval" help="">
+         <PARAM name="time"
+            help="Set retry time"
+            ptype="NIMF_IDLETO_T"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.RetryTime","${time}")
+             </ACTION>
+         </COMMAND>
+
+         <COMMAND name="rollover failover_method retry_attempts" help="">
+         <PARAM name="failover"
+            help="Set failover attempts"
+            ptype="FAILOVER_ATTEMPTS"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.RetryAttempts","${failover}")
+             </ACTION>
+         </COMMAND>
+
+         <COMMAND name="singleport" help=""/>
+         <COMMAND name="singleport wan_port" help="">
+         <PARAM name="wanPort"
+            help="Set WAN Type"
+            ptype="WAN_INTERFACE_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("WanMode", "WanMode.DedicatedLogicalIfName","${wanPort}")
+             </ACTION>
+    </COMMAND>
+   </VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net wan" help="wan mode configuration mode"/>
+    <COMMAND name="net wan mode" license_support="Y" help="wan mode configuration mode" check_supported="Y"/>
+    <!--=======================================================-->
+    <COMMAND name="net wan mode configure"
+             help="wan mode configuration mode"
+             view="net-wan-mode-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("WanMode", nimfCfgInitMode, nimfCfgSaveMode, nimfCfgInputValMode)
+                 </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net wan" help="."/>
+    <COMMAND name="show net wan mode"
+	     license_support="Y"
+	     help="Display wan mode Information.">
+	     <ACTION>lua clishCmdExec (wanSetupGetMode)
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<VIEW name="net-wan-port_setup-config" prompt="wan-config[Port_Setup]> "> 
+    <COMMAND name="save" help="Save WAN port settings.">
+	     <ACTION>lua clishCfgObjExec("Port")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save WAN port settings and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Port")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back WAN port settings changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="respond_ping" help="Disable or Enable ping on WAN side">
+         <PARAM name="ping"
+            help="Disable or Enable ping on WAN side"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("Port", "AttackChecks.ExternalPing","${ping}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="wan1" help="WAN1 port settings"/>
+    <COMMAND name="wan1 mtu_type" help="Enter MTU type">
+         <PARAM name="mtu_type"
+            help="Enter MTU type for WAN1"
+            ptype="MTU_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("Port", "Wan.DefMtu","${mtu_type}")
+             </ACTION>
+     </COMMAND>
+    <COMMAND name="wan1 mtu_size" help="Enter MTU size for WAN1">
+         <PARAM name="mtu"
+            help="Enter MTU size for WAN1"
+            ptype="MTU_MIX"/>
+         <ACTION>lua clishCfgObjAdd ("Port", "Wan.MtuSize","${mtu}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="wan1 port_speed" help="Enter the type of port speed for WAN1">
+         <PARAM name="port_s"
+            help="Enter the type of port speed for WAN1"
+            ptype="PORT_SPEED"/>
+        <ACTION>lua clishCfgObjAdd ("Port", "Wan.portSpeed","${port_s}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="wan2" license_support="Y" check_supported="Y" help="WAN2 port settings"/>
+    <COMMAND name="wan2 mtu_type" help="Enter MTU type">
+         <PARAM name="mtu_type"
+            help="Enter MTU type for WAN2"
+            ptype="MTU_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("Port", "Wan.DefMtu2","${mtu_type}")
+             </ACTION>
+     </COMMAND>
+    <COMMAND name="wan2 mtu_size" help="Enter MTU size for WAN2">
+         <PARAM name="mtu"
+            help="Enter MTU size for WAN2"
+            ptype="MTU_MIX"/>
+         <ACTION>lua clishCfgObjAdd ("Port", "Wan.MtuSize2","${mtu}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="wan2 port_speed" help="Enter the type of port speed for WAN2">
+         <PARAM name="port_s"
+            help="Enter the type of port speed for WAN2"
+            ptype="PORT_SPEED"/>
+        <ACTION>lua clishCfgObjAdd ("Port", "Wan.portSpeed2","${port_s}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--============================================-->
+
+<VIEW name="net-wan-vlan_setup-config" prompt="wan-config[vlan_Setup]>" > 
+    <COMMAND name="save" help="Save WAN port vlan settings.">
+	     <ACTION>lua clishCfgObjExec("vlanWan")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save WAN vlan settings and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("vlanWan")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back WAN vlan settings changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="trunk_mode" help="Disable or Enable Trunk Mode Vlan">
+         <PARAM name="trunk_mode_wan"
+            help="Disable or Enable trunk mode on WAN side"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("vlanWan", "vlanWan1Status.vlanWan1Status","${trunk_mode_wan}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="force_recegotiation" help="Disable or Enable Force renegotiation on WAN">
+         <PARAM name="force_recegotiation_wan"
+            help="Disable or Enable Force renegotiation on WAN"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("vlanWan", "vlanWan1Status.restartStatus","${force_recegotiation_wan}")
+             </ACTION>
+     </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-wan-vlan_setup-delete-config" prompt="wan-config[vlan_Delete]> "> 
+    <COMMAND name="save" help="Save WAN port vlan Delete settings.">
+	     <ACTION>lua clishCfgObjExec("vlanIdDelete")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save WAN vlan Delete settings and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("vlanIdDelete")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back WAN vlan settings changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_Id" help="Enter  Vlan Id">
+         <PARAM name="vlanId"
+            help="Enter Vlan Id"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd ("vlanIdDelete", "vlan.vlanId","${vlanId}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-wan-vlan_setup-add-config" prompt="wan-config[vlan_Add]> "> 
+    <COMMAND name="save" help="Save WAN port vlan Add settings.">
+	     <ACTION>lua clishCfgObjExec("vlanIdAdd")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save WAN vlan Add settings and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("vlanIdAdd")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back WAN vlan settings changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_Id" help="Enter  Vlan Id">
+         <PARAM name="vlanId"
+            help="Enter Vlan Id"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd ("vlanIdAdd", "vlan.vlanId","${vlanId}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<COMMAND name="net wan port_setup" help="wan port setup."/>
+<!--=======================================================-->
+    <COMMAND name="net wan port_setup configure"
+             help="wan port configuration mode."
+             view="net-wan-port_setup-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("Port", 
+                              wanPortCfgInit, wanPortCfgSave, 
+				       wanPortCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+
+<!--==================================================-->
+<COMMAND name="net wan vlan_setup" help="wan vlan setup." check_supported="Y"/>
+<!--==================================================-->
+    <COMMAND name="net wan vlan_setup configure"
+             help="wan vlan configuration mode."
+             view="net-wan-vlan_setup-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("vlanWan", 
+                              wanVlanCfgInit, wanVlanCfgSave, 
+				       wanVlanCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="net wan vlan_setup vlanId_Add"
+             help="wan vlan Id Add."
+             view="net-wan-vlan_setup-add-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("vlanIdAdd", 
+                              wanVlanIdCfgInit, wanVlanIdAddCfgSave, 
+				       wanVlanIdCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="net wan vlan_setup vlanId_Delete"
+             help="wan vlan Id delete."
+             view="net-wan-vlan_setup-delete-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("vlanIdDelete", 
+                              wanVlanIdCfgInit, wanVlanIdDeleteCfgSave, 
+				       wanVlanIdCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+<!--===================================================-->
+    <COMMAND name="show net wan port_setup"
+	     help="Display wan port Information.">
+	     <ACTION>lua clishCmdExec (wanPortCfgGet)
+         </ACTION>
+     </COMMAND>
+     <COMMAND name="show net wan vlan_setup" check_supported="Y"
+	     help="Display vlan port Information for wan.">
+	     <ACTION>lua clishCmdExec (wanVlanPortCfgGet)
+         </ACTION>
+     </COMMAND>
+<!--===================================================-->     
+<VIEW name="net-wan-configurable_port-config" prompt="wan-config[configurable_port]> "> 
+    <COMMAND name="save" help="Save Configurable WAN settings.">
+	     <ACTION>lua clishCfgObjExec("Port")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save configurable WAN settings and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Port")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Configurable WAN settings changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="port_name" help="Select the configurable port type">
+         <PARAM name="port_type"
+            help="Select the configurable port type"
+            ptype="CONFIGURABLE_WAN_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("Port", "ConfigPort.LogicalIfName","${port_type}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<COMMAND name="net wan configurable_port" 
+license_support="Y" check_supported="Y"
+help="configurable port setup."/>
+<!--=======================================================-->
+    <COMMAND name="net wan configurable_port configure"
+             help="configurable port setup."
+             view="net-wan-configurable_port-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("Port", 
+                              wanConfigPortCfgInit, wanConfigPortCfgSave, 
+				       wanConfigPortCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+<!--===================================================-->
+    <COMMAND name="show net wan configurable_port"
+license_support="Y" check_supported="Y"
+	     help="Display configurable port Information.">
+	     <ACTION>lua clishCmdExec (wanConfigPortCfgGet)
+         </ACTION>
+     </COMMAND>
+<!--=======================================================-->
+ <VIEW name="simcard_pin-authentication" prompt="net-authentication[simcard_pin]">
+     <COMMAND name="save" help="Save simcard configuration changes">
+         <ACTION>lua clishCfgObjExec("SimConfig")</ACTION>
+     </COMMAND>
+     <COMMAND name="cancel" help="Roll back simcard configuration changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="exit" 
+              help="Save simcard configuration changes and exit current mode."
+              view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("SimConfig")</ACTION>
+     </COMMAND>
+     <COMMAND name="sim_pin" help="">
+              <PARAM name="pin" 
+               help="Enter SIM PIN number"
+               ptype="SIM_PIN"/>
+               <ACTION>lua clishCfgObjAdd("SimConfig", "SimConfig.pin","${pin}")
+
+          </ACTION>
+     </COMMAND>
+ </VIEW>
+<!--=======================================================-->
+<COMMAND name="net simcard_pin" help="sim card pin authentication."/>
+    <COMMAND name="net simcard_pin authentication"
+             help="sim card pin authentication"
+             view="simcard_pin-authentication" viewid="">
+             <ACTION>lua clishCfgObjNew ("SimConfig", 
+                                       simCardPinCfgInit, 
+                                       simCardPinCfgSave,
+                                       simCardPinInputVal)
+	         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="show net simcard_pin" help="."/>
+       <COMMAND name="show net simcard_pin status"
+                help="Display simcard pin status">
+	            <ACTION>lua clishCmdExec (simCardPinCfgGet)
+               </ACTION>
+       </COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

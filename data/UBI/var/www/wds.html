@@ -1,0 +1,288 @@
+<?lua
+require "teamf1lualib/wds_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes" 
+
+    PAGE_HELP = "wireless"
+    PAGE_HELP_SECTION = "wds"
+
+local wds = require ("com.teamf1.bl.wireless.wds")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local radio2_5 = 1
+if (PRODUCT_ID == "DSR-1000AC_Ax") then
+    radio2_5 = 2
+end
+local configRowId
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable["wds.radioId"] = radio2_5
+    if (RowId == "-1") then
+        local returnCode, cookie =
+            wds.wdsPeerSectionCreate(inputTable)
+            if (returnCode == returnCodes.SUCCESS) then
+                statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+                statusErrorMessage = errorMap.errorStringGet (returnCode)
+	    end
+            web.goToPage(NextPage, true, true)
+    elseif(RowId == "-2") then
+        local returnCode, cookie =
+            wds.wdsGroupSectionSet(inputTable)
+            if (returnCode == returnCodes.SUCCESS) then
+                statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+                statusErrorMessage = errorMap.errorStringGet (returnCode)
+	    end
+            web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if(type(cgi["wds.checkbox"]) == "string") then
+        inputTable["wds.cookie"] = 
+                cgi["wds.checkbox"]
+        local returnCode, cookie = 
+            wds.wdsPeerSectionDelete(inputTable)
+            if (returnCode == returnCodes.SUCCESS) then
+                statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+                statusErrorMessage = errorMap.errorStringGet (returnCode)
+	    end
+            web.goToPage(NextPage, true, true)
+    elseif(type(cgi["wds.checkbox"]) == "table") then
+        local returnCode = 
+            wds.wdsPeerSectionDeleteAll()
+            if (returnCode == returnCodes.SUCCESS) then
+                statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+                statusErrorMessage = errorMap.errorStringGet (returnCode)
+	    end
+            web.goToPage(NextPage, true, true)
+    end
+else
+    local returnCode, cookie, wdsEnable, encryption, security, authentication, 
+           wdsPhrase, sysMacAddress, macTab = 
+                    wds.wdsGroupSectionGetCur(radio2_5)
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end 
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "13355,30087,13339,13354,13337,13352,13041,13353,10169,13338,12758,10449,11636,12048"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+</head>
+<body onload="onloadCall ();">
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmWds" id="tf1_frmWds">       
+            <input type="hidden" name="thispage" id="thispage" value="wds.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+        </tr>
+        <!-- Right click Div Start -->
+        <?lua if(wdsEnable == "1") then ?>
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, '');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                    </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                    </li>
+            </ul>
+        </div>
+        <?lua end ?>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end 
+                    if (PRODUCT_ID == "DSR-1000AC_Ax") then 
+                    ?> 
+                    <div align="left">
+						<nav class="nav-bg">
+
+							<ul class="menu">
+								<li class="current">
+									<a href="?page=wds.html">2.4 GHz</a>
+								</li>
+								<li>
+									<a href="?page=wds5GHz.html">5 GHz</a>
+								</li>
+
+							</ul>
+						</nav>
+
+                    </div>
+                    <?lua end ?>
+
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <?lua if (PRODUCT_ID == "DSR-1000AC_Ax") then 
+                    ?> 
+                    <h1>$| LANG_LOCALE['13355'] |$ 2.4 GHz</h1>
+                    <?lua else ?>
+                    <h1>$| LANG_LOCALE['13355'] |$</h1>
+                    <?lua end ?>
+        	<div class="midArea">
+          	    <div align="left">
+            	        <form name="tf1_frmWds" method="post" id="tf1_frmWds" action="platform.cgi">
+              		<input type="hidden" name="thispage" id="thispage" value="wds.html">
+                	    <div class="configRow">
+                  		<label>$| LANG_LOCALE['30087'] |$</label>
+                  		<?lua 
+				    if (wdsEnable == "1") then
+                                        statusStr="enable-disable-on"
+                                        statusVar="1"
+                                    else
+                                        statusStr="enable-disable-off"
+                                        statusVar="0"
+                                    end
+                                ?>
+                                <a class="$| statusStr |$" alt="" id="tf1_image_OnOff"></a>
+                                <input type="hidden" value="$| statusVar |$" name="wds.wdsEnable">
+                            </div>
+                	    <div class="break" id="break1_div"> &nbsp;</div>
+                            <div class="configRow">
+                                <label>$| LANG_LOCALE['13339'] |$</label>
+                                <p>$| encryption or '' |$</p>
+                	    </div>
+                	    <div class="break" id="break2_div"> &nbsp;</div>
+                	    <div class="configRow">
+                  		<label>$| LANG_LOCALE['13354'] |$</label>
+                  		<p>$| security or '' |$</p>
+                	    </div>
+                	    <div class="break" id="break3_div"> &nbsp;</div>
+                	    <div class="configRow">
+                  		<label>$| LANG_LOCALE['13337'] |$</label>
+                  		<p>$| authentication or '' |$</p>
+                	    </div>
+                	    <div class="break" id="break4_div"> &nbsp;</div>
+                	    <div class="configRow" id="tf1_txtWPAPasswd_div">
+                  		<label>$| LANG_LOCALE['13352'] |$</label>
+                  		<input type="text" name="wds.wdsPskPassAscii" value="$| wdsPhrase or '' |$" maxlength="63" class="txt1" id="tf1_txtWPAPasswd" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_txtWPAPasswd', 8, 63, 'Invalid WDS Passphrase: Please enter key with length between 8 - 63 characters');}">
+                	    </div>
+                	    <div class="break" id="break5_div"> &nbsp;</div>
+                	    <div class="configRow">
+                  		<label>$| LANG_LOCALE['13041'] |$</label>
+                  		<p>$| sysMacAddress or '' |$</p>
+                	    </div>
+                	    <div class="break" id="break6_div"> &nbsp;</div>
+              		<div class="submitRow">
+                	    <input type="submit" name="button.config.wds.wds.-2"  onclick="return pageValidate('tf1_frmWds');" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+               	 	    <input type="button" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); wdsOnReset ('tf1_frmWds');">
+              		</div>
+            		</form>
+            	    <div class="break"> &nbsp;</div>
+            	    <h2>$| LANG_LOCALE['13353'] |$</h2>
+            	        <div class="CLR">
+              		    <div class="demo_jui" id="tf1_wds">
+                	        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                  		    <thead>
+                    		        <tr>
+                                    <th>$| LANG_LOCALE['11636'] |$</th>
+                                    </tr>
+                  		    </thead>
+                                <?lua 
+                                local val = ""
+                                for k,v in pairs(macTab) do 
+                                    val = v["dot11WDSPeers.macAddress"]
+                                ?>
+                                <tr class="gradeA" id="$| v["dot11WDSPeers._ROWID_"] |$">
+                                    <td> 
+                                        $| val or '' |$
+                                    </td>
+                                </tr>
+                                <?lua end ?>
+                	        </table>
+              		    </div>
+              		</div>
+                <?lua if(wdsEnable == "1") then ?>
+                <div class="buttonsRow">
+                  <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10169'] |$" value="$| LANG_LOCALE['10169'] |$" id="tf1_btnShowModal" onclick="openForm('button.add.wds.wds',-1,'tf1_dialog','wds','wdsForm.html', 'tf1_wdsDailogContent','')">
+                </div>
+                <?lua end?>
+                <div class="break"> &nbsp;</div>
+              </div>
+        </div>
+      </div></td>
+  </tr>
+          <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+    <input type="hidden" id="hdSecurity" value="$| security |$">
+    <input type="hidden" id="hdEncr" value="$| encryption |$">
+    <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+    <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+    <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+    <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+    <script type="text/javascript" language="javascript" src="js/macValidations.js"></script>
+    <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+    <script type="text/javascript" language="javascript" src="js/wds.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+
+                $('#tf1_wds .gradeA').contextMenu('contextMenu', {
+                                    bindings : {                                       
+                                        'deleteMenu' : function(t, e, rowId) {
+                                    deleteRows('button.delete.wds.wds', 'tf1_frmWds', rowId, 'optionSelectAll', 'tf1_dialog', 'wds', 'wds');
+                                        }
+                                    }
+                                });
+
+                   oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+    });
+        </script>
+</body>
+</html>
+<?lua end ?>

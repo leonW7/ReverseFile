@@ -1,0 +1,78 @@
+<?lua
+    require "teamf1lualib/omniSslClientConfig_bl"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+
+    local omniSslClientConfig  = require("com.teamf1.bl.vpn.omniSslClientConfig")
+    local errorMap    = require ("com.teamf1.core.errorMap")
+    local returnCodes = require ("com.teamf1.core.returnCodes")
+
+    local configRowId
+    if(ButtonType == "add") then
+       configRowId = "-1"
+    end
+
+    cgilua.header("Content-Type","text/html; charset=UTF-8")
+?>
+<?lua if(ButtonType == "add") then ?>
+<div id="tf1_omniSslConfigurationDailogContent">
+	<div class="topBg">
+		<h1 data-localize="50006">OmniSSL Client Configuration</h1>
+		<close>
+			<a href="#" id="btnClose" title="Close">X</a>
+		</close>
+	</div>
+	<div class="dialogMidArea">
+		<div class="configRow">
+			<label data-localize="10522">Client Name</label>
+			<input type="text" maxlength="24" value="$|configRow["OpenvpnClientConfig.clientName"] or '' |$" id="tf1_clientName" name="OpenvpnClientConfig.clientName" onkeypress="return alphaNumericCheck (event, '')">
+		</div>
+		<div class="break">
+			&nbsp;
+		</div>
+		<div class="configRow">
+			<label data-localize="50007">CA Key upload</label>
+			<input type="file" id="tf1_trustedCAFile" name="Trusted Certificate">
+		</div>
+		<div class="break"></div>
+
+	</div>
+	<div class="dialogSubmitRow">
+		<input data-localize="12758" type="submit" name="button.config.omniSslConfiguration.omniSslConfiguration.$|configRowId|$" onclick="return pageValidate('tf1_frmOmniSslConfiguration')" class="btnSubmit" title="Save" value="Save" id="btSave">
+	</div>
+</div>
+<?lua elseif(ButtonType == "view") then
+configRowId = cgi["configRowId"]
+returnCode, omniSslClientTbl = 
+               omniSslClientConfig.omniSslConfigurationDeltails(configRowId)
+?>
+<div id="tf1_omniSslConfigurationViewDailogContent">
+	<div class="topBg">
+		<h1 data-localize="50008">OmniSSL Client Configuration Details</h1>
+		<close>
+			<a href="#" id="btnClose" title="Close">X</a>
+		</close>
+	</div>
+	<div class="dialogMidArea">
+		<div class="configRow">
+			<label data-localize="10522">Client Name</label>
+			$| omniSslClientTbl["clientName"] or '' |$
+		</div>
+		<div class="break">
+			&nbsp;
+		</div>
+
+		<div class="configRow">
+			<label data-localize="50007">CA Key upload</label>
+			<textarea type="text" rows="3" cols="10" readonly style="margin:0" class="textAreaBig">
+                        $| omniSslClientTbl["clientConfig"] or '' |$ 
+		</textarea>
+		</div>
+		<div class="break">
+			&nbsp;
+		</div>
+
+	</div>
+
+</div>
+<?lua end?>

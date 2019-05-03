@@ -1,0 +1,234 @@
+<?lua 
+require "teamf1lualib/radAccounting_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "radiusAcc"
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag
+if (ButtonType and ButtonType == "delete") then
+local inputTable = web.cgiToLuaTable(cgi)
+    if(type(cgi["radiusAccountings.checkbox"]) == "string") then
+        inputTable["wlanRadAccClient.cookie"] = cgi["radiusAccountings.checkbox"]
+        errorFlag = radiusAccountServerDelete (inputTable)
+    end
+    if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+        
+elseif (ButtonType and ButtonType == "add") then
+local inputTable = web.cgiToLuaTable(cgi)
+        errorFlag, cookie = radiusAccountsCreate (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "edit") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        local rowIDcookie = cgi["configRowId"]
+        errorFlag, cookie = radiusAccountingSet (inputTable, rowIDcookie)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+-- get vlan info
+else
+    local radiusInfoTable
+    errorFlag, radiusInfoTable = radiusAccountingServerGetAll ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body>
+
+<!-- Section for Pop up dialog starts -->
+         <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form name action="platform.cgi" method="post" name="tf1_frmradiusAccountings" id="tf1_frmradiusAccountings">        
+            <input type="hidden" name="thispage" id="thispage" value="radiusAccounting.html">
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+              <!--  <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');"/>
+                    
+                    </li> -->
+                <li id="edit">
+                    Edit
+                </li>
+                <li id="delete">
+                    Delete
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=radiusServer.html">Radius Server</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=radiusAccounting.html">Radius Accounting</a>
+                                </li>
+                                <li>
+                                    <a href="?page=radiusAccGlobalSettings.html">Radius Accounting Global Setting</a>
+                                </li>
+                                <li>
+                                    <a href="?page=pop3Server.html">POP3 Server</a>
+                                </li>
+                                <li>
+                                    <a href="?page=pop3TrustedCa.html">POP3 Trusted CA</a> 
+                                </li>
+                                <li>
+                                    <a href="?page=ldapServer.html">LDAP Server</a>
+                                </li>
+                                <li>
+                                    <a href="?page=adServer.html">AD Server</a>
+                                </li>
+                                <li>
+                                    <a href="?page=ntDomain.html">NT Domain</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>RADIUS Accounting Server List</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_radiusAccounting">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th> IP Address </th>
+                                        <th> Name </th>
+                                    </tr>
+                                </thead>
+                                <?lua 
+                                    local i = 0
+                                    for k, v in pairs (radiusInfoTable) do
+                                        i=i+1
+                                        local row = radiusInfoTable[i]
+                                ?>
+                                <tr class="gradeA" id="radiusAccounting$|row["wlanRadAccClient._ROWID_"]|$">
+                                    <td>$| row["wlanRadAccClient.serverIp"] or '' |$</td>
+                                    <td>$| row["wlanRadAccClient.serverName"] or '' |$</td>
+                                </tr>
+
+                                    <?lua 
+                                        end 
+                                    ?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow">
+                        <input type="button" class="btnSubmit" title="Add New Account" value="Add New Account" id="tf1_btnShowModal" onclick="openForm('button.add.radiusAccounting.radiusAccounting',-1,'tf1_dialog','radiusAccounting','radiusAccountingForm.html', 'tf1_radiusAccountingDailogContent','')">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/radiusAccounting.js"></script>
+        <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+
+                $('#tf1_radiusAccounting .gradeA').contextMenu('contextMenu', {
+                                    bindings : {
+                                        'editMenu' : function(t, e, rowId) {
+                                openForm('button.edit.radiusAccounting.radiusAccounting',rowId,'tf1_dialog','radiusAccounting','radiusAccountingForm.html', 'tf1_radiusAccountingDailogContent','');                                    
+                                        },
+                                        'deleteMenu' : function(t, e, rowId) {
+                                    deleteRows('button.delete.radiusAccounting.radiusAccounting', 'tf1_frmradiusAccountings', rowId, 'optionSelectAll', 'tf1_dialog', 'radiusAccounting', 'radiusAccountings');
+                                        }
+                                    }
+                                });
+
+                   oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+    });
+
+        </script>
+    </body>
+</html>
+<?lua end ?>
+

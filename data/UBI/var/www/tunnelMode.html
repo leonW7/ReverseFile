@@ -1,0 +1,197 @@
+<?lua
+require "teamf1lualib/tunnelMode_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+local tunnelMode = require("com.teamf1.bl.vpn.ipsecMode")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require("com.teamf1.core.returnCodes")
+
+	PAGE_HELP = "vpn"
+	PAGE_HELP_SECTION = "tunnelMode"
+    
+local errMsg, cookie
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["tunnelMode.cookie"] = 1
+    errMsg, cookie = tunnelMode.ipsecModeConfigSectionSet(inputTable)
+    if (errMsg ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errMsg)
+    elseif(errMsg == returnCodes.SUCCESS)then
+       statusSuccessMessage = errorMap.errorStringGet (errMsg)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    errMsg, cookie, configRow = tunnelMode.ipsecModeConfigSectionGet()
+    if (errMsg ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errMsg)
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+
+    LANG_LOCALE =
+    "12912,11723,11052,12915,12968,10923,12536,12781,14017,12786,12127,12007,10934,13160,12758,10449"
+?>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu4");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+                                        <?lua if ( statusErrorMessage ~= returnCodes.NIL) then
+                                          ?>
+                                         <div class="msgError">
+                                             <p>$| statusErrorMessage |$</p>
+                                         </div>
+                                         <?lua else if(statusSuccessMessage ~= returnCodes.NIL) then
+                                         ?>
+                                        <div class="msgSuccess">
+                                              <p>$| statusSuccessMessage |$</p>
+                                        </div>
+                                        <?lua end end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li class="current">
+									<a href="?page=tunnelMode.html">$| LANG_LOCALE['13160'] |$</a>
+								</li>
+								<li>
+									<a href="?page=splitDnsNames.html">$| LANG_LOCALE['12912'] |$</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+                          $| helpHintText |$
+						</p>
+					</div>
+					<h1>$| LANG_LOCALE['11723'] |$</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmTunnelMode" id="tf1_frmTunnelMode" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="tunnelMode.html">
+								<div class="configRow">
+									<label>$| LANG_LOCALE['13160'] |$</label>
+									<p>
+										<input type="radio" name="tunnelMode.tunnelMode" $| web.radioSelected(configRow["tunnelMode.tunnelMode"] == "0") |$ value="0" id="radNtp" checked>
+										$| LANG_LOCALE['11052'] |$
+									</p>
+									<p>
+										<input type="radio" name="tunnelMode.tunnelMode" $| web.radioSelected(configRow["tunnelMode.tunnelMode"] == "1") |$ value="1" id="radNtp2">
+										$| LANG_LOCALE['12915'] |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['12968'] |$</label>
+									<input type="text" name="tunnelMode.firstPoolStartIP"id="tf1_vpn_startIpAddr" value="$| configRow["tunnelMode.firstPoolStartIP"] or '' |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['10923'] |$</label>
+									<input type="text" name="tunnelMode.firstPoolEndIP" id="tf1_vpn_endIpAdde" value="$| configRow["tunnelMode.firstPoolEndIP"] or '' |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+                                                                <?lua
+                                                                  if (configRow["tunnelMode.primaryDns"] == "0.0.0.0") then
+                                                                      configRow["tunnelMode.primaryDns"] = ""
+                                                                  end
+                                                                  if (configRow["tunnelMode.secondaryDns"] == "0.0.0.0") then
+                                                                      configRow["tunnelMode.secondaryDns"] = ""
+                                                                  end
+                                                                  if (configRow["tunnelMode.primaryWINS"] == "0.0.0.0") then
+                                                                      configRow["tunnelMode.primaryWINS"] = ""
+                                                                  end
+                                                                  if (configRow["tunnelMode.secondaryWINS"] == "0.0.0.0") then
+                                                                      configRow["tunnelMode.secondaryWINS"] = ""
+                                                                  end
+                                                                ?>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['12536'] |$</label>
+									<input type="text" name="tunnelMode.primaryDns" id="tf1_vpn_primaryDNS" value="$| configRow["tunnelMode.primaryDns"] or '' |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['12781'] |$</label>
+									<input type="text" name="tunnelMode.secondaryDns" id="tf1_vpn_secondaryDNS" value="$| configRow["tunnelMode.secondaryDns"] or '' |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+									</dl>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['14017'] |$</label>
+									<input type="text" name="tunnelMode.primaryWINS" id="tf1_vpn_priWINServer" value="$| configRow["tunnelMode.primaryWINS"] or '' |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['12786'] |$</label>
+									<input type="text" name="tunnelMode.secondaryWINS" id="tf1_vpn_secWINServer" value="$| configRow["tunnelMode.secondaryWINS"] or '' |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, 'Invalid IP address.', 'for octet ', true); }">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit" name="button.config.tunnelMode" onclick="return pageValidate()" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+									<input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script language="JavaScript" src="js/modeConfig.js" type="text/javascript"></script>
+	</body>
+</html>
+<?lua end ?>

@@ -1,0 +1,136 @@
+<?lua
+require "teamf1lualib/wirelessStatistics_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "status"
+    PAGE_HELP_SECTION = "wirelessStatistics"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require ("com.teamf1.core.errorMap")
+local wirelessStats = require("com.teamf1.bl.wireless.statistics")
+
+local returnCode, wirelessStatistics = 
+        wirelessStats.wirelessStatisticsSectionGetAll ()
+    
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    LANG_LOCALE = "13386,10244,12591,11889,11892,10436,10441,10954,10955,10831,10832"    
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body onload="onloadCall ();">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+		    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?> 
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13386'] |$</h1>
+			<div class="CLR">
+				<div class="demo_jui">
+					<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+						<thead>
+							<tr>
+								<th>$| LANG_LOCALE['10244'] |$</th>
+								<th>$| LANG_LOCALE['12591'] |$</th>
+								<th>$| LANG_LOCALE['11889'] |$</th>
+								<th>$| LANG_LOCALE['11892'] |$</th>
+								<th>$| LANG_LOCALE['10436'] |$</th>
+								<th>$| LANG_LOCALE['10441'] |$</th>
+								<th>$| LANG_LOCALE['10954'] |$</th>
+								<th>$| LANG_LOCALE['10955'] |$</th>
+								<th>$| LANG_LOCALE['10831'] |$</th>
+								<th>$| LANG_LOCALE['10832'] |$</th>
+							</tr>
+						</thead>
+                                                <?lua 
+                                                     i = 0
+                                                     for k,v in pairs(wirelessStatistics) do
+                                                         i = i+1
+                                                         local radio_Mode =  db.getAttribute ("dot11Radio",
+                         "radioNo", wirelessStatistics[i]["radioNo"], "band") 
+                             if (radio_Mode == "b")  then
+                             wirelessStatistics[i]["radioNo"] = "2.4 Ghz"
+                             elseif (radio_Mode == "a")  then
+                             wirelessStatistics[i]["radioNo"] = "5 Ghz"
+                             end
+                                                ?>         
+						<tr class="gradeA">
+							<td>$| wirelessStatistics[i]["vapName"] or '' |$</td>
+							<td>$| wirelessStatistics[i]["radioNo"] or '' |$</td>
+							<td>$| wirelessStatistics[i]["rx_packets"] or '' |$</td>
+							<td>$| wirelessStatistics[i]["tx_packets"] or '' |$ </td>
+							<td>$| wirelessStatistics[i]["rx_bytes"] or '' |$ </td>
+							<td>$| wirelessStatistics[i]["tx_bytes"] or '' |$ </td>
+							<td>$| wirelessStatistics[i]["rx_errors"] or '' |$</td>
+							<td>$| wirelessStatistics[i]["tx_errors"] or '' |$</td>
+							<td>$| wirelessStatistics[i]["rx_dropped"] or '' |$</td>
+							<td>$| wirelessStatistics[i]["tx_dropped"] or '' |$</td>
+						</tr>
+                                                <?lua end?>
+					</table>
+				</div>
+			</div>
+			</div></td>
+			</tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+</html>
+<?lua ?>
+

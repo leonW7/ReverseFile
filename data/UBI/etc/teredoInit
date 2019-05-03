@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# teredoInit - initialization script for TEREDO TUNNEL
+#
+# Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+#(Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01a,28oct14,nir written
+
+# initialize teredo management generic database
+
+mkdir -p /etc/miredo
+ln -s $MIREDO_INSTALL_PATH/etc/client-hook /etc/miredo/client-hook

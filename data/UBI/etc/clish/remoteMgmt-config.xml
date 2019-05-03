@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<!--=======================================================-->
+<VIEW name="system-remote-https-config" prompt="system-config[https]> "> 
+    <COMMAND name="save" help="save access Management changes for https.">
+	     <ACTION>lua clishCfgObjExec("accessMgmt")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save access Management changes for https and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("accessMgmt")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Remote Mgmt changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable" help="Enable/disable remote mgmt over https.">
+	<PARAM name="https_enable" 
+        help="Enable/ Disable flag."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt", "accessMgmt.accessMgmtEnable", 
+		    "${https_enable}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="type" help="Enable/disable remote mgmt over https.">
+	<PARAM name="access_type" 
+        help="0 -Enable access to all, 1 - Enable acess to a range of IPs, 2 - Enable access to a single IP."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt", "accessMgmt.accessType","${access_type}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="from_address" help="Set the starting IP in case of range,
+        and the IP to be allowed access in case of granting access to a
+        particular machine">
+	<PARAM name="access_ip1" 
+	       help="IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt",
+        "accessMgmt.accessMgmtIP1","${access_ip1}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="end_address" help="Set the Ending IP in case of range.">
+	<PARAM name="access_ip2" 
+	       help="IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt",
+        "accessMgmt.accessMgmtIP2","${access_ip2}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="port" help="Set the port you want to use for HTTP.">
+	<PARAM name="port" 
+	       help="Port Number."
+	       ptype="PORT_NUM"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt","accessMgmt.port","${port}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="enable_remote_snmp" help="Enable/disable remote snmp.">
+    <PARAM name="snmp_enable"
+        help="Enable/ Disable flag."
+                   ptype="CHOICE_INT"/>
+    <ACTION>lua clishCfgObjAdd ("accessMgmt", "RemoteSnmp.Status",
+                        "${snmp_enable}")
+    </ACTION>
+    </COMMAND>
+    <COMMAND name="enable_remote_ssh" check_supported="Y" help="Enable/disable remote ssh." >
+    <PARAM name="ssh_enable"
+        help="Enable/ Disable flag."
+                   ptype="CHOICE_INT"/>
+    <ACTION>lua clishCfgObjAdd ("accessMgmt", "accessMgmt.accessMgmtEnableSsh",
+                        "${ssh_enable}")
+    </ACTION>
+    </COMMAND>
+
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="system-remote-http-config" prompt="system-config[http]> "> 
+    <COMMAND name="save" help="save access Management changes for http.">
+	     <ACTION>lua clishCfgObjExec("accessMgmt")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save access Management changes for http and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("accessMgmt")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Remote Mgmt changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable" help="Enable/disable remote mgmt over http.">
+	<PARAM name="https_enable" 
+        help="Enable/ Disable flag."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt", "accessMgmt.accessMgmtEnable", 
+		    "${https_enable}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="type" help="Enable/disable remote mgmt over http.">
+	<PARAM name="access_type" 
+        help="0 -Enable access to all, 1 - Enable acess to a range of IPs, 2 - Enable access to a single IP."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt", "accessMgmt.accessType","${access_type}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="from_address" help="Set the starting IP in case of range,
+        and the IP to be allowed access in case of granting access to a
+        particular machine">
+	<PARAM name="access_ip1" 
+	       help="IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt",
+        "accessMgmt.accessMgmtIP1","${access_ip1}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="end_address" help="Set the Ending IP in case of range.">
+	<PARAM name="access_ip2" 
+	       help="IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt",
+        "accessMgmt.accessMgmtIP2","${access_ip2}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="port" help="Set the port you want to use for HTTP.">
+	<PARAM name="port" 
+	       help="Port Number."
+	       ptype="PORT_NUM"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt","accessMgmt.port","${port}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="enable_remote_snmp" help="Enable/disable remote snmp.">
+    <PARAM name="snmp_enable"
+        help="Enable/ Disable flag."
+                   ptype="CHOICE_INT"/>
+    <ACTION>lua clishCfgObjAdd ("accessMgmt", "RemoteSnmp.Status",
+                        "${snmp_enable}")
+    </ACTION>
+    </COMMAND>
+    <COMMAND name="enable_remote_ssh" check_supported="Y" help="Enable/disable remote ssh." >
+    <PARAM name="ssh_enable"
+        help="Enable/ Disable flag."
+                   ptype="CHOICE_INT"/>
+    <ACTION>lua clishCfgObjAdd ("accessMgmt", "accessMgmt.accessMgmtEnableSsh",
+                        "${ssh_enable}")
+    </ACTION>
+    </COMMAND>
+
+
+</VIEW>
+<!--=======================================================-->
+<VIEW name="system-remote-telnet-config" prompt="system-config[telnet]> "> 
+    <COMMAND name="save" help="save access Management changes for telnet.">
+	     <ACTION>lua clishCfgObjExec("accessMgmt")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save access Management changes for telnet and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("accessMgmt")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Remote Mgmt changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable" help="Enable/disable remote mgmt over telnet.">
+	<PARAM name="telnet_enable" 
+        help="Enable/ Disable flag."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt", "accessMgmt.accessMgmtEnable", 
+		    "${telnet_enable}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="type" help="The kind of access you want to allow.">
+	<PARAM name="access_type" 
+        help="0 -Enable access to all, 1 - Enable acess to a range of IPs, 2 - Enable access to a single IP."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt", "accessMgmt.accessType","${access_type}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="from_address" help="Set the starting IP in case of range,
+        and the IP to be allowed access in case of granting access to a
+        particular machine">
+	<PARAM name="access_ip1" 
+	       help="IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt",
+        "accessMgmt.accessMgmtIP1","${access_ip1}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="to_address" help="Set the Ending IP in case of range.">
+	<PARAM name="access_ip2" 
+	       help="IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("accessMgmt",
+        "accessMgmt.accessMgmtIP2","${access_ip2}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="system remote_management" help="Remote Mgmt Setup."/>
+<!--=======================================================-->
+    <COMMAND name="system remote_management https" check_supported="Y" help="Remote Mgmt Setup for https."/>
+<!--=======================================================-->
+    <COMMAND name="system remote_management http" check_supported="Y" help="Remote Mgmt Setup for http."/>
+<!--=======================================================
+    <COMMAND name="system remote_management telnet" help="Remote Mgmt Setup for telnet."/>-->
+    <!--=======================================================-->
+    <COMMAND name="system remote_management https configure"
+             help="Configure remote management support for https."
+             view="system-remote-https-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("accessMgmt", accessMgmtHttpsInit,
+                accessMgmtCfgSave, accessMgmtInputVal)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system remote_management http configure"
+             help="Configure remote management support for http."
+             view="system-remote-http-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("accessMgmt", accessMgmtHttpInit,
+                accessMgmtHttpCfgSave, accessMgmtHttpInputVal)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system remote_management telnet configure"
+             help="Configure remote management support for telnet."
+             view="system-remote-telnet-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("accessMgmt", accessMgmtTelnetInit,
+                accessMgmtCfgSave, accessMgmtInputVal)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show system remote_management" help="."/>
+    <COMMAND name="show system remote_management setup"
+            help="Display remote management over https configuration">
+            <ACTION>lua clishCmdExec (remoteMgmtGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+
+
+</CLISH_MODULE>
+

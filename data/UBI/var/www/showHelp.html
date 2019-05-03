@@ -1,0 +1,224 @@
+<?lua if(true) then 
+  local mainSection=""
+  if ( cgi["helpfile"] ~= nil and cgi["helpfile"] == "maintenance.txt" ) then
+  mainSection = "Maintenance"
+  elseif ( cgi["helpfile"] ~= nil and cgi["helpfile"] == "network.txt" ) then
+    mainSection = "Network"
+  elseif ( cgi["helpfile"] ~= nil and cgi["helpfile"] == "security.txt" ) then
+    mainSection = "Security"
+  elseif ( cgi["helpfile"] ~= nil and cgi["helpfile"] == "status.txt" ) then
+    mainSection = "Status"
+  elseif ( cgi["helpfile"] ~= nil and cgi["helpfile"] == "vpn.txt" ) then
+    mainSection = "VPN"
+  elseif ( cgi["helpfile"] ~= nil and cgi["helpfile"] == "wireless.txt" ) then
+    mainSection = "Wireless"
+  elseif ( cgi["helpfile"] ~= nil and cgi["helpfile"] == "omniSSL.txt" ) then
+    mainSection = "OmniSSL"
+  end
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2010 - 2012 TeamF1, Inc. All rights reserved.
+-->
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+<script language="JavaScript" type="text/javascript">
+	 
+	function getHelpInfo ()
+		{
+			var request = null;	
+			var helpDiv = document.getElementById("tf1_helpDiv");
+		
+			try 
+				{  // Firefox, Opera 8.0+, Safari
+				request=new XMLHttpRequest();
+				}
+				catch (e)
+		  			{	// Internet Explorer
+					try
+						{
+					    request=new ActiveXObject("Msxml2.XMLHTTP");
+		    			}
+		  				catch (e)
+		    				{
+		    				try
+								{
+								request=new ActiveXObject("Microsoft.XMLHTTP");
+								}
+								catch (e)
+		      						{
+									window.status = "Your browser does not support AJAX!";
+									return false;
+		      						}
+							}
+						}
+				request.onreadystatechange=function()
+				{
+				if(request.readyState==4)
+					{
+					helpDiv.innerHTML = request.responseText + " ";
+					}
+				}
+			request.open("GET","?page=getHelp.html" + window.location.href.substr (window.location.href.indexOf ("&")) + "&time" + new Date(),true);
+			request.send(null);
+}
+ 
+/**
+ * Placeholder like function
+ * OnFoucs and OnBlur events
+ * @method watermark
+ * @param: inputId - Input text enterd by user
+ * @param: text - Default text
+ */
+function watermark(inputId, text){
+    var inputBox = document.getElementById(inputId);
+    if (inputBox.value.length > 0) {
+        if (inputBox.value == text) 
+            inputBox.value = '';
+    }
+    else 
+        inputBox.value = text;
+}
+
+/* ====================== search highlighing ======================== */
+$(document).ready(function() {
+jQuery.fn.textHighlight = function(pat) {
+ function textInnerHighlight(node, pat) {
+  var skip = 0;
+  if (node.nodeType == 3) {
+   var pos = node.data.toUpperCase().indexOf(pat);
+   if (pos >= 0) {
+    var spannode = document.createElement('span');
+    spannode.className = 'highlight';
+    var middlebit = node.splitText(pos);
+    var endbit = middlebit.splitText(pat.length);
+    var middleclone = middlebit.cloneNode(true);
+    spannode.appendChild(middleclone);
+    middlebit.parentNode.replaceChild(spannode, middlebit);
+    skip = 1;
+   }
+  }
+  else if (node.nodeType == 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) {
+   for (var i = 0; i < node.childNodes.length; ++i) {
+    i += textInnerHighlight(node.childNodes[i], pat);
+   }
+  }
+  return skip;
+ }
+ return this.each(function() {
+  textInnerHighlight(this, pat.toUpperCase());
+ });
+};
+
+jQuery.fn.textRemoveHighlight = function() {
+ function newNormalize(node) {
+    for (var i = 0, children = node.childNodes, nodeCount = children.length; i < nodeCount; i++) {
+        var child = children[i];
+        if (child.nodeType == 1) {
+            newNormalize(child);
+            continue;
+        }
+        if (child.nodeType != 3) { continue; }
+        var next = child.nextSibling;
+        if (next == null || next.nodeType != 3) { continue; }
+        var combined_text = child.nodeValue + next.nodeValue;
+        new_node = node.ownerDocument.createTextNode(combined_text);
+        node.insertBefore(new_node, child);
+        node.removeChild(child);
+        node.removeChild(next);
+        i--;
+        nodeCount--;
+    }
+ }
+
+return this.find("span.highlight").each(function() {
+    var thisParent = this.parentNode;
+    thisParent.replaceChild(this.firstChild, this);
+    newNormalize(thisParent);
+ }).end();
+};
+});
+
+</script>
+<style type="text/css">
+.highlight {
+    background-color: #9ecefd;
+    color: #000000;
+}
+
+</style>
+<?lua web.includeMenu("metaInclude.html")?>
+
+</head>
+<body onload="getHelpInfo ()" style="margin-bottom: 0;">
+<div align="center">
+	<table border="0" cellpadding="0" cellspacing="0" width="560">
+		<tr>
+			<td class="helpHeader" valign="top" align="center">
+			<div align="center">
+                <div class="helpLogo FL" style="min-width:200px" >
+                    <?lua if(mainSection == "OmniSSL") then ?>
+                        OmniSSL
+                    <?lua else ?>   
+    					Unified Services Router - $| UNIT_NAME |$  <?lua end ?> 
+				</div>
+                        <div class="FR helpSearch">
+								<input value="Search Words" id="text-search" onfocus="watermark('text-search','Search Words');" onblur="watermark('text-search','Search Words');" />
+
+							</div>
+                            <div class="HelpTitle">$| mainSection |$</div>
+			</div>
+			</td>
+		</tr> 
+		<tr>
+			<td valign="top" align="center">
+					<div class="helpContainer" id="tf1_helpDiv">
+ 
+						<p id="helpLoading">Loading...</p>
+                         
+			</div> 
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="helpFooter">
+					Copyright © 2017 D-Link Corporation. 
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>	
+
+	
+</body>
+<script type="text/javascript">
+$(function() {
+    $('#text-search').bind('keyup change', function(ev) {
+        /* pull in the new value */
+        var searchTerm = $(this).val();
+
+         /* remove any old highlighted terms*/
+        $('#tf1_helpDiv').textRemoveHighlight();
+
+         /* disable textHighlighting if empty*/
+        if ( searchTerm ) {
+	    
+         var searchWordsArr= searchTerm.split(' ');
+		for (i=0; i<searchWordsArr.length; i++){
+	     /* textHighlight the new term */
+		if (searchWordsArr[i].length>=3){
+                   $('#tf1_helpDiv').textHighlight( searchWordsArr[i] );
+		   }
+		}
+            
+        }
+    });
+});
+</script>
+</html>
+<?lua end ?>

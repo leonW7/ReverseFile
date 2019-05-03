@@ -1,0 +1,169 @@
+<?lua 
+require "teamf1lualib/bl_payment"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local gui_paymentGW = require("com.teamf1.bl.captiveportal.payment")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+local errorCode, gwInfo, gwServer, gwCurrencyTbl
+gwInfo = {}
+
+errorCode , gwCurrencyTbl = gui_paymentGW.cpPaymentCurrencyGetAll ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    gwCurrencyTbl = {}
+end
+local configRow = cgi
+if (ButtonType and ButtonType == "edit") then
+    errorCode, gwInfo, gwServer = gui_paymentGW.paymentGateWayGet (configRow.configRowId)
+end
+
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_paymentGatewayDailogContent">
+    <div class="topBg">
+      <h1>Payment Gateway Configuration</h1>
+      <close> <a href="#" id="btnClose" title="Close">X</a> </close>
+    </div>
+    <div class="dialogMidArea">
+      <div class="configRow">
+        <h2>Payment System</h2>
+        <label>Payment Processor</label>
+        <select size="1" name="payMentGW.paymentGateway" id="tf1_paymentProcessor" onChange="loginProfilesOnload();">
+            <!--<option value="Authorize">Authorize.net</option>-->
+            <option value="Paypal" $| web.dropdownSelected(gwServer == "Paypal") |$>Paypal</option>
+            <option value="PaypalTest" $| web.dropdownSelected(gwServer ==
+            "PaypalTest") |$>Paypal Test</option>
+          <!--<option value="SecurePay">SecurePay</option>
+          <option value="WorldPay">WorldPay</option>-->
+        </select>
+      </div>
+      <div class="break">&nbsp;</div>
+      <div class="configRow"  id="tf1_loginId_div">
+        <label> Login ID</label>
+        <input type="text" id="tf1_loginId" maxlength="64" >
+      </div>
+      <div class="break" id="break_loginId_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_transactionKey_div">
+        <label> Transaction Key </label>
+        <input type="text" id="tf1_transactionKey">
+      </div>
+      <div class="break" id="break_transactionKey_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_md5Hash_div">
+        <label>MD5 Hash </label>
+        <input type="text" id="tf1_md5Hash">
+      </div>
+      <div class="break" id="break_md5Hash_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_TransactionServer_div">
+        <label> Transaction Server</label>
+        <p>
+          <input type="radio" value="0" checked >
+          Live </p>
+        <p>
+          <input type="radio" value="1" >
+          Test </p>
+      </div>
+      <div class="break" id="break_TransactionServer_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_TransactionMode_div">
+        <label> Transaction Mode</label>
+        <p>
+          <input type="radio" value="0" checked >
+          Live </p>
+        <p>
+          <input type="radio" value="1"  >
+          Test </p>
+      </div>
+      <div class="break" id="break_TransactionMode_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_minimumOrderTotal_div">
+        <label> Minimum Order Total </label>
+        <input type="text" value="" id="tf1_minimumOrderTotal" onKeyPress="return numericValueCheck (event)">
+      </div>
+      <div class="break" id="break_minimumOrderTotal_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_maximumOrderTotal_div">
+        <label> Maximum Order Total </label>
+        <input type="text" value="" id="tf1_maximumOrderTotal" onKeyPress="return numericValueCheck (event)">
+      </div>
+      <div class="break" id="break_maximumOrderTotal_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_sortOrder_div">
+        <label> Sort Order </label>
+        <select size="1"  >
+          <option value="0">Highest First </option>
+          <option value="1">Lowest First</option>
+        </select>
+      </div>
+      <div class="break" id="break_sortOrder_div">&nbsp;</div>
+      <div class="configRow" id="tf1_emailAddress_div">
+        <label>Payment Reciever Email ID </label>
+        <input type="text" name="payMentGW.loginId" value="$| gwInfo.loginId or '' |$" id="tf1_emailAddress">
+      </div>
+      <div class="break" id="break_emailAddress_div"> &nbsp;</div>
+      <div class="configRow" id="tf1_apiUsername_div">
+        <label>API Username</label>
+        <input type="text" name="payMentGW.APIUserName" value="$| gwInfo.APIUserName or '' |$" id="tf1_apiUsername">
+      </div>
+      <div class="break" id="break_apiUsername_div">&nbsp;</div>
+      <div class="configRow" id="tf1_apiPassword_div">
+        <label> API Password </label>
+        <input type="password" name="payMentGW.APIPassword" value="$| gwInfo.APIPassword or '' |$" id="tf1_apiPassword">
+      </div>
+      <div class="break" id="break_apiPassword_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_apiSignature_div">
+        <label>API Signature</label>
+        <input type="text" name="payMentGW.APISignature" value="$| gwInfo.APISignature or '' |$" id="tf1_apiSignature">
+      </div>
+      <div class="break" id="break_apiSignature_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_appID_div">
+        <label>APP ID</label>
+        <input type="text" name="payMentGW.APPID" value="$| gwInfo.APPID or '' |$"  id="tf1_appID">
+      </div>
+      <div class="break" id="break_appID_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_installationId_div">
+        <label>Installation ID </label>
+        <input type="text"   id="tf1_installationId">
+      </div>
+      <div class="break"  id="break_installationId_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_authorizationPassword_div">
+        <label> Authorization Password</label>
+        <input type="password"   id="tf1_authorizationPassword">
+      </div>
+      <div class="break" id="break_authorizationPassword_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_merchantId_div">
+        <label> Merchant ID </label>
+        <input type="text"   id="tf1_merchantId">
+      </div>
+      <div class="break" id="break_merchantId_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_avsMode_div">
+        <label>AVS Mode</label>
+        <input type="text" id="tf1_avsMode">
+      </div>
+      <div class="break"  id="break_avsMode_div"> &nbsp; </div>
+      <div class="configRow"  id="tf1_useTokenization_div">
+        <label> Use Tokenization </label>
+        <p><img class="enable-disable" alt="" id="tf1_useTokenization" src="images/button_off.png" /></p>
+      </div>
+      <div class="break"  id="break_useTokenization_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_gatewayAlias_div">
+        <label>Gateway Alias</label>
+        <input type="text" id="tf1_gatewayAlias">
+      </div>
+      <div class="break"  id="break_gatewayAlias_div"> &nbsp; </div>
+      <div class="configRow" id="tf1_currency_div">
+        <label>Currency</label>
+        <select size="1"  name="payMentGW.currencyId">
+            <?lua
+            if (gwCurrencyTbl ~= nil) then
+                for k, v in pairs (gwCurrencyTbl) do ?>
+                <option value="$| v["currencyId"] |$" $| web.dropdownSelected(gwInfo.currencyId == v["currencyId"]) |$> $| v["currencyName"] |$</option>
+                <?lua end 
+            end?>
+        </select>
+      </div>
+      <div class="break" id="break_currency_div">&nbsp;</div>
+     
+    </div>
+    <div class="dialogSubmitRow">
+      <input type="submit"
+      name="button.config.paymentGateway.paymentGateway.$| cgi["configRowId"] |$" onClick="return paymentGatewayValidations('tf1_frmPaymentGateway')" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+  </div>

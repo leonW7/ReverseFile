@@ -1,0 +1,275 @@
+<?lua 
+require "teamf1lualib/activeL2tpVpns_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+local active_l2tpVpns  = require("com.teamf1.bl.vpn.active_l2tp_vpn")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local ENABLE = "1"
+local DISABLE = "0"
+local CONNECT = "1"
+local DROP = "0"
+DISABLED = "disabled"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "activeL2tpVpnConnections"
+
+if (ButtonType and ButtonType == "Connect") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local rowId = "1"
+    inputTable["activeL2tpVpns.cookie"] = rowId
+    
+    inputTable["activeL2tpVpns.action"] = CONNECT
+    cgi["buttonAction"] = "Connected"
+
+    local returnCode, cookie = active_l2tpVpns.activeL2tpVpnsSectionSet (inputTable)  
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end  
+
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "getstatus") then
+ local returnCode, cookie, connectionStatus, actionToDo, title, disableBt = active_l2tpVpns.activeL2tpVpnsSectionGet ()
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+$|connectionStatus|$
+<?lua
+elseif (ButtonType and ButtonType == "Drop") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local rowId = "1"
+    inputTable["activeL2tpVpns.cookie"] = rowId
+    inputTable["activeL2tpVpns.action"] = DROP
+    cgi["buttonAction"] = "Disconnected"
+    local returnCode, cookie = active_l2tpVpns.activeL2tpVpnsSectionSet (inputTable) 
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end  
+    web.goToPage(NextPage, true, true)
+
+else
+    local returnCode, cookie, connectionStatus, actionToDo, 
+            title, disableBt = active_l2tpVpns.activeL2tpVpnsSectionGet ()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+    local autodialStatus = active_l2tpVpns.activeL2tpVpnsAutoDialStatusGet ()            
+    
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE = "13451,13452,11425,12935,12519,11821,11512,30580,30028,10579,,10752,30533,30544,10315"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body onload="onloadCall ();">
+  <form action="platform.cgi" method="post" name="tf1_frmActiveL2tpVpn" id="tf1_frmActiveL2tpVpn">        
+            <input type="hidden" name="thispage" id="thispage" value="activeL2tpVpns.html">
+            <input type="hidden" name="buttonAction" value="buttonAction">
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form> 
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <?lua if (autodialStatus == 0) then ?>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li id="rightConnect">
+                    $| LANG_LOCALE['13451'] |$
+                </li>
+                <li id="disconnect">
+                    $| LANG_LOCALE['13452'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <?lua end ?>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=activeVpns.html">$| LANG_LOCALE['11425'] |$</a>
+                                </li>
+                                <?lua if (HIGH_SEC == "HIGH") then ?>
+                                <li>
+                                    <a href="?page=activeSslVpns.html">$| LANG_LOCALE['12935'] |$</a>
+                                </li>
+                                <?lua end ?>
+                                <li>
+                                    <a href="?page=activePptpVpns.html">$| LANG_LOCALE['12519'] |$</a>
+                                </li>
+                                <?lua if (HIGH_SEC == "HIGH") then ?>
+                                <li>
+                                    <a href="?page=activeOpenVpns.html">$| LANG_LOCALE['11821'] |$</a>
+                                </li>
+                                <?lua end ?>
+                                <li class="current">
+                                    <a href="?page=activeL2tpVpns.html">$| LANG_LOCALE['11512'] |$</a>
+                                </li>
+				<li>
+                                    <a href="?page=greTunnelsStatus.html">$| LANG_LOCALE['30580'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint"> $| helpHintText |$</p>
+                    </div>
+                    <h1>$| LANG_LOCALE['30028'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['10579'] |$</th>
+                                    </tr>
+                                </thead>
+                                <tr class="gradeA" id="activeL2tpVpns1" status="$| actionToDo |$">
+                                    <?lua if (connectionStatus == "Disconnected") then
+                                        connectionStatus = LANG_LOCALE['10752']
+                                    elseif (connectionStatus == "Idle") then
+                                        connectionStatus = LANG_LOCALE['30544']
+                                    elseif (connectionStatus == "Connected") then
+                                        connectionStatus = LANG_LOCALE['30533']
+                                    else
+                                        connectionStatus = LANG_LOCALE['10315']
+                                    end
+                                    ?>
+                                    <td id="connState"> $| connectionStatus |$ </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+        <?lua if (cgi["buttonAction"] ~= nil) then ?>
+	    displayProgressBar();
+
+		var actionType = '$|cgi["buttonAction"]|$';
+		var counts = 0;
+		function getL2tpStatus() {
+			dataString = "button.getstatus.activeL2tpVpns=yes&thispage=activeL2tpVpns.html";
+			dataStringArry = dataString.split("&");    	
+			dataObj = new Object();
+			    	
+			for(i=0; i< dataStringArry.length; i++) {
+			    data =  dataStringArry[i].split("=");
+			    dataObj[data[0]] = data[1]; 
+			}			 
+            
+            counts = counts + 1;
+			var request = $.ajax({
+				url: "platform.cgi?page=activeL2tpVpns.html",
+				type: "POST",
+				data: dataObj,
+				dataType: "html"
+			});
+            request.done(function(msg) {
+			    if (msg.search("button.login.Users") != -1){ 
+				    window.location="platform.cgi?page=index.html";
+			        return;	
+			    }			
+			    if (counts <= 3 && actionType != $.trim(msg)) {
+			        setTimeout (getL2tpStatus, 5000);
+			    } else {
+			        if (actionType == $.trim(msg)) {
+				        if(actionType == "Connected") {
+				            $("#connState").html(LANG_LOCALE['30533']);
+				            $("#activeL2tpVpns1").attr("status","0");
+                        } else if (actionType == "Idle") {
+				            $("#connState").html(LANG_LOCALE['30544']);
+                        } else if (actionType == "Disconnected") {
+				            $("#connState").html(LANG_LOCALE['10752']);
+			                $("#activeL2tpVpns1").attr("status","1");
+                        } else {
+				            $("#connState").html(LANG_LOCALE['10315']);
+                        }
+			        }
+			        hideProgressBar();
+			    }
+			});
+			request.fail(function(jqXHR, textStatus) {
+				alert("Failed");
+                hideProgressBar();
+			});
+		}
+        <?lua end ?>
+            $(document).ready(function() {
+                <?lua if (disableBt ~= DISABLED) then ?>
+                $('.gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'rightConnectMenu' : function(t, e, rowId) {
+                            changeRowStauts('Connect', 'tf1_frmActiveL2tpVpn', rowId, 'tf1_dialog', 'activeL2tpVpns', 'activeL2tpVpns', 'activeL2tpVpns.activeL2tpVpns');
+                        },
+                        'disconnectMenu' : function(t, e, rowId) {
+                            changeRowStauts('Drop', 'tf1_frmActiveL2tpVpn', rowId, 'tf1_dialog', 'activeL2tpVpns', 'activeL2tpVpns', 'activeL2tpVpns.activeL2tpVpns');
+                        }
+                    },
+                    onShowMenu: function(e,menu,rowId) {
+                        if ($("#"+rowId).attr("status") == "0"){                            
+                            $('#rightConnectMenu', menu).remove();
+                        } else {
+                            $('#disconnectMenu', menu).remove();
+                        }
+                        return menu;
+                    }
+               
+                });
+                 <?lua end ?>
+
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                <?lua if (cgi["buttonAction"] ~= nil) then ?>
+	    		setTimeout (getL2tpStatus, 5000);
+    	    	<?lua end ?>
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

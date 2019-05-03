@@ -1,0 +1,232 @@
+#!/bin/sh
+#
+# configInit - initialization script for config
+# Copyright (c) 2015, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01c,06apr16,vvs  merged changes for spr#54878
+# 01l,18feb15,abd  factory resetting the device explicitly.
+# 01k,09jun15,as   added code for spr#51698.
+# 01j,03mar15,abd  executing dot11CronHandler to handle active VAP's.
+# 01i,08dec14,as   added code for corrupt configuration.
+# 01h,03nov14,ad   fix for spr#46900.
+# 01g,19Feb14,abd executing with the lua bin.
+# 01f,15May13,was changes for SPR #38051
+# 01e,01May13,was changes for autobackup and encrypted backup support.
+# 01d,20mar13,was restricted taking configuration backup till 1.08B33 only.
+# 01c,16feb09,smd merged the configuration for board specific configuration
+# 01b,01aug08,vms added support for board specific configurations in case of
+#                 factory reset. 
+# 01a,29nov07,nsr written
+VAR_CONF_DIR=/var/backpConfigFiles
+EnableAutoBackup=0
+backupFile=
+backupEncFile=
+FACTORYRESET="/data/tmp/factoryResetEnable"
+FACTORYRESET_SCRIPT="/pfrm2.0/bin/factoryDefault.sh"
+
+#This is to check whether Autobackup is enabled or not 
+#Note :- If teamf1 ascii file in /data/tmp/teamf1.cfg.ascii.tar.bz2 does not exist
+#        then it means that autobackup is disables (factory default condition).
+
+
+if [ "$INCLUDE_CONFIG" = "y" ]; then
+
+    # check if we need to do factory reset the device
+#    if [ -e "/data/tmp/factoryResetNeeded.txt" ]; then
+#        #remove the flash config file
+#        /bin/rm -rf /data/tmp/teamf1.cfg.ascii
+#        /bin/rm -rf /data/tmp/teamf1.cfg.ascii.tar.bz2
+
+        #remove the backup configuration files
+#        /bin/rm -rf /data/backup
+
+        #remove the factoryReset file
+#        /bin/rm -rf /data/tmp/factoryResetNeeded.txt
+#    fi
+    
+    #perform factory reset operation if factoryResetEnable file exists
+    
+    if [ -e $FACTORYRESET ]; then
+        /bin/sh $FACTORYRESET_SCRIPT
+        /bin/rm -rf $FACTORYRESET
+    fi
+
+mkdir -p $VAR_CONF_DIR
+if [ -e "/data/tmp/teamf1.cfg.ascii.tar.bz2" ]; then
+    tar -xvzf /data/tmp/teamf1.cfg.ascii.tar.bz2 -C $VAR_CONF_DIR
+    EnableAutoBackup=`grep EnableAutoBackup $VAR_CONF_DIR/teamf1.cfg.ascii | cut -d '=' -f2 | tr -d '"'`
+    rm -rf $VAR_CONF_DIR/* 
+fi
+
+MODEL_ID_CONFIG=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+
+if [ $EnableAutoBackup -eq 1 ]; then
+    # Check if factory reset button is still pressed
+    # We are checking for /usbX/$MODEL_ID"_"$SERIAL_NUMBER.cfg or /usbX/$MODEL_ID"_"$SERIAL_NUMBER.cfg.enc
+    # file, because while taking backup we are taking in same format.
+    PACKAGEFILE="/pfrm2.0/pkgMgmt/packageKey"
+    key128=`cat $PACKAGEFILE | head -n 1`
+    iv=`cat $PACKAGEFILE | head -n 2 | tail -n 1` 
+    if [ -e /usb1/ ]; then
+        backupFile=`ls /usb1/ | grep -e '^'"$MODEL_ID"'_.\{13\}\.cfg$' | head -n 1`
+        backupEncFile=`ls /usb1/ | grep -e '^'"$MODEL_ID"'_.\{13\}\.cfg.enc$' | head -n 1`
+        if [ -n "$backupFile" ] || [ -n "$backupEncFile" ]; then
+            if [ -n "$backupFile" ]; then
+                cp -f /usb1/$backupFile $VAR_CONF_DIR/$MODEL_ID"_"$SERIAL_NUMBER.cfg
+            else
+                /pfrm2.0/bin/usrKlite openssl enc -d -aes-128-cbc -in /usb1/$backupEncFile -out $VAR_CONF_DIR/$MODEL_ID"_"$SERIAL_NUMBER.cfg -K $key128 -iv $iv -nosalt
+            fi
+        fi
+    elif [ -e /usb2/ ]; then
+        backupFile=`ls /usb2/ | grep -e '^'"$MODEL_ID"'_.\{13\}\.cfg$' | head -n 1`
+        backupEncFile=`ls /usb2/ | grep -e '^'"$MODEL_ID"'_.\{13\}\.cfg.enc$' | head -n 1`
+        if [ -n "$backupFile" ] || [ -n "$backupEncFile" ]; then
+            if [ -n "$backupFile" ]; then
+                cp -f /usb2/$backupFile $VAR_CONF_DIR/$MODEL_ID"_"$SERIAL_NUMBER.cfg
+            else
+                /pfrm2.0/bin/usrKlite openssl enc -d -aes-128-cbc -in /usb2/$backupEncFile -out $VAR_CONF_DIR/$MODEL_ID"_"$SERIAL_NUMBER.cfg -K $key128 -iv $iv -nosalt
+            fi
+        fi
+    fi
+
+    # decript the ascii file if it is in encrypted form
+
+    if [ -e $VAR_CONF_DIR/$MODEL_ID"_"$SERIAL_NUMBER.cfg ]; then
+        cd $VAR_CONF_DIR;
+        mv $MODEL_ID"_"$SERIAL_NUMBER.cfg teamf1.cfg.ascii;
+        tar -czf teamf1.cfg.ascii.tar.bz2 teamf1.cfg.ascii;
+        cp -rf teamf1.cfg.ascii.tar.bz2 /data/tmp/teamf1.cfg.ascii.tar.bz2;
+        cd -;
+    fi
+
+    #delete the temporary files 
+    rm -rf $VAR_CONF_DIR/*
+fi
+
+if [ -e "/data/tmp/teamf1.cfg.ascii.tar.bz2" ]; then
+    mkdir -p /tmp/data/
+    tar -xvzf /data/tmp/teamf1.cfg.ascii.tar.bz2 -C /tmp/data/
+    TAR_CORRUPT_CHECK=$?
+    if [ "$MODEL_ID_CONFIG" = "DSR-1000AC" ] || [ "$MODEL_ID_CONFIG" = "DSR-500AC" ]; then
+    if [ "$TAR_CORRUPT_CHECK" != "0" ]; then
+        echo Configuration File is corrupt, resetting it to factory reset
+        echo Loading default configurations...
+        rm -rf /data/tmp/teamf1.cfg.ascii.tar.bz2
+        FACTORY_DEFAULTS_FLAG=1
+    fi
+    fi
+    CONFIG_FILE="/tmp/data/teamf1.cfg.ascii"
+    if [ "$MODEL_ID_CONFIG" = "DSR-1000AC" ] || [ "$MODEL_ID_CONFIG" = "DSR-500AC" ]; then
+    version=`grep firmwareVerInt $CONFIG_FILE |cut -d '=' -f2`
+    else
+    version=`grep firmwareVer $CONFIG_FILE |cut -d '=' -f2`
+    fi
+    configVer=`echo $version | sed 's/.\(.*\)/\1/' | sed 's/\(.*\)./\1/'`
+    
+    MajorVersion=`echo $configVer | cut -d "." -f1`
+    MinorVersion=`echo $configVer | cut -d "B" -f1 | cut -d "." -f2`
+    buildCode=`echo $configVer | cut -d "B" -f2`
+    if [ "$MODEL_ID_CONFIG" = "DSR-1000AC" ] || [ "$MODEL_ID_CONFIG" = "DSR-500AC" ]; then
+        buildCode=`echo $buildCode | cut -d " " -f1`
+        buildCode=`echo $buildCode | cut -d "\"" -f1`
+    fi
+    
+    # We need to take back till 1.08B33 images only. For futher images will go
+    # this from upgrade.c
+    buildCodeCheck=33
+    device_name=`cat /pfrm2.0/var/device_name`
+
+    if [ "$device_name" == "DSR-250N" ] || [ "$device_name" == "DSR-250" ];then
+        buildCodeCheck=39
+    fi
+
+    if [ "$MODEL_ID_CONFIG" != "DSR-1000AC" ] && [ "$MODEL_ID_CONFIG" != "DSR-500AC" ]; then
+    if [ "$MajorVersion" -eq "01" ] && [ "$MinorVersion" -le "08" ]; then
+        if [ "$MinorVersion" -lt "08" ] || [ "$MinorVersion" -eq "08" -a "$buildCode" -le "$buildCodeCheck" ]; then
+            rm -rf /data/backup/
+            mkdir -p /data/backup/
+            cd /tmp/data
+            tar -czvf /data/backup/teamf1.cfg.ascii.$configVer.tar.bz2 teamf1.cfg.ascii
+            cd -
+        fi
+    fi
+    fi
+    echo Restoring configuration from persistant storage...
+    cp -f /tmp/data/teamf1.cfg.ascii  /tmp/teamf1.cfg.ascii
+    ls /tmp/
+    rm -rf /tmp/data/
+else
+    echo Loading default configurations...
+    FACTORY_DEFAULTS_FLAG=1 
+fi
+
+    # we changed definition for FLASH_CONFIG_FILE as "/data/tmp/teamf1.cfg.ascii
+    # but here it is expecting file from /tmp/teamf1.cfg.ascii.   
+    if [ "$RUNTIME_CONFIG_FILE" = "/tmp/teamf1.cfg.ascii" ]; then
+        FLASH_CONFIG_FILE=$RUNTIME_CONFIG_FILE
+    fi       
+    
+    #get configuration major version
+    configMajorVer1=`grep configMajorVer $FLASH_CONFIG_FILE |cut -d '=' -f2`
+    configMajorVer2=`grep configMajorVer $DEFAULT_CONFIG_FILE |cut -d'=' -f2`
+    
+    configMajorVer1_num=`grep configMajorVer $FLASH_CONFIG_FILE |cut -d '=' -f2 | cut -d '"' -f2`
+    configMajorVer2_num=`grep configMajorVer $DEFAULT_CONFIG_FILE |cut -d'=' -f2 | cut -d '"' -f2`
+
+    if [ -z $configMajorVer1 ]; then
+        configMajorVer1="0"
+    fi
+
+    if [ -z $configMajorVer2 ]; then
+        configMajorVer1="0"
+    fi
+
+    #fill database with settings
+    if [ -s $FLASH_CONFIG_FILE ]; then
+        if [ $RESTORE_ON_CONFIG_VERSION_MISMATCH ]; then
+            if [ $configMajorVer1 != $configMajorVer2 ]; then
+                echo "Configuration major version mismatch. flash:$configMajorVer1 firmware:$configMajorVer2"
+                $CONFIG_INSTALL_PATH/bin/lua $CONFIG_INSTALL_PATH/bin/configUpdate.lua $DB_FILENAME $DEFAULT_CONFIG_FILE $configMajorVer2 $configMajorVer1_num $configMajorVer2_num
+                $CONFIG_INSTALL_PATH/bin/lua $CONFIG_INSTALL_PATH/bin/configUpdate2.lua $DB_FILENAME $BOARD_CONFIG_FILE
+                # if there is still a mismatch, configUpdate.lua has failed .. 
+                configMajorVer1=`grep configMajorVer $FLASH_CONFIG_FILE |cut -d '=' -f2`
+                configMajorVer2=`grep configMajorVer $DEFAULT_CONFIG_FILE |cut -d'=' -f2`
+                if [ $configMajorVer1 != $configMajorVer2 ]; then
+                    cp $DEFAULT_CONFIG_FILE $FLASH_CONFIG_FILE
+                fi
+            fi
+        fi
+        echo "making database from system settings..."
+        if [ "$MODEL_ID_CONFIG" == "DSR-150N" ] || [ "$MODEL_ID_CONFIG" == "DSR-250N" ] || [ "$MODEL_ID_CONFIG" == "DSR-500N" ] || [ "$MODEL_ID_CONFIG" == "DSR-1000N" ]; then
+           echo "DOT11 CRON : Handling the cron issues for active time."
+           if [ -e "/pfrm2.0/bin/dot11CronHandler.lua" ]; then
+              echo "DOT11 CRON : Calling the cron handler."
+              $CONFIG_INSTALL_PATH/bin/lua $CONFIG_INSTALL_PATH/bin/dot11CronHandler.lua $DB_FILENAME $FLASH_CONFIG_FILE
+           fi
+        fi 
+        $CONFIG_INSTALL_PATH/bin/lua $CONFIG_INSTALL_PATH/bin/restoreDB.lua $DB_FILENAME $FLASH_CONFIG_FILE        
+    else
+        echo "no system settings to restore from...so restoring factory defaults..."
+        if [ -e $DEFAULT_CONFIG_FILE ]; then
+            cp $DEFAULT_CONFIG_FILE $FLASH_CONFIG_FILE 
+            if [ "$MODEL_ID_CONFIG" == "DSR-150N" ] || [ "$MODEL_ID_CONFIG" == "DSR-250N" ] || [ "$MODEL_ID_CONFIG" == "DSR-500N" ] || [ "$MODEL_ID_CONFIG" == "DSR-1000N" ]; then
+               echo "DOT11 CRON : Handling the cron issues for active time."
+               if [ -e "/pfrm2.0/bin/dot11CronHandler.lua" ]; then
+                  echo "DOT11 CRON : Calling the cron handler."
+                  $CONFIG_INSTALL_PATH/bin/lua $CONFIG_INSTALL_PATH/bin/dot11CronHandler.lua $DB_FILENAME $FLASH_CONFIG_FILE
+               fi
+            fi 
+            $CONFIG_INSTALL_PATH/bin/lua $CONFIG_INSTALL_PATH/bin/restoreDB.lua $DB_FILENAME $FLASH_CONFIG_FILE
+        else
+            echo "ooops..factory defaults doesn't exist! Not good." 
+        fi
+    fi
+    
+fi
+
+

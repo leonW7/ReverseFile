@@ -1,0 +1,210 @@
+<?lua
+require "teamf1lualib/profileConfig_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local profileConfig = require("com.teamf1.bl.wireless.profile")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, statusMessage
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, statusMessage, dot11ProfileTbl = profileConfig.wirelessProfileGet(configRowId, "edit")
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (statusMessage)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (statusMessage)
+	end
+    else
+        configRowId = "-1"
+        returnCode, statusMessage, dot11ProfileTbl = profileConfig.wirelessProfileGet(configRowId, "add")
+    end
+?>
+<div id="tf1_profilesDailogContent">
+    <div class="topBg">
+        <h1 data-localize="30055">Profile Configuration</h1>
+            <close>
+                <a href="#" id="btnClose" title="Close">X</a>
+            </close>
+    </div>
+    <div class="dialogMidArea">
+	<div class="configRow" id="tf1_txtProfName_div">
+            <label data-localize="12560">Profile Name</label>
+            <?lua if(cgi["configRowId"] ~= "-1") then?>
+	        <p>$| dot11ProfileTbl["dot11Profile.profileName"] |$</p>
+            <input type="hidden" name="dot11Profile.profileName" value="$| dot11ProfileTbl["dot11Profile.profileName"] |$">
+	    <?lua else ?>
+                <input type="text" maxlength="64" name="dot11Profile.profileName" value="$| dot11ProfileTbl["dot11Profile.profileName"] |$" id="tf1_txtProfName" onkeypress="return alphaNumericCheck (event, '')">
+	    <?lua end ?>
+        </div>			
+	<div class="break" id="break_txtProfName_div">&nbsp;</div>
+	<div class="configRow" id="tf1_txtSSID_div">
+	    <label data-localize="12918">SSID</label>
+	    <input type="text" maxlength="32" name="dot11Profile.ssid" value="$| dot11ProfileTbl["dot11Profile.ssid"] or '' |$" id="tf1_txtSSID" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck ('txtSSID', 1, 32,LANG_LOCALE['12920']);}"> <dl> [<span data-localize="11565">Length</span>: 1 -32]</dl>
+	</div>		
+	<div class="break" id="break_txtSSID_div">&nbsp;</div>	
+	<div class="configRow" id="tf1_broadcast_div">
+	    <label data-localize="10414">Broadcast SSID</label>
+	    <?lua 
+                if (dot11ProfileTbl["dot11Profile.broadcastSSID"] == "1") then
+                    statusStr="enable-disable-on"
+	            statusVar = "1"
+	        else
+	            statusStr="enable-disable-off"
+	            statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_broadcast"></a>
+            <input type="hidden" name="dot11Profile.broadcastSSID" value="$| statusVar |$">
+	</div>
+	<div class="break" id="break_broadcast_div">&nbsp;</div>
+	<div class="configRow" id="tf1_selSecurityOpt_div">
+	    <label data-localize="12792">Security</label>
+	    <select name="dot11Profile.security" id="tf1_selSecurityOpt" onchange="profileSecurityCheck ()">
+		<option data-localize="30056" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.security"] == "OPEN") |$ value="OPEN">OPEN</option>
+		<option data-localize="13362" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.security"] == "WEP") |$ value="WEP">WEP</option>
+		<!-- security mode options change for wifi logo certification -->
+		<!-- <option data-localize="13420" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.security"] == "WPA") |$ value="WPA">WPA</option> -->
+		<option data-localize="13430" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.security"] == "WPA2") |$ value="WPA2">WPA2</option>
+		<option data-localize="30444" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.security"] == "WPA+WPA2") |$ value="WPA+WPA2">WPA+WPA2</option>
+	    </select>
+	</div>			
+	<div class="break" id="break_selSecurityOpt_div">&nbsp;</div>
+	<div class="configRow" id="tf1_selEncType_div">
+	    <label data-localize="10916">Encryption</label>
+	    <select name="dot11Profile.pairwiseCiphers" id="tf1_selEncType">
+		<option data-localize="13103" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.pairwiseCiphers"] == "TKIP") |$ value="TKIP">TKIP</option>
+		<option data-localize="30057" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.pairwiseCiphers"] == "CCMP") |$ value="CCMP">CCMP</option>
+		<option data-localize="30445" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.pairwiseCiphers"] == "TKIP+CCMP") |$ value="TKIP+CCMP">TKIP+CCMP</option>
+	    </select>
+	</div>			
+	<div class="break" id="break_selEncType_div">&nbsp;</div>
+	<div class="configRow" id="tf1_selAuthType_div">
+	    <label data-localize="13449">Authentication</label>
+	    <select name="dot11Profile.authMethods" id="tf1_selAuthType" onchange="AuthTypeCheck ()">
+            	<option data-localize="30058" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.authMethods"] == "PSK") |$ value="PSK">PSK</option>
+            	<option data-localize="30059" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.authMethods"] == "RADIUS") |$ value="RADIUS">RADIUS</option>
+            	<option data-localize="30446" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.authMethods"] == "PSK+RADIUS") |$ value="PSK+RADIUS">PSK+RADIUS</option>
+            </select>
+	</div>
+	<div class="break" id="break_selAuthType_div">&nbsp;</div>
+	<div class="configRow" id="tf1_txtWPAPasswd_div">
+	    <label data-localize="30060">WPA Password</label>
+	    <input type="password" maxlength="63" name="dot11Profile.pskPassAscii" value="$| dot11ProfileTbl["dot11Profile.pskPassAscii"] or "" |$" id="tf1_txtWPAPasswd" onkeypress ="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }">
+	</div>
+	<div class="break" id="break_txtWPAPasswd_div">&nbsp;</div>
+	<?lua if (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then ?>
+    <div class="configRow" id="tf1_enablemfp_div">
+	    <label>Protect Management Frame</label>
+	    <?lua 
+                if (dot11ProfileTbl["dot11Profile.preAuthStatus"] == "128" or dot11ProfileTbl["dot11Profile.preAuthStatus"] == "192") then
+                    statusStr="enable-disable-on"
+	            statusVar = "1"
+	        else
+	            statusStr="enable-disable-off"
+	            statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enablemfp" ></a>
+            <input type="hidden" name="dot11Profile.mfpEnabled" value="$| statusVar |$">
+	</div>
+        <div class="break" id="break_enablemfp_div">&nbsp;</div>
+        <div class="configRow" id="tf1_forcemfp_div">
+	    <label>Force PMF</label>
+	    <?lua 
+                if (dot11ProfileTbl["dot11Profile.preAuthStatus"] == "192") then
+                    statusStr="enable-disable-on"
+	            statusVar = "1"
+	        else
+	            statusStr="enable-disable-off"
+	            statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_forcemfp"></a>
+            <input type="hidden" name="dot11Profile.forcePMF" value="$| statusVar |$">
+	</div>
+	<div class="break" id="break_forcemfp_div">&nbsp;</div>
+	<?lua end ?>
+	<div class="configRow" id="tf1_enablePreAuth_div">
+	    <label data-localize="30061">Enable Pre-Authentication</label>
+	    <?lua 
+                if (dot11ProfileTbl["dot11Profile.preAuthStatus"] == "1") then
+                    statusStr="enable-disable-on"
+	            statusVar = "1"
+	        else
+	            statusStr="enable-disable-off"
+	            statusVar = "0"
+                end
+            ?>
+            <a class="$| statusStr |$" alt="" id="tf1_enablePreAuth"></a>
+            <input type="hidden" name="dot11Profile.preAuthStatus" value="$| statusVar |$">
+	</div>
+	<div class="break" id="break_enablePreAuth_div">&nbsp;</div>
+	<div id="tf1_tblWEP_div">
+	    <h2 data-localize="30062">WEP Index and Keys</h2>
+	        <div class="configRow" id="tf1_selWEPAuthType_div">
+		    <label data-localize="13449">Authentication</label>
+		    <select size="1" name="dot11Profile.wepAuth" id="tf1_selWEPAuthType">
+            	        <option data-localize="11820" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.wepAuth"] == "Open") |$ value="Open">Open System</option>
+                        <option data-localize="12851" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.wepAuth"] == "Shared") |$ value="Shared">Shared Key</option>
+                    </select>
+		</div>
+		<div class="break" id="break_selWEPAuthType_div">&nbsp;</div>
+		<div class="configRow" id="tf1_selWepEncrMethod_div">
+		    <label data-localize="10916">Encryption</label>
+		    <select name="dot11Profile.groupCipher" id="tf1_selWepEncrMethod" onchange="wepKeyLenSet ()">
+		        <option data-localize="30063" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.groupCipher"] == "64") |$ value="64">64 bit WEP</option>
+                        <option data-localize="30064" $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.groupCipher"] == "128") |$ value="128">128 bit WEP</option>
+                    </select>
+		</div>
+		<div class="break" id="break_selWepEncrMethod_div">&nbsp;</div>
+		<div class="configRow" id="tf1_txtWepPsk_div">
+		    <label data-localize="30065">WEP Passphrase</label>
+		    <input type="text" name="dot11Profile.pskPassHex" value="$| dot11ProfileTbl["dot11Profile.pskPassHex"] or "" |$" maxlength="32" id="tf1_txtWepPsk">
+		    <div>
+		        <input data-localize="30066" type="button" class="btnSubmit" value="Generate Key" title="Generate Key" onClick="generateWepKeys ()">
+		    </div>
+		</div>
+		<div class="break" id="break_txtWepPsk_div">&nbsp;</div>
+		<div class="configRow" id="tf1_rdbWepKey1_div">
+            <label><span data-localize="13364">WEP Key</span> 1</label>
+		    <p><input type="radio" name="dot11Profile.defWepkeyIdx" $| web.radioSelected(dot11ProfileTbl["dot11Profile.defWepkeyIdx"] == "0") |$ value="0" id="tf1_rdbWepKey1" onclick="wepKeyIdCheck ();"></p>
+		    <input type="text" maxlength="32" class="" name="dot11Profile.wepkey0" value="$| dot11ProfileTbl["dot11Profile.wepkey0"] or "" |$" id="tf1_txtWepKey1">
+		</div>
+		<div class="break" id="break_rdbWepKey1_div">&nbsp;</div>
+		<div class="configRow" id="tf1_rdbWepKey2_div">
+		    <label><span data-localize="13364">WEP Key</span> 2</label>
+		    <p><input type="radio" name="dot11Profile.defWepkeyIdx" $| web.radioSelected(dot11ProfileTbl["dot11Profile.defWepkeyIdx"] == "1") |$ value="1" id="tf1_rdbWepKey2" onclick="wepKeyIdCheck ();"></p>
+		    <input type="text" maxlength="32" class="" name="dot11Profile.wepkey1" value="$| dot11ProfileTbl["dot11Profile.wepkey1"] or "" |$" id="tf1_txtWepKey2">
+		</div>
+		<div class="break" id="break_rdbWepKey2_div">&nbsp;</div>
+		<div class="configRow" id="tf1_rdbWepKey3_div">
+		    <label><span data-localize="13364">WEP Key</span> 3</label>
+		    <p><input type="radio" name="dot11Profile.defWepkeyIdx" $| web.radioSelected(dot11ProfileTbl["dot11Profile.defWepkeyIdx"] == "2") |$ value="2" id="tf1_rdbWepKey3" onclick="wepKeyIdCheck ();"></p>
+		    <input type="text" maxlength="32" class="" name="dot11Profile.wepkey2" value="$| dot11ProfileTbl["dot11Profile.wepkey2"] or "" |$" id="tf1_txtWepKey3">
+		</div>
+		<div class="break" id="break_rdbWepKey3_div">&nbsp;</div>
+		<div class="configRow" id="tf1_rdbWepKey4_div">
+            <label><span data-localize="13364">WEP Key</span> 4</label>
+		    <p><input type="radio" name="dot11Profile.defWepkeyIdx" $| web.radioSelected(dot11ProfileTbl["dot11Profile.defWepkeyIdx"] == "3") |$ value="3" id="tf1_rdbWepKey4" onclick="wepKeyIdCheck ();"></p>
+		    <input type="text" maxlength="32" class="" name="dot11Profile.wepkey3" value="$| dot11ProfileTbl["dot11Profile.wepkey3"] or "" |$" id="tf1_txtWepKey4">
+		</div>
+		<div class="break" id="break_rdbWepKey4_div">&nbsp;</div>	
+	    </div>
+               <?lua if ("DSR-1000AC_Ax" == PRODUCT_ID) then ?>
+		<div class="configRow">
+		<label>Radio Mode</label>
+		<select id="tf1_radiosMode" name ="dot11Profile.radioMode">
+		<option $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.radioMode"] == "b") |$ value="b">2.4 Ghz</option>
+	    <option $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.radioMode"] == "a") |$ value="a">5 Ghz</option>
+	     <option $| web.dropdownSelected(dot11ProfileTbl["dot11Profile.radioMode"] == "dual") |$ value="dual">Both</option>
+		</select>		 
+		</div>
+               <?lua end?>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.config.profiles.profiles.$| configRowId |$" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="return profileConfValidate('tf1_frmProfiles');">
+    </div>
+<?lua end ?>

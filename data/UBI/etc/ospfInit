@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# ospfInit - initialization script
+#
+# Copyright (c) 2011, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,25Mar11,nag written
+
+
+if [ "$INCLUDE_OSPF" = "y" ]; then
+
+mkdir -p /var/run
+
+fi
+

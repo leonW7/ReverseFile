@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+    http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+    <!--===================================================-->
+    <COMMAND name="show Radius-Settings"
+            help="Display radius configuration.
+
+A RADIUS server maintains a database of user accounts used in larger
+environments. If a RADIUS server already exists, it can be used for
+authenticating users that want to connect to the wireless network
+provided by this device. When multiple RADIUS servers are configured
+they are accessed in the same order as in the table. If first RADIUS
+server is not accessible, then system tries to contact the next RADIUS
+server.
+
+Configured Radius Servers
+This table displays the list of all configured RADIUS servers. If the
+optional argument <ServerIP> is specified, detailed configuration of
+the RADIUS server is displayed.
+
+<Server IP>: IP address of RADIUS authentication server
+    
+<Accounting Server IP>: IP address of RADIUS accounting server
+
+<Server Port>: RADIUS authentication server port to send the RADIUS
+messages.
+
+<Timeout>: The time (in seconds) the device waits for a response from
+the RADIUS server
+
+<Retries>: The number of tries the router will make to the RADIUS
+server before giving up.
+
+<Secret>: RADIUS server secret. This field is only displayed if the
+argument <ServerIP> is specified.
+
+">
+	    <ACTION>lua clishCmdExec(radiusGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show Radius-serverCheck"
+            help="Display status of Radius servers.">
+	    <ACTION>lua clishCmdExec(serverStatusGetRadius, "Radius", "radiusClient")</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+        <COMMAND name="show Radius-Accounting-Server-Settings"
+            help="Display radius accounting server configuration.
+
+A RADIUS server maintains a database of user accounts used in larger
+environments. If a RADIUS accounting server already exists, it can be used for
+accounting traffic in a session maintained by this device.
+When multiple RADIUS servers are configured
+they are accessed in the same order as in the table. If first RADIUS accounting
+server is not accessible, then system tries to contact the next RADIUS accounting
+server.
+
+Configured Radius Accounting Servers
+This table displays the list of all configured RADIUS accounting servers. 
+    
+<Accounting Server IP>: IP address of RADIUS accounting server
+
+<Server Port>: RADIUS accounting server port to send the RADIUS
+messages.
+
+<Secret>: RADIUS server secret.
+
+" check_supported="Y">
+	    <ACTION>lua clishCmdExec(radiusAccGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+     <COMMAND name="show serviceRoute" 
+        help="System services route commands."/>
+
+    <!--=======================================================-->
+    <COMMAND name="show serviceRoute all"
+        help="Display all serviceRoutes on system">
+        <ACTION>lua clishCmdExec (servicesRouteGetAll) </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

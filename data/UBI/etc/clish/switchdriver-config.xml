@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="system-switch-power-config" prompt="system-config[power-config> "> 
+    <COMMAND name="save" help="Save powerMode configuration changes.">
+	     <ACTION>lua clishCfgObjExec("powerMode")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save power mode configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("powerMode")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back content Filtering ower mode configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="link_status"
+             help="Enable/Disable Link status">
+             <PARAM name="link_status"
+                    help="Enable/Disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("powerMode", "PowerModeConf.PowerMode", "${link_status}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="cable_length"
+             help="enable/disable Cable Length">
+             <PARAM name="length"
+                    help="enable/disable "
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("powerMode", "PowerModeConf.LengthMode", "${length}")                   </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+
+<VIEW name="system-switch-jumbo-config" prompt="system-config[jumbo-config> "> 
+    <COMMAND name="save" help="Save jumbo frame  configuration changes.">
+	     <ACTION>lua clishCfgObjExec("jumboFrame")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save jumbo frame configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("jumboFrame")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back jumbo frame configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="jumbo_frame"
+             help="Enable/Disable jumbo frame">
+             <PARAM name="jumbo_frame"
+                    help="Enable/Disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("jumboFrame", "PowerModeConf.JumboFrameEnable", "${jumbo_frame}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+    <COMMAND name="system switch_settings" help="switch setting setup."/>
+<!--=======================================================-->
+    <COMMAND name="system switch_settings power_saving" help="power saving setup."/>
+<!--=======================================================-->
+    <COMMAND name="system switch_settings jumbo_frame" check_supported="Y" help="jumbo frame setup."/>
+<!--=======================================================-->
+    <COMMAND name="system switch_settings power_saving configure"
+             help="power saving  configuration mode."
+             view="system-switch-power-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("powerMode", powerModeCfgInit, powerModeCfgSave,powerModeCfgInputVal)
+             </ACTION>
+     </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="system switch_settings jumbo_frame configure"
+             help="jumbo frame configuration mode."
+             view="system-switch-jumbo-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("jumboFrame", jumboFrameCfgInit,jumboFrameCfgSave,jumboFrameCfgInputVal)
+             </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

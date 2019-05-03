@@ -1,0 +1,116 @@
+#!/bin/sh
+#
+# sslvpnInit - initialization script for sslvpn
+#
+# Copyright (c) 2014, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01g,22jul2014,pks added changes for spr#45051 for DSR AC project
+# 01f,15may2014, as added changes related to DWC-1000
+# 01e,08jun2012,bhj fixed 32436
+# 01d,21mar2012,bhj removed ifconfig commands before firebase initialization
+# 01c,11may2011,sen updated ifconfig command while resetting ip on interface
+# 01b,12feb2010,nlm integratred EasyAccess-1.7.3
+# 01a,04jun2008,til written
+#
+
+
+if [ "$INCLUDE_SSLVPN" = "y" ]; then
+ 
+mkdir -p /var/sslvpn/var/cert/
+
+# ssl vpn initialization
+echo -n "SSLVPN Intialization .......  "
+
+# crypto device
+mknod /dev/octcrypto c 125 0
+
+# inserting modules
+SSLVPN_HDLC_MODULE=`lsmod| grep n_hdlc | awk '{print $1}'`
+# inserting modules
+if [ -z $SSLVPN_HDLC_MODULE ]; then
+    [ -f $PFRM_SSLVPN_MODULES_DIR/n_hdlc.ko ]&&{ insmod $PFRM_SSLVPN_MODULES_DIR/n_hdlc.ko; }
+fi
+[ -f $PFRM_SSLVPN_MODULES_DIR/cavmodexp.ko ]&&{ insmod $PFRM_SSLVPN_MODULES_DIR/cavmodexp.ko; };
+
+# creating empty openssl.cnf file
+mkdir -p /etc/ssl
+cat /dev/null > /etc/ssl/openssl.cnf
+
+# Setting up var directory
+mkdir -p /var/sslvpn/var/conf
+mkdir -p /var/log/sslvpn
+mkdir -p /var/sslvpn/uiaddon
+mkdir -p /var/sslvpn/www/conf
+ln -s -f /var/certs/self/default/https.crt /var/sslvpn/var/cert/server.crt
+ln -s -f /var/certs/self/default/https.key /var/sslvpn/var/cert/server.key
+if [ -f /var/sslvpn/var/conf/smm.conf ]; then
+    # Using ssl vpn smm conf
+    echo ""
+else
+    # Using default ssl vpn smm conf
+    cp $PFRM_SSLVPN_DIR/var.default/conf/smm.conf /var/sslvpn/var/conf/; 
+fi
+if [ -f /var/sslvpn/var/conf/firebase.conf ]; then
+    # Using ssl vpn firebase conf
+    echo ""
+else
+    # Using default ssl vpn firebase conf
+    cp $PFRM_SSLVPN_DIR/var.default/conf/firebase.conf /var/sslvpn/var/conf/; 
+fi
+cp $PFRM_SSLVPN_DIR/var.default/conf/firebase.default /var/sslvpn/var/conf/; 
+cp $PFRM_SSLVPN_DIR/var.default/conf/smm.default /var/sslvpn/var/conf/; 
+ln -sf $PFRM_SSLVPN_DIR/var.default/httpd.sh /var/sslvpn/var/httpdKeepAlive.sh;
+mkdir -p $PFRM_SSLVPN_DIR/var/locks/ppp
+mkdir -p $PFRM_SSLVPN_DIR/var/msg
+mkdir -p $PFRM_SSLVPN_DIR/var/logs
+
+mkdir -p /etc/sslvpn-ppp
+ln -sf $PFRM_SSLVPN_DIR/bin/ip-down.local /etc/sslvpn-ppp/ip-down
+ln -sf $PFRM_SSLVPN_DIR/bin/ip-down.local.sh /etc/sslvpn-ppp/ip-down.local.sh
+ln -sf $PFRM_SSLVPN_DIR/bin/ip-up.local /etc/sslvpn-ppp/ip-up
+ln -sf $PFRM_DIR/bin/iptables /sbin/iptables 
+ln -sf $PFRM_SSLVPN_DIR/bin/ip6-down.local /etc/sslvpn-ppp/ipv6-down
+ln -sf $PFRM_SSLVPN_DIR/bin/ip6-down.local.sh /etc/sslvpn-ppp/ip6-down.local.sh
+ln -sf $PFRM_SSLVPN_DIR/bin/ip6-up.local /etc/sslvpn-ppp/ipv6-up
+ln -sf $PFRM_DIR/bin/ip6tables /sbin/ip6tables 
+
+# copying files to /etc
+cp $PFRM_DIR/etc/mime.types /etc/
+
+# Starting firebase
+$PFRM_SSLVPN_DIR/bin/firebase -d
+
+# Starting smm
+$PFRM_SSLVPN_DIR/bin/smm -d
+echo "Done"
+
+echo -n "Webserver Starting...."
+$PFRM_SSLVPN_DIR/bin/httpd
+/var/sslvpn/var/httpdKeepAlive.sh &
+echo "Done"
+
+mkdir -p /flash/tmp/caFiles
+
+echo -n "Copying Default Login Images..."
+mkdir -p /flash/tmp/login
+rm -rf /flash/tmp/login/image0.gif
+rm -rf /flash/tmp/login/imageNew.gif
+
+if [ $MODEL_ID == "DWC-1000" ] || [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000N" ]  || [ $MODEL_ID == "DSR-500" ]  || [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-250" ] || [ $MODEL_ID == "DSR-250N" ] || [ $MODEL_ID == "DSR-150" ] || [ $MODEL_ID == "DSR-150N" ] || [ $MODEL_ID == "DSR-1000AC" ] || [ $MODEL_ID == "DSR-500AC" ]; then
+ cp /pfrm2.0/var/www/images/headerBg.gif /flash/tmp/login/image0.gif
+else
+ cp /pfrm2.0/var/www/images/logo.gif /flash/tmp/login/image0.gif
+fi
+
+cp /pfrm2.0/var/www/images/_blank.gif /flash/tmp/login/imageNew.gif
+
+mkdir -p /flash/tmp/customPortal
+rm -rf /flash/tmp/customPortal/image0.gif
+rm -rf /flash/tmp/customPortal/imageNew.gif
+cp /pfrm2.0/var/www/images/logo.gif /flash/tmp/customPortal/image0.gif
+cp /pfrm2.0/var/www/images/_blank.gif /flash/tmp/customPortal/imageNew.gif
+
+fi # if include_sslvpn == y
+

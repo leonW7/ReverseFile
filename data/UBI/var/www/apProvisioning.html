@@ -1,0 +1,287 @@
+<?lua
+require "teamf1lualib/apProvisioning_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "apProvisioning"
+
+local approvisioning = require("com.teamf1.bl.wlan.apProvisioning")
+local returnCodes = require("com.teamf1.core.returnCodes")
+local errorMap    = require ("com.teamf1.core.errorMap")
+
+local configRowId 
+local configRow = {}
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+        inputTable["apProvisioning.apMac"] = RowId
+        local errorMsg = 
+            approvisioning.apProvisioningSet(inputTable)
+          if (errorMsg ~= returnCodes.SUCCESS) then
+              statusErrorMessage = errorMap.errorStringGet (errorMsg)
+          elseif(errorMsg == returnCodes.SUCCESS)then
+               statusSuccessMessage = errorMap.errorStringGet (errorMsg)
+          end
+        web.goToPage(NextPage, true, true)
+elseif(ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if(type(cgi["apProvisioning.checkbox"]) == "string") then
+        --local inputTable = web.cgiToLuaTable (cgi)
+        local returnCode = 
+            approvisioning.apProvisioningSectionDelete(cgi["apProvisioning.checkbox"])
+            if ( returnCode ~= returnCodes.SUCCESS) then
+               statusErrorMessage = errorMap.errorStringGet (returnCode)
+            elseif(returnCode == returnCodes.SUCCESS)then
+               statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            end
+            web.goToPage(NextPage, true, true)
+    elseif(type(cgi["apProvisioning.checkbox"]) == "table") then
+        local returnCode = approvisioning.apProvisioningSectionDeleteAll()
+        if ( returnCode ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        elseif(returnCode == returnCodes.SUCCESS)then
+               statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            end 
+        web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "provision") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    local returnCode = 
+            approvisioning.doApProvisioning(cgi["apProvisioning.checkbox"])
+             if ( returnCode ~= returnCodes.SUCCESS) then
+                 statusErrorMessage = errorMap.errorStringGet (returnCode)
+            elseif(returnCode == returnCodes.SUCCESS)then
+                 statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            end
+
+            web.goToPage(NextPage, true, true)
+else   
+    local returnCode
+    returnCode, configRow = approvisioning.apProvisioningSectionGet()
+    if (configRow ~=0) then
+    if ( returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body onload="onloadCall();">
+		<!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>				
+		<form action="platform.cgi" method="post" name="tf1_frmApProvisioning" id="tf1_frmApProvisioning">		
+			<input type="hidden" name="thispage" id="thispage" value="apProvisioning.html">			
+			<div id="tf1_dialog" class="configDialog"></div>		
+		</form>		
+		<!-- Section for Pop up dialog ends -->
+		
+		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+			<ul>
+				<li>
+					<input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit provision');"/>
+					&nbsp;Select All
+				</li>
+				<li id="edit">
+					Edit
+				</li>
+				<li id="provision">
+					AP Provision
+				</li>
+				<li id="delete">
+					Delete
+				</li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu2");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgInfo">
+					<p>Status Message Place Holder.</p>
+					</div>
+					-->
+                                        <?lua if ( statusErrorMessage ~= returnCodes.NIL) then
+                                          ?>
+                                         <div class="msgError">
+                                             <p>$| statusErrorMessage |$</p>
+                                         </div>
+                                         <?lua else if(statusSuccessMessage ~= returnCodes.NIL) then
+                                         ?>
+                                        <div class="msgSuccess">
+                                              <p>$| statusSuccessMessage |$</p>
+                                        </div>
+                                        <?lua end end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li >
+									<a href="?page=validAps.html"> Valid APs</a>
+								</li>
+								<li >
+									<a href="?page=manageValidAps.html"> Managed APs</a>
+								</li>
+
+								<li class="current">
+									<a href="?page=apProvisioning.html">AP Provisioning</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$
+						</p>
+					</div>
+					<h1>AP Provisioning Status List</h1>
+					<div class="CLR">
+						<div class="demo_jui" id="tf1_apProvisioning">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th> MAC Address </th>
+										<th> IP Address </th>
+										<th> Primary IP </th>
+										<th> Backup IP </th>
+										<th> New IP </th>
+										<th> New Backup IP </th>
+										<th> Status </th>
+									</tr>
+								</thead>
+                                                                <?lua
+                                                                    local row = {}
+                                                                   if (configRow ~= nil) then
+                                                                    for k, v in pairs(configRow) do 
+                                                                        row = configRow[k]
+                                                                ?>
+								<tr class="gradeA" id="apProvisioning$| row["apMac"] |$">
+									<td>$| row["apMac"] |$</td>
+									<td>$| row["apIp"] |$</td>
+									<td>$| row["primaryIp"] |$</td>
+									<td>$| row["backupIp"] |$</td>
+									<td>$| row["newPrimaryIp"] |$</td>
+									<td>$| row["newBackupIp"] |$</td>
+									<td>$| row["status"] |$</td>
+								</tr>
+                                                              <?lua end ?>
+                                                            <?lua end ?>
+							</table>
+						</div>
+					</div>
+					<div class="break2">
+						&nbsp;
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/macValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/apProvisioning.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#tf1_apProvisioning .gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'editMenu' : function(t, e, rowId) {
+							openForm('button.edit.apProvisioning.apProvisioning',rowId,'tf1_dialog','apProvisioning','apProvisioningForm.html', 'tf1_apProvisioningDailogContent','');
+						},
+						'provisionMenu' : function(t, e, rowId) {
+                                                        changeRowStauts('provision',
+                                            'tf1_frmApProvisioning',
+                                            rowId, 'tf1_dialog',
+                                            'apProvisioning',
+                                            'apProvisioning',
+                                            'apProvisioning');
+						},
+                        'deleteMenu' : function(t, e, rowId) {
+			
+                       
+							deleteRows('button.delete.apProvisioning.apProvisioning', 'tf1_frmApProvisioning', rowId, 'optionSelectAll', 'tf1_dialog', 'apProvisioning', 'apProvisioning');
+						}
+					}
+
+				});
+
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+
+				dataRightClick(true);
+				$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+			   	});
+
+			});
+                        function deleteRows( buttonPrefix, frmId, rowId, selBoxId, dialogId, rowPrefix, checkBoxPrefix) {
+                                             $("#"+dialogId).html('');
+                                             if ( $("#"+selBoxId+"Menu").is(':checked') ) {
+              var delConf = confirm('Are you sure you want to delete all unmanaged AP Provisioning Entries');
+	      if (delConf == false){return false;}
+	      var childrenRows = $(".gradeA").parent().children('tr');						
+       						
+                                                for (var i = 0; i < childrenRows.length; i++) {
+                                                     var thisElement = $(childrenRows[i]);
+                                                     thisRowId = thisElement.attr('id');
+           
+                                                     thisRowId = thisRowId.replace(rowPrefix,"");
+                                                     $("#"+dialogId).append('<input type="hidden" name="'+checkBoxPrefix+'.checkbox" value="'+thisRowId+'">');
+                                             }
+                                             } else {
+                                                 rowId = rowId.replace(rowPrefix,"");
+
+                                                 if (rowId.charAt(0) == "*"){
+                                                 alert("Only Unmanaged APs can be deleted.");
+                                                 return false;
+                                                 }
+
+				 var delConf = confirm('Are you sure you want to delete unmanaged AP Provisioning Entry');
+	      if (delConf == false){return false;}
+                               $("#"+dialogId).append('<input type="hidden" name="'+checkBoxPrefix+'.checkbox" value="'+rowId+'">');
+                       }
+   
+                       $("#"+dialogId).append('<input type="hidden" name="'+buttonPrefix+'" value="delete">');
+   
+                       $("#"+frmId).submit();
+}
+		</script>
+	</body>

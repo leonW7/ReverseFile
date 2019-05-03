@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# management - initialization script for management component
+#
+# Copyright (c) 2013, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,27Apr13,uk  written.
+#
+# DESCRIPTION
+# Management component initialization script
+
+if [ "$INCLUDE_MGMT_COMPONENT" = "y" ]; then
+    echo -n "Initializing the Management component"
+    /pfrm2.0/bin/lua /pfrm2.0/share/lua/5.1/teamf1lualib/management_string_map.lua
+    echo "Done"
+fi
+
+

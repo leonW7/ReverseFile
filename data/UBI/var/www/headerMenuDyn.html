@@ -1,0 +1,655 @@
+<?lua
+local LANG_LOCALE =
+"13540,13541,13542,13544,30619,14378,10290,11867,30007,30006,13318,13321,11522,50160,30010,10185,13431,11764,10734,10458,10085,10092,10085,11191,12452,11183,10852,12769,10399,10653,12873,11884,10744,11674,12735,12647,13533,11629,30400,11653,10180,11195,10985,11623,13356,11601,12671,13627,10526,12949,12492,12686,30437,11511,12518,12998,10013,11478,12572,12996,10782,13124,30008,13281,12484,11525,10184,13416,30005,12563,10724,10212,13218,13389,30004,11615,30001,10937,11545,13445,14232,13004,10659,13039,13446,11061,10040,12603,11761,11541,11515,30487,11155,13202,11486,13272,11196,13307,12736,11398,10790,12733,12714,11863,11408,11455,12514,12511,11508,11504,12929,12932,11822,11828,11077,12792,12992,10850,11007,11009,13044,10666,11012,10348,12887,11614,13040,12667,12879,12503,12837,11570,13217,12841,30012,10206,30011,10305,11416,11470,13447,11427,13160,10736,10470,10859,13379,10728,13386,30177,30178,30181,12665,14133,11010,10842,30635,50021,50022,30501,50055,50070,50042,12608,50076"
+LANG_LOCALE = db.getString (LANG_LOCALE)
+
+?>
+
+<div align="center">
+	<div class="midWidth">
+		<div class="logo FL">
+			$| LANG_LOCALE['30001'] |$ - $| UNIT_NAME |$</div>
+		<div class="FR headerRight">
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tr>
+                    <td valign="top">
+                        
+					<h5 class="FR" id="tf1_langDisplay"></h5>
+					<h4 class="FR divider">$| LANG_LOCALE['11545'] |$:</h4>
+					
+					<h5 class="FR" id="tf1_loginUserNameGroup"></h5>
+					<h4 class="FR">$| LANG_LOCALE['11615'] |$:</h4>					
+					</td>
+					<td rowspan="2" valign="top">
+					<a class="btnLogout" href="?page=index.html">
+					<div>
+						<div>
+									<icon>
+										$| LANG_LOCALE['13445'] |$
+									</icon>
+								</div>
+					</div>
+					</a></td>
+				</tr>
+				<tr>
+					<td valign="top">
+					<h5 class="FR" id="tf1_firmwareVersion"></h5>
+					<h4 class="FR divider">$| LANG_LOCALE['11010'] |$:</h4>
+					<h5 class="FR" id="tf1_serialNum"></h5>
+					<h4 class="FR">$| LANG_LOCALE['30004'] |$:</h4>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" valign="top">
+					<div id="tf1MenuSearch" class="FR systemSearch">
+                        <input id="menuSearch" onfocus="watermark('menuSearch','$| LANG_LOCALE['14232'] |$');" onblur="watermark('menuSearch','$| LANG_LOCALE['14232'] |$');" value="$| LANG_LOCALE['14232'] |$" />
+                        <input type="hidden" id="tf1_hidWatermark" value="$| LANG_LOCALE['14232'] |$">
+						<div id="menuList">
+						</div>
+					</div>
+					<div class="FR">
+						<a class="wizard" href="#">$| LANG_LOCALE['13389'] |$</a>
+					</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="midWidth menuBg">
+			<div>
+				<div>
+					<div align="center">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+								 <ul id="menu">
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu1" class="mMenu">
+												<a class="subMenu1" href="#">$| LANG_LOCALE['13004'] |$</a>
+												<div class="subMenu1List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>$| LANG_LOCALE['10659'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=dashboard.html">$| LANG_LOCALE['10659'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['13039'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=deviceInfo.html">$| LANG_LOCALE['10724'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=logInfo.html">$| LANG_LOCALE['10212'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=usbStatus.html">$| LANG_LOCALE['13218'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['11764'] |$</h3>
+
+															<ul>
+																<li>
+																	<a href="?page=dhcpClientInfoLan.html">$| LANG_LOCALE['10734'] |$</a>
+																</li>
+       <?lua if (UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+																<li>
+																	<a href="?page=captivePortalSessions.html">$| LANG_LOCALE['10458'] |$</a>
+																</li>
+       <?lua end?>
+																<li>
+																	<a href="?page=activeSessions.html">$| LANG_LOCALE['10085'] |$</a>
+                                                                </li>
+                                                                <li>
+																<a href="?page=activeVpns.html">$| LANG_LOCALE['10092'] |$</a>
+                                                                </li>
+																<li>
+																	<a href="?page=interfaces.html">$| LANG_LOCALE['11191'] |$</a>
+																</li>
+                                                            	<?lua if (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then ?>
+																<li>
+																	<a href="?page=wirelessClients.html">$| LANG_LOCALE['13379'] |$</a>
+																</li>
+ 																<li>
+																	<a href="?page=wirelessStatistics.html">$| LANG_LOCALE['13386'] |$</a>
+																</li>
+                                                                <?lua end ?>
+																<li>
+																	<a href="?page=deviceStatistics.html">$| LANG_LOCALE['10728'] |$</a>
+																</li>
+                                                                <li>
+																	<a href="?page=lanClients.html">$| LANG_LOCALE['11522'] |$</a>
+																</li>
+                                                                <li>
+                                                                    <a href="?page=sessionLimitStatus.html">$| LANG_LOCALE['50160'] |$</a>
+                                                                </li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<?lua if (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then ?>
+											<li id="mainMenu2" class="mMenu">
+												<a class="subMenu2" href="#">$| LANG_LOCALE['13446'] |$</a>
+												<div class="subMenu2List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>$| LANG_LOCALE['11061'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=accessPoints.html">$| LANG_LOCALE['10040'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=profiles.html">$| LANG_LOCALE['12563'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=radioConfig.html">$| LANG_LOCALE['12603'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['10184'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=wmm.html">$| LANG_LOCALE['13416'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=wds.html">$| LANG_LOCALE['30005'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=advancedWireless.html">$| LANG_LOCALE['10185'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=wps.html">$| LANG_LOCALE['13431'] |$</a>
+																</li>
+																<!--li>
+																	<a href="?page=fbWiFi.html">$| LANG_LOCALE['30635'] |$</a>
+																</li-->
+															</ul>
+														</div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<?lua end ?>
+											<li id="mainMenu3"  class="mMenu">
+												<a class="subMenu3" href="#">$| LANG_LOCALE['11761'] |$</a>
+												<div class="subMenu3List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>$| LANG_LOCALE['11515'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=lanSettings.html">$| LANG_LOCALE['11541'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=lanDhcpReservedIps.html">$| LANG_LOCALE['11525'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=ipMacBinding.html">$| LANG_LOCALE['30487'] |$</a>
+																</li>
+	
+			   <li>
+				<a href="?page=igmpSetup.html">$| LANG_LOCALE['11155'] |$</a>
+   			   </li>
+																<li>
+																	<a href="?page=upnp.html">$| LANG_LOCALE['13202'] |$</a>
+																</li>
+                                                                
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['13272'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=vlanSettings.html">$| LANG_LOCALE['13281'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=portVlan.html">$| LANG_LOCALE['12484'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['11196'] |$</h3>
+															<ul>
+			<?lua
+				local wan1DispName
+				local wan2DispName
+				local ipv6WAN1DispName
+				wan1DispName = LANG_LOCALE['13318']
+				ipv6WAN1DispName = LANG_LOCALE['30177']
+				wan2DispName = LANG_LOCALE['13321']
+			?>
+			<li>
+																	<a href="?page=ipv4Wan1Settings.html">$|wan1DispName|$</a>
+																</li>
+		<li>	
+				    <a href="?page=ipv4Wan2DmzSetting.html">$|wan2DispName|$</a>
+																</li>
+		<?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+		<li>															<a href="?page=wan3Settings.html">$| LANG_LOCALE['30008'] |$</a>
+		</li>
+		<?lua end ?>
+ 		<li>
+			<a href="?page=wanMode.html">$| LANG_LOCALE['13307'] |$</a>
+		</li>
+		<li>
+                                                                    <a href="?page=simCardPin.html">$| LANG_LOCALE['50070'] |$</a>
+                                                               </li>
+                                                               <li>
+																	<a href="?page=routingMode.html">$| LANG_LOCALE['12736'] |$</a>
+																</li>
+ 																<li>
+																	<a href="?page=ipAliasing.html">$| LANG_LOCALE['11398'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=dmzSettings.html">$| LANG_LOCALE['10790'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=dmzDhcpReservedIps.html">$| LANG_LOCALE['10782'] |$</a>
+																</li>
+			   <li>
+				   <a href="?page=dynamicDnsWan1Settings.html">$| LANG_LOCALE['10842'] |$</a>
+			   </li>
+			   <li>
+				   <a href="?page=bandwidthProfiles.html">$| LANG_LOCALE['13124'] |$</a>
+			   </li>
+               <?lua if(UNIT_NAME ~= "DSR-150" and UNIT_NAME ~= "DSR-150N") then ?>
+               <li>
+					<a href="?page=jumboFrame.html">$| LANG_LOCALE['11486'] |$</a>
+			   </li>
+               <?lua end ?>
+			</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['12733'] |$</h3>
+															<ul>
+																<li>
+	           <a href="?page=staticRouting.html">$| LANG_LOCALE['12996'] |$</a>
+	       </li>
+		<?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+	       <li>
+																	<a href="?page=rip.html">$| LANG_LOCALE['12714'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=ospf.html">$| LANG_LOCALE['11863'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=protocolBinding.html">$| LANG_LOCALE['12572'] |$</a>
+		</li>
+		<?lua end ?>
+	</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['14133'] |$</h3>
+															<ul>
+	    <li>
+		<a href="?page=ipMode.html">$| LANG_LOCALE['11408'] |$</a>
+	    </li>
+	    <li>
+		<a href="?page=ipv6Wan1Settings.html">$|ipv6WAN1DispName|$</a>
+	    </li>
+	    <li>
+		<a href="?page=ipv6Wan2Settings.html">$| LANG_LOCALE['30181'] |$</a>
+	    </li>
+	    <li>
+		<a href="?page=ipv6StaticRouting.html">$| LANG_LOCALE['12998'] |$</a>
+	    </li>
+		<?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+	    <li>
+		<a href="?page=ospfV3.html">$| LANG_LOCALE['11867'] |$</a>
+	    </li>
+		<?lua end ?>
+	    <li>
+		<a href="?page=ipv6ToIpv4.html">$| LANG_LOCALE['10013'] |$</a>
+	    </li>
+	    <li>
+		<a href="?page=isatapTunnels.html">$| LANG_LOCALE['11478'] |$</a>
+	    </li>
+        <?lua if (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then ?>
+        <li>
+        <a href="?page=teredoTunnel.html">Tereod Tunnel</a>
+        </li>
+        <?lua end ?>
+	    <li>
+		<a href="?page=ipv6LanSettings.html">$| LANG_LOCALE['11455'] |$</a>
+	    </li>
+            <li>
+	        <a href="?page=ipv6TunnelsStatus.html">$| LANG_LOCALE['11470'] |$</a>
+	    </li>
+	</ul>
+														</div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu4"  class="mMenu">
+												<a class="subMenu4" href="#">$| LANG_LOCALE['13447'] |$</a>
+												<div class="subMenu4List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>$| LANG_LOCALE['11427'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=policies.html">$| LANG_LOCALE['12452'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=tunnelMode.html">$| LANG_LOCALE['13160'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=dhcpRange.html">$| LANG_LOCALE['10736'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=trustedCertificates.html">$| LANG_LOCALE['10470'] |$</a>
+																</li>
+															<li>
+																	<a href="?page=easyVpnSetup.html">$| LANG_LOCALE['10859'] |$</a>
+																</li>
+															<li>
+																	<a href="?page=oneToOneMapping.html">$| LANG_LOCALE['30010'] |$</a>
+																</li>
+														</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['12518'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=pptpServer.html">$| LANG_LOCALE['12514'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=pptpClient.html">$| LANG_LOCALE['12511'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=pptpActiveUsers.html">$| LANG_LOCALE['30501'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['11511'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=l2tpServer.html">$| LANG_LOCALE['11508'] |$</a>
+																</li>
+        <li>
+																	<a href="?page=l2tpClient.html">$| LANG_LOCALE['11504'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=l2tpActiveUsers.html">$| LANG_LOCALE['30437'] |$</a>
+																</li>
+															</ul>
+														</div>
+<?lua if(COUNTRY_CODE ~= "RU") then ?>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['12929'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=sslVpnServer.html">$| LANG_LOCALE['12949'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=sslVpnPortalLayouts.html">$| LANG_LOCALE['12492'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=sslVpnResources.html">$| LANG_LOCALE['12686'] |$ </a>
+																</li>
+																<li>
+																	<a href="?page=sslVpnClient.html">$| LANG_LOCALE['12932'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=sslVpnClientRoutes.html">$| LANG_LOCALE['10526'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['11822'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=openVpnSettings.html">$| LANG_LOCALE['11828'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=openVpnLocalNetworks.html">$| LANG_LOCALE['11601'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=openVpnRemoteNetworks.html">$| LANG_LOCALE['12671'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=serverClientCertificate.html">$| LANG_LOCALE['13627'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=omniSslConfiguration.html">$| LANG_LOCALE['50021'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=omniSSLServerPolicy.html">$| LANG_LOCALE['50022'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=openvpnCertificates.html">$| LANG_LOCALE['50042'] |$</a>																
+                                                                </li>
+															</ul>
+														</div>
+<?lua end ?>
+	   <div class="subMenuCols">
+		<h3>$| LANG_LOCALE['11077'] |$</h3>
+		<ul>
+			<li>
+				<a href="?page=greTunnels.html">$| LANG_LOCALE['11077'] |$</a>
+			</li>
+		</ul>
+	   </div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu5" class="mMenu">
+												<a class="subMenu5" href="#">$| LANG_LOCALE['12792'] |$</a>
+												<div class="subMenu5List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>$| LANG_LOCALE['13627'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=getUsersDb.html">$| LANG_LOCALE['11195'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=radiusServer.html">$| LANG_LOCALE['10985'] |$</a>
+																</li>
+                                                                 <?lua if (UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                                                <li>
+																	<a href="?page=radiusAccountingCfg.html">$| LANG_LOCALE['12608'] |$</a>
+																</li>
+                                                                <?lua end?>
+																<li>
+																	<a href="?page=loginProfiles.html">$| LANG_LOCALE['11623'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=servicesRouteMgmt.html">$| LANG_LOCALE['50076'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['13356'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=contentFiltering.html">$| LANG_LOCALE['12992'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=approvedCategory.html">$| LANG_LOCALE['10850'] |$</a>
+																</li>
+                                                                 <li>
+                                                                    <a href="?page=urlFilteringACL.html">$| LANG_LOCALE['50055'] |$</a>
+                                                                </li>
+                                                            </ul>
+														</div>
+ 	
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['11007'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=firewallRules.html">$| LANG_LOCALE['11009'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=schedules.html">$| LANG_LOCALE['12769'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=blockedClients.html">$| LANG_LOCALE['10399'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=customServices.html">$| LANG_LOCALE['10653'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=algs.html">$| LANG_LOCALE['10206'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=vpnPassthrough.html">$| LANG_LOCALE['30011'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=applicationRules.html">$| LANG_LOCALE['10852'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=attackChecks.html">$| LANG_LOCALE['10305'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=intelAmt.html">$| LANG_LOCALE['11183'] |$</a>
+                                                                </li>
+                                                                <?lua
+                                                                if (UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+																<li>
+																	<a href="?page=ips.html">$| LANG_LOCALE['11416'] |$</a>
+                                                                </li>
+                                                                <?lua end ?>    
+															</ul>
+														</div>
+													</div>
+												</div>	
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu6" class="mMenu">
+												<a class="subMenu6" href="#">$| LANG_LOCALE['11653'] |$</a>
+												<div class="subMenu6List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>$| LANG_LOCALE['10180'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=adminSettings.html">$| LANG_LOCALE['13044'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=dateTime.html">$| LANG_LOCALE['10666'] |$</a>
+                                                                </li>
+                                                                <li>
+																	<a href="?page=sessionSettings.html">$| LANG_LOCALE['12837'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=licenseUpdate.html">$| LANG_LOCALE['11570'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=usbSharePorts.html">$| LANG_LOCALE['13217'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=inbox.html">$| LANG_LOCALE['12873'] |$</a>
+                                                                </li>
+                                                                <li>
+																	<a href="?page=packageManager.html">$| LANG_LOCALE['11884'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=setLanguage.html">$| LANG_LOCALE['12841'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=webAccessFilter.html">$| LANG_LOCALE['30012'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['11674'] |$</h3>
+															<ul>
+                                                                <li>
+																	<a href="?page=remoteManagement.html">$| LANG_LOCALE['12667'] |$</a>
+																</li>															
+                                                                <li>
+																	<a href="?page=snmp.html">$| LANG_LOCALE['12879'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=networkTools.html">$| LANG_LOCALE['10744'] |$</a>
+                                                                </li>
+																<li>
+																	<a href="?page=powerSaving.html">$| LANG_LOCALE['12503'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['30400'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=systemPc.html">$| LANG_LOCALE['11012'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=backupRestore.html">$| LANG_LOCALE['10348'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=softReboot.html">$| LANG_LOCALE['12887'] |$</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>$| LANG_LOCALE['11629'] |$</h3>
+															<ul>
+																<li>
+																	<a href="?page=facilityLogs.html">$| LANG_LOCALE['11614'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=routingLogs.html">$| LANG_LOCALE['12735'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=systemLogs.html">$| LANG_LOCALE['13040'] |$</a>
+																</li>
+																<li>
+																	<a href="?page=remoteLogging.html">$| LANG_LOCALE['12665'] |$</a> 
+																</li>
+																<li>
+																	<a href="?page=smsEvent.html">$| LANG_LOCALE['14378'] |$</a> 
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										</ul>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="breadCrumb">
+			<div id="breadCrumb">
+			</div>
+			<div class="helpRefresh">
+				<div class="topRightLinks refresh">
+					<input type="button" value class="refreshButton" title="$| LANG_LOCALE['12647'] |$"  id="tf1_refreshButton">
+				</div>
+				<div class="topRightLinks help">
+					<input type="button" value class="helpButton" title="$| LANG_LOCALE['13533'] |$">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

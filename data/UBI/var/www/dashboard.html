@@ -1,0 +1,683 @@
+<?lua
+    require "teamf1lualib/db"
+    require "teamf1lualib/bl_dashboard"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+    require "teamf1lualib/users_bl"
+    require "teamf1lualib/deviceInfo_bl"
+
+   	PAGE_HELP = "status"
+	if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+	PAGE_HELP_SECTION = "dashboard_1000"
+	elseif(UNIT_NAME=="DSR-500N" or UNIT_NAME=="DSR-500" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then
+	PAGE_HELP_SECTION = "dashboard_500"
+	else
+	PAGE_HELP_SECTION = "dashboard_econa"
+	end
+
+    local errorMap     = require ("com.teamf1.core.errorMap")
+    local returnCodes  = require ("com.teamf1.core.returnCodes")
+    local trafficStats = require ("com.teamf1.bl.statistics.traffic")
+    local users        = require ("com.teamf1.bl.userdb.users")
+    local device_info  = require ("com.teamf1.bl.system.deviceInfo")
+
+	if (ButtonType and ButtonType == "saveDashBords") then
+
+		--local inputTable = web.cgiToLuaTable(cgi)
+
+    -- inputTable["userDashboardCustomization.cookie"] = cgi["configRowId"]
+
+    -- errorFlag, cookie = gui_users.userProfileCreate (inputTable)
+
+		errorFlag = 0
+
+    if (errorFlag == 0) then
+       -- statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+       -- statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    
+
+		-- NextPage = "dashboard"
+		statusSuccessMessage = "Dashboard settings saved"
+
+	  web.goToPage(NextPage, true, true)
+      
+    elseif (ButtonType and ButtonType == "manage") then
+        local configRow = web.cgiToLuaTable(cgi)
+        errorFlag = users.dashboardUsersSet (configRow)
+        if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    	end
+        web.goToPage(NextPage, true, true)
+       
+    else
+    
+    local ENABLED     = "1"
+    local DISABLED    = "0"
+
+    local errorCode, lanInterfaceStats, wan1InterfaceStats, wan2InterfaceStats, wan3InterfaceStats
+    errorCode, lanInterfaceStats = trafficStats.lanInterfaceTrafficGet ()
+    if (lanInterfaceStats == returnCodes.NIL) then
+        lanInterfaceStats = {}
+    end
+
+    errorCode, wan1InterfaceStats = trafficStats.wan1TrafficStatsGet ()
+    if (wan1InterfaceStats == returnCodes.NIL) then
+        wan1InterfaceStats = {}
+    end
+
+    errorCode, wan2InterfaceStats = trafficStats.wan2TrafficStatsGet ()
+    if (wan2InterfaceStats == returnCodes.NIL) then
+        wan2InterfaceStats = {}
+    end
+   
+    errorCode, wan3InterfaceStats = trafficStats.wan3TrafficStatsGet ()
+    if (wan3InterfaceStats == returnCodes.NIL) then
+        wan3InterfaceStats = {}
+    end
+     
+    local errorCode, dashBoardUsers  = trafficStats.managedDashboardGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+        dashBoardUsers = {}
+    end
+
+	 dashBoardRow = {}
+    local returnCode, icmpRecieved, availableVlans,availableInterfaces,
+    availableInterfacesNames = trafficStats.activeInfoGet ()
+     if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+     end
+
+     local ipsEnabled, idsEnabled
+     returnCode, ipsEnabled, idsEnabled = trafficStats.ipsInfoGet ()
+
+     cgilua.header ("Content-Type","text/html; charset=UTF-8")
+     
+     LANG_LOCALE =
+     "10659,13562,11592,30013,30014,30015,30016,30017,30018,10865,10715,10361,13110,13299,13234,11706,13232,11039,10429,13123,13122,11515,11171,11876,10825,10829,10077,30020,10345,10078,10953,13562,11660,10583,11196,13653,13243,13126,11127,11129,10794,11164,11780,12462,12874,12917,13049,11187,11175,11880,10823,10827,10362,13300,11059,11060,10523,10532,12958,12959,10611,10609,14261,10608,10612,11707,13114,13233,11040,10447,10428,13113,13120,11007,10666,12879,11427,10842,13125,13311,10610"
+?>
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/dashboard.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+
+	<body>
+		<!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>               
+        <form name action="platform.cgi" method="post" name="tf1_frmDashboard" id="tf1_frmDashboard">   
+            <input type="hidden" name="thispage" id="thispage" value="dashboard.html">          
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+    <!-- Section for Pop up dialog ends -->
+		<div id="dataChart3" style="display:None"></div>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+					<?lua web.includeMenu("header.html")?>				
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu1");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+				<?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>  
+					<div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= nil) then ?> 
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+					
+					<div class="FL2">
+						<p class="hint"> $| helpHintText |$</p>
+					</div>
+					<h1 style="width: auto">$| LANG_LOCALE['10659'] |$</h1>
+					<div class="FR">
+						<input type="button" class="btnSubmit" title="$| LANG_LOCALE['13562'] |$" value="$| LANG_LOCALE['13562'] |$" id="btSave" onclick="openForm('button.add.dashboard.dashboard',-1,'tf1_dialog','dashboard','dashboardForm.html', 'tf1_dashboardDailogContent','');">
+					</div>
+					<div class="dashboard" <?lua if(dashBoardUsers.TrafficOverview  == DISABLED and dashBoardUsers.OptionPorts == DISABLED and dashBoardUsers.BandwidthUsage == DISABLED and dashBoardUsers.VPNs == DISABLED) then ?> style="min-height:0px" <?lua end ?>>
+                        <?lua if (dashBoardUsers.TrafficOverview == ENABLED) then ?>
+                        <div class="widgetLoading" id="tf1_loadingTrafficDiv">$| LANG_LOCALE['11592'] |$</div>
+						<section style="display:none" id="tf1_trafficSec">
+							<h1>Traffic Overview
+		<select size="1" name="Interface.name1" id="tf1_trafficOver" onchange="document.getElementById('tf1_trafficSec').style.display ='none';document.getElementById('tf1_loadingTrafficDiv').style.display ='block';getTrafficData('platform.cgi?page=getDashboardData.html&chartType=trafficOverview','chart','chartData')" >
+				<option $| web.dropdownSelected(intName1 == "ALL") |$ value="ALL" selected>ALL</option>
+				<?lua
+				local table = db.getTable("BwMonStat", true, "SELECT distinct(LogicalIfName) FROM BwMonStat")
+				local bwIfaceName1
+				    for k,v in pairs (table) do
+                    bwIfaceName1 = v["BwMonStat.LogicalIfName"]
+                    if (v["BwMonStat.LogicalIfName"]=="LAN") then
+                        bwIfaceName1 = "LAN"
+                    end
+				    if (v["BwMonStat.LogicalIfName"]=="WAN1") then
+        				if (UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+	    					bwIfaceName1 = LANG_LOCALE['30015']
+	    					--bwIfaceName1 = LANG_LOCALE['30014']
+				   	else
+	    					bwIfaceName1 = LANG_LOCALE['30015']
+					end
+   				    elseif (v["BwMonStat.LogicalIfName"]=="WAN2") then
+				        if (UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+					        bwIfaceName1 = LANG_LOCALE['30017']
+					        --bwIfaceName1 = LANG_LOCALE['30016']
+				    	else
+					        bwIfaceName1 = LANG_LOCALE['30017']
+					end
+   				    elseif (v["BwMonStat.LogicalIfName"]=="WAN3") then
+				        if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N") then
+					        bwIfaceName1 = LANG_LOCALE['30018']
+				    	end
+				    end
+				?>
+				<option $| web.dropdownSelected(v["BwMonStat.LogicalIfName"]== intName1 ) |$ value="$| v["BwMonStat.LogicalIfName"] or '' |$">$| bwIfaceName1 or '' |$</option>
+				<?lua
+				end
+				?>
+					</select>
+</h1>					
+
+							<div id="container">							
+								<canvas id="chart" width="160" height="160"></canvas>
+								<table id="chartData">
+									<tr style="color: #0f9494">
+										<td>HTTP</td>
+										<td id="chartDataR1"></td>
+									</tr>
+									<tr style="color: #336600">
+										<td>HTTPS</td>
+										<td id="chartDataR2"></td>
+									</tr>
+									<tr style="color: #fa6b02">
+										<td>Email</td>
+										<td id="chartDataR3"></td>
+									</tr>
+									<tr style="color: #960064">
+										<td>DNS</td>
+										<td id="chartDataR4"></td>
+									</tr>
+								</table>
+                            </div>
+                            <?lua
+                            if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or 
+                                UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or
+                                PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or
+                                PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+                                local f = io.open ("/proc/sys/hardware_offload_control", "r")
+                                if (f) then
+                                    hardwareOffLoad = f:read("*line")
+                                    f:close()
+                                end
+                            else
+                                local fileName = "/proc/cns3xxx/sppe"
+                                local pfile = 
+                                io.popen ("cat '" .. fileName .. "' | grep -i 'Smart PPE:' |cut -d' ' -f10")
+                                local hwOffload = pfile:read ("*a")
+                                pfile:close()
+                                -- remove new line character
+                                hwOffload = string.gsub (hwOffload, "\n", "")
+                                if (hwOffload == "Enable") then
+                                    hardwareOffLoad = "1"
+                                else
+                                    hardwareOffLoad = "0"
+                                end
+                            end
+
+                            if (hardwareOffLoad == "1") then ?>
+                            <p class="FL chartEerrorMsg">Device is in High Performance Mode</p>
+                            <?lua end ?>
+                            
+							<input type="button" class="dashboardDetailsBtn" title="$| LANG_LOCALE['10715'] |$" value="$| LANG_LOCALE['10715'] |$" id="btSaveTraffic" onclick="openForm('button.add.dashboard.dashboard',-1,'tf1_dialog','dashboard','dashboardDetialsForm.html', 'tf1_dashboardTrafficDetailsDailogContent','');">
+                        </section>
+                        <input type="hidden" value="$| hardwareOffLoad or '' |$" id="hdHardwareOffLoad" />
+                        <?lua end?>
+						<input type="hidden" id="tf1_unit_name" value="$|UNIT_NAME|$">
+						<input type="hidden" id="tf1_product_id" value="$|PRODUCT_ID|$">
+                        <?lua if (dashBoardUsers.OptionPorts == ENABLED) then ?>
+                        <div class="widgetLoading" id="tf1_loadingOptionPortsDiv" >$| LANG_LOCALE['11592'] |$</div>
+						<section style="display:none" id="tf1_optionPortsSec">
+							<h1>WAN Ports</h1>
+							<canvas width="280" height="120" id="optionPortsChart"></canvas>
+							<div class="wansChartData">
+   								<div class ="optionPorts">
+								<div class="option1ImgDown" id="tf1_option1Status">&nbsp;</div>
+                                <div id="tf1_currentOptionData1" class="option1Text">&nbsp;</div> </div>
+   								<div class ="optionPorts">
+								<div class="option2ImgDown" id="tf1_option2Status">&nbsp;</div>
+                                <div id="tf1_currentOptionData2" class="option2Text">&nbsp;</div></div>
+								<?lua if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+   								<div class ="optionPorts">
+								<div class="option3ImgDown" id="tf1_option3Status">&nbsp;</div>
+                                <div id="tf1_currentOptionData3" class="option3Text">&nbsp;</div> </div>
+								<?lua end ?>
+							</div>
+							<p>
+                            <!--Place holder for alerts.-->
+							</p>
+                            <?lua
+                            if (hardwareOffLoad == "1") then ?>
+                            <p class="FL chartEerrorMsg">Device is in High Performance Mode</p>
+                            <?lua end ?>
+							<input type="button" class="dashboardDetailsBtn" title="$| LANG_LOCALE['10715'] |$" value="$| LANG_LOCALE['10715'] |$" id="btWanPorts" onclick="openForm('button.add.dashboard.dashboard',-1,'tf1_dialog','dashboard','dashboardDetialsForm.html', 'tf1_dashboardOptionPortsDetailsDailogContent','');">
+						</section>
+                        <?lua end ?>
+                        <?lua if (dashBoardUsers.BandwidthUsage == ENABLED) then ?>
+                        <div class="widgetLoading" id="tf1_loadingBandwidthDiv" >$| LANG_LOCALE['11592'] |$</div>
+						<section style="display:none" id="tf1_bandwidthSec">
+                            <h1>Bandwidth Usage
+			<select size="1" name="Interface.Name1" id="tf1_bandwidth" onchange="document.getElementById('tf1_bandwidthSec').style.display ='none';document.getElementById('tf1_loadingBandwidthDiv').style.display ='block';getVerticalDataforBarCharts('platform.cgi?page=getDashboardData.html&chartType=bandwidthUsage','bandwidthUsage')" >
+				<option $| web.dropdownSelected(intName1 == "ALL") |$ value="ALL" selected>ALL</option>
+				<?lua
+				local table = db.getTable("BwMonStat", true, "SELECT distinct(LogicalIfName) FROM BwMonStat")
+				local bwIfaceName
+				for k,v in pairs (table) do
+				bwIfaceName = v["BwMonStat.LogicalIfName"]
+                    if (v["BwMonStat.LogicalIfName"]=="LAN") then
+                        bwIfaceName = "LAN"
+                    end
+				    if (v["BwMonStat.LogicalIfName"]=="WAN1") then
+        				if (UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+	    					bwIfaceName = LANG_LOCALE['30015']
+	    					--bwIfaceName = LANG_LOCALE['30014']
+				   	else
+	    					bwIfaceName = LANG_LOCALE['30015']
+					end
+   				    elseif (v["BwMonStat.LogicalIfName"]=="WAN2") then
+				        if (UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+					        --bwIfaceName = LANG_LOCALE['30016']
+					        bwIfaceName = LANG_LOCALE['30017']
+				    	else
+					        bwIfaceName = LANG_LOCALE['30017']
+					end
+   				    elseif (v["BwMonStat.LogicalIfName"]=="WAN3") then
+				        if (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+					        bwIfaceName = "WAN3"
+				    	end
+				    end
+				?>
+			<option $| web.dropdownSelected(v["BwMonStat.LogicalIfName"]== intName1 ) |$ value="$| v["BwMonStat.LogicalIfName"] or '' |$">$| bwIfaceName or '' |$</option>
+			    <?lua end ?>
+			</select>
+							</h1>
+							<div class="barChart">
+							<canvas  width="280" height="140" id="bandWidthChart" ></canvas>
+							</div>
+								<table cellpadding="0" cellspacing="0" width="100%" class="graphTable">
+								  <tr>
+								    <td width="20px"><div id="barFive">
+											<div>1</div>
+										</div></td>
+								    <td width="65px">HTTP</td>
+								    <td id="tf1_http" width="30px" align="right"></td>
+								  	<td width="30px">&nbsp;</td>	
+								    <td width="20px"><div id="barTwo">
+											<div>2</div>
+										</div></td>
+								    <td width="65px">HTTPS</td>
+								     <td id="tf1_https" width="30px" align="right"></td>
+								  </tr>
+								    <tr>
+								    <td><div id="barThree">
+											<div>3</div>
+										</div></td>
+								    <td>DNS</td>
+								     <td id="tf1_dns" align="right"></td>
+								     <td width="30px">&nbsp;</td>
+								    <td><div id="barFour">
+											<div>4</div>
+										</div></td>
+								    <td>SNMP</td>
+								     <td id="tf1_snmp" align="right"></td>
+								  </tr>
+								    <tr>
+								    <td><div id="barOne">
+											<div>5</div>
+										</div></td>
+								    <td>Other</td>
+								     <td id="tf1_other" align="right"></td>
+								     <td>&nbsp;</td>
+								     <td>&nbsp;</td>
+								     <td>&nbsp;</td>
+								     <td>&nbsp;</td>
+								  </tr>
+								</table>
+							<p id="bandwidthUsageTotalCount">
+								Total Bandwidth Usage: 0.
+							</p>
+                            <?lua
+                            if (hardwareOffLoad == "1") then ?>
+                            <p class="FL chartEerrorMsg">Device is in High Performance Mode</p>
+                            <?lua end ?>
+							<input type="button" class="dashboardDetailsBtn" title="$| LANG_LOCALE['10715'] |$" value="$| LANG_LOCALE['10715'] |$" id="btSaveBandwidth" onclick="openForm('button.add.dashboard.dashboard',-1,'tf1_dialog','dashboard','dashboardDetialsForm.html', 'tf1_dashboardBandwidthUsageDetailsDailogContent','');">
+						</section>
+                        <?lua end ?>
+                        <?lua if(dashBoardUsers.VPNs == ENABLED) then ?>
+                        <div class="widgetLoading" id="tf1_loadingVpnsDiv" >$| LANG_LOCALE['11592'] |$</div>
+						<section style="display:none" id="tf1_vpnsSec">
+							<h1>VPNs</h1>
+							<canvas id="vpnChart"  width="280" height="120"></canvas>
+							<div class="vpnsChartData">
+								<div class="vpnsUp">
+									<div>
+										<div></div>
+									</div>
+									IPSec Gateway <span id="tf1_ipsecGateway">&nbsp;</span>
+								</div>
+                                <div class="vpnsClient">
+									<div>
+										<div></div>
+									</div>
+									IPSec Client <span id="tf1_ipsecClient">&nbsp;</span>
+								</div>
+                                <?lua if (HIGH_SEC == "HIGH") then ?>
+								<div class="vpnsDown">
+									<div>
+										<div></div>
+									</div>
+									SSL VPN <span id="tf1_sslVpn">&nbsp;</span>
+								</div>
+                                <?lua end ?>
+							</div>
+							<p>
+                            <!--Place holder for alerts. -->
+							</p>
+							<input type="button" class="dashboardDetailsBtn" title="$| LANG_LOCALE['10715'] |$" value="$| LANG_LOCALE['10715'] |$" id="btSave" onclick="openForm('button.add.dashboard.dashboard',-1,'tf1_dialog','dashboard','dashboardDetialsForm.html', 'tf1_dashboardVPNsDetailsDailogContent','');">
+						</section>
+                        <?lua end ?>
+                        <?lua if (dashBoardUsers.CPUUtilization == ENABLED) then ?>
+                        <div class="widgetLoading" id="tf1_loadingCPUDiv" >$| LANG_LOCALE['11592'] |$</div>
+						<section style="display:none" id="tf1_CPUSec">
+							<h1>CPU Utilization</h1>
+							<div id="container">
+								<canvas id="cpuChart" width="160" height="160"></canvas>
+								<table id="cpuChartData">
+									<tr style="color: #0f9494">
+										<td>User</td>
+										<td id="cpuChartDataR1"></td>
+									</tr>
+									<tr style="color: #336600">
+										<td>Kernel</td>
+										<td id="cpuChartDataR2"></td>
+									</tr>
+									<tr style="color: #fa6b02">
+										<td>Idle Time</td>
+										<td id="cpuChartDataR3"></td>
+									</tr>
+									<tr style="color: #960064">
+										<td>IOs</td>
+										<td id="cpuChartDataR4"></td>
+									</tr>
+								</table>
+							</div>
+							<p>
+                            <!--Place holder for alerts.-->
+							</p>
+							<input type="button" class="dashboardDetailsBtn" title="$| LANG_LOCALE['10715'] |$" value="$| LANG_LOCALE['10715'] |$" id="btSave" onclick="openForm('button.add.dashboard.dashboard',-1,'tf1_dialog','dashboard','dashboardDetialsForm.html', 'tf1_dashboardCPUUtilizationDetailsDailogContent','');">
+						</section>
+                        <?lua end ?>
+                        <?lua if (dashBoardUsers.MemoryUtilization == ENABLED) then ?>
+                        <div class="widgetLoading" id="tf1_loadingMemoryDiv" >$| LANG_LOCALE['11592'] |$</div>
+						<section style="display:none" id="tf1_memorySec">
+							<h1>Memory Utilization</h1>
+							<div class="barChart">
+								<canvas id="MemoryBarChart" width="280" height="140"></canvas>
+							</div>
+								<table cellpadding="0" cellspacing="0" width="100%" class="graphTable">
+								  <tr>
+								    <td width="20px"><div id="barOne">
+											<div>1</div>
+										</div></td>
+								    <td width="65px">Used</td>
+								     <td id="tf1_used" width="30px" align="right"></td>
+								      <td width="30px">&nbsp;</td>
+								    <td width="20px"><div id="barTwo">
+											<div>2</div>
+										</div></td>
+								    <td width="65px">Free</td>
+								     <td id="tf1_free" width="30px" align="right"></td>
+								  </tr>
+								    <tr>
+								    <td><div id="barSix">
+											<div>3</div>
+										</div></td>
+								    <td>Cached</td>
+								     <td id="tf1_cached" align="right"></td>
+								     <td width="30px">&nbsp;</td>
+								    <td><div id="barFour">
+											<div>4</div>
+										</div></td>
+								    <td>Buffers</td>
+								     <td id="tf1_buffers" align="right"></td>
+								  </tr>
+								  
+								</table>
+                                <p id="memoryUtilizationTotalCount">
+								Total Memory. &nbsp;&nbsp;&nbsp;
+							</p>
+							<input type="button" class="dashboardDetailsBtn" title="$| LANG_LOCALE['10715'] |$" value="$| LANG_LOCALE['10715'] |$" id="btSave" onclick="openForm('button.add.dashboard.dashboard',-1,'tf1_dialog','dashboard','dashboardDetialsForm.html', 'tf1_dashboardMemoryUtilizationDetailsDailogContent','');">
+						</section>
+                        <?lua end ?>
+                        <h1>$| LANG_LOCALE['13123'] |$</h1>
+					<div class="CLR">
+						<div class="demo_jui">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+						<?lua 
+							local wan1DispName
+							local wan2DispName
+							if (UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+								wan1DispName = LANG_LOCALE['30015']
+								wan2DispName = LANG_LOCALE['30017']
+								--wan1DispName = LANG_LOCALE['30014']
+								--wan2DispName = LANG_LOCALE['30016']
+							else
+								wan1DispName = LANG_LOCALE['30015']
+								wan2DispName = LANG_LOCALE['30017']
+							end
+						?>
+									<tr>
+										<th>$| LANG_LOCALE['13122'] |$ </th>
+										<th>$| LANG_LOCALE['11515'] |$ </th>
+										<th>$|wan1DispName|$ </th>
+										<th>$|wan2DispName|$ </th>
+                                                    <?lua if(UNIT_NAME =="DSR-1000N" or UNIT_NAME== "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then?>
+										<th>$| LANG_LOCALE['30018'] |$ </th>
+                                                    <?lua end?>
+									</tr>
+								</thead>
+								<tr class="gradeA">
+									<td>$| LANG_LOCALE['11171'] |$ </td>
+									<td>$| lanInterfaceStats.rx_packets or '0' |$ </td>
+									<td>$| wan1InterfaceStats.rx_packets or '0' |$ </td>
+									<td>$| wan2InterfaceStats.rx_packets or '0' |$ </td>
+                                                    <?lua if(UNIT_NAME =="DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then?>
+						    			<td>$| wan3InterfaceStats.rx_packets or '0' |$ </td>
+                                                     <?lua end?>
+								</tr>
+								<tr class="gradeA">
+									<td>$| LANG_LOCALE['11876'] |$</td>
+									<td>$| lanInterfaceStats.tx_packets or '0' |$ </td>
+									<td>$| wan1InterfaceStats.tx_packets or '0' |$ </td>
+									<td>$| wan2InterfaceStats.tx_packets or '0' |$ </td>
+                                                    <?lua if(UNIT_NAME =="DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then?>
+									<td>$| wan3InterfaceStats.tx_packets or '0' |$ </td>
+                                                     <?lua end?>
+								</tr>
+								<tr class="gradeA">
+									<td>$| LANG_LOCALE['10825'] |$</td>
+									<td>$| lanInterfaceStats.rx_dropped or '0' |$ </td>
+									<td>$| wan1InterfaceStats.rx_dropped or '0' |$ </td>
+									<td>$| wan2InterfaceStats.rx_dropped or '0' |$ </td>
+                                                    <?lua if(UNIT_NAME =="DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then?>
+									<td>$| wan3InterfaceStats.rx_dropped or '0' |$ </td>
+                                                    <?lua end?>
+								</tr>
+								<tr class="gradeA">
+									<td>$| LANG_LOCALE['10829'] |$</td>
+									<td>$| lanInterfaceStats.tx_dropped or '0' |$ </td>
+									<td>$| wan1InterfaceStats.tx_dropped or '0' |$ </td>
+									<td>$| wan2InterfaceStats.tx_dropped or '0' |$ </td>
+                                                    <?lua if(UNIT_NAME =="DSR-1000N" or UNIT_NAME== "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then?>
+									<td>$| wan3InterfaceStats.tx_dropped or '0' |$ </td>
+                                                    <?lua end?>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div class="break">
+&nbsp;
+					</div>
+                                        <h1>$| LANG_LOCALE['10077'] |$</h1>
+				        <div class="midArea" style="min-height: 130px;">
+				        <div align="left">
+					<div class="configRow">
+						<label>$| LANG_LOCALE['30020'] |$</label>
+						<p>$| icmpRecieved |$</p>
+					</div>
+					<div class="break">&nbsp; </div>
+					<div class="configRow">
+						<label>$| LANG_LOCALE['10345'] |$</label>
+						<p>$| availableVlans |$</p>
+					</div>
+					<div class="break">&nbsp; </div>
+					<div class="configRow">
+						<label>$| LANG_LOCALE['10078'] |$</label>
+						<p>$| availableInterfaces .. " ( " ..
+                        availableInterfacesNames .. " ) "|$</p>
+					</div>
+					<div class="break">&nbsp; </div>
+                                        </div>
+                                        </div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				   <?lua web.includeMenu("footer.html")?>
+				</td>
+			</tr>
+        </table>
+        <input type="hidden" value="$| ipsEnabled |$" id="hdIPSEnabled" >
+        <input type="hidden" value="$| idsEnabled |$" id="hdIDSEnabled" >
+	<!--[if lt IE 9]><script src="js/excanvas.js"></script><![endif]-->
+		<script type="text/javascript" language="javascript" src="js/dashboard.js"></script>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        	<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" charset="utf-8">
+        <?lua if(UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500") then ?>
+        var pageRefreshCount = 0;
+        setInterval(pageRedirect, 1000);
+        function pageRedirect ()
+            {
+                pageRefreshCount = pageRefreshCount + 1;
+                if (pageRefreshCount > 15)
+                {
+                    hideProgressBar ();
+                    pageRefreshCount = 0;
+                }
+            }
+        <?lua end ?>
+                $(document).ready(function() {
+                  <?lua if(UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500") then ?>
+                  var ipsVal = $("#hdIPSEnabled").val();
+                  var idsVal = $("#hdIDSEnabled").val();
+                  if (ipsVal == "1" || idsVal == "1")
+                      {
+                        $("div.msgInfoLoading").css({'min-height': '60px'});
+                        $("div.msgInfoLoading p").css({'line-height': '25px'});
+						displayProgressBar();
+                        $("#tf1_pageLoadingMask p").html("IPS/IDS is enabled!<br>Please wait for few seconds to load dashboard page");
+                      }
+                  <?lua end ?>
+                  hardwareOffLoadfn ();
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"bPaginate" : false,
+					"bLengthChange" : false,
+					"bFilter" : false,
+					"bSort" : false,
+					"bInfo" : false,
+					"bAutoWidth" : false
+				});
+				oTable = $('#recordsDataPackets').dataTable({
+					"bJQueryUI" : true,
+					"bPaginate" : false,
+					"bLengthChange" : false,
+					"bFilter" : false,
+					"bSort" : false,
+					"bInfo" : false,
+					"bAutoWidth" : false
+				});	   
+        <?lua if (dashBoardUsers.TrafficOverview == ENABLED) then ?>	 
+        getTrafficData('platform.cgi?page=getDashboardData.html&chartType=trafficOverview','chart','chartData');
+        <?lua end?>
+        <?lua if (dashBoardUsers.BandwidthUsage == ENABLED) then ?>
+        getVerticalDataforBarCharts('platform.cgi?page=getDashboardData.html&chartType=bandwidthUsage','bandwidthUsage');
+        <?lua end?>
+        <?lua if (dashBoardUsers.OptionPorts == ENABLED) then ?>
+        getOptionPortsGraph('platform.cgi?page=getDashboardData.html&chartType=optionPorts');
+        <?lua end?>
+        <?lua if(dashBoardUsers.VPNs == ENABLED) then ?>
+         getVpnGraph('platform.cgi?page=getDashboardData.html&chartType=vpnData','$|HIGH_SEC|$');			
+        <?lua end?>     
+        <?lua if (dashBoardUsers.CPUUtilization == ENABLED) then ?>
+        getTrafficData('platform.cgi?page=getDashboardData.html&chartType=CPUUtilizationData','cpuChart','cpuChartData');
+        <?lua end?>
+        <?lua if (dashBoardUsers.MemoryUtilization == ENABLED) then ?>
+        getVerticalDataforBarCharts('platform.cgi?page=getDashboardData.html&chartType=MemoryUtilizationData','memoryUtilization');
+        <?lua end?>
+
+		$("#btnClose").live("click",function(e){
+        	HideDialog('tf1_dialog', 'tf1_overlay');
+        	e.preventDefault();
+        }); 
+	onloadCall (enableDisableFieldsByImageClick, {imageId:'', disableIndividual:'', disableGrp:'', enableIndividual:'', enableGrp:'', hideClass:'hide', showClass:'configRow', breakDivs:'', breakClass:'break', imagesInfo:{disableImages:'', enableImages:'', disableClass:'', enableClass:''}});
+			   	hardwareOffLoadfn ();	
+			  //hideSectionsOnload('tf1_loadingCPUDiv');
+			  //hideSectionsOnload('tf1_loadingMemoryDiv');
+			  //hideSectionsOnload('tf1_loadingActiveInfoDiv');
+		 });
+
+function hardwareOffLoadfn ()
+    {
+        var hardwareOffloadObj = document.getElementById ('hdHardwareOffLoad');
+        if (hardwareOffloadObj) {
+            if (hardwareOffloadObj.value == "1")
+                {
+                    fieldStateChangeWr ('tf1_trafficOver btSaveTraffic btWanPorts tf1_bandwidth btSaveBandwidth','','','');
+                }
+            else
+                {
+                    fieldStateChangeWr ('','','tf1_trafficOver btSaveTraffic btWanPorts tf1_bandwidth btSaveBandwidth','');
+                }
+        }
+    }
+		</script> 
+	</body>
+
+</html>
+
+<?lua end ?>

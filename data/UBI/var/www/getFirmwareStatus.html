@@ -1,0 +1,47 @@
+<?lua
+	local statMsg=db.getAttribute("FirmStatus","_ROWID_","1","StatusMsg")
+	local statusMsg = ""
+    if(statMsg == 'Unable to connect the server. Please check internet settings.') then
+        statusMsg = "Unable to connect the server. Please check internet settings."
+    elseif(statMsg == 'Connecting to the Server...') then
+        statusMsg = "Connecting to the Server..."
+    elseif(statMsg == 'Invalid Firmware Version.') then
+        statusMsg = "Invalid Firmware Version."
+    elseif(statMsg == 'Unknown error has occurred.') then
+        statusMsg = "Unknown error has occurred."
+    elseif(statMsg == 'Unknown Url.') then
+        statusMsg = "Unknown Url."
+    elseif(statMsg == 'Prorocol not specified') then
+        statusMsg = "Prorocol not specified"
+    elseif(statMsg == 'Protocol not supported.') then
+        statusMsg = "Protocol not supported."
+    elseif(statMsg == 'Unable to create ssl context.') then
+        statusMsg = "Unable to create ssl context."    
+    elseif(statMsg == 'Failed to connect to remote server. Please check Internet Settings') then
+        statusMsg = "Failed to connect to remote server. Please check Internet Settings"
+    elseif(statMsg == 'Unable to send information.') then
+        statusMsg = "Unable to send information."
+    elseif(statMsg == 'Server is Busy. Please retry after some time.') then
+        statusMsg = "Server is Busy. Please retry after some time."
+    elseif(statMsg == 'Unable to retrieve information from server.') then
+        statusMsg = "Unable to retrieve information from server."
+    elseif(statMsg == 'You are running the latest firmware version.') then
+        statusMsg = "You are running the latest firmware version."
+    elseif(statMsg == 'Invalid Firmware Version.') then
+        statusMsg = "Invalid Firmware Version."
+    elseif(string.find(statMsg,'A newer version') ~= nil and string.find(statMsg,'is available for download.') ~= nil) then
+        local trStr1 = "A newer version"
+        local trStr2 = "is available for download."
+        statusMsg = string.gsub(statMsg, "A newer version", trStr1)
+        statusMsg = string.gsub(statusMsg, "is available for download.", trStr2)
+    else
+        statusMsg = statMsg
+    end
+	local availableStatus=db.getAttribute("FirmStatus","_ROWID_","1","StatusAvailable")
+	local regLink = ""
+	if(availableStatus == "2" or availableStatus == "3") then
+		regLink = db.getAttribute("FirmStatus","_ROWID_","1","RegLink")
+	end
+	
+?>
+$| statusMsg.."||"..availableStatus.."||"..regLink |$

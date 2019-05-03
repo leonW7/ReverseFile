@@ -1,0 +1,103 @@
+#!/bin/sh
+#
+# threeg_wrapper - wrapper for pppd command
+#
+# Copyright (c) 2009, TeamF1, Inc.
+# Copyright (c) 2017, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01b,21mar17,ps   added changes for spr 59728
+# 01a,08dec09,anp  written.
+#
+# DESCRIPTION
+# This script is a wrapper for the pppd command. This is generally forked from
+# threeg management component.
+#
+# If an argument comes with TF1_THREEG_MAGIC_NUM, it means that is empty.
+
+TF1_THREEG_MAGIC_NUM="$1";
+
+# User Name
+if [ "$2" = "$TF1_THREEG_MAGIC_NUM" ]; then
+    echo "No Username specified!";
+    USERNAME="";
+else
+    USERNAME="user $2";
+fi
+
+# Password
+if [ "$3" = "$TF1_THREEG_MAGIC_NUM" ]; then
+    echo "No Password specified!";
+    PASSWORD="";
+else
+    PASSWORD="password $3";
+fi
+
+# MTU
+if [ "$4" = "$TF1_THREEG_MAGIC_NUM" ]; then
+    echo "No MTU specified!";
+    MTU="mtu 1492";
+else
+    MTU="mtu $4";
+fi
+
+# Link Suffix
+if [ "$5" = "$TF1_THREEG_MAGIC_NUM" ]; then
+    echo "No link suffix specified!";
+    LINKSUFFIX="";
+else
+    LINKSUFFIX="linkname $5 unit $5";
+fi
+
+# Idle Timeout
+if [ "$6" = "0" ]; then
+    echo "Idle Timeout not requested!";
+    IDLETIME="idle 0";
+else
+    IDLETIME="demand idle $7";
+fi
+
+# Authentication support
+if [ "$8" = "$TF1_THREEG_MAGIC_NUM" ]; then
+    # Nothing specified
+    echo "No Auth Specified!";
+    AUTH="noauth"; 
+elif [ "$8" = "0" ]; then     
+    # No authentication requested
+    echo "No Auth Specified!";
+    AUTH="noauth";
+elif [ "$8" = "1" ]; then       
+    # PAP authentication requested
+    echo "PAP Auth Specified!";
+    AUTH="refuse-chap refuse-mschap refuse-mschap-v2 refuse-eap";
+elif [ "$8" = "2" ]; then     
+    # CHAP authentication requested
+    echo "CHAP Auth Specified!";
+    AUTH="refuse-pap refuse-mschap refuse-mschap-v2 refuse-eap";
+elif [ "$8" = "3" ]; then     
+    # MS-CHAP authentication requested
+    echo "MS-CHAP Auth Specified!";
+    AUTH="refuse-chap refuse-pap refuse-mschap-v2 refuse-eap";
+elif [ "$8" = "4" ]; then     
+    # MS-CHAPv2 authentication requested
+    echo "MS-CHAP v2 Auth Specified!";
+    AUTH="refuse-chap refuse-mschap refuse-pap refuse-eap";
+else
+    echo "Unknown Auth Specified!";
+    exit 1;
+fi
+
+# DNS informationt
+if [ "$9" = "0" ]; then
+    echo "DNS servers not requested!";
+    USEPEERDNS="";
+else
+    USEPEERDNS="usepeerdns";
+fi
+
+echo "Establishing 3G Connection... ";
+echo "/pfrm2.0/bin/pppd /dev/modem updetach lcp-echo-failure 10 lcp-echo-interval 5 defaultroute $USERNAME $PASSWORD $MTU $LINKSUFFIX $IDLETIME $USEPEERDNS $AUTH connect \"chat -v -f /var/chat -t 3\" persist maxfail 0";
+
+/pfrm2.0/bin/pppd /dev/modem updetach lcp-echo-failure 10 lcp-echo-interval 5 defaultroute $USERNAME $PASSWORD $MTU $LINKSUFFIX $IDLETIME $USEPEERDNS $AUTH connect "chat -v -f /var/chat -t 3" persist maxfail 0

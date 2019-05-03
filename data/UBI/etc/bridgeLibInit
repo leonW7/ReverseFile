@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# bridgeLibInit - initialization script for bridgeLib
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_BRIDGELIB" = "y" ]; then
+
+MODULES_DIR=$BRIDGELIB_INSTALL_PATH/lib/modules/bridgeLib/
+
+
+[ -f $MODULES_DIR/bridge.$MOD_SUFFIX ] && { insmod $MODULES_DIR/bridge.$MOD_SUFFIX; }
+
+fi

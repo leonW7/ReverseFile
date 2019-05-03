@@ -1,0 +1,224 @@
+<?lua
+require "teamf1lualib/captivePortal"
+
+-- Check if User is already Logged in
+        -- If already logged in make spUrlStr 1
+
+        local alreadyLoggedIn = captivePortal.getLoginStatus ()
+        if(alreadyLoggedIn == "1" ) then
+            spUrlStr = "1"
+        end
+
+
+-- if login button
+if(spUrlStr=="1") then
+	spUrlStrFinal="1"
+else
+	spUrlStrFinal="0"
+end
+
+local isenabled,profileId,vlanId, clientType, accessType = captivePortal.isEnabled ()
+if (ButtonType and ButtonType == "login") then   
+	local valid, statusCode = captivePortal.slaRunTimelogin(vlanId, clientType)		
+	if(valid) then
+		spUrlStr = "1"
+		statusMessage=statusCode or ''
+                local url, enableRedirect
+                if (clientType == CaptivePortal.LAN_CLIENT) then
+                    url = db.getAttribute("CaptivePortalVlan", "vlanId", vlanId, "url")
+                    enableRedirect = db.getAttribute("CaptivePortalVlan", "vlanId", vlanId, "enableRedirect") 
+                else
+                    url = db.getAttribute("CaptivePortalSSID", "intfNum", vlanId, "url")
+                    enableRedirect = db.getAttribute("CaptivePortalSSID", "intfNum", vlanId, "enableRedirect")
+                end
+                if (enableRedirect == "1") then
+                    if (string.sub(url, 1, 4) == "http") then
+                        url = url
+                    else
+                        url = "http://" .. url
+                    end
+                    cgilua.redirect (url)
+                else
+                    web.goToPage(NextPage, true, true)
+                end
+	end
+elseif (ButtonType and ButtonType == "logout") then
+    -- go to next page - which will be login page
+    spUrlStr = "0"
+    captivePortal.RunTimelogout()
+    if (clientType ~= CaptivePortal.LAN_CLIENT) then
+        os.execute("sleep " .. tonumber(1))
+        local wher = "LogicalIfName ='LAN' and AddressFamily = 2"
+        local lanIPRow = db.getRowWhere ("ifStatic", wher)
+        local lanIP = lanIPRow["ifStatic.StaticIp"] 
+        cgilua.redirect ("http://" .. lanIP .."/scgi-bin/platform.cgi?page=slaLogin.html")
+    else
+        web.goToPage(NextPage, true, true)
+    end
+elseif (isenabled == "0") then
+    NextPage = "index"
+    cpStatusMsg = ""
+    web.goToPage(NextPage, true, true) 
+elseif (isenabled == "1" and (accessType == "2" or accessType == "3")) then
+        local wher = "LogicalIfName ='LAN' and AddressFamily = 2"
+        local lanIPRow = db.getRowWhere ("ifStatic", wher)
+        local lanIP = lanIPRow["ifStatic.StaticIp"] 
+        cgilua.redirect ("http://" .. lanIP .."/scgi-bin/platform.cgi?page=captivePortal.html")
+else
+	local serviceRule, browserTitle=captivePortal.getslaRules(profileId)
+?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+
+        <title>$|browserTitle |$</title>
+ <link rel="shortcut icon" href="images/favicon.png?page=slaLogin.html" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css?page=slaLogin.html">
+        <link rel="stylesheet" type="text/css" href="css/buttons.css?page=slaLogin.html" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css?page=slaLogin.html" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js?page=slaLogin.html"></script>
+
+<style type="text/css">
+    
+.header { background: url("images/headerBg.png?page=slaLogin.html") repeat-x scroll 0 0 transparent; min-height: 140px; text-align: center; }
+
+.logo { background: url('images/logo.png?page=slaLogin.html') no-repeat scroll 10px 16px transparent; color: #86C2FD; font-size: 14px; letter-spacing: 1px; padding: 54px 10px 10px; text-align: left; }
+
+.footer {
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#919191',EndColorStr='#2F2F2F');
+    
+	background:#919191;
+	background:-ms-linear-gradient(top,#919191,#2F2F2F);
+	background:-webkit-gradient(linear,left top,left bottom,from(#919191),to(#2F2F2F));
+	background:-moz-linear-gradient(top,#919191,#2F2F2F);
+	background:-o-linear-gradient(top,#919191,#2F2F2F);
+ color: #FFFFFF; font-size: 10px; letter-spacing: 1px; line-height: 48px; text-align: center; margin: 20px 0 0;
+}
+</style>
+<?lua web.includeMenu("metaInclude.html")?>
+
+
+
+                    
+</head>
+<body>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                    <div align="center">
+    <div class="midWidth">
+        <div class="logo FL">Unified Services Router - $| UNIT_NAME |$</div>
+        <div class="FR headerRight">
+&nbsp; </div>
+        <div class="midWidth menuBg">
+            <div>
+                <div>
+                    <div align="center">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                </td>
+            </tr>
+ <tr>
+                <td valign="top" align="center">
+                <div class="midWidth2">
+										<?lua if ( (spUrlStrFinal ~= "0") and
+                                        (statusMessage ~= nil and statusMessage
+                                        ~= '')) then ?>
+										  <div class="blank">
+                      	&nbsp;
+                      </div>
+											<div class="msgSuccess">
+		                  	<p>$| statusMessage |$</p>
+		                  </div>
+											<div class="blank">
+                      	&nbsp;
+                      </div>
+										<?lua end ?>
+											<div class="blank">&nbsp;</div>
+                                        <h1>SLA LOGIN</h1>
+
+                    <div class="midArea" style="min-height:50px">
+                        <div class="configLogin">
+                            <form method="post" action="platform.cgi" name="tf1_slaLogin" id="tf1_slaLogin">
+                                <input type="hidden" name="thispage" value="slaLogin.html">
+                            <?lua if(spUrlStrFinal=="0") then ?>
+                                 <div class="configRow">
+                                
+                                 <textarea style="width:485px; height:200px" rows="15" name="S1" cols="60" readonly="true">$|serviceRule or ''|$</textarea>
+                             </div>
+                             <div class="break">&nbsp;                                 
+                             </div>
+                       
+					
+                             <div class="configRow"><p>
+                                   <input type="checkbox" name="" $|
+                                   web.checkboxSelected(configRow["Rip.AuthenticationType"]
+                                   == "1") |$ value="1" id="chkAuthTypeEnable"
+                                   onclick="if (this.checked == false)
+                                   {$('#tf1_btnLogin').attr('disabled','disabled')}
+                                   else{ $('#tf1_btnLogin').removeAttr('disabled')}">
+                                   <span>I Accept to Terms & Service</span></p>
+                                                                  </div>
+
+
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                               <div class="submitRow2">
+                    <input type="submit" disabled name ="button.login.slaLogin" class="btnSubmit" title="Login" value="Login" id="tf1_btnLogin" >
+                </div>
+                <div class="break">
+                    &nbsp;
+                </div>
+            <?lua elseif(spUrlStrFinal=="1") then?>
+
+                                                       
+					
+                             
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                               <div class="submitRow2">
+                    <input type="submit" name ="button.logout.slaLogin"
+                    class="btnSubmit" title="Logout" value="Logout"
+                    id="tf1_btnLogout" >
+                </div>
+                <div class="break">
+                    &nbsp;
+                </div>
+
+            <?lua end?>
+            </form>
+		            <script language="javascript" type="text/javascript">
+		    			if(document.getElementById ('tf1_hdUserAgent'))
+		    			document.getElementById ('tf1_hdUserAgent').value = navigator.userAgent;
+		        	</script>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <div class="footer">$| COPYRIGHTS or ''|$</div></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js?page=slaLogin.html"></script>
+				<script type="text/javascript" language="javascript" src="js/textValidations.js?page=slaLogin.html"></script>
+			    </body>
+</html>
+<?lua end ?>
+
+

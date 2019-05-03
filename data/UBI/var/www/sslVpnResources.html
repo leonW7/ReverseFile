@@ -1,0 +1,509 @@
+<?lua
+require "teamf1lualib/sslvpnResources_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/sslvpn_returnCodes"
+
+	PAGE_HELP = "vpn"
+	PAGE_HELP_SECTION = "sslVpnResources"
+
+local resources = require("com.teamf1.bl.sslvpn.resource")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local ssl_returnCodes = require("com.teamf1.core.sslvpn.returnCodes")
+
+local configRowId
+if(ButtonType and ButtonType == "configResources") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if (RowId == "-1") then 
+        local returnCode, cookie =
+            resources.sslvpnResourcesSectionCreate(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    else
+        inputTable["sslvpnResources.cookie"] = RowId
+        local returnCode, cookie = 
+             resources.sslvpnResourcesSectionSet(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "configApps") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if (RowId == "-1") then 
+        local returnCode, cookie =
+             resources.appsMapSectionCreate(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    else
+        inputTable["appsMap.cookie"] = RowId
+        local returnCode, cookie = 
+             resources.appsMapSectionSet(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "configHosts") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if (RowId == "-1") then 
+        local returnCode, cookie =
+             resources.fqdnMapSectionCreate(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    else
+        inputTable["fqdnMap.cookie"] = RowId
+        local returnCode, cookie = 
+             resources.fqdnMapSectionSet(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "deleteResources") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if(type(cgi["sslVpnResources.checkbox"]) == "string") then
+        inputTable["sslvpnResources.cookie"] = 
+                cgi["sslVpnResources.checkbox"]
+        local returnCode, cookie = 
+             resources.sslvpnResourcesSectionDelete(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    elseif(type(cgi["sslVpnResources.checkbox"]) == "table") then
+        local returnCode = resources.sslvpnResourcesSectionDeleteAll()
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+        web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "deleteApps") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if(type(cgi["sslVpnResourcesApplications.checkbox"]) == "string") then
+        inputTable["appsMap.cookie"] = 
+                cgi["sslVpnResourcesApplications.checkbox"]
+        local returnCode, cookie = 
+             resources.appsMapSectionDelete(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    elseif(type(cgi["sslVpnResourcesApplications.checkbox"]) == "table") then
+        local returnCode = resources.appsMapSectionDeleteAll()
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+        web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "deleteHosts") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if(type(cgi["sslVpnResourcesHostNames.checkbox"]) == "string") then
+        inputTable["fqdnMap.cookie"] = 
+                cgi["sslVpnResourcesHostNames.checkbox"]
+        local returnCode, cookie = 
+             resources.fqdnMapSectionDelete(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    elseif(type(cgi["sslVpnResourcesHostNames.checkbox"]) == "table") then
+        local returnCode = resources.fqdnMapSectionDeleteAll()
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+        web.goToPage(NextPage, true, true)
+    end
+else    
+    local configRowA = {}
+    local configRowB = {}
+    local configRowC = {}
+    local returnCode
+    returnCode, configRowA =  resources.sslvpnResourcesSectionGetAll()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        if (returnCode == ssl_returnCodes.SSLVPN_REMOTEMANAGEMENT_DISABLED) then
+             statusInfoMessage = errorMap.errorStringGet (returnCode)
+        else
+             statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+    end
+    returnCode, configRowB =  resources.appsMapSectionGetAll()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    returnCode, configRowC =  resources.fqdnMapSectionGetAll() 
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+
+    LANG_LOCALE =
+    "14006,12946,11748,12831,13173,12684,12467,11684,10151,12470,11606,13048,10152,12471,11054,12945,12944,12683,13297,12468,10207,12685,11134,11809,14097,11808,10374,12477,10919,12470,13503,12472,12361,12068,12050,12198,12195,13503,13501,13504,11251,13502,12795,14006,10695,12795,10695"
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+
+            <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmSslVpnResources" id="tf1_frmSslVpnResources">    
+            <input type="hidden" name="thispage" id="thispage" value="sslVpnResources.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu1">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'addResourceObject');" />
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>               
+                <li id="addResourceObject">
+                    $| LANG_LOCALE['14006'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+	 <div class="contextMenu" id="contextMenu2">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" />
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>                
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+
+	 <div class="contextMenu" id="contextMenu3">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" />
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>                
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu4");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                            if (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua else ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua end?>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['12946'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_sslVpnResources">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11748'] |$</th>
+                                        <th>$| LANG_LOCALE['12831'] |$</th>
+                                        <th>$| LANG_LOCALE['13173'] |$</th>
+                                        <th>$| LANG_LOCALE['12684'] |$</th>
+                                        <th>$| LANG_LOCALE['12467'] |$</th>
+                                        <th>$| LANG_LOCALE['11684'] |$</th>
+                                    </tr>
+                                </thead>
+                                <?lua
+                                    local serviceType
+                                    local objectType
+                                    for k, v in pairs(configRowA) do
+                                        local outputTable = {}
+                                        outputTable = configRowA[k]
+                                        local rowId = outputTable["_ROWID_"]
+                                        if (outputTable["ServiceType"] == "VIRTUAL-PASSAGE") then
+                                            serviceType = LANG_LOCALE['13297']
+                                        elseif (outputTable["ServiceType"] == "VIRTUAL-TRANSPORT") then
+                                            serviceType = LANG_LOCALE['12468']
+                                        else
+                                            serviceType = LANG_LOCALE['10207']
+                                        end
+                                        if (outputTable["ObjectType"] == "1") then
+                                            objectType = LANG_LOCALE['11387']
+                                        else
+                                            objectType = LANG_LOCALE['14097']
+                                        end
+                                        local resourceObject = outputTable["ObjectAddress"]
+                                        local port = outputTable["StartPort"] .. "-" 
+                                                     .. outputTable["EndPort"]
+                                        local maskLength = outputTable["MaskLength"]
+					local len = #outputTable["ResourceName"]
+                                        local resourceName=""
+					if (len > 30) then
+					    resourceName = outputTable["ResourceName"]
+					    outputTable["ResourceName"] = string.sub(outputTable["ResourceName"], 1, 30) .. "..."
+                           		end
+                               ?>
+                                <tr class="gradeA" id="sslVpnResources$| rowId |$">
+                                    <td title="$| resourceName |$">$| outputTable["ResourceName"] |$ </td>
+                                    <td>$| serviceType or '' |$ </td>
+                                    <td>$| objectType |$</td>
+                                    <td>$| resourceObject |$</td>
+                                    <td>$| port |$</td>
+                                    <td>$| maskLength |$</td>
+                                </tr>
+                                <?lua end?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModal">
+                        <input type="button"
+                        name="button.button.addResources.sslVpnResources.sslVpnResources.-" class="btnSubmit" title="$| LANG_LOCALE['10151'] |$" value="$| LANG_LOCALE['10151'] |$" id="btSave" onclick="openForm('button.addResources.sslVpnResources.sslVpnResources',-1,'tf1_dialog','sslVpnResources','sslVpnResourcesForm.html', 'tf1_sslVpnResourcesDailogContent','resourceObjectOnloadCallFn');">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <h1>$| LANG_LOCALE['12470'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_sslVpnResourcesApplications">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData2">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11606'] |$</th>
+                                        <th>$| LANG_LOCALE['13048'] |$</th>
+                                    </tr>
+                                </thead>
+                                <?lua
+                                    for k, v in pairs(configRowB) do
+                                        local outputTable = {}
+                                        outputTable = configRowB[k]
+                                        local rowId = outputTable["_ROWID_"]
+                                        local serverIp = outputTable["ServerIP"]
+                                        local port = outputTable["Port"]
+                                        ?>
+                                <tr class="gradeA" id="sslVpnResourcesApplications$| rowId |$">
+                                    <td>$| serverIp |$ </td>
+                                    <td>$| port |$ </td>
+                                </tr>
+                                <?lua end?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModalapplication">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10152'] |$" name="button.addApps.sslVpnResources.sslVpnResources.-1" value="$| LANG_LOCALE['10152'] |$" id="btSave" onclick="openForm('button.addApps.sslVpnResources.sslVpnResources',-1,'tf1_dialog','sslVpnResources','sslVpnResourcesForm.html', 'tf1_sslVpnRuleDailogContent','');">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <h1>$| LANG_LOCALE['12471'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_sslVpnResourcesHostNames">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData3">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11606'] |$</th>
+                                        <th>$| LANG_LOCALE['11054'] |$</th>
+                                    </tr>
+                                </thead>
+                                <?lua
+                                    for k, v in pairs(configRowC) do
+                                        local outputTable = {}
+                                        outputTable = configRowC[k]
+                                        local rowId = outputTable["_ROWID_"]
+                                        local serverIp = outputTable["ServerIP"]
+                                        local fqdnName = outputTable["FQDNName"]
+                                        ?>
+                                <tr class="gradeA" id="sslVpnResourcesHostNames$| rowId |$">
+                                    <td>$| serverIp |$ </td>
+                                    <td>$| fqdnName |$ </td>
+                                </tr>
+                                <?lua end?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModalHost">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10152'] |$" name="button.addHosts.sslVpnResources.sslVpnResources.-1" value="$| LANG_LOCALE['10152'] |$" id="btSave" onclick="openForm('button.addHosts.sslVpnResourcesHostNames.sslVpnResourcesHostNames',-1,'tf1_dialog','sslVpnResourcesHostNames','sslVpnResourcesForm.html', 'tf1_hostConfigDailogContent','');">
+
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/sslVpnResources.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+             $('#tf1_sslVpnResources .gradeA').contextMenu('contextMenu1', {
+                bindings : {
+                'addResourceObjectMenu' : function(t, e, rowId) {
+                openForm('button.editResources.sslVpnResources.sslVpnResources',rowId,'tf1_dialog','sslVpnResources','sslVpnResourcesForm.html', 'tf1_sslVpnResourcesDailogContent','resourceObjectOnloadCallFn');    
+                },
+                'deleteMenu' : function(t, e, rowId) {
+                    deleteRows('button.deleteResources.sslVpnResources.sslVpnResources', 'tf1_frmSslVpnResources', rowId, 'optionSelectAll', 'tf1_dialog', 'sslVpnResources', 'sslVpnResources');
+                }
+            },
+            onShowMenu: function(e,menu,rowId) {
+                $('#editMenu', menu).remove();
+                return menu;
+            }
+            });
+            $('#tf1_sslVpnResourcesApplications .gradeA').contextMenu('contextMenu2', {
+                bindings : { 
+                'deleteMenu' : function(t, e, rowId) {
+                    deleteRows('button.deleteApps.sslVpnResourcesApplications.sslVpnResources', 'tf1_frmSslVpnResources', rowId, 'optionSelectAll', 'tf1_dialog', 'sslVpnResourcesApplications', 'sslVpnResourcesApplications');
+                }
+            },
+            onShowMenu: function(e,menu,rowId) {
+                $('#addResourceObjectMenu', menu).remove();
+                $('#editMenu', menu).remove();
+                return menu;
+            }
+            });
+            $('#tf1_sslVpnResourcesHostNames .gradeA').contextMenu('contextMenu3', {
+                bindings : {
+                'deleteMenu' : function(t, e, rowId) {
+                    deleteRows('button.deleteHosts.sslVpnResourcesHostNames.sslVpnResources', 'tf1_frmSslVpnResources', rowId, 'optionSelectAll', 'tf1_dialog', 'sslVpnResourcesHostNames', 'sslVpnResourcesHostNames');
+                }
+            },
+            onShowMenu: function(e,menu,rowId) {
+                $('#addResourceObjectMenu', menu).remove();
+                $('#editMenu', menu).remove();
+                return menu;
+            }
+
+            });
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 3 }
+                    ]
+                });
+                oTable = $('#recordsData2').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 0 }
+                    ]
+                });
+                oTable = $('#recordsData3').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 0 }
+                    ]
+                });
+
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+            });
+        </script>
+
+    </body>
+
+</html>
+<?lua end ?>

@@ -1,0 +1,298 @@
+<?lua
+require "teamf1lualib/bl_authFailedAps"
+require "teamf1lualib/util"
+require "teamf1lualib/bl_manageAp"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/wlan_returnCodes"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "authenticationFailed"
+
+local guiAuthFailedAps = require("com.teamf1.bl.wlan.authfailedaplist")
+local guiManageAp      = require("com.teamf1.bl.wlan.manageap")
+local errorMap         = require ("com.teamf1.core.errorMap")
+local returnCodes      = require ("com.teamf1.core.returnCodes")
+local wlanReturnCodes  = require ("com.teamf1.core.wlan.wlanReturnCodes")
+
+local errorCode, apProfileTbl
+
+errorCode, apProfileTbl = guiManageAp.apProfileChannelsGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+local authFailedApsInfo, errorCode
+errorCode, authFailedApsInfo = guiAuthFailedAps.authFailedApsGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "manage") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local page = "authFailedAps"
+    local removePrefix = page .. "."
+    configRow = util.removePrefix (configRow, removePrefix)
+    configRow["page"] = 2
+    local errorCode 
+    PROMT_MESSAGE = 0
+    errorCode, PROMT_MESSAGE = guiManageAp.manageApAdd (configRow)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        if (errorCode == wlanReturnCodes.AP_PROMT_MESSAGE_MANAGED) then
+            MAC_ADDRESS = configRow.macAddress
+            statusInfoMessage = errorMap.errorStringGet (errorCode)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorCode)
+        end
+    else
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "delete") then
+    local errorCode 
+    errorCode = guiAuthFailedAps.authFailedApsDelete ( )
+    if (errorCode ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    end
+    web.goToPage(NextPage, true, true)
+else 
+cgilua.header ("Content-Type","text/html; charset=UTF-8")       
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmAuthFailedAps" id="tf1_frmAuthFailedAps">        
+            <input type="hidden" name="thispage" id="thispage" value="authFailedAps.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->    
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li id="edit">
+                    Manage
+                </li>
+                <li id="details">
+                    View Details
+                </li>
+                <li id="delete">
+                    Delete All
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use
+                    "msgError" 2. for information use "msgInfo" 3. for sucess
+                    use "msgSuccess" CSS classes ]-->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusInfoMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage .. ":" .. MAC_ADDRESS |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="platform.cgi?page=globalStatusAps.html">Global Status</a>
+                                </li>
+                                <li>
+                                    <a href="platform.cgi?page=allAps.html">All APs</a>
+                                </li>
+                                <li>
+                                    <a href="platform.cgi?page=managedAps.html">Managed</a>
+                                </li>
+                                <li>
+                                    <a href="platform.cgi?page=peerControllerManagedAps.html">Peer Managed</a>
+                                </li>
+                                <li class="current">
+                                    <a href="platform.cgi?page=authFailedAps.html">Authentication Failed</a>
+                                </li>
+                                <li>
+                                    <a href="platform.cgi?page=rfScanAps.html">RF Scan</a>
+                                </li>
+                                <li>
+                                    <a href="platform.cgi?page=deAuthAttacks.html">De-Authentication Attacks</a>
+                                </li>
+                                <li>
+                                    <a href="?page=apHwCapability.html">Hardware Capability</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint"> $| helpHintText |$</p>
+                    </div>
+                    <h1>Authentication Failed APs List</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_authFailedAps">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th> MAC Address </th>
+                                        <th> IP Address </th>
+                                        <th> Last Failure Type </th>
+                                        <th> Age </th>
+                                    </tr>
+                                </thead>
+                                        <?lua
+                                            if (authFailedApsInfo ~= nil) then
+                                            for k, v in pairs (authFailedApsInfo) do
+                                            local row = authFailedApsInfo[k]
+
+                                            ?>
+                                            <tr class="gradeA"
+                                                id="authFailedAps$| row["macAddress"] |$">
+                                                <td class="spanGradeA" id="authFailedAps$| row["macAddress"] |$" ><span class="highlight1">$|
+                                                        row["macAddress"] or ''
+                                                        |$</span></td>
+                                                <td>$| row["ipAddress"] or '' |$</td>
+                                                <td>$| row["lastFailed"] or '' |$</td>
+                                                <td>$| row["age"] or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                            end
+                                            end
+                                            ?>
+                            </table>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" src="js/authFailedAps.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#tf1_authFailedAps .gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'editMenu' : function(t, e, rowId) {
+                            openForm('button.edit.authFailedAps.authFailedAps',rowId,'tf1_dialog','authFailedAps','authFailedApsForm.html', 'tf1_authFailedApsContent','onloadAuthFailedApsFn');
+                        },
+
+                        'detailsMenu' : function(t, e, rowId) {                            
+                            openPreviewForm('button.view.authFailedAps.authFailedAps', 'MAC', rowId,'tf1_dialog','authFailedAps','authFailedApsForm.html', 'tf1_authFailedApsViewContent','');
+                        },
+                        'deleteMenu' : function(t, e, rowId) {
+                            deleteRows('button.delete.authFailedAps.authFailedAps', 'tf1_frmAuthFailedAps', rowId, 'optionSelectAll', 'tf1_dialog', 'authFailedAps', 'authFailedAps');
+                        }
+                    }
+
+                });
+
+                $('#tf1_authFailedAps .spanGradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'editMenu' : function(t, e, rowId) {
+                            openForm('button.edit.authFailedAps.authFailedAps',rowId,'tf1_dialog','authFailedAps','authFailedApsForm.html', 'tf1_authFailedApsContent','onloadAuthFailedApsFn');                        },
+
+                        'detailsMenu' : function(t, e, rowId) {                            
+                            openPreviewForm('button.view.authFailedAps.authFailedAps', 'MAC', rowId,'tf1_dialog','authFailedAps','authFailedApsForm.html', 'tf1_authFailedApsViewContent','');
+                        }
+                    }
+
+                });
+
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+            });
+            
+            function profileChange() {
+
+				var selObj = document.getElementById("tf1_profile");
+                var selValue = selObj.options[selObj.selectedIndex].value;
+                var chan1Obj = document.getElementById("tf1_radio1Channel");
+                var chan2Obj = document.getElementById("tf1_radio2Channel");
+                chan1Obj.options.length = 0;
+                chan2Obj.options.length = 0;
+
+			<?lua
+                			if (apProfileTbl ~= nil) then
+                				for k, v in pairs (apProfileTbl) do
+                					local row = apProfileTbl[k]
+                	?>
+			
+				if ( selValue == '$| row.profileId |$' ) {
+                    <?lua
+                        for l, m in pairs (row.radio1Channels) do 
+                     ?>
+                    chan1Obj.options[chan1Obj.options.length] = new  Option('$| m.name |$',
+                                                                            '$| m.value |$');
+                    <?lua end 
+                        for i, j in pairs (row.radio2Channels) do 
+                     ?>                        
+                    chan2Obj.options[chan2Obj.options.length] = new Option('$|j.name |$',
+                                                                           '$| j.value |$');
+                    <?lua end ?>
+				}
+			 <?lua
+                		end
+                		end
+                	?>	
+
+				
+			}
+	
+        </script>
+    </body>
+</html>
+<?lua end ?>

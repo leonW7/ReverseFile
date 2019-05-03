@@ -1,0 +1,201 @@
+<?lua
+require "teamf1lualib/billingDesk_bl"
+require "teamf1lualib/billingsUsers_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/captivePortal"
+
+local billingDesk = require ("com.teamf1.bl.billingDesk")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local billingUser = require ("com.teamf1.bl.billingUser")
+local profileId = cgi["configRowId"]
+configRowId = cgi["configRowId"]
+ if(ButtonType and ButtonType == "extend") then
+     
+     local configRow, ProfileRow = billingUser.curUserProfileGet (profileId)
+     cgilua.htmlheader()
+
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_extendSessionDailogContent">
+
+<div class="topBg">
+					<h1>Extend Session Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+				<div class="dialogMidArea">
+                                       <?lua if(ProfileRow["tempCPUserProfiles.ModifyAccount"]=="1") then ?>
+					<div class="configRow">
+						<label> Account Name </label>
+						<p>$| configRow["tempUsers.CstmAccName"] or '' |$</p>
+                                               <?lua accntName = configRow["tempUsers.CstmAccName"] or ''?>
+                                               <input type="hidden" name="tempUsers.CstmAccName" value="$| accntName |$" >
+					</div>
+					<div class="break">&nbsp;</div> 
+                                       <?lua end?>
+                    <div class="configRow">
+						<label>User Name </label>
+						<p>$| configRow["tempUsers.UserName"]|$</p>
+                                               <input type="hidden" name="tempUsers.UserName" value="$| configRow["tempUsers.UserName"]|$" > </td>
+					</div>
+					<div class="break">&nbsp;</div>
+                                       <?lua if(ProfileRow["tempCPUserProfiles.ValidDurationCheck"]=="1")  then ?>
+                    <div class="configRow">
+						<label>Expiration Date/Time </label>
+                                               <?lua
+                                                local expDate = billingDesk.covertDateInGUi(configRow["tempUsers.ExpirationDate"])
+                                                ?>
+						<input type="text" id="txtbeginFrom" name="tempUsers.ExpirationDate" value="$| expDate |$" readonly >
+					(Set time from below)
+					</div>
+					<div class="break" >
+							        &nbsp;
+							    </div>
+							    <div class="configRow" >
+							        <label>&nbsp; </label>
+							        <input type="hidden" id="tf1_setDateTime"  onChange="onchangeValue()" readonly>
+							        <div id="tf1_setDateTime"></div>
+							    </div>
+							    <div class="break">
+							        &nbsp;
+								</div> 
+                                        <?lua end ?>
+                                <?lua if(ProfileRow["tempCPUserProfiles.MaxUsageTrafficCheck"]=="1" and ProfileRow["tempCPUserProfiles.ModifyUsage"]=="1") then 
+                                        trafficType,trafficVal=billingDesk.convertTraffic(configRow["tempUsers.MaxUsageTrafficInfo"])    ?>
+                    <div class="configRow">
+						<label> Maximum Usage Traffic </label>
+						<input type="text" class="one" name="tempUsers.MaxUsageTrafficValue" value="$| trafficVal |$" id="txtMaxUserTraffic" onkeypress="return numericValueCheck (event)" > 
+                                       <select name="tempUsers.MaxUsageTrafficType" class="two" size="1">
+                                        <option $| web.dropdownSelected(trafficType == "2") |$ value="2">MB</option>
+                                        <option $| web.dropdownSelected(trafficType == "3") |$ value="3">GB</option>
+                                        </select>
+					</div>
+					<div class="break">&nbsp;</div>
+                    <?lua end
+                                      if(ProfileRow["tempCPUserProfiles.MaxUsageTimeCheck"]=="1" and ProfileRow["tempCPUserProfiles.ModifyUsage"]=="1") then 
+                                        timeType,timeVal=billingDesk.convertTime(configRow["tempUsers.MaxUsageTimeInfo"])        
+                                ?>
+                    <div class="configRow">
+						<label>Maximum Usage Time </label>
+						<input type="text" id="txtMaxUserTime" class="one" name="tempUsers.MaxUsageTimeValue" value="$| timeVal |$"> 
+                                       <select class="two" size="1" name="tempUsers.MaxUsageTimeType" id="selMaxUsageTime" >
+                                        <option $| web.dropdownSelected(timeType == "0") |$ value="0">Hours</option>
+                                        <option $| web.dropdownSelected(timeType == "1") |$ value="1">Days</option>
+                                        </select>
+					</div>
+					<div class="break">&nbsp;</div>
+                                 <?lua end?>
+				</div>
+				<div class="dialogSubmitRow">
+					<input type="submit" name="button.configExtend.billingsUsers.billingsUsers.$| configRowId |$" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="return validateExtendSession()">
+				</div>
+
+</div>
+
+<?lua elseif (ButtonType and ButtonType == "viewDetails") then
+     local configRow, ProfileRow = billingUser.curUserProfileGet (profileId)
+     cgilua.htmlheader()
+?>
+
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_viewDetailsDailogContent">
+	<div class="topBg">
+					<h1>$| ProfileRow["tempCPUserProfiles.ProfileName"] |$'s User Accounts</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+				<div id="tf1_printPreview" class="dialogMidArea">
+                                        <?lua 
+                                                if(configRow["tempUsers.CstmAccName"] and configRow["tempUsers.CstmAccName"]~=' ') then ?>
+					<div class="configRow">
+						<label> Account Name </label>
+						<p>$| configRow["tempUsers.CstmAccName"] |$</p>
+					</div>
+					<div class="break">&nbsp;</div> 
+                                        <?lua end ?>
+                    <div class="configRow">
+						<label> Username  </label>
+						<p>$| configRow["tempUsers.UserName"] |$</p>
+					</div>
+					<div class="break">&nbsp;</div>
+                    <div class="configRow">
+						<label> Password </label>
+						  <p>$| configRow["tempUsers.Password"] |$</p>
+					</div>
+					<div class="break">&nbsp;</div>
+                                        <?lua 
+                                if(configRow["tempUsers.BeginDate"]~= "0") then ?>
+                                  <?lua
+                                        
+                                        beginDate =billingDesk.covertDateInGUi(configRow["tempUsers.BeginDate"])
+					local dayLightSaveCheck=db.getAttribute("ntp","_ROWID_", "1","autoDaylight")
+							if (dayLightSaveCheck == "1") then
+							if (configRow["tempUsers.DayLightSaving"] == "0") then
+							beginDate=captivePortal.dateToGuiAdd(configRow["tempUsers.BeginDate"])
+							end
+							elseif (dayLightSaveCheck == "0") then
+							if (configRow["tempUsers.DayLightSaving"] == "1") then
+							beginDate=captivePortal.dateToGuiSubtract(configRow["tempUsers.BeginDate"])
+							end
+							end 
+                                        if( ProfileRow["tempCPUserProfiles.DurationType"]== "0") then ?>
+
+                    <div class="configRow">
+						<label> Account Created Date/Time: </label>
+                                         <?lua else ?>
+                                                 <div class="configRow">
+						<label> Begin Date/Time: </label>
+                                         <?lua end?>
+						 <p>$| beginDate |$</p>
+					</div>
+					<div class="break">&nbsp;</div>
+                                       <?lua end?>
+
+                <?lua if(configRow["tempUsers.ExpirationDate"]~="0") then                             
+                         local expDate = billingDesk.covertDateInGUi(configRow["tempUsers.ExpirationDate"])
+			 local dayLightSaveCheck=db.getAttribute("ntp","_ROWID_", "1","autoDaylight")
+							if (dayLightSaveCheck == "1") then
+							if (configRow["tempUsers.DayLightSaving"] == "0") then
+							expDate=captivePortal.dateToGuiAdd(configRow["tempUsers.ExpirationDate"])
+							end
+							elseif (dayLightSaveCheck == "0") then
+							if (configRow["tempUsers.DayLightSaving"] == "1") then
+							expDate=captivePortal.dateToGuiSubtract(configRow["tempUsers.ExpirationDate"])
+							end
+							end  
+               ?>
+                    <div class="configRow">
+						<label> Expiration Date/Time </label>
+						 <p>$| expDate or ' ' |$</p>
+					</div>
+					<div class="break">&nbsp;</div>
+                           <?lua end ?>
+
+                                <?lua if(configRow["tempUsers.MaxUsageTimeInfo"]~= "0") then 
+                                        timeType,timeVal=billingDesk.convertTime(configRow["tempUsers.MaxUsageTimeInfo"])                                        ?>
+                    <div class="configRow">
+						<label> Maximum Usage Time</label>
+						 <p>$| timeVal |$ $| web.getArgsFromIndex (timeType, "Hours","Days") |$</p>
+					</div>
+					<div class="break">&nbsp;</div>
+                                     <?lua end ?>
+                                <?lua if(configRow["tempUsers.MaxUsageTrafficInfo"]~= "0") then 
+                                        trafficType,trafficVal=billingDesk.convertTraffic(configRow["tempUsers.MaxUsageTrafficInfo"])
+                                ?>
+                    <div class="configRow">
+						<label> Expiration Date/Time </label>
+						 <p>$| trafficVal |$ $| web.getArgsFromIndex (trafficType," "," ", "MB","GB") |$</p>
+					</div>
+					<div class="break">&nbsp;</div>
+                            <?lua end ?>
+
+	</div>
+	<div class="dialogSubmitRow">
+            <input type="button" name="button.print"  class="btnSubmit" title="Print" value="Print" id="btnPrint" onclick="PrintMe('tf1_printPreview')">
+    </div>
+</div>
+<?lua end?>

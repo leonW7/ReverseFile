@@ -1,0 +1,278 @@
+<?lua 
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/webAccessFilter_bl"
+
+    PAGE_HELP = "maintenance"
+    PAGE_HELP_SECTION = "webAccessFilter"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+-- webAccessFilter business Logic
+local WAF_bl = require ("com.teamf1.bl.system.webAccessFilter") 
+
+local errorFlag
+
+if (ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local cookieTbl = {}
+    local tempVar   = 1
+    if (type(cgi["webAccessFilter.checkbox"]) == "string") then
+        cookieTbl[tempVar] = inputTable["webAccessFilter.checkbox"]
+    else
+        for k, v in pairs(cgi["webAccessFilter.checkbox"]) do
+            cookieTbl[tempVar] = v
+            tempVar = tempVar + 1
+        end
+    end
+
+    -- call the BL logic
+    errorFlag = WAF_bl.webAccessFilterDelete (cookieTbl)
+    
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag = WAF_bl.webAccessFilterStatusEdit (inputTable)
+
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "config1") then
+    if(RowId == "-1") then
+       local inputTable = web.cgiToLuaTable(cgi)
+       errorFlag = WAF_bl.webAccessFilterCreate (inputTable)
+       if (errorFlag == returnCodes.SUCCESS) then 
+          statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+       else 
+          statusErrorMessage = errorMap.errorStringGet (errorFlag)
+       end
+    else
+       local inputTable = web.cgiToLuaTable(cgi)
+       inputTable["webAccessInfo.cookie"] = RowId
+       errorFlag = WAF_bl.webAccessFilterEdit (inputTable)
+       if(errorMap.errorStringGet == nil ) then
+       else
+       end
+       if (errorFlag == returnCodes.SUCCESS) then 
+          statusSuccessMessage = errorMap.errorStringGet (returnCodes.SUCCESS)
+       else 
+          statusErrorMessage = errorMap.errorStringGet (errorFlag)
+       end
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local webAccessStatus 
+    local webAccInfoTab = {}
+    errorFlag, webAccessStatus = WAF_bl.webAccessFilterStatusGet ()
+    errorFlag, webAccInfoTab = WAF_bl.webAccessFilterGetAll ()
+
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+ cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE =
+"12795,10862,10695,30012,10875,11748,10044,30341,30340,30342,30343,14182,30344,11281,11031,12758,12064,30345,11281,11031,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+<link rel="stylesheet" type="text/css" href="css/menu.css" />
+<link rel="stylesheet" type="text/css" href="css/table.css" />
+<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+<?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body>    
+    <!-- Section for Pop up dialog starts -->
+    <div id="tf1_overlay" class="configDialogMask"></div>                
+    <form action="platform.cgi" method="post" name="tf1_frmWebAccFilterConfig" id="tf1_frmWebAccFilterConfig">
+        <input type="hidden" name="thispage" id="thispage" value="webAccessFilter.html">
+        <div id="tf1_dialog" class="configDialog"></div>
+    </form>
+    <!-- Section for Pop up dialog ends -->
+    
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+        </tr>
+        <tr>
+            <td valign="top" align="center">
+    <!-- Right click Div Start -->
+    <div class="contextMenu" id="contextMenu">
+        <ul>
+            <li>
+                <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');" />&nbsp; 
+                    $| LANG_LOCALE['12795'] |$ 
+            </li>
+            <li id="edit">$| LANG_LOCALE['10862'] |$ </li>
+            <li id="delete">$| LANG_LOCALE['10695'] |$ </li>
+        </ul>
+    </div>
+    <!-- Right click Div End -->
+                <div class="midWidth">
+                <script language="JavaScript">
+                    mmSel("mainMenu6");
+                </script>
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+                        <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+                        </div>
+                    <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+                        <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                        </div>
+                    <?lua  end?>
+                        <div class="FL2">
+                            <p class="hint">
+                                $| helpHintText |$ 
+                            </p>
+                        </div>
+                        <h1>$| LANG_LOCALE['30012'] |$</h1>
+                            <div class="midArea">
+                                <div align="left">
+                                    <form name="tf1_frmWebAccFilter" id="tf1_frmWebAccFilter" action="platform.cgi" method="post">
+                                    <input type="hidden" name="thispage" id="thispage" value="webAccessFilter.html">
+                                        <div class="configRow">
+                                            <label>$| LANG_LOCALE['10875'] |$</label>
+                                            <?lua
+                                                if (webAccessStatus == "1") then
+                                                    statusStr="enable-disable-on"
+                                                    statusVar = "1"
+                                                else
+                                                    statusStr="enable-disable-off"
+                                                    statusVar = "0"
+                                                end
+                                            ?>
+                                            <a class="$| statusStr |$" alt="" id="tf1_wafStatus" status="$| webAccessStatus |$"></a>
+                                            <input type="hidden" name="webAccessStatus.accessStatus" value="$| statusVar |$"> 
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+					                    <div class="submitRow">							
+                                            <input type="submit" name="button.config.webAccessFilter.webAccessFilter" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" onclick="setHiddenChks('tf1_frmWebAccFilter');">							
+                                            <input type="reset" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" onclick="this.form.reset(); resetImgOnOff('tf1_frmWebAccFilter');">
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+                                    </form>
+                                </div> <!-- close align = left -->
+                                <div class="break">&nbsp;</div>
+                                <h2>$| LANG_LOCALE['30340'] |$</h2>
+                                    <div class="CLR">
+                                        <div class="demo_jui" id="tf1_webAccFilterIPs">
+                                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                                <thead>
+                                                    <tr>
+                                                        <th> $| LANG_LOCALE['11748'] |$ </th>
+                                                        <th> $| LANG_LOCALE['10044'] |$ </th>
+                                                        <th> $| LANG_LOCALE['30341'] |$ </th>
+                                                    </tr>
+                                                </thead>
+                                                <?lua
+												local i = 0
+                                                for k,v in pairs(webAccInfoTab) do
+                                                    i = i + 1
+                                                    local row = webAccInfoTab[i]
+                                                    local accessType
+                                                    local iporVlan
+                                                if (row["accessType"] == "0") then
+                                                accessType=LANG_LOCALE['14182']
+                                                iporVlan=row["IpAddr"]
+                                                else
+                                                    accessType=LANG_LOCALE['30344']
+                                                    iporVlan=row["vlanName"]
+                                                end
+                                                ?>
+                                                    <tr pro-name="$| row["name"] or '' |$" class="gradeA" id="$| row["_ROWID_"] |$">
+                                                        <td>$| row["name"] or '' |$</td>
+                                                        <td>$| accessType or '' |$</td>
+                                                        <td>$| iporVlan or '' |$</td>
+                                                    </tr>
+                                                <?lua 
+                                                    end 
+                                                 ?>
+                                            </table>
+                                        </div>
+                                    </div> <!-- close CLR class tag -->
+                                    <div class="buttonsRow" id="tf1_btnShowModal">
+                                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['30342'] |$" value="$| LANG_LOCALE['30342'] |$" id="btSave" onclick="openForm('button.add.webAccessFilter.webAccessFilter',-1,'tf1_dialog','webAccessFilter','webAccessFilterForm.html', 'tf1_webAccessFilterDailogContent','onLoadWebAccFilterFn')">
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                            </div> <!-- close midArea class tag -->
+                </div> <!-- close midWidth class tag -->
+            </td>
+        </tr>
+        <tr>
+            <td><?lua web.includeMenu("footer.html")?></td>
+        </tr>
+    </table>
+<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+<script type="text/ecmascript" language="javascript" src="js/webAccessFilter.js"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        $('#tf1_webAccFilterIPs .gradeA').contextMenu('contextMenu', {
+            bindings : {
+                'editMenu' : function(t, e, rowId) {
+                    openForm('button.edit.webAccessFilter.webAccessFilter',rowId,'tf1_dialog','webAccessFilter','webAccessFilterForm.html', 'tf1_webAccessFilterDailogContent','onLoadWebAccFilterFn');                                    
+                    },
+                'deleteMenu' : function(t, e, rowId) {
+                    deleteRows('button.delete.webAccessFilter.webAccessFilter', 'tf1_frmWebAccFilterConfig', rowId, 'optionSelectAll', 'tf1_dialog', 'webAccessFilter', 'webAccessFilter');
+                }
+                },
+                onShowMenu: function(e,menu,rowId) {
+			    var re  = new RegExp(":",'g');
+			    rowId = rowId.replace(re,"\\:");
+                    if (($("#"+rowId).attr("pro-name") == "Default")){                  
+                            $('#editMenu', menu).remove();
+                    }
+                    return menu;
+                }
+        });
+
+        oTable = $('#recordsData').dataTable({
+            "bJQueryUI" : true,
+            "sPaginationType" : "full_numbers"
+        });
+        dataRightClick(true);
+        $("#btnClose").live("click",function(e){
+            HideDialog('tf1_dialog', 'tf1_overlay');
+            e.preventDefault();
+            });
+        onloadCall();
+    });
+
+</script>
+</body>
+
+</html>
+<?lua end?>

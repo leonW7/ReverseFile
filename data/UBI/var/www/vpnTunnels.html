@@ -1,0 +1,231 @@
+<?lua 
+    require "teamf1lualib/portalInfo_bl"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+    local portalInfo = require ("com.teamf1.bl.portalInfo")
+    local cookiePortal = cgilua.cookies.get ("TeamF1PortalName")
+    local returnCode, isVPNEnabled, isPortFowrwardingEnabled = 
+                                portalInfo.portalInfoGet (cookiePortal)
+ ?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body onLoad="onloadCall ();">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center"><!--webbot bot="Include" U-Include="header.html" TAG="BODY" startspan -->
+		<div align="center">
+			<div class="midWidth">
+				<div class="logo FL">
+					Unified Services Router - $| UNIT_NAME |$
+				</div>
+				 <div class="FR headerRight">
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td valign="top">&nbsp;</td>
+							<td rowspan="2" valign="top"><a class="btnLogout" href="?page=portalLogin.html&portal=$| cookiePortal |$">
+							<div>
+								<div>
+									<icon>
+										Logout
+									</icon>
+								</div>
+							</div> </a></td>
+						</tr>
+					</table>
+				</div>
+				  <div class="midWidth menuBg">
+					<div>
+						<div>
+							<div align="center">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td>
+										<ul id="menu">
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu1">
+												<a href="?page=portalInformation.html">Portal Information</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu2">
+							<a href="?page=vpnTunnels.html">VPN Tunnel</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+                                                                                       <?lua if (isPortFowrwardingEnabled=="1") then?>
+											<li id="mainMenu3">
+												<a href="?page=portForwarding.html">Port Forwarding</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+                                                                                        <?lua end?>
+											<li id="mainMenu4">
+												<a href="?page=changePassword.html">Change Password</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										</ul></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				 
+			</div>
+		</div>
+  </td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+										<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+					<div class="FL2">
+						<p class="hint">
+							 
+						</p>
+					</div>
+					<h1>VPN TUNNEL</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name action="cgi-action.html" method="post">
+								<h2>Supported Features</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+								 <label>This page allows user to establish a SSL VPN tunnel client which provides a point-to-point connection between the remote client machine and the gateway of the corporate network</label>
+								</div>
+								<div class="break">&nbsp;</div>
+								 
+								 <h2>SSL VPN Tunnel Client Installer / Launcher</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+										  <label><a href="#" onclick="launchApplet('install')"><img src="images/iconSslVpnTunnelInstall.png" alt=""></a><br />
+                                          Click the Icon to connect to the remote network. Keep your browser open to maintain the connection. </div>
+<div class="break">&nbsp;</div>
+<h2>SSL VPN Tunnel Client Uninstaller</h2>
+
+ <div class="configRow">
+										  <label><a href="#" onclick="launchApplet('uninstall')"><img src="images/iconSslVpnTunnelUnInstall.png" alt=""></a><br />
+                                          Click the Icon to connect to the remote network. Keep your browser open to maintain the connection. </div>
+<div class="break">&nbsp;</div>
+<div class="break">&nbsp;</div>
+
+<div class="configRow">
+<label>
+<strong>Note:</strong><br />
+
+* If you reload your browser, SSL VPN Tunnel Client will disconnect and then reconnect to the remote network.<br />
+* Installation/Uninstallation can be done only as "root"<br /><br />
+
+<strong>Recommendations :</strong><br />
+* Always follow this sequence: Uninstall any active clients, logout and close the browser. If recommended steps are followed, it will make the connection safer, easier to maintain and avoid possible errors.
+</label>
+ 
+								</div>
+								<div class="break">&nbsp;</div>
+                                
+                                 
+								                            
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td><!--webbot bot="Include" U-Include="footer.html" TAG="BODY" startspan -->
+		<div class="footer">
+			Copyright &#169; 2017 D-Link Corporation.
+		</div>
+	<!--webbot bot="Include" i-checksum="35774" endspan --></td>
+			</tr>
+		</table>
+<script language="JavaScript" type="text/javascript">
+var installWindow, uninstallWindow;
+
+function connect_linux()
+{
+	installWindow = window.open('/scgi-bin/userPortal/clientlinux?openvirtualpassage=connect_linux','install');
+}
+
+function connect_mac()
+{
+	installWindow = window.open('/scgi-bin/userPortal/clientlinux?openvirtualpassage=connect_mac','install');
+}
+
+function closeInstallWindow()
+{
+	if(installWindow != null)
+	{
+		installWindow.close();
+		installWindow = null;
+	}
+}
+
+function closeUninstallWindow()
+{
+	if(uninstallWindow != null)
+	{
+		uninstallWindow.close();
+		uninstallWindow = null;
+	}
+}
+
+function callUninstaller()
+{
+	launchApplet("uninstall");
+}
+
+function launchApplet(argument)
+{
+	var agent = navigator.userAgent.toLowerCase();
+	if (agent.indexOf("linux") != -1 || agent.indexOf("mac") != -1)
+	{
+
+		if(argument == "install")
+		{
+			if( installWindow == null )
+			{
+				closeUninstallWindow();
+				installWindow = window.open('/scgi-bin/userPortal/clientlinux?openvirtualpassage=install','install','width=351,height=52');
+			}
+			installWindow.focus();
+		}
+		else if(argument == "uninstall")
+		{
+				closeInstallWindow();
+				uninstallWindow = window.open('/scgi-bin/userPortal/clientlinux?openvirtualpassage=uninstall','uninstall','width=302,height=42');
+		}
+	}
+	else
+	{
+		alert('SSL VPN Tunnel is not supported on your browser');
+	}
+}
+</script>
+       <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+	</body>
+</html>

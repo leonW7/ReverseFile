@@ -1,0 +1,172 @@
+<?lua
+require "teamf1lualib/bl_cosDscpMarking"
+local guiCos2dscp = require("com.teamf1.bl.wanqos.cos2dscp")
+local configRow = cgi
+local cookie = {}
+cookie["cosDscpMarking.cookie"] = configRow["configRowId"]
+local errorCode, cos2DscpInfo = guiCos2dscp.cos2dscpRemarkGetInfo (cookie)
+if (errorCode ~= 0) then
+errorString = "There is some issue"
+end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_cosDscpMarkingDailogContent">
+				<div class="topBg">
+					<h1>CoS DSCP Marking Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+				<div class="dialogMidArea">
+					<div class="configRow" id="tf1_CoS_div">
+						<label>CoS </label>
+						<input type="text" name="cosDscpMarking.cookie" value= "$|
+                        cos2DscpInfo["cosNum"] |$" class="one" id="tf1_CoS" maxlength="1" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck (this, '', '', 0, 7, true, 'Invalid CoS Value', ''); }">
+						<dl>
+							[Range: 0 - 7]
+						</dl>
+					</div>
+					<div class="break" id="break2_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_DSCP_div">
+						<label>DSCP </label>
+                        <select size="1" name="cosDscpMarking.dscp" id="tf1_DSCP">
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "0") |$ value="0">0</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "1") |$ value="1">1</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "2") |$ value="2">2</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "3") |$ value="3">3</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "4") |$ value="4">4</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "5") |$ value="5">5</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "6") |$ value="6">6</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "7") |$ value="7">7</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "8") |$ value="8">8</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "9") |$ value="9">9</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "10") |$ value="10">10</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "11") |$ value="11">11</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "12") |$ value="12">12</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "13") |$ value="13">13</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "14") |$ value="14">14</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "15") |$ value="15">15</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "16") |$ value="16">16</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "17") |$ value="17">17</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "18") |$ value="18">18</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "19") |$ value="19">19</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "20") |$ value="20">20</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "21") |$ value="21">21</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "22") |$ value="22">22</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "23") |$ value="23">23</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "24") |$ value="24">24</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "25") |$ value="25">25</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "26") |$ value="26">26</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "27") |$ value="27">27</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "28") |$ value="28">28</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "29") |$ value="29">29</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "30") |$ value="30">30</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "31") |$ value="31">31</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "32") |$ value="32">32</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "33") |$ value="33">33</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "34") |$ value="34">34</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "35") |$ value="35">35</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "36") |$ value="36">36</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "37") |$ value="37">37</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "38") |$ value="38">38</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "39") |$ value="39">39</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "40") |$ value="40">40</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "41") |$ value="41">41</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "42") |$ value="42">42</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "43") |$ value="43">43</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "44") |$ value="44">44</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "45") |$ value="45">45</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "46") |$ value="46">46</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "47") |$ value="47">47</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "48") |$ value="48">48</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "49") |$ value="49">49</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "50") |$ value="50">50</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "51") |$ value="51">51</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "52") |$ value="52">52</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "53") |$ value="53">53</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "54") |$ value="54">54</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "55") |$ value="55">55</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "56") |$ value="56">56</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "57") |$ value="57">57</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "58") |$ value="58">58</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "59") |$ value="59">59</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "60") |$ value="60">60</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "61") |$ value="61">61</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "62") |$ value="62">62</option>
+							<option  $|
+                            web.dropdownSelected(cos2DscpInfo["dscp"] == "63") |$ value="63">63</option>
+						</select>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+				</div>
+				<div class="dialogSubmitRow">
+					<input type="submit" name="button.edit.cosDscpMarking" onclick="return cosDscpMarkingFormValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+				</div>
+			</div>

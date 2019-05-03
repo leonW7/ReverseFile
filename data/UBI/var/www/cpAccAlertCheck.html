@@ -1,0 +1,21 @@
+<?lua
+	local alertType = ""
+	local userName = ""
+	local currentValue =  ""
+	if (cgi["userName"] ~= nil) then
+        userName = cgi["userName"]
+    end	
+	if (cgi["alertType"] ~= nil) then
+       alertType  = cgi["alertType"]
+    end
+	db.execute("ATTACH '/tmp/cpAcc.db' as cpAccDB")
+
+if( alertType == "2" or alertType == "3") then
+		currentValue = db.getAttribute("CPAccInfoUserAccount","UserName",userName,"currentTrafficUsage") or "0"
+	else
+		currentValue = db.getAttribute("CPAccInfoUserAccount","UserName",userName,"currentTimeUsage") or "0"
+	end
+	currentValue = tonumber(currentValue)
+	db.execute("DETACH cpAccDB")
+?>
+$| currentValue	|$

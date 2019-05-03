@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# ethInit - initialization script for ifDev
+#
+# Copyright (c) 2007, TeamF1, Inc.
+# Copyright (c) 2015, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01c,01dec15,abd  (AC Merge) merging the AC to super branch.
+# 01b,12oct07,sdk  added ifDev kernel module and removed updt for bdg mac
+# 01a,05sep07,sdk  written
+
+# get the device name 
+PRODUCT_NAME=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+
+if [ "$INCLUDE_IFDEV" = "y" ]; then
+
+MODULES_DIR=$IFDEV_INSTALL_PATH/lib/modules/ifDev/
+
+
+[ -f $MODULES_DIR/ifDev.$MOD_SUFFIX ] && { insmod $MODULES_DIR/ifDev.$MOD_SUFFIX; }
+
+fi
+MODEL_ID=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId | awk '{print $1}'`
+# Interfaces are changed w.r.to the devices. Do not alter the flow of
+# operations else we will create a MAC mess.
+if [ $PRODUCT_NAME == "DSR-1000AC" -o $PRODUCT_NAME == "DSR-500AC" -o $PRODUCT_ID == "DSR-1000_Bx" -o $PRODUCT_ID == "DSR-500_Bx" ]; then
+$IFDEV_INSTALL_PATH/bin/ifDevUpdateMac $DB_FILENAME "ethernet" "agl0" &
+else
+$IFDEV_INSTALL_PATH/bin/ifDevUpdateMac $DB_FILENAME "ethernet" "eth0" &
+fi
+$IFDEV_INSTALL_PATH/bin/ifDevUpdateMac $DB_FILENAME "ethernet" "eth1" &
+if [ $PRODUCT_NAME == "DSR-1000AC" -o $PRODUCT_NAME == "DSR-500AC" -o $PRODUCT_ID == "DSR-1000_Bx" -o $PRODUCT_ID == "DSR-500_Bx" ]; then
+$IFDEV_INSTALL_PATH/bin/ifDevUpdateMac $DB_FILENAME "ethernet" "eth0" &
+elif [ $MODEL_ID == "DSR-250N" ] || [ $MODEL_ID == "DSR-250" ] || [ $MODEL_ID == "DSR-150N" ] || [ $MODEL_ID == "DSR-150" ]; then
+$IFDEV_INSTALL_PATH/bin/ifDevUpdateMac $DB_FILENAME "ethernet" "eth0.4093" &
+else
+$IFDEV_INSTALL_PATH/bin/ifDevUpdateMac $DB_FILENAME "ethernet" "eth2" &
+fi
+$IFDEV_INSTALL_PATH/bin/ifDevUpdateMac $DB_FILENAME "ethernet" "bdgWAN1" &
+$IFDEV_INSTALL_PATH/bin/ifDevUpdateMac $DB_FILENAME "ethernet" "bdgWAN2" &

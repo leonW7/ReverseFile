@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ $# -ne 1 ]; then
+    echo 1>&2 "Usage: $0 <new tcp session timeout>"
+    exit 127
+fi
+
+#read default values from user.config
+
+. /pfrm2.0/etc/ips.config
+. /pfrm2.0/etc/user.config
+
+NF_CONNTRACK_TCP_TIMEOUT_ESTABLISHED=$1
+cp /pfrm2.0/etc/ips.conf /tmp/ips.conf
+echo "preprocessor stream5_global: max_tcp $NF_CONNTRACK_MAX, track_tcp yes, track_udp no, memcap $IPS_TCP_MEMCAP" >>/tmp/ips.conf
+echo "preprocessor stream5_tcp: policy first, use_static_footprint_sizes, timeout $NF_CONNTRACK_TCP_TIMEOUT_ESTABLISHED" >>/tmp/ips.conf
+
+#restart snort
+killall -SIGHUP snort

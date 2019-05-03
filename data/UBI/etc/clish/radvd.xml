@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="net-radvd-config" prompt="net-config[radvd]> "> 
+    <COMMAND name="save" help="Save radvd configuration changes.">
+	     <ACTION>lua clishCfgObjExec("radvd")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save radvd configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("radvd")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back radvd configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable"
+             help="enable the RADVD process here to allow stateless auto configuration of the IPv6 LAN network">
+             <PARAM name="status"
+                    help="Enable/Disable radvd"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("radvd", "radvd.isEnabled", "${status}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="mode"
+             help="select N to send router advertisements (RA&apos;s) to all interfaces else Y">
+             <PARAM name="mode"
+                    help="Enter N to send router advertisements (RA&apos;s) to all interfaces otherwise enter Y"
+                    ptype="RADVD_MODE_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("radvd", "radvd.UnicastOnly", "${mode}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="interval"
+             help="The time in seconds between sending unsolicited multicast RA&apos;s. The default is 30 seconds.">
+             <PARAM name="interval"
+                    help="The time in seconds between sending unsolicited multicast RA&apos;s. The default is 30 seconds."
+                    ptype="RADVD_IDLETO_T"/>
+             <ACTION>lua clishCfgObjAdd ("radvd", "radvd.MaxRtrAdvInterval", "${interval}")              
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="flags" help="RA Flags"/>
+    <COMMAND name="flags managed_enable"
+             help="Chose Managed to use the administered /stateful protocol for address auto configuration">
+             <PARAM name="managedFlag"
+                    help="Chose Managed to use the administered /stateful protocol for address auto configuration"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("radvd", "radvd.AdvManagedFlag", "${managedFlag}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="flags other_enable"
+             help="the Other flag is selected the host uses administered/stateful protocol of other (i.e. non-address) information auto configuration.">
+             <PARAM name="otherFlag"
+                    help="the Other flag is selected the host uses administered/stateful protocol of other (i.e. non-address) information auto configuration."
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("radvd", "radvd.AdvOtherConfigFlag", "${otherFlag}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="preference"
+             help="Chose between low/medium/high for the preference associated with this router’s RADVD process">
+             <PARAM name="preference"
+                    help="Chose between low/medium/high for the preference associated with this router’s RADVD process"
+                    ptype="RADVD_PREFERENCE_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("radvd", "radvd.AdvDefaultPreference", "${preference}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="mtu"
+             help="This is used in RA&apos;s to ensure all nodes on the network use the same MTU value in the cases where the LAN MTU is not well known. The default is 1500">
+             <PARAM name="mtuSize"
+                    help="This is used in RA&apos;s to ensure all nodes on the network use the same MTU value in the cases where the LAN MTU is not well known. The default is 1500"
+                    ptype="MTU_R"/>
+             <ACTION>lua clishCfgObjAdd ("radvd", "radvd.AdvLinkMTU", "${mtuSize}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="life_time"
+             help="The lifetime in seconds of the route. The default is 3600 seconds.">
+             <PARAM name="lifeTime"
+                    help="The lifetime in seconds of the route. The default is 3600 seconds."
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("radvd", "radvd.AdvDefaultLifetime", "${lifeTime}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-radvd-pool-config" prompt="net-config[radvd-pool]> "> 
+    <COMMAND name="save" help="Save radvd Pool configuration changes.">
+	     <ACTION>lua clishCfgObjExec("radvdPool")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save radvd Pool configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("radvdPool")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back radvd Pool configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="prefix_type"
+             help="Option whether to select the prefix type as 6to4 or Global/Local/ISATAP">
+             <PARAM name="ipv6Prefixtype"
+                    help="select the prefix type as 6to4 or Global/Local/ISATAP"
+                    ptype="IPV6_PREFIX_T"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.radvdPrefixType", "${ipv6Prefixtype}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="sla_id"
+             help="The SLA ID (Site-Level Aggregation Identifier) in the 6to4 address prefix is set to the interface ID of the interface on which the advertisements are sent">
+             <PARAM name="slaid"
+                    help="The SLA ID (Site-Level Aggregation Identifier) in the 6to4 address prefix is set to the interface ID of the interface on which the advertisements are sent"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.SLAIdentifier", "${slaid}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="prefix_address"
+             help="It specifies the IPv6 network address">
+             <PARAM name="prefix"
+                    help="It specifies the IPv6 network address"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.radvdAdvPrefix", "${prefix}")              
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="Vlan_ID"
+             help="It specifies the vlan interface Id">
+             <PARAM name="vlan_id"
+                    help="Row Id Of the domain to be added, use 'show net vlan configuration' for available vlan list"
+                    ptype="VLANID_RANGE"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.vlanId", "${vlan_id}")              
+             </ACTION>
+    </COMMAND>  
+    <COMMAND name="prefix_length"
+             help="The prefix length variable is a decimal value that indicates the number of contiguous, higher order bits of the address that make up the network portion of the address">
+             <PARAM name="prefixLen"
+                    help="The prefix length variable is a decimal value that indicates the number of contiguous, higher order bits of the address that make up the network portion of the address"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.radvdAdvPrefixLength", "${prefixLen}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="prefix_life_time"
+             help="The length of time over which the requesting router is allowed to use the prefix">
+             <PARAM name="prefixLifetime"
+                    help="The length of time over which the requesting router is allowed to use the prefix"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.radvdAdvPrefixLifetime", "${prefixLifetime}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-radvd-pool-config-edit" prompt="net-config[radvd-pool]> "> 
+    <COMMAND name="save" help="Save radvd Pool configuration changes.">
+	     <ACTION>lua clishCfgObjExec("radvdPool")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save radvd Pool configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("radvdPool")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back radvd Pool configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="prefix_type"
+             help="Option whether to select the prefix type as 6to4 or Global/Local/ISATAP">
+             <PARAM name="ipv6Prefixtype"
+                    help="select the prefix type as 6to4 or Global/Local/ISATAP"
+                    ptype="IPV6_PREFIX_T"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.radvdPrefixType", "${ipv6Prefixtype}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="sla_id"
+             help="The SLA ID (Site-Level Aggregation Identifier) in the 6to4 address prefix is set to the interface ID of the interface on which the advertisements are sent">
+             <PARAM name="slaid"
+                    help="The SLA ID (Site-Level Aggregation Identifier) in the 6to4 address prefix is set to the interface ID of the interface on which the advertisements are sent"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.SLAIdentifier", "${slaid}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="prefix_address"
+             help="It specifies the IPv6 network address">
+             <PARAM name="prefix"
+                    help="It specifies the IPv6 network address"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.radvdAdvPrefix", "${prefix}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="prefix_length"
+             help="The prefix length variable is a decimal value that indicates the number of contiguous, higher order bits of the address that make up the network portion of the address">
+             <PARAM name="prefixLen"
+                    help="The prefix length variable is a decimal value that indicates the number of contiguous, higher order bits of the address that make up the network portion of the address"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.radvdAdvPrefixLength", "${prefixLen}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="prefix_life_time"
+             help="The length of time over which the requesting router is allowed to use the prefix">
+             <PARAM name="prefixLifetime"
+                    help="The length of time over which the requesting router is allowed to use the prefix"
+                    ptype="UINT"/>
+             <ACTION>lua clishCfgObjAdd ("radvdPool", "radvdLANPrefixPool.radvdAdvPrefixLifetime", "${prefixLifetime}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net radvd" help="RADVD configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="net radvd pool" help="RADVD configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="net radvd configure"
+             help="radvd configuration mode."
+             view="net-radvd-config" viewid="">
+             <PARAM name="row_id" 
+	       help=" Row Id Of the domain to be edited, use 'show net vlan configuration' for available vlan list"
+	       ptype="VLANID_RANGE"/>
+                   <ACTION>lua clishCfgObjNew ("radvd", 
+                              radvdCfgInit, radvdCfgSave, 
+				       radvdCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="net radvd pool add"
+             help="radvd Pool configuration mode."
+             view="net-radvd-pool-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("radvdPool", 
+                              radvdPoolCfgInit, radvdPoolCfgSave, 
+				       radvdPoolCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="net radvd pool edit"
+             help="radvd Pool configuration mode."
+             view="net-radvd-pool-config-edit" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the domain to be edited, use 'show net vlan configuration' for available vlan list"
+	       ptype="VLANID_RANGE"/>
+                   <ACTION>lua clishCfgObjNew ("radvdPool", 
+                              radvdPoolCfgInit, radvdPoolCfgSave, 
+				       radvdPoolCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="net radvd pool delete"
+             help="radvd pool configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be enabled"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("radvdPool", 
+                              radvdPoolCfgInit, radvdPoolCfgDel, 
+				       radvdPoolCfgInputVal,"${row_id}")
+                   clishCfgObjExec("radvdPool")
+                   </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show net radvd" help="."/>
+    <COMMAND name="show net radvd configure_setup"
+            help="Display RADVD configuration">
+	    <ACTION>lua clishCmdExec (radvdCfgGet)</ACTION>
+    </COMMAND>
+    <COMMAND name="show net radvd pool_setup"
+            help="Display RADVD pool configuration">
+	    <ACTION>lua clishCmdExec (radvdpoolCfgGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

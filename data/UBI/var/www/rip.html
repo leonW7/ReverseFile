@@ -1,0 +1,325 @@
+<?lua
+require "teamf1lualib/rip_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "rip"
+	
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local routing_rip = require ("com.teamf1.bl.routing.rip")
+local errorMap    = require ("com.teamf1.core.errorMap")
+
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local rowId = "1"
+    inputTable["rip.cookie"] = rowId
+
+    local returnCode, cookie = routing_rip.ripSectionSet (inputTable)    
+    
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end    
+
+    web.goToPage(NextPage, true, true)
+
+else
+    local returnCode, cookie, direction, version, authentication, 
+           firstKeyId, firstAuthenticationKey, firstKeyFrom, 
+           firstKeyTo, secondKeyId, secondAuthenticationKey, secondKeyFrom, 
+           secondKeyTo = routing_rip.ripSectionGet ()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "12714,12715,10747,13996,13997,13650,13266,10751,30171,30172,30173,13449,13998,11704,11302,11702,11798,11797,10311,12056,12169,11978,11968,12176,10922,11789,12627,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/dateTimePicker.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$ </p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['12714'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmRip"  method="post" id="tf1_frmRip"action="platform.cgi">
+                            <input type="hidden" name="thispage" id="thispage" value="rip.html">
+                                <h2>$| LANG_LOCALE['12715'] |$</h2>
+                                <div class="configRow" id="tf1_ripDirection_div">
+                                    <label>$| LANG_LOCALE['10747'] |$</label>
+                                    <p>
+                                        <input type="radio" value="0" $| web.radioSelected(direction == "0") |$  name="rip.direction" onClick="ripDirectionTypeCheck('tf1_ripDirection1')" id="tf1_ripDirection1">
+                                        $| LANG_LOCALE['11789'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" value="1" $| web.radioSelected(direction == "1") |$ name="rip.direction" onClick="ripDirectionTypeCheck('tf1_ripDirection2')" id="tf1_ripDirection2">
+                                        $| LANG_LOCALE['13996'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" value="2" $| web.radioSelected(direction == "2") |$ name="rip.direction" onClick="ripDirectionTypeCheck('tf1_ripDirection3')" id="tf1_ripDirection3">
+                                        $| LANG_LOCALE['13997'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" value="3" $| web.radioSelected(direction == "3") |$ name="rip.direction" onClick="ripDirectionTypeCheck('tf1_ripDirection4')" id="tf1_ripDirection4">
+                                        $| LANG_LOCALE['13650'] |$
+                                    </p>
+                                </div>
+                                <div class="break" id="break2_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_ripVersion_div">
+                                    <label>$| LANG_LOCALE['13266'] |$</label>
+                                    <select size="1" name="rip.version" id="tf1_ripVersion" onChange="ripDirectionTypeCheck('tf1_ripDirection1')">
+                                        <option $| web.dropdownSelected(version == "0") |$ value="0">$| LANG_LOCALE['10751'] |$</option>
+                                        <option $| web.dropdownSelected(version == "1") |$ value="1">$| LANG_LOCALE['30171'] |$</option>
+                                        <option $| web.dropdownSelected(version == "2") |$ value="2">$| LANG_LOCALE['30172'] |$</option>
+                                        <option $| web.dropdownSelected(version == "3") |$ value="3">$| LANG_LOCALE['30173'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break3_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_ripAuthentication_div">
+                                    <label>$| LANG_LOCALE['13449'] |$</label>
+                                    
+                                        <?lua 
+                                                 
+                                        if (authentication == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar = "0"
+                                        end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_ripAuthentication"></a>
+                                        <input type="hidden" name="rip.authentication" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break4_div">
+                                    &nbsp;
+                                </div>
+                                <div id="authenticationFirstKey_div">
+                                    <h2>$| LANG_LOCALE['13998'] |$</h2>
+                                    <div class="configRow" id="tf1_ripFirstMd5KeyId_div">
+                                        <label>$| LANG_LOCALE['11704'] |$</label>
+                                        <input type="text" name="rip.firstKeyId" value="$|firstKeyId or ''|$" id="tf1_ripFirstMd5KeyId" class="one" maxlength="3" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, LANG_LOCALE['11302'], '');}">
+                                        <dl>
+                                            [$| LANG_LOCALE['12627'] |$: 1 - 255]
+                                        </dl>
+                                    </div>
+                                    <div class="break" id="break5_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_ripFirstMd5AuthKey_div">
+                                        <label>$| LANG_LOCALE['11702'] |$</label>
+                                        <input type="password" name="rip.firstAuthenticationKey" value="$|firstAuthenticationKey or ''|$" id="tf1_ripFirstMd5AuthKey" maxlength="16" onkeypress ="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }">
+                                    </div>
+                                    <div class="break" id="break6_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow">
+                                        <label>$| LANG_LOCALE['11798'] |$</label>
+                                        <input type="text" id="tf1_dateTimePickerFirstStartValue" name="rip.firstKeyFrom" value="$|firstKeyFrom or ''|$" readonly />
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow">
+                                        <label>&nbsp; </label>
+                                        <input type="hidden" id="tf1_dateTimePickerFirstStart"  onChange="onchangeValueFirstStart()" readonly>
+                                        <div id="tf1_dateTimePickerFirstStart"></div>
+                                    </div>
+                                    
+                                    <div class="configRow">
+                                        <label>$| LANG_LOCALE['11797'] |$</label>
+                                        <input type="text" id="tf1_dateTimePickerFirstEndValue"  name="rip.firstKeyTo" value="$|firstKeyTo or ''|$" readonly />
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow">
+                                        <label>&nbsp; </label>
+                                        <input type="hidden" id="tf1_dateTimePickerFirstEnd"  onChange="onchangeValueFirstEnd()" readonly>
+                                        <div id="tf1_dateTimePickerFirstEnd"></div>
+                                    </div>                                </div>
+                                <div id="authenticationSecondKey_div">
+                                    <h2>$| LANG_LOCALE['10311'] |$</h2>
+                                    <div class="configRow" id="tf1_ripSecMd5KeyId_div">
+                                        <label>$| LANG_LOCALE['11704'] |$</label>
+                                        <input type="text" name="rip.secondKeyId" value="$|secondKeyId or ''|$" class="one" id="tf1_ripSecMd5KeyId" maxlength="3" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, LANG_LOCALE['11302'], '');}">
+                                        <dl>
+                                            [$| LANG_LOCALE['12627'] |$: 1 - 255]
+                                        </dl>
+                                    </div>
+                                    <div class="break" id="break9_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_ripSecMd5AuthKey_div">
+                                        <label>$| LANG_LOCALE['11702'] |$</label>
+                                        <input type="password" name="rip.secondAuthenticationKey" value="$|secondAuthenticationKey or ''|$" id="tf1_ripSecMd5AuthKey" maxlength="16" onkeypress ="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }">
+                                    </div>
+                                    <div class="break" id="break10_div">
+                                        &nbsp;
+                                    </div>
+                                     <div class="configRow">
+                                        <label>$| LANG_LOCALE['11798'] |$</label>
+                                        <input type="text" id="tf1_dateTimePickerSecondStartValue"  name="rip.secondKeyFrom" value="$|secondKeyFrom or ''|$" readonly />
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow">
+                                        <label>&nbsp; </label>
+                                        <input type="hidden" id="tf1_dateTimePickerSecondStart"  onChange="onchangeValueSecondStart()" readonly>
+                                        <div id="tf1_dateTimePickerSecondStart"></div>
+                                    </div>
+                                    
+                                    <div class="configRow">
+                                        <label>$| LANG_LOCALE['11797'] |$</label>
+                                        <input type="text" id="tf1_dateTimePickerSecondEndValue"  name="rip.secondKeyTo" value="$|secondKeyTo or ''|$" readonly />
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow">
+                                        <label>&nbsp; </label>
+                                        <input type="hidden" id="tf1_dateTimePickerSecondEnd"  onChange="onchangeValueSecondEnd()" readonly>
+                                        <div id="tf1_dateTimePickerSecondEnd"></div>
+                                    </div>                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.rip" onclick="setHiddenChks('tf1_frmRip');return ripValidate()" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmRip'); return ripOnreset();">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/rip.js"></script>
+        <script type="text/javascript" language="javascript" src="js/dateTimePicker.js"></script>
+        <script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				// date Time picker
+				var curr = new Date().getFullYear();
+				var opt = {}
+				opt.datetime = {preset: 'datetime',minDate: new Date(1970,3,10,9,22),maxDate: new Date(2037,11,31,23,59),stepMinute: 1};
+				// First start Time
+				$('#tf1_dateTimePickerFirstStart').val($('#tf1_dateTimePickerFirstStartValue').val());
+				$('#tf1_dateTimePickerFirstStart').scroller('destroy').scroller(
+					$.extend(
+						opt["datetime"], {
+							mode: "scroller", 
+							display: "inline" 
+						}
+					)
+				);
+				// First End Time
+				$('#tf1_dateTimePickerFirstEnd').val($('#tf1_dateTimePickerFirstEndValue').val());
+				$('#tf1_dateTimePickerFirstEnd').scroller('destroy').scroller(
+					$.extend(
+						opt["datetime"], { 	
+							mode: "scroller", 
+							display: "inline" 
+						}
+					)
+				);
+				
+				// Second start Time
+				$('#tf1_dateTimePickerSecondStart').val($('#tf1_dateTimePickerSecondStartValue').val());
+				$('#tf1_dateTimePickerSecondStart').scroller('destroy').scroller(
+					$.extend(
+						opt["datetime"], {
+							mode: "scroller", 
+							display: "inline" 
+						}
+					)
+				);
+				// Second End Time
+				$('#tf1_dateTimePickerSecondEnd').val($('#tf1_dateTimePickerSecondEndValue').val());
+				$('#tf1_dateTimePickerSecondEnd').scroller('destroy').scroller(
+					$.extend(
+						opt["datetime"], {
+							mode: "scroller", 
+							display: "inline" 
+						}
+					)
+				);
+
+			});
+			function onchangeValueFirstStart(){
+				$('#tf1_dateTimePickerFirstStartValue').val($('#tf1_dateTimePickerFirstStart').val());
+			}
+			function onchangeValueFirstEnd(){
+				$('#tf1_dateTimePickerFirstEndValue').val($('#tf1_dateTimePickerFirstEnd').val());
+			}
+			function onchangeValueSecondStart(){
+				$('#tf1_dateTimePickerSecondStartValue').val($('#tf1_dateTimePickerSecondStart').val());
+			}
+			function onchangeValueSecondEnd(){
+				$('#tf1_dateTimePickerSecondEndValue').val($('#tf1_dateTimePickerSecondEnd').val());
+			}
+		</script>
+    </body>
+</html>
+<?lua end ?>
+&nbsp;

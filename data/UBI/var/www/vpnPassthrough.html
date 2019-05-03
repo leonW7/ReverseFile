@@ -1,0 +1,154 @@
+<?lua 
+require "teamf1lualib/vpnPassthrough_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "vpnPassthrough"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag, cookie
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag, cookie = vpnPassthroughSet (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+else
+    local ipsecPassThroughStatus, pptpPassThroughStatus, 
+           l2tpPassThroughStatus
+    errorFlag, cookie, ipsecPassThroughStatus, pptpPassThroughStatus, 
+           l2tpPassThroughStatus = vpnPassthroughGet (inputTable)
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+LANG_LOCALE = "30011,11419,12509,11502,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body onLoad="onloadCall ();">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                   
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['30011'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmVpnPassthrough" id="tf1_frmVpnPassthrough" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="vpnPassthrough.html">
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11419'] |$ </label>
+                                <?lua if (ipsecPassThroughStatus == "1") then
+                                               statusStr="enable-disable-on"
+                                               statusVar = "1"
+                                         else
+                                               statusStr="enable-disable-off"
+                                               statusVar = "0"
+                                         end
+                                                                       ?>                                                                    
+                                            <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                        <input type="hidden" name="vpnPassthrough.ipsecPassThroughStatus" value="$| statusVar |$">
+
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12509'] |$ </label>
+                                <?lua if (pptpPassThroughStatus == "1") then
+                                            statusStr="enable-disable-on"
+                                           statusVar = "1"
+                                     else
+                                           statusStr="enable-disable-off"
+                                           statusVar = "0"
+                                     end
+                                               ?>
+                                            <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a> 
+                        <input type="hidden" name="vpnPassthrough.pptpPassThroughStatus" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11502'] |$ </label>
+                                <?lua if (l2tpPassThroughStatus == "1") then
+
+                                               statusStr="enable-disable-on"
+                                               statusVar = "1"
+                                            else
+                                               statusStr="enable-disable-off"
+                                               statusVar = "0"
+                                            end
+                                                                       ?>
+                                            <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                        <input type="hidden" name="vpnPassthrough.l2tpPassThroughStatus" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" name="button.config.vpnPassthrough" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" onclick="setHiddenChks('tf1_frmVpnPassthrough');" >
+
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmVpnPassthrough');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>        
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+    </body>
+</html>
+<?lua end ?>

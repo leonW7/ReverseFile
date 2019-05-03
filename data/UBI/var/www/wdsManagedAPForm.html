@@ -1,0 +1,181 @@
+<?lua
+cgilua.htmlheader ()
+require "teamf1lualib/util"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+if (ButtonType and ButtonType == "add") then
+    require "teamf1lualib/bl_validAps"
+    require "teamf1lualib/bl_wdsManagedAPGroups"
+    local guiWdsManagedAps = require("com.teamf1.bl.wlan.wdsgroup")
+    local guiValidAps = require ("com.teamf1.bl.wlan.validap")
+    local errorCode, validApsList, wdsGroups 
+    errorCode , validApsList = guiValidAps.validApsGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+
+    errorCode , wdsGroups = guiWdsManagedAps.wdsMangedGroupGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+    local apMac
+    if (#validApsList ~= 0) then
+        apMac = validApsList[1].macAddress
+    end    
+	cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+            <div id="tf1_wdsManagedAPDailogContent">
+                <div class="topBg">
+                    <h1>WDS Managed AP Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label>WDS Managed Group Id</label>
+                        <select name="wdsManagedAP.wdsmanagedapsGROUPID" id="tf1_wdsGroupId">
+                            <?lua 
+                                if (wdsGroups ~= nil) then
+                                for k, v in pairs (wdsGroups) do
+                                    local row = wdsGroups[k]
+                            ?>    
+                            <option selected>$| row.wdsgroupsGROUPID or '' |$</option>
+                            <?lua 
+                            end
+                            end
+                            ?>
+                        </select>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Valid AP MAC Address</label>
+                        <select id="tf1_apMacAddress"
+                            onchange="document.getElementById('tf1_wdsApMacAddress').value=this.options[this.selectedIndex].value;">
+                            <?lua 
+                                if (validApsList ~= nil) then
+                                for k, v in pairs (validApsList) do
+                                    local row = validApsList[k]
+                            ?>    
+                            <option selected>$| row.macAddress or '' |$</option>
+                            <?lua 
+                            end
+                            end
+                            ?>
+                        </select>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Hardware Type String</label>
+                        <select name="wdsManagedAP.wdsmanagedapsAPHWTYPE" id="tf1_hardwareTypeString">
+                            <option value ="9">DWL-8600AP Dual Radio a/b/g/n</option>
+                            <option value ="10">DWL-3600AP Single Radio b/g/n</option>
+                            <option value ="11">DWL-6600AP Dual Radio a/b/g/n</option>
+                            <option value ="12">DWL-2600AP Single Radio b/g/n</option>
+                            <option value ="13">DWL-8610AP Single Radio a/b/g/n/ac</option>
+                        </select>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>WDS AP MAC Address</label>
+                        <input type="text"
+                        name="wdsManagedAP.wdsmanagedapsAPMACADDRESS"
+                        value="$| apMac or '' |$" id="tf1_wdsApMacAddress" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify (event, this, true, '', '')">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>STP Priority</label>
+                        <input type="text" name="wdsManagedAP.wdsmanagedapsSTPPRIORITY" id="tf1_stpPriority" maxlength="64" onkeydown="if (event.keyCode == 9) { return alphaNumericValueCheck('tf1_stpPriority', '', 'Invalid STP Priority. '); }">
+                        <dl>
+                            [Length: 0 - 64]
+                        </dl>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="submit" name="button.add.wdsManagedAP" onclick="return wdsManagedApConfigValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                </div>
+            </div>
+        <!-- Section for Pop up dialog ends -->
+        <!-- Section for Pop up Edit dialog starts -->
+        <?lua
+        elseif (ButtonType and ButtonType == "edit") then
+            local cookieInfo = util.split (cgi.configRowId, "_")
+            local groupId = cookieInfo[1]
+            local apMacAddress = cookieInfo[2]
+            local hwType = cookieInfo[3]
+            local stpPriority = cookieInfo[4]
+
+        ?>
+            <div id="tf1_wdsManagedAPEditDailogContent">
+                <div class="topBg">
+                    <h1>WDS Managed AP Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label>WDS Group ID</label>
+                        <p>
+                            $| groupId |$
+                            <input type="hidden" name="wdsManagedAP.wdsmanagedapsGROUPID" value= "$|
+                            groupId |$">
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Hardware Type String</label>
+                        <p>
+                            $| hwType |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>WDS AP MAC Address</label>
+                        <p>
+                            $| apMacAddress |$
+                            <input type="hidden" name="wdsManagedAP.wdsmanagedapsAPMACADDRESS" value= "$| apMacAddress |$">
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>STP Priority</label>
+                        <input type="text" name="wdsManagedAP.wdsmanagedapsSTPPRIORITY" value= "$|
+                        stpPriority |$" id="tf1_stpPriorityEdit" maxlength="64" onkeydown="if (event.keyCode == 9) { return alphaNumericValueCheck('tf1_stpPriorityEdit', '', 'Invalid STP Priority. '); }">
+                        <dl>
+                            [Length: 0 - 64]
+                        </dl>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="submit" name="button.edit.wdsManagedAP" onclick="return wdsManagedApConfigValidateEdit()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                </div>
+            </div>
+            <!-- Section for Pop up dialog ends -->
+            <?lua end ?>
+

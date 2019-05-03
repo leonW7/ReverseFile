@@ -1,0 +1,314 @@
+<?lua 
+require "teamf1lualib/urlFilteringAccessControl_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/contentFiltering_bl"
+require "teamf1lualib/wcf_returnCodes"
+
+PAGE_HELP = "security"
+PAGE_HELP_SECTION = "urlFilteringACL"
+
+local wcfReturnCodes = require ("com.teamf1.core.filter.returnCodes")
+ENABLED = "1"
+local contentFiltering = require("com.teamf1.bl.filter.content")
+local acl = require("com.teamf1.bl.filter.accessControl")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+local returnCode, cookie, feature, webProxy, java, activex, cookies
+    returnCode, cookie, feature, webProxy, java, 
+    activex, cookies = 
+            contentFiltering.contentFilteringSectionGet()
+if(returnCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (returnCode)
+end
+if (feature ~= ENABLED) then
+    statusInfoMessage = 
+     errorMap.errorStringGet (wcfReturnCodes.WCFSTATUS_DISABLED)
+end
+
+
+if (ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if (type(cgi["urlFilteringACL.checkbox"]) == "string") then
+        inputTable["urlFilteringACLPolicy.cookie"] = cgi["urlFilteringACL.checkbox"]
+        local returnCode, cookie = acl.urlFilteringACLPolicySectionDelete(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+    elseif(type(cgi["urlFilteringACL.checkbox"]) == "table") then
+        local returnCode = acl.urlFilteringACLPolicySectionDeleteAll()
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+    end
+        web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local returnCode, cookie = acl.urlFilteringAccessControlSectionSet (inputTable)
+
+    if (returnCode == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "configForm") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    if(RowId == "-1") then
+       local returnCode, cookie = acl.urlFilteringACLPolicySectionCreate (inputTable)
+       if (returnCode == returnCodes.SUCCESS) then
+           statusSuccessMessage = errorMap.errorStringGet (returnCode)
+       else 
+           statusErrorMessage = errorMap.errorStringGet (returnCode)
+       end
+    else
+       inputTable["urlFilteringACLPolicy.cookie"] = RowId
+       local returnCode, cookie = acl.urlFilteringACLPolicySectionSet(inputTable)
+       if (returnCode == returnCodes.SUCCESS) then
+           statusSuccessMessage = errorMap.errorStringGet (returnCode)
+       else 
+           statusErrorMessage = errorMap.errorStringGet (returnCode)
+       end
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local returnCode, aclEnable, aclAction = acl.urlFilteringAccessControlSectionGet()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    
+    local configRow = {}
+    returnCode, configRow = acl.urlFilteringACLPolicySectionGetAll()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+    LANG_LOCALE = "12795,10862,10695,50056,50057,10056,50058,50059,50060,50061,50062,12627,11187,13184,11387,12965,10920,12560,13173,11761,10148,12758,10449,12080,12028,11281,11031"
+
+ cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+<link rel="stylesheet" type="text/css" href="css/menu.css" />
+<link rel="stylesheet" type="text/css" href="css/table.css" />
+<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+<?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body>    
+    <!-- Section for Pop up dialog starts -->
+    <div id="tf1_overlay" class="configDialogMask"></div>                
+    <form action="platform.cgi" method="post" name="tf1_frmURLFilteringACL1" id="tf1_frmURLFilteringACL1">
+        <input type="hidden" name="thispage" id="thispage" value="urlFilteringACL.html">
+        <div id="tf1_dialog" class="configDialog"></div>
+    </form>
+    <!-- Section for Pop up dialog ends -->
+
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+        </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');" />&nbsp;
+                    $| LANG_LOCALE['12795'] |$
+                </li>
+                </li>
+                <li id="edit">$| LANG_LOCALE['10862'] |$</li>
+                <li id="delete">$| LANG_LOCALE['10695'] |$</li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <tr>
+            <td valign="top" align="center">
+                <div class="midWidth">
+                <script language="JavaScript">
+                    mmSel("mainMenu5");
+                </script>
+                    <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then ?>
+                        <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+                        </div>
+                    <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+                        <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                        </div>
+                    <?lua  end?>
+                        <div class="FL2">
+                            <p class="hint">
+                                $| helpHintText |$ 
+                            </p>
+                        </div>
+                        <h1>$| LANG_LOCALE['50056'] |$</h1>
+                            <div class="midArea">
+                                <div align="left">
+                                    <form name="tf1_frmURLFilteringACL" id="tf1_frmURLFilteringACL" action="platform.cgi" method="post">
+                                    <input type="hidden" name="thispage" id="thispage" value="urlFilteringACL.html">
+                                        <div class="configRow">
+                                            <label>$| LANG_LOCALE['50057'] |$</label>
+                                            <?lua 
+                                                if (aclEnable == "1") then
+                                                    statusStr="enable-disable-on"
+                                                    statusVar = "1"
+                                                else
+                                                    statusStr="enable-disable-off"
+                                                    statusVar = "0"
+                                                end
+                                            ?>
+                                            <a class="$| statusStr |$" alt="" id="aclStatus" status="$| aclEnable or '' |$"></a>
+                                            <input type="hidden" name="urlFilteringAccessControl.enable" value="$| statusVar |$"> 
+                                        </div>
+                                        <div class="break" id="break_enableURLFiltering">&nbsp;</div>
+                                        <div class="configRow" id="tf1_action_div">
+                                            <label>$| LANG_LOCALE['10056'] |$</label>
+                                            <select size="1" name="urlFilteringAccessControl.action" id="tf1_action">
+                                                <option $| web.dropdownSelected (aclAction == "1") |$ value="1">$| LANG_LOCALE['50058'] |$</option>
+                                                <option $| web.dropdownSelected (aclAction == "0") |$ value="0">$| LANG_LOCALE['50059'] |$</option>
+                                            </select>
+                                        </div>
+                                        <div class="break" id="break_action_div">&nbsp;</div>
+					                    <div class="submitRow">							
+                                            <input type="submit" name="button.config.urlFilteringACL.urlFilteringACL" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" onclick="setHiddenChks('tf1_frmURLFilteringACL');">
+                                            <input type="reset" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" onclick="this.form.reset(); validateOnReset('tf1_frmURLFilteringACL');">
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+                                    </form>
+                                </div> <!-- close align = left -->
+                                <div class="break">&nbsp;</div>
+                                <h2>$| LANG_LOCALE['50060'] |$</h2>
+                                    <div class="CLR">
+                                        <div class="demo_jui" id="tf1_urlFilteringACLTbl">
+                                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                                <thead>
+                                                    <tr>
+                                                        <th>$| LANG_LOCALE['12560'] |$</th>
+                                                        <th>$| LANG_LOCALE['13173'] |$</th>
+                                                        <th>$| LANG_LOCALE['11761'] |$</th>
+                                                    </tr>
+                                                </thead>
+                                                <?lua
+						                        local i = 0
+                                                for k,v in pairs(configRow) do
+                                                    i = i + 1
+                                                    local row = configRow[i]
+                                                    local policyName = row["policyName"]
+                                                    local policyType = ""
+                                                    local network = ""
+                                                    if(row["policyType"] == "0") then
+                                                        policyType = LANG_LOCALE['50062']
+                                                        network = row["ipAddress"]
+                                                    elseif(row["policyType"] == "1") then
+                                                        policyType = LANG_LOCALE['12627']
+                                                        network = row["startIpAddress"] .. " - " .. row["endIpAddress"]
+                                                    elseif(row["policyType"] == "2") then
+                                                        policyType = LANG_LOCALE['11187']
+                                                        network = row["interfaceName"]
+                                                    else
+                                                        policyType = LANG_LOCALE['13184']
+                                                        network = LANG_LOCALE['13184']
+                                                    end
+                                                ?>
+                                                    <tr class="gradeA" id="$| row["_ROWID_"] |$">
+                                                        <td>$| policyName |$</td>
+                                                        <td>$| policyType |$</td>
+                                                        <td>$| network |$</td>
+                                                    </tr>
+                                                <?lua 
+                                                    end
+                                                 ?>
+                                            </table>
+                                        </div>
+                                    </div> <!-- close CLR class tag -->
+                                    <div class="buttonsRow" id="tf1_btnShowModal">
+                                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10148'] |$" value="$| LANG_LOCALE['10148'] |$" id="btSave" onclick="openForm('button.add.urlFilteringACL.urlFilteringACL',-1,'tf1_dialog','urlFilteringACL','urlFilteringACLForm.html', 'tf1_urlFilteringACLDailogContent','onLoadurlFilteringACLFn')">
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                            </div> <!-- close midArea class tag -->
+                </div> <!-- close midWidth class tag -->
+            </td>
+        </tr>
+        <tr>
+            <td><?lua web.includeMenu("footer.html")?></td>
+        </tr>
+    </table>
+<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+<script type="text/ecmascript" language="javascript" src="js/urlFilteringACL.js"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        $('#tf1_urlFilteringACLTbl .gradeA').contextMenu('contextMenu', {
+            bindings : {
+                'editMenu' : function(t, e, rowId) {
+                    openForm('button.edit.urlFilteringACL.urlFilteringACL',rowId,'tf1_dialog','urlFilteringACL','urlFilteringACLForm.html', 'tf1_urlFilteringACLDailogContent','onLoadurlFilteringACLFn');                                    
+                    },
+                'deleteMenu' : function(t, e, rowId) {
+                    deleteRows('button.delete.urlFilteringACL.urlFilteringACL', 'tf1_frmURLFilteringACL1', rowId, 'optionSelectAll', 'tf1_dialog', 'urlFilteringACL', 'urlFilteringACL');
+                }
+                },
+                onShowMenu: function(e,menu,rowId) {
+			    	if ($("#aclStatus").attr("status") == "0"){							
+				    	$('#editMenu', menu).remove();
+				    	$('#deleteMenu', menu).remove();
+					} 
+					return menu;
+				}
+        });
+
+        oTable = $('#recordsData').dataTable({
+            "bJQueryUI" : true,
+            "sPaginationType" : "full_numbers"
+        });
+        dataRightClick(true);
+        $("#btnClose").live("click",function(e){
+            HideDialog('tf1_dialog', 'tf1_overlay');
+            e.preventDefault();
+        });
+    });
+
+</script>
+</body>
+
+</html>
+<?lua end?>
+

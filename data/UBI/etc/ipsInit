@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# ipsInit - initialization script for ips
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,11jun08,rks written
+
+
+if [ "$INCLUDE_IPS" = "y" ]; then
+
+if [ "$NF_CONNTRACK_TCP_TIMEOUT_ESTABLISHED" = "" ]; then
+timeout=
+else
+timeout=",timeout $NF_CONNTRACK_TCP_TIMEOUT_ESTABLISHED"
+fi
+
+cp $IPS_INSTALL_PATH/etc/ips.conf /tmp/ips.conf
+echo "preprocessor stream5_global: max_tcp $NF_CONNTRACK_MAX, track_tcp yes, track_udp no, memcap $IPS_TCP_MEMCAP" >>/tmp/ips.conf
+echo "preprocessor stream5_tcp: policy first, use_static_footprint_sizes  $timeout" >>/tmp/ips.conf
+
+fi

@@ -1,0 +1,92 @@
+<?lua 
+require "teamf1lualib/protocolVlan_bl"
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie, groupId, groupName, port, protocol, vlan
+        
+    if (ButtonType and ButtonType == "edit") then
+       returnCode, cookie, groupId, groupName, port, protocol, vlan =  protocolGet (inputCookie) 
+    end    
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_protocolVlanDailogContent">
+                <div class="topBg">
+                    <h1>Protocol Based VLAN Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow" id="tf1_txtVlan_div">
+                        <label>VLAN ID </label>
+                        <input type="text" name="protocolVlan.vlan" value="$| vlan or ''|$" id="tf1_txtVlan" maxlength="4" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 4096, true, 'Invalid Vlan Id:', '');}" class="one">
+                        <dl>
+                            [Range: 1 - 4096]
+                        </dl>
+                    </div>
+                    <div class="break" id="break4_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <?lua if(cgi["configRowId"] == "-1") then?>
+                        <label>Group ID </label>
+                        <input type="text" name="protocolVlan.groupId" value="$| groupId or '' |$"id="tf1_groupId" maxlength="4" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 4096, true, 'Invalid Vlan Id:', '');}" class="one">
+                        <dl>
+                            [Range: 1 - 4096]
+                        </dl>
+                        <?lua else?>
+                        <label>Group ID </label>
+                        <p>$| groupId |$</p>
+                        <?lua end?>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Group Name </label>
+                        <input type="text" name="protocolVlan.groupName" value="$| groupName or '' |$" id="tf1_groupName">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Interface </label>
+                        <select size="1" name="protocolVlan.port" value="$| port or '' |$" id="tf1_interface">
+                            <option value="1" $| web.dropdownSelected(port == "1") |$ >Port1</option>
+                            <option value="2" $| web.dropdownSelected(port == "2") |$ >Port2</option>
+                            <option value="3" $| web.dropdownSelected(port == "3") |$ >Port3</option>
+                            <option value="4" $| web.dropdownSelected(port == "4") |$ >Port4</option>
+                        </select>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Protocol List </label>
+                        <p>
+                            <input type="radio" name="protocolVlan.protocol" value="1" $| web.radioSelected(protocol == "1") |$ name="tf1_protocolList" checked="">
+                            IP
+                        </p>
+                        <p>
+                            <input type="radio" name="protocolVlan.protocol" value="2" $| web.radioSelected(protocol == "2") |$ name="tf1_protocolList">
+                            IPX
+                        </p>
+                        <p>
+                            <input type="radio" name="protocolVlan.protocol" value="3" $| web.radioSelected(protocol == "3") |$ name="tf1_protocolList">
+                            ARP
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                <?lua if(cgi["configRowId"] == "-1") then?>
+
+                    <input type="submit" name="button.add.protocolVlan" onclick="return protocolVlanConfigValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                <?lua else?>
+                    <input type="submit" name="button.edit.protocolVlan" onclick="return protocolVlanConfigValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                <?lua end?>
+                </div>
+            </div>
+ 

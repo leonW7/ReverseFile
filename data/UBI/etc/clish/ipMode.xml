@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="net-mode-config" prompt="net-config[mode]> "> 
+    <COMMAND name="save" help="Save IP Mode configuration changes.">
+	     <ACTION>lua clishCfgObjExec("networkInfo")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save IP Mode configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("networkInfo")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back IP Mode configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+    
+    <COMMAND name="ip_type" help="Select IPv4 only or IPv4/IPv6 mode.">
+	<PARAM name="nwkMode" 
+         help="Select IPv4 only or IPv4/IPv6 mode"    
+	       ptype="IPMODE_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("networkInfo", "networkInfo.netWorkMode", "${nwkMode}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net mode" help="IP Mode Setup"/>
+    <!--=======================================================-->
+    <COMMAND name="net mode configure"
+             help="IP Mode configuration mode."
+             view="net-mode-config" viewid="">
+                      <ACTION>lua clishCfgObjNew ("networkInfo", 
+                              ipModeInit, ipModeConfig, ipModeVal)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show net mode" help="."/>
+    <COMMAND name="show net mode setup"
+            help="Display IP MODE configuration">
+	    <ACTION>lua clishCmdExec (ipModeInfoGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

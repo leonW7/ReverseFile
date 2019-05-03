@@ -1,0 +1,182 @@
+<?lua
+require "teamf1lualib/ospfV3_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "ospfv3"
+	
+local routing_ospfV3  = require("com.teamf1.bl.routing.ospfv3")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local configRowId
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable["ospfV3.cookie"] = RowId
+    local returnCode, cookie = 
+                routing_ospfV3.ospfV3SectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end 
+    web.goToPage(NextPage, true, true)
+ 
+else    
+    local configRow = {}
+    local returnCode
+    returnCode, configRow = routing_ospfV3.ospfV3SectionGetAll()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "11870,12467,10291,12546,11108,10674,10604,11868,11869,11187,11325,11271,11241,11238,12342,12281,12247,12244,10751,13524,10862,13004"
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+<!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmOspfV3" id="tf1_frmOspfV3">    
+            <input type="hidden" name="thispage" id="thispage" value="ospfV3.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li id="edit" name="button.edit.ospfV3.ospfV3">
+                    $| LANG_LOCALE['10862'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$
+                        </p>
+                    </div>
+                            <h1>$| LANG_LOCALE['11870'] |$</h1>
+                            <div class="CLR">
+                                <div class="demo_jui" id="tf1_ospfV">
+                                    <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                        <thead>
+                                            <tr>
+                                                <th>$| LANG_LOCALE['13004'] |$</th>
+                                                <th>$| LANG_LOCALE['12467'] |$</th>
+                                                <th>$| LANG_LOCALE['12546'] |$</th>
+                                                <th>$| LANG_LOCALE['11108'] |$</th>
+                                                <th>$| LANG_LOCALE['10674'] |$</th>
+                                                <th>$| LANG_LOCALE['10604'] |$</th>
+                                            </tr>
+                                        </thead>
+                                       <?lua
+                                        for k, v in pairs(configRow) do
+                                            local outputTable = {}
+                                            outputTable = configRow[k]
+                                            local rowId = outputTable["_ROWID_"]
+                                            local status = outputTable["ospf6Enable"]
+                                            if(status == "0") then
+                                                status = LANG_LOCALE['10751']
+                                            elseif(status == "1") then
+                                                status = LANG_LOCALE['13524']
+                                            end
+                                            local port = outputTable["LogicalIfName"]
+                                            local priority = outputTable["priority"]
+                                            local helloInterval = outputTable["helloInterval"]
+                                            local deadInterval = outputTable["deadInterval"]
+                                            local cost = outputTable["cost"]
+                                           
+                                        ?>
+                                        <tr class="gradeA" id="ospfV$| rowId |$">
+                                            <td>$|status|$ </td>
+                                            <td>$|port|$ </td>
+                                            <td>$|priority|$</td>
+                                            <td>$|helloInterval|$</td>
+                                            <td>$|deadInterval|$</td>
+                                            <td>$|cost|$</td>
+                                        </tr>
+                                    <?lua end?>
+                                    </table>
+                                </div>
+                            </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ospfV3.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#tf1_ospfV .gradeA').contextMenu('contextMenu', {
+                bindings : {
+                'editMenu' : function(t, e, rowId) {
+                    openForm('button.edit.ospfV3.ospfV3',rowId,'tf1_dialog','ospfV','ospfV3Form.html', 'tf1_ospfV3DailogContent','onLoadOspfV3Fn');                                    
+                }
+            }
+            });
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                    $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+            });
+        </script>
+    </body>
+
+</html>
+<?lua end?>

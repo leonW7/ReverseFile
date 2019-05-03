@@ -1,0 +1,70 @@
+<?lua 
+require "teamf1lualib/loginProfilesSla_bl"
+
+
+local gui_login = require("com.teamf1.bl.captiveportal.loginprofilesSla")
+
+    local inputCookie = cgi["configRowId"]
+    local profileTable = {}
+    if (ButtonType and ButtonType == "edit") then
+        returnCode, cookie, slaProfileName, textMessage, browserTitle  =  gui_login.profileSlaGet (inputCookie)
+
+    end
+        
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!-- Section for Pop up dialog starts -->
+            <div id="tf1_loginProfilesSlaDailogContent">
+                <div class="topBg">
+                    <h1>SLA Profile Configuration</h1> 
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                  
+                    <div class="configRow" id="tf1_profileName_div">
+                        <label> SLA Profile Name </label>  
+                          <?lua if (ButtonType == "edit") then
+            ?>
+
+                        <input type="hidden" name="slaProfile.slaProfileName" maxlength="32"
+                        value="$|slaProfileName or '' |$"  id="tf1_profileName"><p>$|slaProfileName or '' |$</p>
+                         <?lua else ?>
+ <input type="text" name="slaProfile.slaProfileName" maxlength="32"
+                        value="$|''|$"  id="tf1_profileName">
+  <?lua end?>
+
+                    </div>
+                    <div class="break" id="break_profileName_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_browserTitle_div">
+                        <label> Browser Title </label>
+                        <input type="text" name="slaProfile.browserTitle" maxlength="32"
+                        value="$| browserTitle or 'D-Link : Wireless Controller' |$"  id="tf1_browserTitle">
+                    </div>
+                    <div class="break" id="break_browserTitle_div">
+                        &nbsp;
+                    </div>
+                <div class="configRow" id="tf1_termsOfServiceRule_div">
+                                    <label> Terms of Service Rule </label>
+                                    <textarea id="tf1_termsOfServiceRule"
+                                        name="slaProfile.textMessage"
+                                        >$| textMessage or '' |$</textarea>
+                                </div>
+                                <div class="break" id="break_termsOfServiceRule_div">
+                                    &nbsp;
+                                </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    <?lua if(cgi["configRowId"] == "-1") then?>
+                    <input type="submit" name="button.add.loginProfilesSla" onclick="return loginProfilesSlaValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua else ?>
+                    <input type="submit" name="button.edit.loginProfilesSla" onclick="return loginProfilesSlaValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua end ?>
+
+                </div>
+            </div>

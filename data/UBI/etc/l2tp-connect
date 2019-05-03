@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# l2tp-connect - connect script for l2tp connection.
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,02jul08,anp written. 
+#
+# DESCRIPTION
+# This script is used for making a L2TP connection, and is dialed with pppd
+# using a 'connect' option.
+#
+
+# presently this script is dummy and is used for supporting the 'demand' dialing feature.
+return 0

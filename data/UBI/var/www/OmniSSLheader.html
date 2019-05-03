@@ -1,0 +1,128 @@
+<?lua
+    require "teamf1lualib/db"
+    require "teamf1lualib/header_bl"
+    require "teamf1lualib/system_productData"
+    local productData = require("com.teamf1.core.system.productdata")
+    local firmwareDetails = require("com.teamf1.bl.maintenance")
+	local returnCode, cookie, firmwareVersion, wlanModuleVersion, firmwareDate, currentLoginUserName, returnCode1, currentLoginGroupName
+	returnCode, cookie, firmwareVersion, wlanModuleVersion, firmwareDate, serialNum = firmwareDetails.headerContenetGet()
+	local fileName = ""
+	if ( cgi["page"] ~= nil and cgi["page"] ~= "" ) then
+		fileName = cgi["page"]
+	elseif ( NextPage ~= nil and NextPage ~= "" ) then
+		fileName = NextPage..".html"
+	elseif ( Page ~= nil and Page ~= "" ) then
+		fileName = Page..".html"
+	elseif ( cgi["thispage"] ~= nil and cgi["thispage"] ~= "" ) then
+		fileName = cgi["thispage"]
+	end
+   --Start HelpHint File paring
+    helpHintText = ""
+    local f = assert(io.open("help/"..PAGE_HELP.."Hint.txt", "r"))
+    local data = ""
+    while true do
+    	local line = f:read("*line")
+    	if line == nil then break end
+    	data = data .. line
+    end
+    assert(f:close())
+	local helpHintStart1,helpHintEnd1 = string.find(data,":|"..PAGE_HELP_SECTION.."|:")
+    local helpHintStart2,helpHintEnd2 = string.find(data,":|"..PAGE_HELP_SECTION.."End|:")
+    
+    if (helpHintStart1 ~= nil and helpHintEnd1 ~= nil and helpHintStart2 ~= nil and helpHintEnd2 ~= nil) then
+        helpHintText = string.sub(data, helpHintEnd1+1, helpHintStart2-1)
+    else
+    	helpHintText = ""
+    end
+   --End HelpHint File paring
+
+   -- get current login username
+   local inputTable = web.cgiToLuaTable (cgi)
+   local authServerId = db.getAttribute("OpenVPN", "_ROWID_", "1", "authServerId")
+   if(authServerId == "0") then
+       returnCode1, currentLoginUserName, currentLoginGroupName = firmwareDetails.openvpnCurrentLoginUserNameGet (inputTable["Users.UserName"])
+   end
+   -- require system 
+
+   returnCode , cookie, countryCode = productData.countryCodeGet ()
+   COUNTRY_CODE = countryCode
+
+   -- Append Country code to Firmware Version
+	firmwareVersion = firmwareVersion .. "_" .. COUNTRY_CODE
+
+    LANG_LOCALE = "50009,13445,13533"
+    LANG_LOCALE = db.getString (LANG_LOCALE)
+ ?>
+ 
+
+
+<div align="center">
+	<div class="midWidth">
+		<div class="logo FL"  style="width:200px">
+			$| LANG_LOCALE['50009'] |$</div>
+		<div class="FR headerRight">
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td valign="top"></td>
+					<td rowspan="2" valign="top">
+
+					<form name="tf1_frmLogout" id="tf1_frmLogout" action="platform.cgi" method="post">
+                       <input type="hidden" name="thispage" id="thispage" value="OmniSSLPortalLogin.html">
+                                             <input type="hidden" name="button.logout.users.OmniSSLPortalLogin" value="logout">
+
+                                       <a class="btnLogout" href="javascript:void(0)" onclick="document.tf1_frmLogout.submit()">
+                                       <div>
+                                               <div>
+                                                                                       <icon>
+                                                                                               $| LANG_LOCALE['13445'] |$
+                                                                                       </icon>
+                                                                               </div>
+                                       </div>
+                                       </a></form>
+</td>
+				</tr>
+			</table>
+		</div>
+		<div class="midWidth menuBg">
+			<div>
+				<div>
+					<div align="center">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="breadCrumb">
+			<div id="breadCrumb">
+				<p class="hint"></p>
+			</div>
+			<div class="helpRefresh">
+				<div class="topRightLinks help">
+					<input type="button" class="helpButton" title="$| LANG_LOCALE['13533'] |$">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+<script language="JavaScript" type="text/javascript">
+	var fileName = '$| fileName |$';
+	/* Help default variable */
+	var helpSection = "$| PAGE_HELP_SECTION |$";
+	var helpConfigFile = "$| PAGE_HELP |$.txt";
+</script>
+<script  language="JavaScript" type="text/javascript">
+/* Activate the click event for help Button */	
+$(".helpButton").live("click", function(e){			
+	/*Prevent the anchor action or donot append the # to URL*/						
+	e.preventDefault();						
+	/*Open the help file */
+	omniSSLHelpPop (helpSection,helpConfigFile);	
+});
+</script>
+

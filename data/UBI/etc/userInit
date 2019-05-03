@@ -1,0 +1,547 @@
+#!/bin/sh
+
+#Copyright (c) 2016, TeamF1 Networks Pvt. Ltd. 
+#(Subsidiary of D-Link India)
+
+#modification history 
+#---------------------
+#01b,20oct16,asv  added changes for spr#57592
+#01a,04apr16,abd  porting changes for SPR 54526.
+
+#management init script to run managment_strings_map lua
+if [ "$INCLUDE_MGMT_COMPONENT" = "y" ]; then
+    echo -n "Initializing the Management component"
+    /pfrm2.0/bin/lua /pfrm2.0/share/lua/5.1/teamf1lualib/management_string_map.lua
+    echo "Done"
+fi
+
+# inserting ifgroup module
+insmod /pfrm2.0/lib/modules/ifgroup/ifgroup.ko
+
+# Setting the maximum number of connections through the firewall 
+echo $NF_CONNTRACK_MAX > /proc/sys/net/nf_conntrack_max
+
+
+# Dhcp server/client related files.
+if [ -d /var/state/dhcp ]; then
+echo "directory /var/state/dhcp already there";
+else
+mkdir -p /var/state/dhcp
+fi
+# don't accept RA until configured.
+sysctl -w net.ipv6.conf.eth1.accept_ra=0
+sysctl -w net.ipv6.conf.eth0.accept_ra=0
+sysctl -w net.ipv6.conf.eth1.router_solicitations=0
+sysctl -w net.ipv6.conf.eth0.router_solicitations=0
+
+touch /var/dhcpd.leases
+touch /var/dhclient.leases
+cp -af /pfrm2.0/bin/dhclient-script /sbin/dhclient-script
+cp -af /pfrm2.0/bin/dhclient-exit-hooks /etc/dhclient-exit-hooks
+cp -af /pfrm2.0/bin/dhclient-down-hooks /etc/dhclient-down-hooks
+cp -rf /pfrm2.0/var/linuxigd /var/
+cp -rf /pfrm2.0/etc/igmpproxy.conf /etc/
+#cp -rf /pfrm2.0/etc/fw_env.config /etc/
+cp -af /pfrm2.0/bin/dhclient.conf /etc/dhclient.conf
+cp -af /pfrm2.0/var/www/db/* /tmp/
+cp -af /pkgMgmt/www/db/* /tmp/
+cp -af /pfrm2.0/etc/wcfClientd.conf /tmp/
+
+#iptable libs
+ln -s /pfrm2.0/lib/iptables/libipt_*.so /lib/
+ln -s /pfrm2.0/lib/iptables/libip6t_*.so /lib/
+
+#ebtable libs
+ln -s /pfrm2.0/lib/ebtables/libebt*.so /lib/
+
+touch /etc/shadow
+ln -s /pfrm2.0/bin/tinylogin /bin/tinylogin
+ln -s tinylogin /bin/ipsecuseradd
+ln -s tinylogin /bin/ipsecuserdel
+ln -s tinylogin /bin/ipsecpasswd
+
+#/etc/localtime
+ln -s /var/localtime /etc/localtime
+
+if [ -e $BOARD_CONFIG_FILE ]; then
+	echo Dummy present
+else
+	echo Creating Dummy Config File
+	touch $BOARD_CONFIG_FILE
+fi
+
+MODEL_ID=`/pfrm2.0/bin/printProductData /dev/mtd0 ModelId |  awk '{print $1}'`
+SERIAL_NUMBER=`/pfrm2.0/bin/printProductData /dev/mtd0 SerNo  | awk '{print $1}'`
+HW_VERSION=`/pfrm2.0/bin/printProductData /dev/mtd0 HwVer |  awk '{print $1}'`
+# These files will be written from hwFamilyHandler.lua which is called from
+# platform.config
+HARDWARE_FAMILY_SERIES =`cat /tmp/hwFamilyVersion | awk '{print $1}'`
+
+# For now we maintain different XML for firewall and clish
+#if [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000AC" ]; then
+#    cp /pfrm2.0/etc/clish/firewall-rule-configure-octeon-DSR.xml /pfrm2.0/etc/clish/firewall-rule-configure.xml
+#    cp /pfrm2.0/etc/clish/types-octeon-DSR.xml /pfrm2.0/etc/clish/types.xml
+#fi
+#if [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500AC" ]; then
+#    cp /pfrm2.0/etc/clish/firewall-rule-configure-octeon-DSR-500N.xml /pfrm2.0/etc/clish/firewall-rule-configure.xml
+#    cp /pfrm2.0/etc/clish/types-octeon-DSR-500N.xml /pfrm2.0/etc/clish/types.xml
+#fi
+
+# we will delete the redundant files
+#rm -rf /pfrm2.0/etc/clish/types-octeon.xml /pfrm2.0/etc/clish/types-octeon-DSR.xml /pfrm2.0/etc/clish/firewall-rule-configure-octeon-DSR.xml /pfrm2.0/etc/clish/types-octeon-DSR-500N.xml /pfrm2.0/etc/clish/firewall-rule-configure-octeon-DSR-500N.xml
+
+#work around will be done here till the issue gets resolved
+#echo "eth1 ">/proc/sys/net/ipv4/ipsec4/wandev_name
+echo "bdg1">/proc/sys/net/ipsec4/landev_name
+
+timeShow > /var/bootTime
+timeShow > /var/bootComplete
+
+ln -s /pfrm2.0/bin/timezonechangescript.sh /bin/timezonechangescript.sh
+rm -rf /etc/hosts
+ln -s /var/hosts /etc/hosts
+ln -s /pfrm2.0/etc/ssh/ /etc/ssh
+cp -rf /pfrm2.0/etc/clish/ /etc/
+
+# Remove the unnecessary types.xml files
+rm -rf /etc/clish/types*
+
+# First copy the default xml file (check the install of clish)
+# TODO : need to make this common
+cp -rf /pfrm2.0/etc/clish/types.xml /etc/clish/types.xml
+
+# Now copy the device specific types.xml file
+if [ "$PRODUCT_ID" == "DSR-1000_Bx" -o "$PRODUCT_ID" == "DSR-500_Bx" ]; then
+    cp -rf /pfrm2.0/etc/clish/types-B1.xml /etc/clish/types.xml
+fi
+
+if [ "$PRODUCT_ID" == "DSR-1000AC_Ax" -o "$PRODUCT_ID" == "DSR-1000_Bx" ]; then
+    cp -rf /pfrm2.0/etc/clish/logging-config-DSR.xml /etc/clish/logging-config.xml
+fi
+
+if [ "$PRODUCT_ID" == "DSR-500AC_Ax" -o "$PRODUCT_ID" == "DSR-500_Bx" ]; then
+    cp -rf /pfrm2.0/etc/clish/logging-config-DSR-500.xml /etc/clish/logging-config.xml
+fi
+
+# we will delete the redundant files 
+rm -rf /etc/clish/logging-config-DSR.xml /etc/clish/logging-config-DSR-500.xml
+
+#/pfrm2.0/bin/sshdConfig /tmp/system.db 23 sshd 1
+
+cp -af /pfrm2.0/bin/dhScript.sh /tmp
+chmod 777 /tmp/dhScript.sh
+
+# tr069 related directory
+mkdir -p /var/tr069
+
+# to store cookie value
+mkdir -p /tmp/referer
+
+ln -s /pfrm2.0/bin/ip /bin/ip
+ln -s /pfrm2.0/lib/libstdc++.so.6.0.17 /lib/libstdc++.so.6
+#DHCPv6 related files
+mkdir -p /var/lib/dhcpv6
+mkdir -p /var/run/dhcpv6
+mkdir -p /var/db
+
+# enable reboot on kernel panic and oops
+echo "1"  > /proc/sys/kernel/panic_on_oops
+echo "10" > /proc/sys/kernel/panic
+
+# bring up ethernet interface
+echo "1">/proc/sys/net/ipv6/conf/agl0/disable_ipv6
+ifconfig eth0 up
+# Changing accept_dad to 2 to disable ipv6 if DAD fails.
+echo "2">/proc/sys/net/ipv6/conf/eth1/accept_dad
+ifconfig eth1 up
+# Changing accept_dad to 2 to disable ipv6 if DAD fails.
+echo "2">/proc/sys/net/ipv6/conf/eth0/accept_dad
+ifconfig eth2 up
+
+# Removing telnet support
+#/usr/sbin/telnetd -l /bin/login
+
+# Writing the country Code
+mkdir -p /var
+/pfrm2.0/bin/firmCountryCodeWrite "/dev/mtd1" > /dev/NULL;
+
+# threeg related directory
+mkdir -p /var/lock
+
+# set the default MAC address
+/pfrm2.0/bin/nimfDefaultMac > /var/interfaces 
+echo "      WAN3                00:00:00:00:00:00" >> /var/interfaces
+
+# default MAC addresses
+LAN_DEF_MAC=`/pfrm2.0/bin/printProductData /dev/mtd0 MacAddr | awk '{print $1}' | tail +1 | head -n 1`
+WAN1_DEF_MAC=`/pfrm2.0/bin/printProductData /dev/mtd0 MacAddr | awk '{print $1}' | tail +2 | head -n 1`
+WAN2_DEF_MAC=`/pfrm2.0/bin/printProductData /dev/mtd0 MacAddr | awk '{print $1}' | tail +3 | head -n 1`
+
+echo $LAN_DEF_MAC >/etc/defaultMac
+# Product Data
+HARDWARE_VER=`/pfrm2.0/bin/printProductData /dev/mtd0 HwVer |  awk '{print $1}'`
+REGION_INFO=`/pfrm2.0/bin/printProductData /dev/mtd0 RegInfo  | awk '{print $1}'`
+
+if [ $REGION_INFO == "392" ]; then                                              
+    REGION_INFO="4015"                                                       
+fi
+
+# For singapore region
+if [ $REGION_INFO == "356" ]; then                                              
+    REGION_INFO="702"                                                       
+fi
+
+# insert hdlc module, ONLY if its NOT already present
+[ -f /pfrm2.0/lib/modules/n_hdlc.ko ]&&{ EXIST=`lsmod | grep -v grep | grep n_hdlc | wc -l`; if [ "${EXIST}" == "0" ]; then insmod /pfrm2.0/lib/modules/n_hdlc.ko; fi }
+ 
+
+
+# disable all wireless if DSR-1000/DSR-500
+if [ $MODEL_ID != "DSR-1000" ] && [ $MODEL_ID != "DSR-500" ]; then
+# set the new mac address on wifi0
+WLANMAC=`/pfrm2.0/bin/printProductData /dev/mtd0 MacAddr | awk '{print $1}' | tail +4 | head -n 1`
+#ifconfig wifi0 hw ether $WLANMAC
+/pfrm2.0/bin/iwpriv wifi0 setHwaddr $WLANMAC
+fi
+
+#setting radio2 for 1000AC
+if [ $MODEL_ID == "DSR-1000AC" ]; then
+first=`echo $WLANMAC | awk '{ print substr ($0,0,15 ) }'`
+last=`echo $WLANMAC | awk '{ print substr ($0,16,15 ) }'`
+dec=`echo $((0x${last}))`
+dec=$((dec+1))
+last=`printf "%x\n" $dec`
+newmac=$(echo "$first$last")
+/pfrm2.0/bin/iwpriv wifi1 setHwaddr $newmac
+fi
+
+COUNTRY_CODE=`cat /var/firmCountryCode.txt  | awk '{print $1}'`
+#Setting up the security Level
+# Low level security
+# Medium Level security
+# High Level security
+if [ $COUNTRY_CODE == "RU" ]; then
+    mkdir -p /var/log
+    echo "LOW" > /etc/security_level.conf
+    DLINK_FIRMWARE_URL='mydsr.dlink.com.tw'
+else
+    # start sshd
+    /pfrm2.0/bin/sshd &
+    echo "HIGH" > /etc/security_level.conf
+    DLINK_FIRMWARE_URL='mydsr.dlink.com.tw'
+fi
+
+#zebra
+cp /pfrm2.0/etc/zebra.conf /etc/zebra.conf
+/pfrm2.0/bin/zebra -d -u root -g root -f /etc/zebra.conf
+
+
+#Creating lighttpd support file based on which we control the redirection logic in
+#platform.lua
+if [ $INCLUDE_LIGHTTPD == "y" ] && [ $MODEL_ID == "DWC-1000" ]; then
+    echo  "INCLUDE_LIGHTTPD" > /etc/include_lighttpd.conf
+fi
+
+#Clish Access depending on different boards
+mkdir -p /var/clish
+
+if [ $MODEL_ID == "DWC-1000" ] || [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-500" ]; then
+    echo "N" > /var/clish/dot11
+fi
+if [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-500AC" ] ||  [ $MODEL_ID == "DSR-500" ]; then
+    echo "N" > /var/clish/wan3
+    echo "N" > /var/clish/usb2
+    echo "N" > /var/clish/ipaddr_wan3
+  
+
+else
+    echo "Y" > /var/clish/wan3
+    echo "Y" > /var/clish/usb2
+    echo "Y" > /var/clish/ipaddr_wan3
+
+fi
+
+if [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000AC" ]; then
+    echo "N" > /var/clish/non_wlan_edit
+    echo "Y" > /var/clish/wlan_edit
+fi
+
+if [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-1000" ]; then
+    echo "N" > /var/clish/wlan_edit
+    echo "Y" > /var/clish/non_wlan_edit
+fi
+
+echo "Y" > /var/clish/jumbo_frame
+
+if [ $MODEL_ID == "DWC-1000" ]; then
+    echo "Y" > /var/clish/wlan
+    echo "Y" > /var/clish/license
+    echo "Y" > /var/clish/qos
+else
+    echo "N" > /var/clish/wlan
+    echo "Y" > /var/clish/license
+    echo "N" > /var/clish/qos
+fi
+
+if [ $COUNTRY_CODE == "RU" ]; then
+    echo "N" > /var/clish/sslvpn
+    echo "N" > /var/clish/portal_name
+    echo "N" > /var/clish/SSLVPN_Settings
+    echo "N" > /var/clish/groupaccesscontrol
+    echo "N" > /var/clish/access_control_browser
+    echo "N" > /var/clish/access_control_ip
+fi
+
+if [ $COUNTRY_CODE == "RU" ]; then
+    echo "N" > /var/clish/enable_remote_ssh;
+    echo "N" > /var/clish/https;
+elif [ $COUNTRY_CODE == "WW" ]; then
+    echo "Y" > /var/clish/enable_remote_ssh;
+    echo "N" > /var/clish/http;
+fi
+
+#Clish Access depending on different boards
+mkdir -p /var/clish
+if [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000AC" ] || [ $MODEL_ID == "DSR-500AC" ]; then
+    echo "Y" > /var/clish/security
+    echo "Y" > /var/clish/vpn
+fi
+
+if [ $MODEL_ID == "DSR-250" ] || [ $MODEL_ID == "DSR-250N" ];
+then
+   echo "N" > /var/clish/ospfv2
+   echo "N" > /var/clish/ospfv3
+else
+   echo "Y" > /var/clish/ospfv2
+   echo "Y" > /var/clish/ospfv3
+fi	
+
+if [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000AC" ] || [ $MODEL_ID == "DSR-500AC" ] || [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-1000N" ]; then
+    echo "Y" > /var/clish/captive-portal-type
+    echo "Y" > /var/clish/permanent-user
+    echo "Y" > /var/clish/temporary-user
+    echo "Y" > /var/clish/showCP-profiles
+    echo "Y" > /var/clish/configurable_port
+    echo "N" > /var/clish/enable_dmz
+    echo "Y" > /var/clish/captivePortal
+    echo "Y" > /var/clish/mode
+    echo "N" > /var/clish/watchdog_disable
+    echo "N" > /var/clish/snooping
+    echo "N" > /var/clish/portmap
+fi
+
+#disable vlan on wan
+echo "N" > /var/clish/vlan_setup
+echo "N" > /var/clish/third_party_logs_ctrl
+
+#if [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DWC-1000" ] || [ $MODEL_ID == "DSR-1000" ]; then
+#    /pfrm2.0/bin/bcmRegConfig 0 65 192 28
+#elif [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-500" ]; then
+#    /pfrm2.0/bin/bcmRegConfig 0 65 192 21
+#fi
+
+# As per the requirements in mail from DLink dated 16th Nov 2011
+if [ $MODEL_ID == "DSR-1000N" ]; then
+   MAX_CLIENTS=64
+elif [ $MODEL_ID == "DSR-500N" ]; then
+   MAX_CLIENTS=32
+else
+   MAX_CLIENTS=127
+fi
+
+mkdir -p /var/criticalPageDebug
+
+# disable all wireless handlers if DSR-1000/DSR-500/DWC-1000
+if [ $MODEL_ID == "DWC-1000" ] || [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-500" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+delete from dbUpdateRegisterTbl where tablename='dot11VAP';
+delete from dbUpdateRegisterTbl where tablename='dot11Radio';
+delete from dbUpdateRegisterTbl where tablename='dot11WPS';
+delete from dbUpdateRegisterTbl where tablename='dot11Profile';
+delete from dbUpdateRegisterTbl where tablename='dot11Interface';
+delete from dbUpdateRegisterTbl where tablename='dot11Radio11n';
+delete from dbUpdateRegisterTbl where tablename='dot11GlobalConfig';
+delete from dbUpdateRegisterTbl where tablename='dot11AuthorizedAP';
+delete from dbUpdateRegisterTbl where tablename='dot11RogueAP';
+delete from dbUpdateRegisterTbl where tablename='dot11ACL';
+delete from dbUpdateRegisterTbl where tablename='dot11Card';
+COMMIT;
+SQL_ENTR_TAG_1
+fi
+
+if [ $MODEL_ID == "DSR-1000AC" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values("SNMP_SYSOBJID", "1.3.6.1.4.1.171.20.3.11");
+COMMIT;
+SQL_ENTR_TAG_1
+elif [ $MODEL_ID == "DSR-500AC" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values("SNMP_SYSOBJID", "1.3.6.1.4.1.171.20.3.10");
+COMMIT;
+SQL_ENTR_TAG_1
+elif [ $MODEL_ID == "DSR-1000N" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values("SNMP_SYSOBJID", "1.3.6.1.4.1.171.20.3.4");
+COMMIT;
+SQL_ENTR_TAG_1
+elif [ $MODEL_ID == "DSR-1000" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values("SNMP_SYSOBJID", "1.3.6.1.4.1.171.20.3.3");
+COMMIT;
+SQL_ENTR_TAG_1
+elif [ $MODEL_ID == "DSR-500N" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values("SNMP_SYSOBJID", "1.3.6.1.4.1.171.20.3.2");
+COMMIT;
+SQL_ENTR_TAG_1
+elif [ $MODEL_ID == "DSR-500" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values("SNMP_SYSOBJID", "1.3.6.1.4.1.171.20.3.1");
+COMMIT;
+SQL_ENTR_TAG_1
+elif [ $MODEL_ID == "DWC-1000" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values("SNMP_SYSOBJID", "1.3.6.1.4.1.171.10.121.1.1");
+COMMIT;
+SQL_ENTR_TAG_1
+fi
+
+# add board name for run time access
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into defaultMac values ('LAN', '$LAN_DEF_MAC');
+insert into defaultMac values ('WAN1', '$WAN1_DEF_MAC');
+insert into defaultMac values ('WAN2', '$WAN2_DEF_MAC');
+insert into unitInfo values ('$MODEL_ID','$HARDWARE_VER','$REGION_INFO','$SERIAL_NUMBER','$LAN_DEF_MAC', '$DLINK_FIRMWARE_URL');
+insert into hwFamilyInfo values ('$MODEL_ID','$HARDWARE_VER','$HARDWARE_FAMILY_SERIES');
+insert into environment (name, value) values('DEVICE_NAME', '$MODEL_ID');
+insert into webBrandingTags values ('D-Link','Copyright &#169; 2017 D-Link Corporation.','www.dlink.com','www.dlink.com','$MODEL_ID','D-LINK','DSR','Unified Services Router','1');
+update tableDefaults set defValue='$MAX_CLIENTS' where tableName="dot11VAP" and columnName="maxClients";
+COMMIT;
+SQL_ENTR_TAG_1
+
+#SLVPN : Making Product specific file.
+#Board specific configuarions(primarily used by sslvpn as it should be made
+#indepedent of pfrm1.0/pfrm2.0), however can be used by any other components too.
+echo -n "COMPANY_NAME:$COMPANY_NAME|" >> /var/product.spec
+echo -n "UNIT_NAME:$UNIT_NAME|" >> /var/product.spec
+echo -n "PRODUCT_HOME_URL:$PRODUCT_HOME_URL|" >> /var/product.spec
+echo -n "PRODUCT_SUPPORT_URL:$PRODUCT_SUPPORT_URL|" >> /var/product.spec
+echo -n "SSL_MAX_USER_SESSION_LIMIT:$SSL_MAX_USER_SESSION_LIMIT|" >> /var/product.spec
+echo -n "SSL_MAX_TUNNEL_LIMIT:$SSL_MAX_TUNNEL_LIMIT|" >> /var/product.spec
+echo -n "COPYRIGHTS_BASE:$COPYRIGHTS_BASE|" >> /var/product.spec
+
+# finally change the permissions on the file as read only
+chmod 444 /var/product.spec
+
+# Moved Making of brand.conf to firmwareInit.
+#sleep 1 # to avoid DB locks !
+#echo "Making Brand.conf... "
+#sqlite3  $DB_FILENAME "select * from webBrandingTags" > /var/brand.conf
+
+
+
+# Creating symbolic link for radius.dict
+ln -sf /pfrm2.0/etc/radius.dict /var/radius.dict
+
+# Copying solution specific snort conf files
+if [ "$PRODUCT_ID" == "DSR-1000AC_Ax" -o "$PRODUCT_ID" == "DSR-1000_Bx" ]; then
+    cp /pfrm2.0/etc/snort/solution_snort_DSR-1000AC.conf /tmp/solution_snort.conf
+elif [ "$PRODUCT_ID" == "DSR-500AC_Ax" -o "$PRODUCT_ID" == "DSR-500_Bx" ]; then
+    cp /pfrm2.0/etc/snort/solution_snort_DSR-500AC.conf /tmp/solution_snort.conf
+fi
+
+#Setting the timeout for icmp conntrack (in kernels >=2.6.31, conntrack entries
+#for icmp are not being reset for each echo request/reply pair. So to avoid 
+#failure of "Block ping on WAN" feature, reducing the timeout value of icmp 
+#conntrack, so that every icmp request will be passing through firewall)
+echo "5" > /proc/sys/net/netfilter/nf_conntrack_icmp_timeout
+
+#Creating softlinks for radvd configuration files for tahi test suite
+ln -s /pfrm2.0/var/radvd.conf.def /var/radvd.conf.def
+ln -s /pfrm2.0/var/radvd.conf.m /var/radvd.conf.m
+ln -s /pfrm2.0/var/radvd.conf.x /var/radvd.conf.x
+ln -s /pfrm2.0/var/radvd.conf.b /var/radvd.conf.b
+ln -s /pfrm2.0/var/radvd.conf.10 /var/radvd.conf.10
+ln -s /pfrm2.0/var/radvd.conf.40 /var/radvd.conf.40
+ln -s /pfrm2.0/var/radvd.conf.198 /var/radvd.conf.198
+ln -s /pfrm2.0/var/radvd.conf.8000 /var/radvd.conf.8000
+ln -s /pfrm2.0/var/radvd.conf.fec0 /var/radvd.conf.fec0
+ln -s /pfrm2.0/var/radvd.conf.0 /var/radvd.conf.0
+ln -s /pfrm2.0/var/radvd.conf.1000 /var/radvd.conf.1000
+ln -s /pfrm2.0/var/radvd.conf.5000 /var/radvd.conf.5000
+ln -s /pfrm2.0/var/radvd.conf.30k /var/radvd.conf.30k
+ln -s /pfrm2.0/var/radvd.conf.10k /var/radvd.conf.10k
+ln -s /pfrm2.0/var/radvd.conf.15 /var/radvd.conf.15
+ln -s /pfrm2.0/var/radvd.conf.wan /var/radvd.conf.wan
+
+#Setting arp_ignore to 2 so that we can drop the arp requests (whois) with 
+#target IP not matching with the IP of the interface on which it was received or
+#if the source IP of the arp request is not in the same subnet as that of the
+#IP of the interface (SPR#35932). 
+echo "2" > /proc/sys/net/ipv4/conf/all/arp_ignore
+
+if [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000AC" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+update logging set maxEventLogRows = '1500' where rowid = '1';
+COMMIT;
+SQL_ENTR_TAG_1
+elif [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500AC" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+update logging set maxEventLogRows = '1000' where rowid = '1';
+COMMIT;
+SQL_ENTR_TAG_1
+fi
+
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values('FIRMWARE_PARTITION','/dev/mtd1');
+insert into environment (name, value) values('FLASH_FIRM_PARTITION','/dev/mtd1');
+insert into environment (name, value) values('KERNEL_PARTITION','/dev/mtd2');
+insert into environment (name, value) values('ROOTFS_PARTITION','/dev/mtd3');
+insert into environment (name, value) values('CONFIG_PARTITION','/dev/mtd4');
+insert into environment (name, value) values('CURRENT_FIRM_PARTITION','');
+COMMIT;
+SQL_ENTR_TAG_1
+
+if [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000AC" ] || [ $MODEL_ID == "DSR-500AC" ] || [ $MODEL_ID == "DSR-500N" ]; then
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into environment (name, value) values("WPS_PIN_PROGRAM", "/pfrm2.0/bin/dot11WpsConfigPin");
+insert into environment (name, value) values("WPS_PBC_PROGRAM", "/pfrm2.0/bin/dot11WpsConfigPbc");
+COMMIT;
+SQL_ENTR_TAG_1
+fi
+
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into networkInterface values ("bdgWAN2", "DMZ", "bdgWAN2", "ifStatic", "","ethernet", 1500, "0.0.0.0", "0.0.0.0", "0.0.0.0", "0.0.0.0", "0.0.0.0", 0, 0, 5, 0,1,1,4); 
+COMMIT;
+SQL_ENTR_TAG_1
+
+
+

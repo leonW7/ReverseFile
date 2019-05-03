@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="net-six-to-four-tunnel-config" prompt="net-config[six-to-four-tunnel]> "> 
+    <COMMAND name="save" help="Save sixToFour Tunnel configuration changes.">
+	     <ACTION>lua clishCfgObjExec("sixToFourTunnel")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save sixToFour Tunnel configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("sixToFourTunnel")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back sixToFourTunnel configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="automatic_tunneling_enable"
+             help="enable/disable automatic tunneling which will allow traffic from a LAN IPv6 network to be tunneled through a WAN IPv4 network to reach an IPV6 network.">
+             <PARAM name="status"
+                    help="enable/disable automatic tunneling which will allow traffic from a LAN IPv6 network to be tunneled through a WAN IPv4 network to reach an IPV6 network"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("sixToFourTunnel", "sixToFourTunnel.tunnelStatus", "${status}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net ipv6_tunnel" help="ipv6 tunnel configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="net ipv6_tunnel six_to_four" help="six to four tunnel configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="net ipv6_tunnel six_to_four configure"
+             help="six To Four Tunnel configuration mode."
+             view="net-six-to-four-tunnel-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("sixToFourTunnel", 
+                              sixToFourTunnelCfgInit, sixToFourTunnelCfgSave, 
+				       sixToFourTunnelCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show net ipv6_tunnel status"
+            help="Display ipv6 tunnels status">
+	    <ACTION>lua clishCmdExec (ipv6TunnelsStatusGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

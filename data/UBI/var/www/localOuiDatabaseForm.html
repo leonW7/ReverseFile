@@ -1,0 +1,30 @@
+<?lua
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Channel Power Starts -->
+<div id="tf1_localOuiDatabaseDailogContent">
+	<div class="topBg">
+		<h1>Local OUI Database Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+	<div class="dialogMidArea">
+		<div class="configRow">
+			<label>OUI Value</label>
+			<input type="text" name="localOuiDatabase.ouiValue" maxlength="8" id="tf1_ouiValue" >
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label>OUI Description</label>
+			<input type="text" name="localOuiDatabase.ouiDescription" maxlength="32" id="tf1_description"> </div>
+		<div class="break">
+&nbsp; </div>
+	</div>
+	<div class="dialogSubmitRow">
+		<input type="submit" name="button.add.localOuiDatabase" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return localOuiDatabaseValidations()">
+	</div>
+</div>
+<!-- Section for Channel Power ends -->

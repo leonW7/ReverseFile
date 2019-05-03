@@ -1,0 +1,320 @@
+<?lua 
+require "teamf1lualib/adServer_bl"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "adServer"
+
+local errorMap         = require ("com.teamf1.core.errorMap")
+local gui_adServer = require("com.teamf1.bl.authentication.activedirectory")
+
+if (ButtonType and ButtonType == "config") then
+    local activeDirectoryTable = web.cgiToLuaTable(cgi)
+    errorFlag, cookie, statusCode = gui_adServer.adServerSet (activeDirectoryTable)
+    if (errorFlag == 0) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "checkNow") then    	
+    errorFlag, statusCode = gui_adServer.serverStatusSet ('activeDirectory', 'edit')
+  	web.goToPage(NextPage, true, true)
+    
+else
+    returnCode, activeDirectoryTable = gui_adServer.adServerGet ()
+    disableServerCheck = ""
+    if (activeDirectoryTable == nil) then
+        disableServerCheck = "disabled"
+        returnCode, activeDirectoryTable = gui_adServer.adServerDefaultsGet ()
+    end
+		cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "10072,12826,12827,14205,14206,30408,13628,13629,13630,12348,12232,12332,12280,12274,12377,12322,12403,12273,12374,12375,12232,30430,30431,30432,30309,12438,12450,11236,13631,11031,11281,11861,12777,10073,13065,13100,30406,12732,12697,12623,12464,12466,11560,10099,11802,30407,11015,30269,11899,12778,30270,13066,30271,12001,11973,12136,12103,11232,11281,11031,30272,30273,30274,30275,30276,30277,30278,30279,30280,30406,30407,30256,30609,30575,12758,10449"
+?>
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body onLoad="onloadCall ();">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=radiusServer.html">$| LANG_LOCALE['12623'] |$</a>
+                                </li> 
+                                <li>
+                                    <a href="?page=pop3Server.html">$| LANG_LOCALE['12464'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=pop3TrustedCa.html">$| LANG_LOCALE['12466'] |$</a> 
+                                </li>
+                                <li>
+                                    <a href="?page=ldapServer.html">$| LANG_LOCALE['11560'] |$</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=adServer.html">$| LANG_LOCALE['10099'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=ntDomain.html">$| LANG_LOCALE['11802'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['10072'] |$</h1>
+                    <?lua status, checkNowStatus = gui_adServer.getServerStatus('activeDirectory')
+                        if(checkNowStatus == '1') then 
+        					disableServerCheck = "disabled"
+            			end
+                     ?>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmAdServer" id="tf1_frmAdServer" action="platform.cgi" method="post">
+                                <input type="hidden" name="thispage" id="thispage" value="adServer.html">      <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12826'] |$  </label>
+                                    <div class="submitRow">
+                                        <input type="submit" name="button.checkNow.adServer"  id="serverCheckBt" class="btnSubmit" title="$| LANG_LOCALE['12827'] |$ " value="$| LANG_LOCALE['12827'] |$ " id="btSave" $| disableServerCheck |$>
+                                    </div>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div id="authServerId1" class="hide">
+                                    <label>$| LANG_LOCALE['14205'] |$: $| activeDirectoryTable["adServer.primaryServer"] or ''|$ </label>
+                                    <p id="serverId1"></p>
+                                </div>
+                                <div id="authServerBreak1" class="hide">
+                                    &nbsp;
+                                </div>
+                                <div id="authServerId2" class="hide">
+                                    <label>$| LANG_LOCALE['14206'] |$: $| activeDirectoryTable["adServer.secondaryServer"] or '' |$ </label>
+                                    <p id="serverId2"></p>
+                                </div>
+                                <div id="authServerBreak2" class="hide">
+                                    &nbsp;
+                                </div>
+                                <div id="authServerId3" class="hide">
+                                    <label>$| LANG_LOCALE['30408'] |$: $| activeDirectoryTable["adServer.tertiaryServer"] or '' |$</label>
+                                    <p id="serverId3"></p>
+                                </div>
+                                <div id="authServerBreak3" class="hide">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['14205'] |$</label>
+                                    <input type="text" name="adServer.primaryServer" value = "$| activeDirectoryTable["adServer.primaryServer"] or ''|$" id="tf1_activeAuthServer1" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['14206'] |$</label>
+                                    <input type="text" name="adServer.secondaryServer" value = "$| activeDirectoryTable["adServer.secondaryServer"] or ''|$" id="tf1_activeAuthServer2" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['30408'] |$</label>
+                                    <input type="text" name="adServer.tertiaryServer" value = "$| activeDirectoryTable["adServer.tertiaryServer"] or ''|$" id="tf1_activeAuthServer3" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10073'] |$ </label>
+                                    <input type="text"
+                                    name="adServer.primaryDomain" value = "$|
+                                    activeDirectoryTable["adServer.primaryDomain"]
+                                    or ''|$" id="tf1_activeDirectoryDomain1" maxlength="128">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12777'] |$ </label>
+                                    <input type="text"
+                                    name="adServer.secondaryDomain" value = "$|
+                                    activeDirectoryTable["adServer.secondaryDomain"]
+                                    or ''|$" id="tf1_activeDirectoryDomain2" maxlength="128"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13065'] |$ </label>
+                                    <input type="text"
+                                    name="adServer.tertiaryDomain" value = "$|
+                                activeDirectoryTable["adServer.tertiaryDomain"]
+                            or ''|$" id="tf1_activeDirectoryDomain3" maxlength="128" ><dl>$| LANG_LOCALE['11861'] |$</dl>                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['13100'] |$ </label>
+                                    <input type="text"
+                                    name="adServer.timeout"value = "$|
+                                    activeDirectoryTable["adServer.timeout"] or
+                                    ''|$" maxlength="3" id="tf1_txtTimeOut" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck1 (document.getElementById ('tf1_txtTimeOut'), '', '', 1, true, LANG_LOCALE['30406']+':', LANG_LOCALE['12732']); }" class="one">
+                                    <dl>
+                                       ($| LANG_LOCALE['12732'] |$)
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12697'] |$ </label>
+                                    <input type="text" name="adServer.maxRetries" value = "$| activeDirectoryTable["adServer.maxRetries"] or '5' |$" maxlength="1" id="tf1_txtRetries" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck1 (document.getElementById ('tf1_txtRetries'), '', '', 5, true, LANG_LOCALE['30407']+':', ''); }" class="one">
+                                    <dl>
+                                        [Range: 5 - 9]
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11015'] |$ </label>
+                                    <input type="text" name="adServer.primaryAdminAccount" value = "$| activeDirectoryTable["adServer.primaryAdminAccount"] or ''|$" maxlength="128" id="tf1_firstAdminAcc"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11899'] |$ </label>
+                                    <input type="password" name="adServer.primaryAdminPassword" value = "$| activeDirectoryTable["adServer.primaryAdminPassword"] or ''|$" maxlength="128" id="tf1_firstPassword"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['30269'] |$ </label>
+                                    <input type="text" name="adServer.primaryServerHostName" value = "$| activeDirectoryTable["adServer.primaryServerHostName"] or ''|$" maxlength="128" id="tf1_firstServHostname">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12778'] |$ </label>
+                                    <input type="text" name="adServer.secondaryAdminAccount" value = "$| activeDirectoryTable["adServer.secondaryAdminAccount"] or ''|$" maxlength="128" id="tf1_secondAdminAcc"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11899'] |$ </label>
+                                    <input type="password" name="adServer.secondaryAdminPassword" value = "$| activeDirectoryTable["adServer.secondaryAdminPassword"] or ''|$" maxlength="128" id="tf1_secondPassword"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['30270'] |$ </label>
+                                    <input type="text" name="adServer.secondaryServerHostName" value = "$| activeDirectoryTable["adServer.secondaryServerHostName"] or ''|$" maxlength="128" id="tf1_secondServHostname"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13066'] |$ </label>
+                                    <input type="text" name="adServer.tertiaryAdminAccount" value = "$| activeDirectoryTable["adServer.tertiaryAdminAccount"] or ''|$" maxlength="128" id="tf1_thirdAdminAcc"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11899'] |$ </label>
+                                    <input type="password" name="adServer.tertiaryAdminPassword" value = "$| activeDirectoryTable["adServer.tertiaryAdminPassword"] or ''|$" maxlength="128" id="tf1_thirdPassword"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['30271'] |$ </label>
+                                    <input type="text" name="adServer.tertiaryServerHostName" value = "$| activeDirectoryTable["adServer.tertiaryServerHostName"] or ''|$" maxlength="128" id="tf1_thirdServHostname"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" onclick="return adServerValidate()" class="btnSubmit" name="button.config.adServer" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <input type="hidden" id="checkNowId" value="$| checkNowStatus or '0' |$" />
+        <input type="hidden" id="serverObjId1" value="$| activeDirectoryTable["adServer.primaryServer"] or '' |$" />
+        <input type="hidden" id="serverObjId2" value="$| activeDirectoryTable["adServer.secondaryServer"] or '' |$" />
+        <input type="hidden" id="serverObjId3" value="$| activeDirectoryTable["adServer.tertiaryServer"] or '' |$" />
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/ecmascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/adServer.js"></script>
+        <script type="text/javascript" language="javascript" src="js/serverCheck.js"></script>
+    </body>
+</html>
+<?lua end ?>
+

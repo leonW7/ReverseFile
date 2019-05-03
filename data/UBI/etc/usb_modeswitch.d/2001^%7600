@@ -1,0 +1,7 @@
+DefaultVendor=  0x2001
+DefaultProduct= 0x7600
+
+TargetVendor=   0x2001
+TargetProduct=  0x7600
+
+Configuration=2

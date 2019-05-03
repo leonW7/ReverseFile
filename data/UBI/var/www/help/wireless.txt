@@ -1,0 +1,649 @@
+:|noHelpSet|:
+No Help Set configured or not available.
+:|noHelpSetEnd|:
+
+:|accessPoints|:
+<p><b>Wireless Settings</b><br><br>
+	<b>Access Points List:</b><br><br>
+		<b>Status:</b> This column displays the Enabled/Disabled state of an AP. An AP can be disabled if not in use and enabled when needed. Disabling an AP does not delete the configuration, but stops the AP from sending wireless beacons. Enabling the AP creates a wireless network, where computers and other devices can join and communicate with the devices connected to the access point or the devices on the Local Area Network (LAN).<br><br>
+		<b>Virtual AP:</b> This column shows the name for the access point configuration.<br><br>
+	        <b>SSID:</b> The Service Set Identifier (SSID) is the name of the wireless network serviced by this AP, and is seen by clients in the 802.11 environment when broadcast is enabled for this AP.<br><br>
+		<b>Broadcast:</b> This field indicates whether or not SSID is broadcast in the beacon frames transmitted by the AP. If SSID is not broadcast, then wireless devices will not be able to see the network name (SSID). <b>Enabled</b>  indicates that the SSID is to be broadcasted to the public; <b>Disabled</b> indicates that the SSID is not to be broadcasted and a device would have to specify the SSID exactly to connect to this AP.<br><br>
+		<b>Profile Name:</b> This field has a brief description of the security, encryption and authentication combination assigned to the AP. A profile does not have to be unique to an AP; rather this grouping of wireless settings can be applied to more than one AP simultaneously.<br><br>
+		<b>Active Time:</b> This field indicates if the AP is configured to be functional for only a certain duration during the day: Yes or No.<br><br>
+		<b>Start Time:</b> The time of the day when the AP is activated.<br><br>
+		<b>Stop Time:</b> The time of the day when the AP is deactivated.<br><br>
+		The actions that can be taken on the List of Available Access Points are:<br>
+		<b>Select All:</b> Selects all the APs in the table.<br>
+		<b>Edit:</b> Opens the Access Points Configuration page, which allows one to edit the settings for the selected access point.<br>
+		<b>Enable:</b> Enables the selected AP(s).<br>
+		<b>Disable:</b> Stops the selected AP(s).<br>
+		<b>Delete:</b> Stops and deletes the selected AP(s).<br>
+		<b>MAC Filter:</b> Opens the MAC Filter configuration page to configure MAC Address filtering and ACL Policy settings<br>
+		<b>Status:</b> Opens the Access Point Status page, displaying traffic statistics for the AP and the list of the connected clients.<br>
+<br>
+<b>Access Points Configuration:</b><br><br>
+	<b>AP Name:</b> Identifier corresponding to this access point configuration.<br><br>
+	<b>Profile Name:</b> Choose the encryption and authentication methods to be used by clients connecting to this AP from the drop-down list of configured profiles. This list is populated by adding profiles in the Wireless &gt; Profiles page.<br><br>
+	<b>Active Time:</b> Enable this setting to activate the AP during the period of time specified by the Start Time and End Time fields.<br><br>
+	<b>Schedule Control:</b> If we enable this option, the AP will be scheduled to work according to values set in start and stop time fields.<br><br>
+	<b>Start Time:</b> Set the hour, minute, and AM/PM when the AP is to be activated each day.<br><br>
+	<b>Stop Time:</b> Set the hour, minute, and AM/PM when the AP is to be deactivated each day.<br><br>
+	<b>WLAN Partition:</b> Check this box to create a separate virtual network for each wireless connection. When this feature is enabled, each of your wireless clients will be in its own virtual network and will not be able to communicate with other clients.<br><br>
+        <b>Add New Access Point:</b> By using this option we can add and configure a new Access Point.<br><br>
+	<br>Click <b>Save</b> to save your changes.</p>
+
+:|accessPointsEnd|:
+
+:|accessPoints_1000ac|:
+<p><b>Wireless Settings</b><br><br>
+	<b>Access Points List:</b><br><br>
+		<b>Status:</b> This column displays the Enabled/Disabled state of an AP. An AP can be disabled if not in use and enabled when needed. Disabling an AP does not delete the configuration, but stops the AP from sending wireless beacons. Enabling the AP creates a wireless network, where computers and other devices can join and communicate with the devices connected to the access point or the devices on the Local Area Network (LAN).<br><br>
+		<b>Virtual AP:</b> This column shows the name for the access point configuration.<br><br>
+	        <b>SSID:</b> The Service Set Identifier (SSID) is the name of the wireless network serviced by this AP, and is seen by clients in the 802.11 environment when broadcast is enabled for this AP.<br><br>
+		<b>Broadcast:</b> This field indicates whether or not SSID is broadcast in the beacon frames transmitted by the AP. If SSID is not broadcast, then wireless devices will not be able to see the network name (SSID). <b>Enabled</b>  indicates that the SSID is to be broadcasted to the public; <b>Disabled</b> indicates that the SSID is not to be broadcasted and a device would have to specify the SSID exactly to connect to this AP.<br><br>
+		<b>Profile Name:</b> This field has a brief description of the security, encryption and authentication combination assigned to the AP. A profile does not have to be unique to an AP; rather this grouping of wireless settings can be applied to more than one AP simultaneously.<br><br>
+		<b>Active Time:</b> This field indicates if the AP is configured to be functional for only a certain duration during the day: Yes or No.<br><br>
+		<b>Start Time:</b> The time of the day when the AP is activated.<br><br>
+		<b>Stop Time:</b> The time of the day when the AP is deactivated.<br><br>
+        <b>Radio Mode:</b> This field show the Radio Mode of Profile to which
+        this Access point is attached.<br><br>
+		The actions that can be taken on the List of Available Access Points are:<br>
+		<b>Select All:</b> Selects all the APs in the table.<br>
+		<b>Edit:</b> Opens the Access Points Configuration page, which allows one to edit the settings for the selected access point.<br>
+		<b>Enable:</b> Enables the selected AP(s).<br>
+		<b>Disable:</b> Stops the selected AP(s).<br>
+		<b>Delete:</b> Stops and deletes the selected AP(s).<br>
+		<b>MAC Filter:</b> Opens the MAC Filter configuration page to configure MAC Address filtering and ACL Policy settings<br>
+		<b>Status:</b> Opens the Access Point Status page, displaying traffic statistics for the AP and the list of the connected clients.<br>
+<br>
+<b>Access Points Configuration:</b><br><br>
+	<b>AP Name:</b> Identifier corresponding to this access point configuration.<br><br>
+	<b>Profile Name:</b> Choose the encryption and authentication methods to be used by clients connecting to this AP from the drop-down list of configured profiles. This list is populated by adding profiles in the Wireless &gt; Profiles page.<br><br>
+	<b>Active Time:</b> Enable this setting to activate the AP during the period of time specified by the Start Time and End Time fields.<br><br>
+	<b>Schedule Control:</b> If we enable this option, the AP will be scheduled to work according to values set in start and stop time fields.<br><br>
+	<b>Start Time:</b> Set the hour, minute, and AM/PM when the AP is to be activated each day.<br><br>
+	<b>Stop Time:</b> Set the hour, minute, and AM/PM when the AP is to be deactivated each day.<br><br>
+	<b>WLAN Partition:</b> Check this box to create a separate virtual network for each wireless connection. When this feature is enabled, each of your wireless clients will be in its own virtual network and will not be able to communicate with other clients.<br><br>
+        <b>Add New Access Point:</b> By using this option we can add and configure a new Access Point.<br><br>
+	<br>Click <b>Save</b> to save your changes.</p>
+
+:|accessPoints_1000acEnd|:
+
+:|accessPointMacFilters|:
+	<p>
+		<b>MAC Filter</b><br>
+		<br>
+		<b>Access Control List Status:</b><br>
+		<br>
+		<b>AP Name:</b> This is the name of the Profile that is being configured.<br>
+		<br>
+		<b>ACL Policy Status:</b> Indicates the type of access policy: Allow, Deny, or Open. An Allow policy permits connections by a client whose MAC address appears in the list. A Deny policy prevents connections by a client whose MAC address appears in the list. An Open policy permits all clients to connect and does not filter access based on the list.<br>
+		<br>
+		Click <b>Save </b> to save your changes.<br>
+		<br>
+		Click <b>Cancel </b> to revert to the previous settings.<br>
+		<br>
+		<b>MAC Filter List:</b><br>
+		<br>               
+		<p><b>MAC Address:</b><br>
+		This list shows all the MAC addresses of computers and devices which are authorized/unauthorized (based on the default ACL Policy) to connect to this access point.  The actions that can be taken are:<br>
+		<br>
+		The actions that can be taken on the MAC addresses are:<br>
+		<b>Select All</b> Selects all the MAC addresses in the list.<br>
+		<br>
+		<b>Delete</b>: Deletes the selected MAC address or addresses from the list.<br>
+		<br>
+		<b>Add New Mac Filter</b>: Opens the MAC Filter Configuration page to add a new MAC address.<br>
+		<br>
+		<b>Note:</b> User can configure MAX of 512 entries.<br><br>
+		<b>MAC Filter Configuration:</b><br>
+		<br>
+		<b>MAC Address</b>: Enter the MAC (Media Access Control) address of the client that you would like to add to the list of MAC addresses. The format for the MAC address is XX:XX:XX:XX:XX:XX where X is a number from 0 to 9 (inclusive) or an alphabetical letter between A and F (inclusive).<br>
+		<br>
+		<br>Click <b>Save</b> to save your changes.</p>
+:|accessPointMacFiltersEnd|:
+
+:|profiles|:
+<p><b>Profiles List:</b><br><br>
+
+	<b>Profile Name:</b> This is the unique (alphanumeric) identifier of this wireless profile.<br><br>
+	<b>SSID:</b> The Service Set Identifier (SSID) is the name of the wireless network associated with the wireless profile.<br><br>
+	<b>Broadcast:</b> This field indicates whether or not SSID is broadcast in the beacon frames transmitted by the AP. If SSID is not broadcast, then wireless devices will not be able to see the network name (SSID). <b>Enabled</b> indicates that the SSID is to be broadcasted to the public; <b>Disabled</b> indicates that the SSID is not to be broadcasted and a device would have to specify the SSID exactly to connect to this AP.<br><br>
+	<b>Security:</b> This field displays the type of wireless security (if any) assigned to this profile: OPEN, WEP, WPA, WPA2, WPA+WPA2.<br><br>
+	<b>Encryption:</b> This field displays the encryption type that is assigned to the profile: TKIP, CCMP, TKIP + CCMP.<br><br>
+	<b>Authentication:</b> This field displays the client authentication method that is configured in the profile: PSK, RADIUS, PSK + RADIUS.<br><br>
+	The actions that can be taken on the profiles are:<br>
+	<b>Select All</b> Selects all the profiles in the table<br>
+	<b>Edit:</b> Opens the Profile Configuration page to edit the selected profile.<br>
+	<b>Delete:</b> Deletes the selected profile or profiles.<br>
+	<b>Add:</b> Opens the Profile Configuration page to add a new profile.<br><br>
+
+<b>Profile Configuration:</b><br><br>
+	<b>Profile Name:</b> Enter a unique (alphanumeric) identifier for this wireless profile.<br><br>
+	<b>SSID:</b> The Service Set Identifier (SSID) is the name of the wireless network/APs associated with this profile.<br><br>
+	<b>Broadcast SSID:</b> Select ON button to broadcast the SSID. Select OFF button to prevent auto-detection of the SSID. In this case clients that want to connect to this AP will need to specify the SSID without detecting the SSID via a scan of the 802.11 environment.<br><br>
+	<b>Security:</b> Choose the type of security to be configured in this profile:<br><br>
+	<b>OPEN:</b> No security. Any supported wireless client can connect to this AP (subject to AP ACL policy).<br><br>
+	<b>WEP (Wired Equivalent Privacy):</b> Select this to use WEP encryption on the data packets. WEP is not considered to be secure and can be easily broken. Select this only if there are clients which can only support WEP security (i.e. legacy clients).<br><br>
+    <b>Note:</b> OPEN and WEP security modes provide weak or no security and makes a user prone to malicious attacks. For strong wireless security please use WPA, WPA2 or WPA+WPA2.<br><br>
+	<b>WPA (Wi-Fi Protected Access):</b> WPA is part of the wireless security standard (802.11i) standardized by the Wi-Fi Alliance and was intended as an intermediate measure to take the place of WEP while 802.11i was being prepared. It supports TKIP or CCMP encryption (default is TKIP) and PSK or RADIUS based authentication.<br><br>
+	<b>WPA2:</b> WPA2 is the implementation of security standard specified in final 802.11i. It supports TKIP or CCMP encryption (default is CCMP) and PSK or RADIUS based authentication.<br><br>
+	<b>WPA + WPA2:</b> This mode allows both WPA and WPA2 clients to connect simultaneously. When supported by the client, the stronger security method (WPA2) will be used.<br><br>
+	<b>Encryption:</b> Select the WPA/WPA2 encryption method to be used: TKIP, CCMP, or both.<br><br>
+	<b>Authentication:</b> Select the WPA/WPA2 authentication method to be used: RADIUS, PSK, or PSK + RADIUS.<br><br>
+	<b>WPA Password:</b> The Pre-shared key for WPA/WPA2 PSK authentication. The clients also need to be configured with the same passphrase.<br><br>
+	Enable Pre-Authentication: Check this box to enable Pre-Authentication for this profile.<br>
+
+	<b>WEP Index and Keys</b>
+	Selecting WEP as the Security option for this profile requires selecting the type of authentication and specifying the static WEP key to be used in the computers or devices that wish to access this secured wireless network.<br><br>
+	<b>Authentication:</b> Select either Open System or Shared Key scheme.<br><br>
+	<b>Encryption:</b> Select the encryption type - 64 WEP or 128 WEP The larger size keys provide stronger encryption, thus making the key more difficult to crack (i.e. 64 WEP has a 40 bit key which is less secure than the 128 WEP which has a 104 bit key).<br><br>
+	<b>WEP Passphrase:</b> Define a alphanumeric phrase (longer than 8 characters for optimal security) and click generate key to generate 4 unique WEP keys. Select one of the four to use as the static key that devices must have in order to use the wireless network.<br><br>
+<b>WEP Key 1-4:</b> If WEP Passphrase is not specified, a key can be entered directly in one of the WEP Key boxes. The length of the key should be 5 ASCII characters (or 10 hex characters) for 64-bit WEP and 13 ASCII characters (or 26 hex characters) for 128-bit WEP.<br><br>
+	<b>WEP Key Index:</b> Based on which WEP key box is used, the WEP key index is derived.<br><br>
+	<br>Click <b>Save</b> to save your changes.</p>
+:|profilesEnd|:
+
+|profiles_500ac|:
+<p><b>Profiles List:</b><br><br>
+
+	<b>Profile Name:</b> This is the unique (alphanumeric) identifier of this wireless profile.<br><br>
+	<b>SSID:</b> The Service Set Identifier (SSID) is the name of the wireless network associated with the wireless profile.<br><br>
+	<b>Broadcast:</b> This field indicates whether or not SSID is broadcast in the beacon frames transmitted by the AP. If SSID is not broadcast, then wireless devices will not be able to see the network name (SSID). <b>Enabled</b> indicates that the SSID is to be broadcasted to the public; <b>Disabled</b> indicates that the SSID is not to be broadcasted and a device would have to specify the SSID exactly to connect to this AP.<br><br>
+	<b>Security:</b> This field displays the type of wireless security (if any) assigned to this profile: OPEN, WEP, WPA, WPA2, WPA+WPA2.<br><br>
+	<b>Encryption:</b> This field displays the encryption type that is assigned to the profile: TKIP, CCMP, TKIP + CCMP.<br><br>
+	<b>Authentication:</b> This field displays the client authentication method that is configured in the profile: PSK, RADIUS, PSK + RADIUS.<br><br>
+	The actions that can be taken on the profiles are:<br>
+	<b>Select All</b> Selects all the profiles in the table<br>
+	<b>Edit:</b> Opens the Profile Configuration page to edit the selected profile.<br>
+	<b>Delete:</b> Deletes the selected profile or profiles.<br>
+	<b>Add:</b> Opens the Profile Configuration page to add a new profile.<br><br>
+
+<b>Profile Configuration:</b><br><br>
+	<b>Profile Name:</b> Enter a unique (alphanumeric) identifier for this wireless profile.<br><br>
+	<b>SSID:</b> The Service Set Identifier (SSID) is the name of the wireless network/APs associated with this profile.<br><br>
+	<b>Broadcast SSID:</b> Select ON button to broadcast the SSID. Select OFF button to prevent auto-detection of the SSID. In this case clients that want to connect to this AP will need to specify the SSID without detecting the SSID via a scan of the 802.11 environment.<br><br>
+	<b>Security:</b> Choose the type of security to be configured in this profile:<br><br>
+	<b>OPEN:</b> No security. Any supported wireless client can connect to this AP (subject to AP ACL policy).<br><br>
+	<b>WEP (Wired Equivalent Privacy):</b> Select this to use WEP encryption on the data packets. WEP is not considered to be secure and can be easily broken. Select this only if there are clients which can only support WEP security (i.e. legacy clients).<br><br>
+    <b>Note:</b> OPEN and WEP security modes provide weak or no security and makes a user prone to malicious attacks. For strong wireless security please use WPA, WPA2 or WPA+WPA2.<br><br>
+	<b>WPA (Wi-Fi Protected Access):</b> WPA is part of the wireless security standard (802.11i) standardized by the Wi-Fi Alliance and was intended as an intermediate measure to take the place of WEP while 802.11i was being prepared. It supports TKIP or CCMP encryption (default is TKIP) and PSK or RADIUS based authentication.<br><br>
+	<b>WPA2:</b> WPA2 is the implementation of security standard specified in final 802.11i. It supports TKIP or CCMP encryption (default is CCMP) and PSK or RADIUS based authentication.<br><br>
+	<b>WPA + WPA2:</b> This mode allows both WPA and WPA2 clients to connect simultaneously. When supported by the client, the stronger security method (WPA2) will be used.<br><br>
+	<b>Encryption:</b> Select the WPA/WPA2 encryption method to be used: TKIP, CCMP, or both.<br><br>
+	<b>Authentication:</b> Select the WPA/WPA2 authentication method to be used: RADIUS, PSK, or PSK + RADIUS.<br><br>
+	<b>WPA Password:</b> The Pre-shared key for WPA/WPA2 PSK authentication. The clients also need to be configured with the same passphrase.<br><br>
+	Enable Pre-Authentication: Check this box to enable Pre-Authentication for this profile.<br>
+
+	<b>WEP Index and Keys</b>
+	Selecting WEP as the Security option for this profile requires selecting the type of authentication and specifying the static WEP key to be used in the computers or devices that wish to access this secured wireless network.<br><br>
+	<b>Authentication:</b> Select either Open System or Shared Key scheme.<br><br>
+	<b>Encryption:</b> Select the encryption type - 64 WEP or 128 WEP The larger size keys provide stronger encryption, thus making the key more difficult to crack (i.e. 64 WEP has a 40 bit key which is less secure than the 128 WEP which has a 104 bit key).<br><br>
+	<b>WEP Passphrase:</b> Define a alphanumeric phrase (longer than 8 characters for optimal security) and click generate key to generate 4 unique WEP keys. Select one of the four to use as the static key that devices must have in order to use the wireless network.<br><br>
+<b>WEP Key 1-4:</b> If WEP Passphrase is not specified, a key can be entered directly in one of the WEP Key boxes. The length of the key should be 5 ASCII characters (or 10 hex characters) for 64-bit WEP and 13 ASCII characters (or 26 hex characters) for 128-bit WEP.<br><br>
+	<b>WEP Key Index:</b> Based on which WEP key box is used, the WEP key index is derived.<br><br>
+    <b>Protect Management Frame:</b> Provides security for the otherwise unprotected and unencrypted 802.11 management frames. This field is visible only when wpa2 security and CCMP fields are enabled.<br><br>
+    <b>Force PMF:</b> This field is visible when Protect Management Frame is
+    enabled. By enabling this means to connect with configured Profile, Clients need
+    to support Protect Management Frame.<br><br>
+	<br>Click <b>Save</b> to save your changes.</p>
+:|profiles_500acEnd|:
+
+:|profiles_1000ac|:
+<p><b>Profiles List:</b><br><br>
+
+	<b>Profile Name:</b> This is the unique (alphanumeric) identifier of this wireless profile.<br><br>
+	<b>SSID:</b> The Service Set Identifier (SSID) is the name of the wireless network associated with the wireless profile.<br><br>
+	<b>Broadcast:</b> This field indicates whether or not SSID is broadcast in the beacon frames transmitted by the AP. If SSID is not broadcast, then wireless devices will not be able to see the network name (SSID). <b>Enabled</b> indicates that the SSID is to be broadcasted to the public; <b>Disabled</b> indicates that the SSID is not to be broadcasted and a device would have to specify the SSID exactly to connect to this AP.<br><br>
+	<b>Security:</b> This field displays the type of wireless security (if any) assigned to this profile: OPEN, WEP, WPA, WPA2, WPA+WPA2.<br><br>
+	<b>Encryption:</b> This field displays the encryption type that is assigned to the profile: TKIP, CCMP, TKIP + CCMP.<br><br>
+	<b>Authentication:</b> This field displays the client authentication method that is configured in the profile: PSK, RADIUS, PSK + RADIUS.<br><br>
+    <b>Radio Mode:</b> This field display the Radio Mode / Operating Frequency on which Profile is
+    configured : 2.4 Ghz, 5 Ghz, Both .<br><br>
+	The actions that can be taken on the profiles are:<br>
+	<b>Select All</b> Selects all the profiles in the table<br>
+	<b>Edit:</b> Opens the Profile Configuration page to edit the selected profile.<br>
+	<b>Delete:</b> Deletes the selected profile or profiles.<br>
+	<b>Add:</b> Opens the Profile Configuration page to add a new profile.<br><br>
+
+<b>Profile Configuration:</b><br><br>
+	<b>Profile Name:</b> Enter a unique (alphanumeric) identifier for this wireless profile.<br><br>
+	<b>SSID:</b> The Service Set Identifier (SSID) is the name of the wireless network/APs associated with this profile.<br><br>
+	<b>Broadcast SSID:</b> Select ON button to broadcast the SSID. Select OFF button to prevent auto-detection of the SSID. In this case clients that want to connect to this AP will need to specify the SSID without detecting the SSID via a scan of the 802.11 environment.<br><br>
+	<b>Security:</b> Choose the type of security to be configured in this profile:<br><br>
+	<b>OPEN:</b> No security. Any supported wireless client can connect to this AP (subject to AP ACL policy).<br><br>
+	<b>WEP (Wired Equivalent Privacy):</b> Select this to use WEP encryption on the data packets. WEP is not considered to be secure and can be easily broken. Select this only if there are clients which can only support WEP security (i.e. legacy clients).<br><br>
+    <b>Note:</b> OPEN and WEP security modes provide weak or no security and makes a user prone to malicious attacks. For strong wireless security please use WPA, WPA2 or WPA+WPA2.<br><br>
+	<b>WPA (Wi-Fi Protected Access):</b> WPA is part of the wireless security standard (802.11i) standardized by the Wi-Fi Alliance and was intended as an intermediate measure to take the place of WEP while 802.11i was being prepared. It supports TKIP or CCMP encryption (default is TKIP) and PSK or RADIUS based authentication.<br><br>
+	<b>WPA2:</b> WPA2 is the implementation of security standard specified in final 802.11i. It supports TKIP or CCMP encryption (default is CCMP) and PSK or RADIUS based authentication.<br><br>
+	<b>WPA + WPA2:</b> This mode allows both WPA and WPA2 clients to connect simultaneously. When supported by the client, the stronger security method (WPA2) will be used.<br><br>
+	<b>Encryption:</b> Select the WPA/WPA2 encryption method to be used: TKIP, CCMP, or both.<br><br>
+	<b>Authentication:</b> Select the WPA/WPA2 authentication method to be used: RADIUS, PSK, or PSK + RADIUS.<br><br>
+	<b>WPA Password:</b> The Pre-shared key for WPA/WPA2 PSK authentication. The clients also need to be configured with the same passphrase.<br><br>
+	Enable Pre-Authentication: Check this box to enable Pre-Authentication for this profile.<br>
+
+	<b>WEP Index and Keys</b>
+	Selecting WEP as the Security option for this profile requires selecting the type of authentication and specifying the static WEP key to be used in the computers or devices that wish to access this secured wireless network.<br><br>
+	<b>Authentication:</b> Select either Open System or Shared Key scheme.<br><br>
+	<b>Encryption:</b> Select the encryption type - 64 WEP or 128 WEP The larger size keys provide stronger encryption, thus making the key more difficult to crack (i.e. 64 WEP has a 40 bit key which is less secure than the 128 WEP which has a 104 bit key).<br><br>
+	<b>WEP Passphrase:</b> Define a alphanumeric phrase (longer than 8 characters for optimal security) and click generate key to generate 4 unique WEP keys. Select one of the four to use as the static key that devices must have in order to use the wireless network.<br><br>
+<b>WEP Key 1-4:</b> If WEP Passphrase is not specified, a key can be entered directly in one of the WEP Key boxes. The length of the key should be 5 ASCII characters (or 10 hex characters) for 64-bit WEP and 13 ASCII characters (or 26 hex characters) for 128-bit WEP.<br><br>
+	<b>WEP Key Index:</b> Based on which WEP key box is used, the WEP key index is derived.<br><br>
+    <b>Protect Management Frame:</b> Provides security for the otherwise unprotected and unencrypted 802.11 management frames. This field is visible only when wpa2 security and CCMP fields are enabled.<br><br>
+    <b>Force PMF:</b> This field is visible when Protect Management Frame is
+    enabled. By enabling this means to connect with configured Profile, Clients need
+    to support Protect Management Frame.<br><br>
+    <b>Radio Mode:</b> Choose the Mode of Radio / Operating Frequency to be
+    configured on this profile.<br><br>
+    <b>2.4 Ghz:</b> Only 2.4 Ghz supported wireless clients can connect to this AP.<br><br>
+    <b>5 Ghz:</b> Only 5 Ghz supported wireless clients can connect to this AP.<br><br>
+    <b>Both:</b> Both 2.4 Ghz and 5 Ghz supported wireless clients can connect to this AP.<br><br>
+	<br>Click <b>Save</b> to save your changes.</p>
+:|profiles_1000acEnd|:
+
+:|radioConfig_1000N|:
+<p><b>Radio Settings:</b><br><br>
+
+	<b>Operating Frequency:</b> Select the operating frequency of the radio, if this router supports dual band 2.4 GHz / 5 GHz operation.<br><br>
+	<b>Mode:</b> Select the 802.11 modulation technique. This device supports
+    802.11 a/b/g/n Wi-Fi modes; the available modes are dependent on the
+    operating frequency selected.<br><br>
+	The available modes for the 2.4 GHz setting are:<br><br>
+	<b>g &amp; b:</b> Select this mode if there will be some devices in the
+    wireless network that will use 802.11g and some that will use
+    802.11b.<br><br>
+	<b>g only:</b> Select this mode if all devices in the wireless network can
+    support 802.11g.<br><br>
+    <b>b only:</b> Select this mode if all devices in the wireless network can
+    support 802.11b.<br><br>
+	<b>ng:</b> Select this mode to allow 802.11n, 802.11g and 802.11b clients to
+    connect to APs configured for this radio.<br><br>
+	<b>n only:</b> Select this mode if all devices in the wireless network can
+    support 802.11n. Legacy clients will not be able to connect to APs
+    configured on this radio.<br><br>
+	The available modes for the 5 GHz setting are:<br><br>
+	<b>a only:</b> Select this mode if all devices in the wireless network can
+    only support 802.11a.<br><br>
+	<b>na:</b> Select this mode to allow 802.11n and 802.11a clients to connect
+    to this AP.<br><br>
+	<b>n only:</b> Select this mode if all devices in the wireless network can support 802.11n. Legacy clients will not be able to connect to APs configured on this radio.<br><br>
+	<b>Channel Spacing:</b> This is the difference in frequency between
+    successive radio channels. Choose 20/40 MHz to let system determine the best
+    channel spacing to use. This setting is specific to 802.11n traffic.<br>
+	<br><b>Control Side Band:</b> control sideband defines the sideband which is used for secondary or extension channel when AP is operating in 40 MHz channel width. This setting is only applicable to 802.11n traffic and used in conjunction with the 40 MHz channel spacing.<br><br>
+	<b>Current Channel:</b> This field displays the channel currently in use by the radio.<br><br>
+	<b>Channel:</b> This specifies the frequency the radio uses to transmit the wireless frames. Select a channel from the list of channels or choose Auto to let the system determine the best channel to use based on the environment noise levels for the available channels.<br><br>
+	<b>Default Transmit Power:</b> Enter a value in dBm as the default transmitted power level for all APs that use this radio.<br><br>
+	<b>Transmit Power:</b> This field shows the actual power being transmitted by the radio, which could be clamped down to a lower value than the value configured in the <b>"Default Transmit Power"</b> field due to various factors like regulatory domain restrictions, etc.<br><br>
+	<b>Transmission Rate:</b> Allows the user to specify the transmit data rate to be used when communicating with the clients. Select Best to automatically determine and use the optimal rate specific to each client link.<br><br>
+	Click <b>Save </b> to save your changes.<br><br>
+	Click <b>Cancel </b> to revert to the previous settings.<br>
+	<br></p>
+:|radioConfig_1000NEnd|:
+
+:|radioConfig_500N|:
+<p><b>Radio Settings:</b><br><br>
+
+	<b>Operating Frequency:</b> This field represents the radio operating
+    frequency of the device.<br><br>
+	<b>Mode:</b> Select the 802.11 modulation technique. This device supports
+    802.11 b/g/n Wi-Fi modes; the available modes are dependent on the
+    operating frequency selected.<br><br>
+	The available modes for this device are:<br><br>
+	<b>g &amp; b:</b> Select this mode if there will be some devices in the
+    wireless network that will use 802.11g and some that will use
+    802.11b.<br><br>
+	<b>g only:</b> Select this mode if all devices in the wireless network can
+    support 802.11g.<br><br>
+    <b>b only:</b> Select this mode if all devices in the wireless network can
+    support 802.11b.<br><br>
+	<b>ng:</b> Select this mode to allow 802.11n, 802.11g and 802.11b clients to
+    connect to APs configured for this radio.<br><br>
+	<b>n only:</b> Select this mode if all devices in the wireless network can
+    support 802.11n. Legacy clients will not be able to connect to APs
+    configured on this radio.<br><br>
+	<b>Channel Spacing:</b> This is the difference in frequency between
+    successive radio channels. Choose 20/40 MHz to let system determine the best
+    channel spacing to use. This setting is specific to 802.11n traffic.<br><br>
+	<b>Control Side Band:</b> control sideband defines the sideband which is used for secondary or extension channel when AP is operating in 40 MHz channel width. This setting is only applicable to 802.11n traffic and used in conjunction with the 40 MHz channel spacing.<br><br>
+	<b>Current Channel:</b> This field displays the channel currently in use by the radio.<br><br>
+	<b>Channel:</b> This specifies the frequency the radio uses to transmit the wireless frames. Select a channel from the list of channels or choose Auto to let the system determine the best channel to use based on the environment noise levels for the available channels.<br><br>
+	<b>Default Transmit Power:</b> Enter a value in dBm as the default transmitted power level for all APs that use this radio.<br><br>
+    <b>Transmit Power:</b> This field shows the actual power being transmitted by the radio, which could be clamped down to a lower value than the value configured in the <b>"Default Transmit Power"</b> field due to various factors like regulatory domain restrictions, etc.<br><br>
+	<b>Transmission Rate:</b> Allows the user to specify the transmit data rate to be used when communicating with the clients. Select Best to automatically determine and use the optimal rate specific to each client link.<br><br>
+	Click <b>Save </b> to save your changes.<br><br>
+	Click <b>Cancel </b> to revert to the previous settings.<br>
+	<br></p>
+:|radioConfig_500NEnd|:
+
+:|radioConfig_250N|:
+<p><b>Radio Settings:</b><br><br>
+
+	<b>Operating Frequency:</b> This field represents the radio operating
+    frequency of the device.<br><br>
+	<b>Mode:</b> Select the 802.11 modulation technique. This device supports 802.11 b/g/n Wi-Fi modes; the available modes are dependent on the operating frequency selected.<br>
+	The available modes for this device are:<br><br>
+	<b>g &amp; b:</b> Select this mode if there will be some devices in the
+    wireless network that will use 802.11g and some that will use
+    802.11b.<br><br>
+	<b>g only:</b> Select this mode if all devices in the wireless network can
+    support 802.11g.<br><br>
+    <b>b only:</b> Select this mode if all devices in the wireless network can
+    support 802.11b.<br><br>
+	<b>ng:</b> Select this mode to allow 802.11n, 802.11g and 802.11b clients to
+    connect to APs configured for this radio.<br><br>
+	<b>n only:</b> Select this mode if all devices in the wireless network can
+    support 802.11n. Legacy clients will not be able to connect to APs
+    configured on this radio.<br><br>
+	<b>Channel Spacing:</b> This is the difference in frequency between successive radio channels. Choose 20/40 MHz to let system determine the best channel spacing to use. This setting is specific to 802.11n traffic.<br>
+	<br><b>Control Side Band:</b> control sideband defines the sideband which is used for secondary or extension channel when AP is operating in 40 MHz channel width. This setting is only applicable to 802.11n traffic and used in conjunction with the 40 MHz channel spacing.<br><br>
+	<b>Current Channel:</b> This field displays the channel currently in use by the radio.<br><br>
+	<b>Channel:</b> This specifies the frequency the radio uses to transmit the wireless frames. Select a channel from the list of channels or choose Auto to let the system determine the best channel to use based on the environment noise levels for the available channels.<br><br>
+	<b>Transmit Power:</b> Transmit power depends on many factors such as PCB, electronic component. Transmit power level is preconfigured such that the transmit power output will range between 10-14 dBm.<br><br>
+	<b>Transmission Rate:</b> Allows the user to specify the transmit data rate to be used when communicating with the clients. Select Best to automatically determine and use the optimal rate specific to each client link.<br><br>
+	Click <b>Save </b> to save your changes.<br><br>
+	Click <b>Cancel </b> to revert to the previous settings.<br>
+	<br></p>
+:|radioConfig_250NEnd|:
+
+:|radioConfig_250N_B1|:
+<p><b>Radio Settings:</b><br><br>
+
+	<b>Operating Frequency:</b> This field represents the radio operating
+    frequency of the device.<br><br>
+	<b>Mode:</b> Select the 802.11 modulation technique. This device supports 802.11 b/g/n Wi-Fi modes; the available modes are dependent on the operating frequency selected.<br>
+	The available modes for this device are:<br><br>
+	<b>g &amp; b:</b> Select this mode if there will be some devices in the
+    wireless network that will use 802.11g and some that will use
+    802.11b.<br><br>
+	<b>g only:</b> Select this mode if all devices in the wireless network can
+    support 802.11g.<br><br>
+    <b>b only:</b> Select this mode if all devices in the wireless network can
+    support 802.11b.<br><br>
+	<b>ng:</b> Select this mode to allow 802.11n, 802.11g and 802.11b clients to
+    connect to APs configured for this radio.<br><br>
+	<b>n only:</b> Select this mode if all devices in the wireless network can
+    support 802.11n. Legacy clients will not be able to connect to APs
+    configured on this radio.<br><br>
+	<b>Channel Spacing:</b> This is the difference in frequency between successive radio channels. Choose 20/40 MHz to let system determine the best channel spacing to use. This setting is specific to 802.11n traffic.<br>
+	<br><b>Control Side Band:</b> control sideband defines the sideband which is used for secondary or extension channel when AP is operating in 40 MHz channel width. This setting is only applicable to 802.11n traffic and used in conjunction with the 40 MHz channel spacing.<br><br>
+	<b>Current Channel:</b> This field displays the channel currently in use by the radio.<br><br>
+	<b>Channel:</b> This specifies the frequency the radio uses to transmit the wireless frames. Select a channel from the list of channels or choose Auto to let the system determine the best channel to use based on the environment noise levels for the available channels.<br><br>
+	<b>Default Transmit Power:</b> Enter a value in dBm as the default transmitted power level for all APs that use this radio.<br><br>
+    <b>Transmit Power:</b> This field shows the actual power being transmitted by the radio, which could be clamped down to a lower value than the value configured in the <b>"Default Transmit Power"</b> field due to various factors like regulatory domain restrictions, etc.<br><br>
+    <b>Transmission Rate:</b> Allows the user to specify the transmit data rate to be used when communicating with the clients. Select Best to automatically determine and use the optimal rate specific to each client link.<br><br>
+	Click <b>Save </b> to save your changes.<br><br>
+	Click <b>Cancel </b> to revert to the previous settings.<br>
+	<br></p>
+:|radioConfig_250N_B1End|:
+
+:|radioConfig_150N|:
+<p><b>Radio Settings:</b><br><br>
+
+	<b>Operating Frequency:</b> This field represents the radio operating
+    frequency of the device.br><br>
+	<b>Mode:</b> Select the 802.11 modulation technique. This device supports 802.11 b/g/n Wi-Fi modes; the available modes are dependent on the operating frequency selected.<br>
+	The available modes for this device are:<br><br>
+	<b>g &amp; b:</b> Select this mode if there will be some devices in the
+    wireless network that will use 802.11g and some that will use
+    802.11b.<br><br>
+	<b>g only:</b> Select this mode if all devices in the wireless network can
+    support 802.11g.<br><br>
+    <b>b only:</b> Select this mode if all devices in the wireless network can
+    support 802.11b.<br><br>
+	<b>ng:</b> Select this mode to allow 802.11n, 802.11g and 802.11b clients to
+    connect to APs configured for this radio.<br><br>
+	<b>n only:</b> Select this mode if all devices in the wireless network can
+    support 802.11n. Legacy clients will not be able to connect to APs
+    configured on this radio.<br><br>
+	<b>Channel Spacing:</b> This is the difference in frequency between successive radio channels. Choose 20/40 MHz to let system determine the best channel spacing to use. This setting is specific to 802.11n traffic.<br>
+	<br><b>Control Side Band:</b> control sideband defines the sideband which is used for secondary or extension channel when AP is operating in 40 MHz channel width. This setting is only applicable to 802.11n traffic and used in conjunction with the 40 MHz channel spacing.<br><br>
+	<b>Current Channel:</b> This field displays the channel currently in use by the radio.<br><br>
+    <b>Channel:</b> This specifies the frequency the radio uses to transmit the wireless frames. Select a channel from the list of channels or choose Auto to let the system determine the best channel to use based on the environment noise levels for the available channels.<br><br>
+    <b>Default Transmit Power:</b> Enter a value in dBm as the default transmitted power level for all APs that use this radio.<br><br>
+    <b>Transmit Power:</b> This field shows the actual power being transmitted by the radio, which could be clamped down to a lower value than the value configured in the <b>"Default Transmit Power"</b> field due to various factors like regulatory domain restrictions, etc.<br><br>
+    <b>Transmission Rate:</b> Allows the user to specify the transmit data rate to be used when communicating with the clients. Select Best to automatically determine and use the optimal rate specific to each client link.<br><br>
+	Click <b>Save </b> to save your changes.<br><br>
+	Click <b>Cancel </b> to revert to the previous settings.<br>
+	<br></p>
+:|radioConfig_150NEnd|:
+
+:|radioConfig5GHz|:
+Help Content goes here...
+:|radioConfig5GHz|:
+
+:|wmm|:
+<p><b>Wi-Fi Multimedia:</b><br><br>
+	<b>Profile Name:</b> The name of the profile to which service is being added will be displayed here.<br><br>
+	<b>Enable WMM:</b> Check this box to enable WMM for this profile. when this feature is enabled the specified default class of service is applied to the entries in the IP TOS/DiffServ Mapping table.<br><br>
+	<b>Default Class Of Service:</b> Choose among "Background", "Best Effort", "video", "Voice". This class of service is used for the traffic for whose IP DSCP/TOS value is set to "Default" in IP TOS/DiffServ Mapping table.<br><br>
+	IEEE802.11e standard defines 4 queues to prioritize the data traffic over the wireless link:<br>
+	<b>Voice:</b> Highest priority queue, minimum delay. Used typically to send time sensitive data such as Voice over IP (VoIP).<br><br>
+	<b>Video:</b> Highest priority queue, minimum delay. Used typically to send time sensitive data such as Video and other streaming data.<br><br>
+	<b>Best Effort:</b> Medium priority queue, medium throughput and delay. Most traditional IP data is sent to this queue.<br><br>
+	<b>Background:</b> Lowest priority queue, low throughput. Bulk data that requires maximum throughput and is non time-sensitive is typically sent to this queue(FTP for example).<br><br>
+	<b>IP TOS/DiffServ Mapping:</b> This table helps to map the IP/TOS values to WMM queues. Configuring this table will help the security device in reading TOS bits in IP packet and perform queuing based on WMM policy selected.<br><br>
+	<b>IP DSCP/TOS:</b> Six most significant bits of the DiffServ field.<br><br>
+	<b>Class Of Service:</b> Choose among "Default", "Background", "Best Effort", "video", "Voice" to give different types of traffic different processing priority.<br><br>
+	Click <b>Save </b> to save your changes.<br>
+	Click <b>Cancel </b> to revert to the previous settings.<br>
+	<br></p>
+:|wmmEnd|:
+
+:|wds|:
+<p><b>WDS Settings for 2.4GHz radio:</b><br><br>
+	WDS is a system that enables the wireless interconnection of access points in a network.<br><br>
+	<b>WDS Enable:</b> Enables the WDS for 2.4 GHz radio.<br><br>
+	<b>WDS encryption, security and authentication</b> displays the current scheme being implemented for the WDS links.<br><br>
+	<b>WDS Passphrase:</b> Enter the passphrase for authenticating the WDS peers when the security is configured as WPA/WPA2.<br><br>
+	<b>System MAC Address </b> displays the MAC Address of the WDS interface of this security device.<br><br>
+	Click <b>Save </b> to save your changes.<br>
+	Click <b>Cancel </b> to revert to the previous settings.<br>
+	<br>
+
+<b>WDS Peer Mac Addresses List</b>
+	 WDS Peer Mac Addresses lists the number of WDS peers configured in the security device.<br><br>
+	<b>Note:</b> The encryption used by the WDS link depends on the default access point configuration and is displayed in WDS encryption. The security mode to be used can be changed by editing the default Access Points configuration. We could have a maximum of 4 WDS peers configured.<br><br>
+	<b>Add:</b> Add a new WDS peer <br>
+	<b>Select All:</b> Selects all the WDS peers.<br>
+	<b>Delete: </b> Deletes the selected WDS peer <br><br>
+
+<b>WDS Configuration:</b><br><br>
+    <b>Mac Address:</b>Enter the MAC (Media Access Control) Address of the client that you would like to add to the list of WDS Peers.<br>
+	The format for the MAC address is XX:XX:XX:XX:XX:XX, where X is a number from 0 to 9 (inclusive) or an alphabetical letter between A and F (inclusive).<br><br>
+	<b>Note:</b> We cannot have Multicast / Broadcast Address as the WDS Peers.<br>
+	<br>Click <b>Save</b> to save your changes.</p>
+:|wdsEnd|:
+
+:|wds5GHz|:
+<p><b>WDS Settings for 5GHz radio:</b><br><br>
+	WDS is a system that enables the wireless interconnection of access points in a network.<br><br>
+	<b>WDS Enable:</b> Enables the WDS for 5GHz radio.<br><br>
+	<b>WDS encryption, security and authentication</b> displays the current scheme being implemented for the WDS links.<br><br>
+	<b>WDS Passphrase:</b> Enter the passphrase for authenticating the WDS peers when the security is configured as WPA/WPA2.<br><br>
+	<b>System MAC Address </b> displays the MAC Address of the WDS interface of this security device.<br><br>
+	Click <b>Save </b> to save your changes.<br>
+	Click <b>Cancel </b> to revert to the previous settings.<br>
+	<br>
+
+<b>WDS Peer Mac Addresses List</b>
+	 WDS Peer Mac Addresses lists the number of WDS peers configured in the security device.<br><br>
+	<b>Note:</b> The encryption used by the WDS link depends on the default access point configuration and is displayed in WDS encryption. The security mode to be used can be changed by editing the default Access Points configuration. We could have a maximum of 4 WDS peers configured.<br><br>
+	<b>Add:</b> Add a new WDS peer <br>
+	<b>Select All:</b> Selects all the WDS peers.<br>
+	<b>Delete: </b> Deletes the selected WDS peer <br><br>
+
+<b>WDS Configuration:</b><br><br>
+    <b>Mac Address:</b>Enter the MAC (Media Access Control) Address of the client that you would like to add to the list of WDS Peers.<br>
+	The format for the MAC address is XX:XX:XX:XX:XX:XX, where X is a number from 0 to 9 (inclusive) or an alphabetical letter between A and F (inclusive).<br><br>
+	<b>Note:</b> We cannot have Multicast / Broadcast Address as the WDS Peers.<br>
+	<br>Click <b>Save</b> to save your changes.</p>
+:|wds5GHzEnd|:
+
+:|advancedWireless|:
+<p>
+		<b>Advanced Wireless Settings</b><br><br>
+		<b>Beacon Interval:</b> Enter the time in milliseconds between beacon transmissions. The default interval is 100 milliseconds.<br><br>
+		<b>Dtim Interval:</b> Enter the interval at which the delivery traffic indication
+		message should be sent. This setting is related to the beacon interval.
+		The default interval is 2 beacon intervals.<br><br>
+		<b>RTS Threshold:</b> The Request to Send (RTS) threshold is the packet size in
+		bytes that requires the AP to check the transmitting frames to determine if 
+		RTS/Clear to Send (CTS) handshake is required with the receiving client. Using a 
+		small value causes RTS packets to be sent more often, consuming more of the 
+		available bandwidth, therefore reducing the apparent throughput of the network 
+		packets. The default value is 2346, which effectively disables RTS.<br><br>
+		<b>Fragmentation Threshold:</b> This is the maximum length of the frame, in bytes,
+		beyond which packets must be broken up (fragmented) into two or more frames.
+		Collisions occur more often for long frames because while sending them, they occupy the channel for a longer time. The default value is 2346, which effectively
+		disables fragmentation.<br><br>
+		<b>Note:</b> Fragmentation Threshold value will not be applicable when the wireless
+		radio setting <b>Mode</b> is configured for <b>ng</b> or <b>n only</b> mode.<br>
+		<br><b>Preamble mode:</b> 802.11b requires that a preamble be appended to every frame 
+		before it is transmitted through the air. The preamble may be either the 
+		traditional &quot;long&quot; preamble, which requires 192 microseconds for 
+		transmission, or it may be an optional &quot;short&quot; preamble that requires 
+		only 96 microseconds. A long preamble is needed for compatibility with the legacy
+		802.11 systems operating at 1 and 2 Mbps. The default selection is Long.<br><br>
+		<b>Protection Mode:</b> Select the CTS-to-Self Protection option to enable 
+		CTS-to-Self protection mechanism, which is used to minimize collisions among 
+		stations in a mixed 802.11 b &amp; g environment. The default selection is None.<br><br>
+		<b>Power Save Enable:</b> Select this to enable the Unscheduled Automatic Power 
+		Save Delivery (also referred to as WMM Power Save) feature that allows the radio to
+		conserve power.<br><br>
+		<b>Multi To Unicast:</b> Select this to enable and translate externally received content provider multicast destination addresses to unicast destination addresses.<br><br>
+		Click <b>Save </b> to save your changes.<br><br>
+		Click <b>Cancel </b> to revert to the previous settings.
+    		<br></p>
+:|advancedWirelessEnd|:
+
+:|advancedWirelessAC|:
+<p>
+		<b>Advanced Wireless Settings</b><br><br>
+		<b>Beacon Interval:</b> Enter the time in milliseconds between beacon transmissions. The default interval is 100 milliseconds.<br><br>
+		<b>Dtim Interval:</b> Enter the interval at which the delivery traffic indication
+		message should be sent. This setting is related to the beacon interval.
+		The default interval is 2 beacon intervals.<br><br>
+        <b>Enable RTS Threshold:</b> Select this to enable/disable RTS Threshold.<br><br>
+		<b>RTS Threshold:</b> The Request to Send (RTS) threshold is the packet size in
+		bytes that requires the AP to check the transmitting frames to determine if 
+		RTS/Clear to Send (CTS) handshake is required with the receiving client. Using a 
+		small value causes RTS packets to be sent more often, consuming more of the 
+		available bandwidth, therefore reducing the apparent throughput of the network 
+		packets. The default value is 2346, which effectively disables RTS.<br><br>
+		<b>Fragmentation Threshold:</b> This is the maximum length of the frame, in bytes,
+		beyond which packets must be broken up (fragmented) into two or more frames.
+		Collisions occur more often for long frames because while sending them, they occupy the channel for a longer time. The default value is 2346, which effectively
+		disables fragmentation.<br><br>
+		<b>Note:</b> Fragmentation Threshold value will not be applicable when the wireless
+		radio setting <b>Mode</b> is configured for <b>ng</b> or <b>n only</b> mode.<br>
+		<br><b>Preamble mode:</b> 802.11b requires that a preamble be appended to every frame 
+		before it is transmitted through the air. The preamble may be either the 
+		traditional &quot;long&quot; preamble, which requires 192 microseconds for 
+		transmission, or it may be an optional &quot;short&quot; preamble that requires 
+		only 96 microseconds. A long preamble is needed for compatibility with the legacy
+		802.11 systems operating at 1 and 2 Mbps. The default selection is Long.<br><br>
+		<b>Protection Mode:</b> Select the CTS-to-Self Protection option to enable 
+		CTS-to-Self protection mechanism, which is used to minimize collisions among 
+		stations in a mixed 802.11 b &amp; g environment. The default selection is None.<br><br>
+		<b>Power Save Enable:</b> Select this to enable the Unscheduled Automatic Power 
+		Save Delivery (also referred to as WMM Power Save) feature that allows the radio to
+		conserve power.<br><br>
+		<b>Multi To Unicast:</b> Select this to enable and translate externally received content provider multicast destination addresses to unicast destination addresses.<br><br>
+		Click <b>Save </b> to save your changes.<br><br>
+		Click <b>Cancel </b> to revert to the previous settings.
+    		<br></p>
+:|advancedWirelessACEnd|:
+
+:|advancedWireless5GHz|:
+<p>
+		<b>Advanced Wireless Settings</b><br><br>
+		<b>Beacon Interval:</b> Enter the time in milliseconds between beacon transmissions. The default interval is 100 milliseconds.<br><br>
+		<b>Dtim Interval:</b> Enter the interval at which the delivery traffic indication
+		message should be sent. This setting is related to the beacon interval.
+		The default interval is 2 beacon intervals.<br><br>
+		<b>Enable RTS Threshold:</b> Select this to enable/disable RTS Threshold.<br><br>
+		<b>RTS Threshold:</b> The Request to Send (RTS) threshold is the packet size in
+		bytes that requires the AP to check the transmitting frames to determine if 
+		RTS/Clear to Send (CTS) handshake is required with the receiving client. Using a 
+		small value causes RTS packets to be sent more often, consuming more of the 
+		available bandwidth, therefore reducing the apparent throughput of the network 
+		packets. The default value is 2346, which effectively disables RTS.<br><br>
+		<b>Power Save Enable:</b> Select this to enable the Unscheduled Automatic Power 
+		Save Delivery (also referred to as WMM Power Save) feature that allows the radio to
+		conserve power.<br><br>
+        <b>Multi To Unicast:</b> Select this to enable and translate externally received content provider multicast destination addresses to unicast destination addresses.<br><br>
+		Click <b>Save </b> to save your changes.<br><br>
+		Click <b>Cancel </b> to revert to the previous settings.
+    		<br></p>
+:|advancedWireless5GHzEnd|: 
+
+:|wps|:
+<p><b>WPS Settings</b><br>
+		WPS is available for configured and enabled APs that support WPA / WPA2 security. You must have a WPS-supporting 802.11 client to let that client join this APs network via WPS.<br><br>
+		<b>WPS Configuration:</b><br>
+		    <b>Select VAP:</b> Select one of the configured Virtual APs (VAP) from the drop down box on which WPS is to be enabled. Only the SSIDs for AP which are configured with WPA, WPA2 or WPA + WPA2 security modes are available for WPS configuration.<br><br>
+		<b>WPS Status:</b> Select Enable from the drop down box to enable WPS for this AP. By default WPS is disabled.<br><br>
+		<b>WPS Current Status</b>
+		<b>Security:</b> The security mode being employed by the AP on which WPS is configured.<br><br>
+		<b>Authentication Type:</b> The authentication method being employed by the AP on which the WPS is configured.<br><br>
+		<b>Encryption Type:</b> The encryption method being employed by the AP on which the WPS is configured.<br><br>
+		<b>WPS Setup Method</b><br>
+		<b>Station PIN:</b> To use a PIN to establish the WPA/WPS2 link, enter the PIN (a pre-shared password) that is configured on the WPS clients. <br><br>
+		<b>Click Configure via PIN</b> to initiate the WPS session using the PIN (Personal Identification Number) method.<br><br>
+		<b>Click Configure via PBC</b> to initiate the WPS session using the PBC (Push button configuration) method. Once this is clicked, press down on the clients push button within 60 seconds to establish the WPS link.<br><br>
+		<b>Session Status</b> Displays messages indicating current status of a WPS session.<br><br>
+		Click <b>Save </b> to save your changes.<br>
+		Click <b>Cancel </b> to revert to the previous settings.
+    		<br></p>
+:|wpsEnd|:
+:|wps_ndev|:
+<p><b>WPS Settings</b><br>
+		WPS is available for configured and enabled APs that support WPA / WPA2 security. You must have a WPS-supporting 802.11 client to let that client join this APs network via WPS.<br><br>
+		<b>WPS Configuration:</b><br>
+		    <b>Select VAP:</b> Select one of the configured Virtual APs (VAP) from the drop down box on which WPS is to be enabled. Only the SSIDs for AP which are configured with WPA, WPA2 or WPA + WPA2 security modes are available for WPS configuration.<br><br>
+		<b>WPS Status:</b> Select Enable from the drop down box to enable WPS for this AP. By default WPS is disabled.<br><br>
+		<b>WPS Current Status</b>
+		<b>Security:</b> The security mode being employed by the AP on which WPS is configured.<br><br>
+		<b>Authentication Type:</b> The authentication method being employed by the AP on which the WPS is configured.<br><br>
+		<b>Encryption Type:</b> The encryption method being employed by the AP on which the WPS is configured.<br><br>
+		<b>WPS Setup Method</b><br>
+		<b>Station PIN:</b> To use a PIN to establish the WPA/WPS2 link, enter the PIN (a pre-shared password) that is configured on the WPS clients. <br><br>
+		<b>Click Configure via PIN</b> to initiate the WPS session using the PIN (Personal Identification Number) method.<br><br>
+		<b>Click Configure via PBC</b> to initiate the WPS session using the PBC (Push button configuration) method. Once this is clicked, press down on the clients push button within 60 seconds to establish the WPS link.<br><br>
+		<b>Note:</b> PBC LED will go to solid blue state for 10 seconds to
+        indicate the connection is successful.<br><br>
+		<b>Session Status</b> Displays messages indicating current status of a WPS session.<br><br>
+		Click <b>Save </b> to save your changes.<br>
+		Click <b>Cancel </b> to revert to the previous settings.
+    		<br></p>
+:|wps_ndevEnd|:
+:|fbWiFi|:
+<p><b>Facebook WiFi</b><br>
+        Enabling Facebook Wi-Fi turns your business into a Wi-Fi hotspot.<br><br>
+        <b>Enable Facebook WiFi:</b><br>
+        Choose ON/OFF to enable/disable the Facebook WiFi.<br><br>
+        <b>Configure Facebook WiFi</b><br>
+        Clicking submit will redirect the merchant to the facebook registration page.The
+        merchant is expected to have created a page for the business and can be selected
+        after login to facebook.<br><br>
+        <b>Device Registration Status:</b><br>
+        Shows the device registration status with Facebook.If it is not
+        registered please use 'Configure Facebook WiFi' button to register and configure the
+        business page.<br><br>
+        <b>Available Wireless Vlans</b><br>
+        Shows the available vlans in the device which can pair up with Facebook
+        WiFi.<br><br>
+        <b>VLAN Name:</b><br>
+        This shows VLAN Name of the available vlans which can pair up with Facebook
+        WiFi.<br><br>
+        <b>VLAN ID:</b><br>
+        This shows the VLAN ID of the available vlans.<br><br>
+        <b>Pair with FbWiFi:</b><br>
+        Choose ON/OFF to pair up/down with facebook WiFi for the selected
+        VLAN.<br><br>
+		Click <b>Save </b> to save your changes.<br>
+		Click <b>Cancel </b> to revert to the previous settings.
+    		<br></p>
+:|fbWiFiEnd|:

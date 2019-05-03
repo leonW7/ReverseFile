@@ -1,0 +1,158 @@
+<tr><td align="center">
+<!-- Menu-close -->
+<script language="JavaScript" type="text/javascript">
+function LaunchSSLVPNClient()
+    {
+    var webagent = navigator.userAgent.toLowerCase();
+    if ((webagent.indexOf("msie") != -1) || (webagent.indexOf("nt 6.3;") != -1))
+        {
+
+        if ((webagent.indexOf("win64") != -1) || (webagent.indexOf("wow64") != -1))
+            {
+            if ((webagent.indexOf("wow64") != -1) && (webagent.indexOf("nt 6.2;") == -1) && (webagent.indexOf("nt 6.1;") == -1) && (webagent.indexOf("nt 6.3;") == -1))
+                {
+                alert('64bit Internet Explorer is required to install this application');
+                return ;
+                }
+            else if ((webagent.indexOf("wow64") == -1) && (webagent.indexOf("nt 6.2;") != -1))
+                {
+                alert('Please try installing this driver in 64bit environment');
+                return 0;
+                } 
+            else if (((webagent.indexOf("nt 6.1;") != -1) || (webagent.indexOf("nt 6.2;") != -1) || (webagent.indexOf("nt 6.3;") != -1)) && (webagent.indexOf("wow64") != -1))
+                {
+		window.open('/scgi-bin/userPortal/sslvpnclient64?launch=true&isWOW64=true', 'install', 'width=420,height=300')
+                }
+            else
+                {
+                window.open('/scgi-bin/userPortal/sslvpnclient64?launch=true&is64bit=true', 'install',
+                    'width=420,height=300')
+                }
+            }
+        else
+            {
+            window.open('/scgi-bin/userPortal/sslvpnclient?launch=true&is32bit=true', 'install',
+                    'width=420,height=300')
+            }
+        }
+    else
+        {
+        window.open('/scgi-bin/userPortal/sslvpnclient?jni_installer=connect', 'install',
+                    'width=420,height=300')
+        }
+    }
+/* Function for Un Install SSL VPN Client on Internet Explorer */        
+function UninstallSSLVPNClient()
+    {
+    var webagent = navigator.userAgent.toLowerCase();
+    if (webagent.indexOf("msie") != -1)
+        {
+        if ((webagent.indexOf("win64") != -1) || (webagent.indexOf("wow64") != -1))
+            {
+		    if (webagent.indexOf("wow64") != -1)
+                {
+                if((webagent.indexOf("nt 6.2;") == -1) && (webagent.indexOf("nt 6.1;") == -1) && (webagent.indexOf("nt 6.3;") == -1))
+		            {
+                    window.open('/scgi-bin/userPortal/sslvpnclient?launch=uninstall&is32bit=true','uninstall','width=420,height=300')
+		            }
+                else
+                    {
+		            window.location.href="/scgi-bin/userPortal/sslvpnclient64?launch=uninstall&is32bit=false";
+                    }
+                }
+		    else
+		        {
+		        window.location.href="/scgi-bin/userPortal/sslvpnclient64?launch=uninstall&is32bit=false";
+		        }
+		    }
+		else
+            {
+            window.location.href="/scgi-bin/userPortal/sslvpnclient?launch=uninstall&is32bit=true";
+            }
+        }
+    }
+</script>
+
+
+<div align="center" class="midWidth">
+<div class="FL2">
+<p class="hint"></p>
+</div>
+ <h1>VPN TUNNEL</h1>
+<div class="midArea" > <!-- style="margin-left:15px" -->
+<div align="left">
+<form name action="cgi-action.html" method="post">
+								<h2>Supported Features</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+								 <label>This page allows user to establish a SSL VPN tunnel client which provides a point-to-point connection between the remote client machine and the gateway of the corporate network</label>
+								</div>
+								<div class="break">&nbsp;</div>
+								 
+								 <h2>SSL VPN Tunnel Client Installer / Launcher</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+                               <div class="userPortalIcons" onclick="LaunchSSLVPNClient()">
+        <img border="0" src="../images/iconSslVpnTunnelInstall.png" class="handcursor"></div>
+										  <label><br />
+  Click the Icon to connect to the remote network. Keep your browser open to maintain the connection. </div>
+<div class="break">&nbsp;</div>
+<div class="break">&nbsp;</div>
+
+<div class="configRow">
+<label>
+<strong>Note:</strong><br />
+
+* If you reload your browser, SSL VPN Tunnel Client will disconnect and then reconnect to the remote network.<br />
+* Installation/Uninstallation can be done only as "root"<br /><br />
+
+<strong>Recommendations :</strong><br />
+* Always follow this sequence: Uninstall any active clients, logout and close the browser. If recommended steps are followed, it will make the connection safer, easier to maintain and avoid possible errors.
+</label>
+ 
+								</div>
+								<div class="break">&nbsp;</div>
+								                            
+							</form>
+						</div>
+					</div>
+				</div></div>
+
+</div>
+</td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

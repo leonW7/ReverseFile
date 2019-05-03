@@ -1,0 +1,10 @@
+interface bdg1
+    {
+    AdvSendAdvert on;
+    AdvRetransTimer 5000;
+    prefix 3ffe:501:ffff:100::/64
+        {
+        AdvOnLink on;
+        AdvAutonomous on;
+        };
+    };

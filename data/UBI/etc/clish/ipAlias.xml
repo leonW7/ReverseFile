@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<VIEW name="Ip-Alias-config" prompt="Ip-Alias-config[policy]>">
+<COMMAND name="save" help="Save Ip Alias server configuration changes.">
+        <ACTION>lua clishCfgObjExec("IpAlias")</ACTION>
+    </COMMAND>
+<COMMAND name="cancel" help="Roll back Ip Alias server configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+<COMMAND name="exit" 
+             help="Save Ip Aias server configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("IpAlias")</ACTION>
+    </COMMAND>
+<COMMAND name="Interface"
+             help="Select the Interface for the Ip Aliasing">
+     <PARAM name="interface_name" 
+            help="Select the Name of the Interface for the Ip Aliasing."
+            ptype="EXT_INTERFACE_TYPE_DUAL_WANS"/>
+         <ACTION>lua clishCfgObjAdd("IpAlias", "ifStaticIPAlias.LogicalIfName","${interface_name}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="Ip_Address"
+             help="Ip Address for ip Aliasing.">
+     <PARAM name="ip_address" 
+            help="Enter valid Ip address."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("IpAlias", "ifStaticIPAlias.IPAddress","${ip_address}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="Subnet_Mask"
+             help="Subnet mask for ip Aliasing">
+     <PARAM name="subnet_mask" 
+            help="Enter Valid Subnet mask for Ip Aliasing."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("IpAlias", "ifStaticIPAlias.SubnetMask","${subnet_mask}")
+         </ACTION>
+    </COMMAND>
+</VIEW>
+
+
+<!--=======================================================-->
+<COMMAND name="net ip_Aliasing" license_support="Y" help="net policy mode."/>
+<COMMAND name="net ip_Aliasing server" help="net policy mode."/>
+<!--=======================================================-->
+    <COMMAND name="net ip_Aliasing server add"
+             help=" Ip Aliasing server configuration"
+             view="Ip-Alias-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("IpAlias", 
+                                       IpAliasServerCfgInit, 
+                                       IpAliasServerCfgSave,
+                                       IpAliasServerInputVal,"-1")
+	    </ACTION>
+</COMMAND>
+
+ <!--=======================================================-->
+    <COMMAND name="net ip_Aliasing server edit"
+             help="Editing Ip Aliasing server configuration."
+             view="Ip-Alias-config" viewid="">
+	         <PARAM name="row_id" 
+	                help=" Row Id Of the rule to be edited"
+	                ptype="UINT"/>
+                    <ACTION>lua clishCfgObjNew ("IpAlias", 
+                                       IpAliasServerCfgInit, 
+                                       IpAliasServerCfgSave,
+                                       IpAliasServerInputVal,"${row_id}")
+                    </ACTION>
+    </COMMAND>
+ <!--=======================================================-->
+
+	<COMMAND name="net ip_Aliasing server delete"
+             help="Delete Ip Aliasing configuratio"
+             view="Ip-Alias-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(IpAliasCfsDelete, "${row_id}", "delete")
+                   </ACTION>
+    </COMMAND>
+
+<!--=======================================================-->
+<COMMAND name="show net Ip_Alias" license_support="Y" help="show Ip Alias configuration details"/>
+<!--=======================================================-->
+<COMMAND name="show net Ip_Alias server" help="show Ip Alias configuration details"/>
+<!--=======================================================-->
+    <COMMAND name="show net Ip_Alias server setup"
+	     help="Display Ip_Alias server setup.">
+	     <ACTION>lua clishCmdExec (ipAliascfgInfoGet)
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+
+</CLISH_MODULE>

@@ -1,0 +1,77 @@
+#!/bin/sh
+#
+# ipset - initialization script for ipset
+#
+# Copyright (c) 2010, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01c,28arp14, vik added ipset for web access filtering support
+# 01b,11apr12, rkm Fixed spr 37590
+# 01a,24oct10, suh written
+
+if [ "$INCLUDE_IPSET" = "y" ]; then
+    MODULES_DIR=$IPSET_INSTALL_PATH/lib/modules/ipset/
+
+    echo -n "Inserting ipset modules..."
+    [ -f $MODULES_DIR/ip_set.$MOD_SUFFIX ] && insmod $MODULES_DIR/ip_set.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_IPMAP" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_ipmap.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_ipmap.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_PORTMAP" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_portmap.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_portmap.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_MACIPMAP" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_macipmap.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_macipmap.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_IPHASH" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_iphash.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_iphash.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_NETHASH" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_nethash.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_nethash.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_IPPORTHASH" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_ipporthash.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_ipporthash.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_IPPORTIPHASH" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_ipportiphash.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_ipportiphash.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_IPPORTNETHASH" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_ipportnethash.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_ipportnethash.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_IPTREE" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_iptree.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_iptree.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_IPTREEMAP" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_iptreemap.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_iptreemap.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_SETLIST" = "y" ] && \
+        [ -f $MODULES_DIR/ip_set_setlist.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ip_set_setlist.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_NF_MATCH" = "y" ] && \
+        [ -f $MODULES_DIR/ipt_set.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ipt_set.$MOD_SUFFIX
+    [ "$INCLUDE_IPSET_NF_TARGET" = "y" ] && \
+        [ -f $MODULES_DIR/ipt_SET.$MOD_SUFFIX ] && \
+        insmod $MODULES_DIR/ipt_SET.$MOD_SUFFIX
+    echo "Done"
+    ipset -N setSecureIp iphash
+    ipset -N setInsecureIp iphash
+    ipset -N setPublicIp iphash
+    ipset -N setLANIp iphash
+    ipset -N setWAN1Ip iphash
+    ipset -N setWAN2Ip iphash
+    ipset -N setWAN3Ip iphash
+    ipset -N setSecureNet nethash
+    ipset -N setPublicNet nethash
+    ipset -N setGreIp iphash
+# create ipset for web access filtering support
+    ipset -N setWebAccessIp iphash
+    ipset -N setWebAccessNet nethash
+#create ipset Dnat
+    ipset -N Dnat iphash
+    ipset -N fwDhcpRelay iphash
+    ipset -N setURLFilterACL hash:net
+    ipset -N setURLFilterACL iptreemap
+fi
+

@@ -1,0 +1,241 @@
+<?lua 
+
+require "teamf1lualib/bl_usbStatus"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+PAGE_HELP = "status"
+if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or
+   PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+PAGE_HELP_SECTION = "usbStatus"
+else
+PAGE_HELP_SECTION = "usbStatus_single"
+end
+
+local usbStatus = require("com.teamf1.bl.usb.status")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+
+if (ButtonType and ButtonType == "unmount1") then
+    local errorFlag, statusMessage = usbStatus.usb1UnmountStatusGet ("usb1")   
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (returnCodes.SAFELY_REMOVED_USB1)
+    else 
+        statusErrorMessage =  errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "unmount2") then
+    local errorFlag,statusMessage = usbStatus.us2bUnmountStatusGet ("usb2")
+    if (errorFlag == returnCodes.SUCCESS) then
+        if (PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then
+            statusSuccessMessage = errorMap.errorStringGet (returnCodes.SAFELY_REMOVED_USB)
+        else
+            statusSuccessMessage = errorMap.errorStringGet (returnCodes.SAFELY_REMOVED_USB2)
+        end
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+else  
+    local errorFlag, returnCode, port1, statusUsb1, vendorUsb1, modelUsb1, typeUsb1,
+    mountUsb1 = usbStatus.usb1StatusGet ()   
+
+    local errorFlag, returnCode, port2, statusUsb2, vendorUsb2, modelUsb2, typeUsb2,
+    mountUsb2 = usbStatus.usb2StatusGet ()
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+
+    LANG_LOCALE = "13219,10702,13213,13004,14019,14020,13173,14021,30027,10752,30533"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgInfo">
+                    <p>Status Message Place Holder.</p>
+                    </div>
+tod                    -->
+                    <div class="FL2">
+                        <p class="hint"> $| helpHintText |$</p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13219'] |$</h1>
+                    <form name="tf1_frmUsbStatus" id="tf1_frmUsbStatus" action="platform.cgi" method="post">
+                    <input type="hidden" name="thispage" id="thispage" value="usbStatus.html"> 
+                    <div class="CLR">
+                        <div class="demo_jui">
+                            <table cellpadding="0" cellspacing="0" border="0"
+                                class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['10702'] |$</th>
+										<?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or  PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                        <th>$| LANG_LOCALE['13213'] |$ 1</th>
+                                        <th>$| LANG_LOCALE['13213'] |$ 2</th>
+										<?lua else ?>
+                                        <th>$| LANG_LOCALE['13213'] |$</th>
+										<?lua end ?>
+                                    </tr>
+                                </thead>
+                                <?lua if (PRODUCT_ID ~= "DSR-500AC_Ax" and PRODUCT_ID ~= "DSR-500_Bx") then ?> 
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['13004'] |$</td>
+                                    <?lua if (statusUsb1 == "disconnected") then
+                                            statusUsb1 = LANG_LOCALE['10752']
+                                        else
+                                            statusUsb1 = LANG_LOCALE['30533']
+                                        end
+                                    ?>
+                                    <td>$| statusUsb1 or "NA" |$ </td>
+                                    <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then 
+                                    if (statusUsb2 == "disconnected") then
+                                        statusUsb2 = LANG_LOCALE['10752']
+                                    else
+                                        statusUsb2 = LANG_LOCALE['30533']
+                                    end
+                                    ?>
+                                    <td>$| statusUsb2 or "NA"|$ </td>
+									<?lua end ?>
+                                </tr>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['14019'] |$</td>
+                                    <td>$| vendorUsb1 or "NA" |$ </td>
+									<?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                    <td>$| vendorUsb2 or "NA" |$ </td>
+									<?lua end ?>
+                                </tr>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['14020'] |$</td>
+                                    <td>$| modelUsb1 or "NA" |$</td>
+									<?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or 
+                                             PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                    <td>$| modelUsb2 or "NA" |$</td>
+									<?lua end ?>
+                                </tr>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['13173'] |$</td>
+                                    <td>$| typeUsb1 or "NA" |$</td>
+									<?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                    <td>$| typeUsb2 or "NA" |$</td>
+									<?lua end ?>
+                                </tr>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['14021'] |$</td>
+                                    <td>$| mountUsb1 or "NA" |$</td>
+									<?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                    <td>$| mountUsb2 or "NA"|$</td>
+									<?lua end ?>
+                                </tr>
+                                <?lua 
+                                -- below code should allow only for DSR-500AC and DSR-500_Bx devices
+                                else ?>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['13004'] |$</td>
+                                    <?lua 
+                                    
+                                        if (statusUsb2 == "disconnected") then
+                                            statusUsb2 = LANG_LOCALE['10752']
+                                        else
+                                            statusUsb2 = LANG_LOCALE['30533']
+                                        end
+                                    ?>
+                                    <td>$| statusUsb2 or "NA"|$ </td>
+                                </tr>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['14019'] |$</td>
+                                    <td>$| vendorUsb2 or "NA" |$ </td>
+                                </tr>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['14020'] |$</td>
+                                    <td>$| modelUsb2 or "NA" |$</td>
+                                </tr>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['13173'] |$</td>
+                                    <td>$| typeUsb2 or "NA" |$</td>
+                                </tr>
+                                <tr class="gradeA">
+                                    <td>$| LANG_LOCALE['14021'] |$</td>
+                                    <td>$| mountUsb2 or "NA"|$</td>
+                                </tr>
+                                <?lua end ?>
+                            </table>
+                        </div>
+                    </div>
+		<div class="submitRow">
+		    <?lua if ( mountUsb1 == "USB mounted" ) then ?>
+                        <input type="submit" name="button.unmount1.usbStatus" class="btnSubmit" title="$| LANG_LOCALE['30027'] |$1" value="$| LANG_LOCALE['30027'] |$1" id="btUsb1">
+		    <?lua end if ((UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000"
+            or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") and (mountUsb2 == "USB mounted")) then ?>
+                        <input type="submit" name="button.unmount2.usbStatus" class="btnSubmit" title="$| LANG_LOCALE['30027'] |$2" value="$| LANG_LOCALE['30027'] |$2" id="btUsb2">
+		    <?lua end 
+            if ((PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") and (mountUsb2 == "USB mounted")) then ?>
+                <input type="submit" name="button.unmount2.usbStatus" class="btnSubmit" title="$| LANG_LOCALE['30027'] |$" value="$| LANG_LOCALE['30027'] |$" id="btUsb2">
+            <?lua end ?>
+                </div>
+		</form>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+            });
+
+        </script>
+    </body>
+</html>
+<?lua end?>
+

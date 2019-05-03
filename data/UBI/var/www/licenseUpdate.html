@@ -1,0 +1,203 @@
+<?lua
+require "teamf1lualib/licenseUpdate_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "licenseUpdate"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local lm_returnCodes = require ("com.teamf1.core.lm.returnCodes")
+
+local license = require("com.teamf1.bl.admin.license")
+licensesList = {}
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag, status = license.licenseCodeSet (inputTable)
+    if (errorFlag == lm_returnCodes.ACTIVATION_CODE_SUCCEEDED) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    elseif (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "activate") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag = license.freeTriallicenseCodeSet (inputTable)
+    if (errorFlag == lm_returnCodes.ACTIVATION_CODE_SUCCEEDED) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    elseif (errorFlag ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+else
+   returnCode, status, licensesList , Message = license.licenseListsGet()
+   if (statusErrorMessage == nil ) then
+   if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+   elseif (returnCode == returnCodes.SUCCESS) then
+       if(Message ~= nil) then
+           statusErrorMessage = Message
+       end
+   end 
+   end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "11570,13608,11569,10068,10977,11567,10057,10069,13492,11203,12042,14379,14380"
+?>
+    <!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage or '' |$</p>
+                </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11570'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+
+
+                       <?lua
+                       local trialFile = io.open("/flash/tmp/lm/freeTrial","r")
+                       local wcfFile = io.open("/flash/tmp/lm/activation_keys","r")
+                       if(wcfFile ~= nil) then 
+                           if (trialFile == nil) then
+                               local licenseStatus = wcfFile:read("*line")
+                               if (licenseStatus == nil or licenseStatus == '') then
+                               ?>
+        
+                               <div class="configRow">
+                                       <form  action="platform.cgi" method="post" name="tf1_frmFreeTrial" id="tf1_frmLicenseUpdate">
+                                       <input type="hidden" name="thispage" id="thispage" value="licenseUpdate.html">
+                                               <h2>$| LANG_LOCALE['14379'] |$</h2>
+                                                       <div class="break">
+                                                       &nbsp;
+                                                       </div>
+                                                       <input type="hidden" name="licenseUpdate.freeTrial" value="Activate">
+                                                               <div class="submitRow">
+                                                                 <input type="submit" name ="button.activate.licenseUpdate" class="btnSubmit" title="$| LANG_LOCALE['14380'] |$" value="$| LANG_LOCALE['14380'] |$" id="btSave">
+                                                                   </div>
+                                                                     <div class="break">
+                                                                       &nbsp;
+
+                                              			      </div>
+                                       </form>
+
+ 				<?lua end ?>
+ 			   <?lua end ?>
+ 		       <?lua end ?>
+
+                            <form  action="platform.cgi" method="post" name="tf1_frmLicenseUpdate" id="tf1_frmLicenseUpdate">
+                             <input type="hidden" name="thispage" id="thispage" value="licenseUpdate.html">   
+                                <h2>$| LANG_LOCALE['13608'] |$</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                            <thead>
+                                                <tr>
+                                                    <th> $| LANG_LOCALE['11569'] |$ </th>
+                                                    <th> $| LANG_LOCALE['10068'] |$ </th>
+                                                    <th> $| LANG_LOCALE['10977'] |$ </th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            for k,v in pairs (licensesList) do
+                                            ?>
+                                            <tr class="gradeA">
+                                                <td> $| v[1] or '' |$ </td>
+                                                <td> $| v[2] or '' |$ </td>
+                                                <td> $| v[3] or '' |$ </td>
+                                            </tr>
+                                            <?lua end?>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['10069'] |$</h2>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11567'] |$ </label>
+                                    <input type="text" name="licenseUpdate.activationKey" id="tf1_licenseUpdate" maxlength="25" onKeyPress="return alphaNumericCheck(event, '');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name ="button.config.licenseUpdate" class="btnSubmit" onClick="return pageValidate('tf1_frmLicenseUpdate')" title="$| LANG_LOCALE['10057'] |$" value="$| LANG_LOCALE['10057'] |$" id="btSave">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/licenseUpdate.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

@@ -1,0 +1,264 @@
+<?lua
+require "teamf1lualib/bl_peerConfiguration"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "peerConfiguration"
+
+local gui_peerConfig = require("com.teamf1.bl.wlan.peerconfiguration")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local peerConfigStatus
+local ENABLED = 1
+local DISABLED = 0
+errorCode, peerConfigStatus = gui_peerConfig.peerConfigurationGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+
+if (ButtonType and ButtonType == "config") then
+    local configRow = web.cgiToLuaTable(cgi)
+    errorFlag, statusCode = gui_peerConfig.peerConfigurationSet (configRow)
+    if (errorFlag == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+    
+else
+  cgilua.header ("Content-Type","text/html; charset=UTF-8")  
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body onLoad="onloadCall ();">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes 
+                    -->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+							$| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>Peer Configuration</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmPeerConfiguration"
+                                id="tf1_frmPeerConfiguration"
+                                action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="peerConfiguration.html">
+                                <div class="configRow">
+                                    <label> Global </label>
+                                        <?lua if
+                                        (peerConfigStatus.global
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="peerConfiguration.global" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Discovery </label>
+                                         <?lua if
+                                        (peerConfigStatus.discovery
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable" ></a>
+                                          <input type="hidden"
+                                          name="peerConfiguration.discovery" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Channel / Power </label>
+                                         <?lua if
+                                        (peerConfigStatus.channelOrPower
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="peerConfiguration.channelOrPower" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> AP Database </label>
+                                         <?lua if
+                                        (peerConfigStatus.apDatabase
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="peerConfiguration.apDatabase" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> AP Profiles </label>
+                                         <?lua if
+                                        (peerConfigStatus.apProfiles
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="peerConfiguration.apProfiles" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Known Client </label>
+                                         <?lua if
+                                        (peerConfigStatus.knownClient
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="peerConfiguration.knownClient" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Captive Portal </label>
+                                         <?lua if
+                                        (peerConfigStatus.captivePortal
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="peerConfiguration.captivePortal" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Radius Client </label>
+                                         <?lua if
+                                        (peerConfigStatus.radiusClient
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="peerConfiguration.radiusClient" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit"
+                                    name="button.config.peerConfiguration" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="setHiddenChks('tf1_frmPeerConfiguration');">
+
+                                    <input type="reset" class="btnReset" title="Cancel" value="Cancel" id="btSave"  onclick="this.form.reset(); resetImgOnOff('tf1_frmPeerConfiguration');">
+
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+    </body>
+</html>
+<?lua end ?>

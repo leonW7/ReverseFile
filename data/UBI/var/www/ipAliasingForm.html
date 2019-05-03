@@ -1,0 +1,144 @@
+<?lua
+
+require "teamf1lualib/bl_ipAliasing"
+local alias = require("com.teamf1.bl.wan.ipAliasing")
+local DMZ = "DMZ"
+if (ButtonType == "add" or ButtonType == "edit") then
+    local returnCode
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, wanPort, ipAddress, subnetMask = alias.ipAliasGetCur(configRowId)
+        returnCode,configurablePort = alias.configurablePortGet()
+    else
+        configRowId = "-1"
+        returnCode,configurablePort = alias.configurablePortGet()
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_ipAliasingDailogContent">
+    <div class="topBg">
+        <h1 data-localize="11399">IP Aliasing Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="11187">Interface </label>
+            <?lua 
+                if (wanPort == nil or wanPort == '') then 
+                    wanPort = "WAN1"
+                end
+                if( UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+                wanDispName ="WAN1" 
+                else
+                wanDispName ="WAN1"
+                end
+            ?>
+            <p><input type="radio" value="WAN1" $| web.radioSelected(wanPort == "WAN1") |$ name="ipAliasing.wanPort" id="tf1_radioWAN1"> $| wanDispName |$
+            </p>
+            
+            <?lua
+            if (configurablePort == "WAN2") then 
+            ?>
+            <p><input type="radio" value="WAN2" $| web.radioSelected(wanPort == "WAN2") |$ name="ipAliasing.wanPort" id="tf1_radioWAN2"> WAN2 </p>
+            <?lua end?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="11387">IP Address </label>
+            <input type="text" name="ipAliasing.ipAddress" value = "$| ipAddress or '' |$" id="tf1_IPAddress" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label data-localize="13017">Subnet Mask </label>
+            <input type="text" name="ipAliasing.subnetMask" value = "$| subnetMask or '' |$" id="tf1_subnetMask" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id) }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+		<?lua
+		local i = 0
+		local table = alias.networkIntrTbl ()
+		for k,v in pairs(table) do
+		    local logIfName = "'" .. v["networkInterface.LogicalIfName"] .. "'"
+		    where = "LogicalIfName = "..logIfName.." and AddressFamily=2"
+		    local ifRow = alias.ifStaticRows (where)
+		    i = i + 1
+		    local lanIp = ifRow["ifStatic.StaticIp"]
+		    local snetMask = ifRow["ifStatic.NetMask"]
+		    local ipVar = "hdIPAddr" .. ifRow["ifStatic.LogicalIfName"]
+		    local snetVar = "hdSnetAddr" .. ifRow["ifStatic.LogicalIfName"]
+		    local ifName = "ifName" .. i
+		?>
+		<input type="hidden" id="$| ipVar |$" value="$| lanIp |$">
+		<input type="hidden" id="$| snetVar |$" value="$| snetMask |$">
+		<input type="hidden" id="$| ifName |$" value="$| ifRow["ifStatic.LogicalIfName"] |$">
+		<?lua
+		end
+		if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+		    i = i + 1
+		    local ifName = "ifName" .. i
+		    local ipVar = "hdIPAddrDMZ"
+		    local snetVar = "hdSnetAddrDMZ"
+		    local dmzIPAddr = "0.0.0.0"
+		    local dmzSnetMask = "0.0.0.0"
+		    if (configurablePort == "DMZ") then
+		        local dmzConRow = alias.dmzRowsGet ()
+		        if (dmzConRow ~= nil) then
+		            dmzIPAddr = dmzConRow["ifStatic.StaticIp"] or ''
+		            dmzSnetMask =  dmzConRow["ifStatic.NetMask"] or ''
+		        end
+            end
+        ?>
+	    <input type="hidden" id="$| ipVar |$" value="$| dmzIPAddr |$">
+	    <input type="hidden" id="$| snetVar |$" value="$| dmzSnetMask |$">
+	    <input type="hidden" id="$| ifName |$" value="DMZ">
+	    <?lua end ?>
+	    <?lua
+		local j = 0
+		local table = alias.wan1TblGet ()
+		for k,v in pairs(table) do		    
+		    j = j + 1
+		    local ifRow = table[j]
+		    local lanIp = ifRow["ifStaticIPAlias.IPAddress"]
+		    local snetMask = ifRow["ifStaticIPAlias.SubnetMask"]
+		    local ipVar = "hdIPAddr" .. ifRow["ifStaticIPAlias.LogicalIfName"] .. j
+		    local snetVar = "hdSnetAddr" .. ifRow["ifStaticIPAlias.LogicalIfName"] .. j
+		    local ifName = "ifNameWan1" .. j
+		?>
+		<input type="hidden" id="$| ipVar |$" value="$| lanIp |$">
+		<input type="hidden" id="$| snetVar |$" value="$| snetMask |$">
+		<input type="hidden" id="$| ifName |$" value="$| ifRow["ifStaticIPAlias.LogicalIfName"] |$">
+		<?lua
+		end
+		?>
+		<?lua
+		local t = 0
+		local table = alias.wan2TblGet ()
+		for k,v in pairs(table) do		    
+		    t = t + 1
+		    local ifRow = table[t]
+		    local lanIp = ifRow["ifStaticIPAlias.IPAddress"]
+		    local snetMask = ifRow["ifStaticIPAlias.SubnetMask"]
+		    local ipVar = "hdIPAddr" .. ifRow["ifStaticIPAlias.LogicalIfName"] .. t
+		    local snetVar = "hdSnetAddr" .. ifRow["ifStaticIPAlias.LogicalIfName"] .. t
+		    local ifName = "ifNameWan2" .. t
+		?>
+		<input type="hidden" id="$| ipVar |$" value="$| lanIp |$">
+		<input type="hidden" id="$| snetVar |$" value="$| snetMask |$">
+		<input type="hidden" id="$| ifName |$" value="$| ifRow["ifStaticIPAlias.LogicalIfName"] |$">
+		<?lua
+		end
+		?>
+	    <input type="hidden" id="hdCount" value="$| i |$">
+	    <input type="hidden" id="hdCountWan1" value="$| j |$">
+	    <input type="hidden" id="hdCountWan2" value="$| t |$">
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.config.ipAliasing.ipAliasing.$| configRowId |$" onclick="return protocolVlanConfigValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<?lua end?>

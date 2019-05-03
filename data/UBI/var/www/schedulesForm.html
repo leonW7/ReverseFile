@@ -1,0 +1,300 @@
+<?lua 
+require "teamf1lualib/schedules_bl"
+        local inputCookie = cgi["configRowId"]
+        local returnCode, cookie, scheduleName, monday, tuesday, wednesday, thursday,
+           friday, saturday, sunday, daysAll, allDay, startTime,
+           endTime
+	daysAll = "1"
+	allDay = "1"     
+        if (ButtonType and ButtonType == "edit") then
+            returnCode, cookie,  scheduleName, monday, tuesday, wednesday, thursday,
+           friday, saturday, sunday, daysAll, allDay, startTime, endTime =  schedulesGet (inputCookie) 
+	end    
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+
+<div id="tf1_schedulesDailogContent">
+    <div class="topBg">
+        <h1 data-localize="12770">Schedules Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label data-localize="11748"> Name </label>
+                        <?lua if(cgi["configRowId"] ~= "-1") then?>
+                			<p> $| scheduleName |$ </p>
+                			<input type="hidden" name="schedules.scheduleName" value="$| scheduleName or '' |$" id="tf1_scheduleName">
+            			<?lua else ?>
+                        	<input type="text" name="schedules.scheduleName" value="$| scheduleName or '' |$" id="tf1_scheduleName" maxlength='64' onkeypress="return alphaNumericCheck (event, '')">
+                        <?lua end?>                       
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <h2 data-localize="12767">Scheduled Days</h2>
+                    <div class="configRow">
+                        <label><span data-localize="14140"> Do you want this schedule</span><br/><span data-localize="14145"> to be active on all days</span> <br/><span data-localize="14146">or specific days?</span> </label>
+                        <p>
+                            <input type="radio" value="1" $| web.radioSelected(daysAll == "1") |$ id="tf1_daySelect1" onClick="daySelectCheck('tf1_daySelect1')" name="schedules.allDay">
+                            <span data-localize="30320">All Days</span>
+                        </p>
+                        <p>
+                            <input type="radio" value="2" $| web.radioSelected(daysAll == "2") |$ id="tf1_daySelect2" onClick="daySelectCheck('tf1_daySelect2')" name="schedules.allDay">
+                            <span data-localize="14144">Specific Days</span>
+                        </p>
+                    </div>
+                    <div class="break" id="break1_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_monday_div">
+                        <label class="three" data-localize="11725"> Monday </label>
+                        <p class="three">
+                                               <?lua if (monday == "1") then
+                                                       statusStr="enable-disable-on"
+                                                       statusVar = "1"
+                                                     else
+                                                       statusStr="enable-disable-off"
+                                                       statusVar = "0"
+                                                     end
+                                                ?>
+                            <a class="$| statusStr |$" alt="" id="tf1_monday"></a>
+                            <input type="hidden" name="schedules.monday" value="$| statusVar |$">
+                        </p>
+                        <label class="three" data-localize="13156"> Tuesday </label>
+                        <p class="three">
+                                               <?lua if (tuesday == "1") then
+                                                       statusStr="enable-disable-on"
+                                                       statusVar = "1"
+                                                     else
+                                                       statusStr="enable-disable-off"
+                                                       statusVar = "0"
+                                                     end
+                                                ?>
+
+                            <a class="$| statusStr |$" alt="" id="tf1_tuesday"></a>
+                            <input type="hidden" name="schedules.tuesday" value="$| statusVar |$">
+                        </p>
+                    </div>
+                    <div class="break" id="break3_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_wednesday_div">
+                        <label class="three" data-localize="13358"> Wednesday </label>
+                        <p class="three">
+                                               <?lua if (wednesday == "1") then
+                                                       statusStr="enable-disable-on"
+                                                       statusVar = "1"
+                                                     else
+                                                       statusStr="enable-disable-off"
+                                                       statusVar = "0"
+                                                     end
+                                                ?>
+                            <a class="$| statusStr |$" alt="" id="tf1_wednesday"></a>
+                            <input type="hidden" name="schedules.wednesday" value="$| statusVar |$">
+                        </p>
+                        <label class="three" data-localize="13085"> Thursday </label>
+                        <p class="three">
+                                               <?lua if (thursday == "1") then
+                                                       statusStr="enable-disable-on"
+                                                       statusVar = "1"
+                                                     else
+                                                       statusStr="enable-disable-off"
+                                                       statusVar = "0"
+                                                     end
+                                                ?>
+                            <a class="$| statusStr |$" alt="" id="tf1_thursday"></a>
+                            <input type="hidden" name="schedules.thursday" value="$| statusVar |$">
+                        </p>
+                    </div>
+                    <div class="break" id="break5_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_friday_div">
+                        <label class="three" data-localize="11042"> Friday </label>
+                        <p class="three">
+                                               <?lua if (friday == "1") then
+                                                       statusStr="enable-disable-on"
+                                                       statusVar = "1"
+                                                     else
+                                                       statusStr="enable-disable-off"
+                                                       statusVar = "0"
+                                                     end
+                                                ?>
+
+                            <a class="$| statusStr |$" alt="" id="tf1_friday"></a>
+                            <input type="hidden" name="schedules.friday" value="$| statusVar |$">
+                        </p>
+                        <label class="three" data-localize="12757"> Saturday </label>
+                        <p class="three">
+                                               <?lua if (saturday == "1") then
+                                                       statusStr="enable-disable-on"
+                                                       statusVar = "1"
+                                                     else
+                                                       statusStr="enable-disable-off"
+                                                       statusVar = "0"
+                                                     end
+                                                ?>
+
+                            <a class="$| statusStr |$" alt="" id="tf1_saturday"></a>
+                            <input type="hidden" name="schedules.saturday" value="$| statusVar |$">
+                        </p>
+                    </div>
+                    <div class="break" id="break7_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_sunday_div">
+                        <label class="three" data-localize="13022"> Sunday </label>
+                        <p class="three">
+                                               <?lua if (sunday == "1") then
+                                                       statusStr="enable-disable-on"
+                                                       statusVar = "1"
+                                                     else
+                                                       statusStr="enable-disable-off"
+                                                       statusVar = "0"
+                                                     end
+                                                ?>
+                            <a class="$| statusStr |$" alt="" id="tf1_sunday"></a>
+                            <input type="hidden" name="schedules.sunday" value="$| statusVar |$">
+                        </p>
+                    </div>
+                    <div class="break" id="break8_div">
+                        &nbsp;
+                    </div>
+                    <h2 data-localize="12768">Scheduled Time of Day</h2>
+                    <div class="configRow" id="tf1_timeSelect_div">
+                        <label><span data-localize="14140"> Do you want this schedule</span><br/><span data-localize="14141"> to be active all day or at</span><br/> <span data-localize="30321">specific times</span>
+                            <br/>
+                            <span data-localize="14143">during the day?</span> </label>
+                        <p>
+                            <input type="radio" value="1" name="schedules.allTime"  $| web.radioSelected(allDay == "1") |$ onClick="timeSelectCheck('tf1_timeSelect1')" id="tf1_timeSelect1">
+                            <span data-localize="14139">All Day</span>
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="schedules.allTime"  $| web.radioSelected(allDay == "2") |$  onClick="timeSelectCheck('tf1_timeSelect2')" id="tf1_timeSelect2">
+                            <span data-localize="14142">Specific Times</span>
+                        </p>
+                    </div>
+                    <div class="break" id="break9_div">
+                        &nbsp;
+                    </div>
+                    <div id="startTime_div">
+                        <h2 data-localize="12971">Start Time</h2>
+                        <div class="configRow" id="tf1_dateTimePickerStartValue_div">
+                            <label data-localize="12971"> Start Time </label>
+                            <input type="text" id="tf1_dateTimePickerStartValue" name="schedules.DatePickerStartTime" value="$| startTime or ''|$"  readonly>
+                        </div>
+                        <div class="break">&nbsp;</div>
+                        
+                        <div class="configRow" id="tf1_dateTimePickerStart_div">
+                            <label>&nbsp; </label>
+                            <input type="hidden" id="tf1_dateTimePickerStart" onChange="onchangeValueStart()"  readonly>
+                            <div id="tf1_dateTimePickerStart"></div>
+                        </div>
+                        <div class="break" id="break12_div">
+                            &nbsp;
+                        </div>
+                    </div>					
+                    <div id="endTime_div">
+                        <h2 data-localize="10927">End Time</h2>
+                        <div class="configRow" id="tf1_dateTimePickerEndValue_div">
+                            <label data-localize="10927"> End Time </label>
+                            <input type="text" id="tf1_dateTimePickerEndValue" name="schedules.DatePickerEndTime"  value="$| endTime or ''|$" readonly>
+                        </div>
+                        <div class="break">&nbsp;</div>
+                        
+                        <div class="configRow" id="tf1_dateTimePickerEnd_div">
+                            <label>&nbsp; </label>
+                            <input type="hidden" id="tf1_dateTimePickerEnd" onChange="onchangeValueEnd()" readonly>
+                            <div id="tf1_dateTimePickerEnd"></div>
+                        </div>
+                        <div class="break" id="break12_div">
+                            &nbsp;
+                        </div>
+					</div>
+                    <!-- <div id="startTime_div">
+                        <h2>Start Time</h2>
+                        <div class="configRow" id="tf1_txtSchedStartTimeHrs_div">
+                            <label> Hour </label>
+                            <input type="text" class="one" name="schedules.startTimeInHours" value="$| startTimeInHours or '' |$" id="tf1_txtSchedStartTimeHrs" maxlength="2" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck(this, '', '', 1, 12, true, 'Invalid start time for schedule.','','Hours');}">
+                            <dl>
+                                [Range: 1 - 12] Hours
+                            </dl>
+                        </div>
+                        <div class="break" id="break10_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_txtSchedStartTimeMns_div">
+                            <label> Minute </label>
+                            <input type="text" class="one" name= "schedules.startTimeInMins" value="$| startTimeInMins or '' |$"  id="tf1_txtSchedStartTimeMns" maxlength="2" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck(this, '', '', 0, 59, true, 'Invalid start time for schedule.','','Minutes');}">
+                            <dl>
+                                [Range: 0 - 59] Minutes
+                            </dl>
+                        </div>
+                        <div class="break" id="break11_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_startMeridium_div">
+                            <label> &nbsp; </label>
+                            <p>
+                                <input type="radio" value="1"  name="schedules.startTimeMeridian" $| web.radioSelected(startTimeMeridian == "1") |$ >
+                                AM
+                            </p>
+                            <p>
+                                <input type="radio" value="2" name="schedules.startTimeMeridian" $| web.radioSelected(startTimeMeridian == "2") |$ >
+                                PM
+                            </p>
+                        </div>
+                    </div> 
+                    <div class="break" id="break12_div">
+                        &nbsp;
+                    </div>
+                    <div id="endTime_div">
+                        <h2>End Time</h2>
+                        <div class="configRow" id="tf1_txtSchedEndTimeHrs_div">
+                            <label> Hour </label>
+                            <input type="text" class="one"  name="schedules.endTimeInHours" value="$| endTimeInHours or '' |$" id="tf1_txtSchedEndTimeHrs" maxlength="2" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck(this, '', '', 1, 12, true, 'Invalid end time for schedule. ','','Hours');}">
+                            <dl>
+                                [Range: 1 - 12] Hours
+                            </dl>
+                        </div>
+                        <div class="break" id="break13_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_txtSchedEndTimeMns_div">
+                            <label> Minute </label>
+                            <input type="text" class="one" name="schedules.endTimeInMins" value="$| endTimeInMins or '' |$" id="tf1_txtSchedEndTimeMns" maxlength="2" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck(this, '', '', 0, 59, true, 'Invalid end time for schedule. ','','Minutes');}">
+                            <dl>
+                                [Range: 0 - 59] Minutes
+                            </dl>
+                        </div>
+                        <div class="break" id="break14_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_endMeridium_div">
+                            <label> &nbsp; </label>
+                            <p>
+                                <input type="radio" value="1"  name="schedules.endTimeMeridian" $| web.radioSelected(endTimeMeridian == "1") |$ >
+                                AM
+                            </p>
+                            <p>
+                                <input type="radio" value="2" name="schedules.endTimeMeridian" $| web.radioSelected(endTimeMeridian == "2") |$ >
+                                PM
+                            </p>
+                        </div>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>-->
+                </div>
+                <div class="dialogSubmitRow">
+                            <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                         <?lua if(cgi["configRowId"] == "-1") then?>
+                    <input data-localize="12758" type="submit" name="button.add.schedules" onclick="return schedulesConfigValidate('tf1_frmSchedules')" class="btnSubmit" title="Save" value="Save" id="btSave">
+                 <?lua else?>
+                    <input data-localize="12758" type="submit" name="button.edit.schedules" onclick="return schedulesConfigValidate('tf1_frmSchedules')" class="btnSubmit" title="Save" value="Save" id="btSave">
+                 <?lua end?>
+                </div>
+            </div>

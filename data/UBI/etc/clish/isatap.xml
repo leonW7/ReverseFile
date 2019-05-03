@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="net-isatap-tunnel-config" prompt="net-config[isatap-tunnel]> "> 
+    <COMMAND name="save" help="Save isatap tunnel configuration changes.">
+	     <ACTION>lua clishCfgObjExec("isatapTunnel")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save isaptap tunnel configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("isatapTunnel")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back isatap tunnel configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="subnet_prefix"
+             help="This is the 64-bit subnet prefix that is assigned to the logical ISATAP subnet for this intranet.">
+             <PARAM name="isatapPrefix"
+                    help="This is the 64-bit subnet prefix that is assigned to the logical ISATAP subnet for this intranet."
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("isatapTunnel", "isatapTunnel.isatapPrefix", "${isatapPrefix}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="end_point_type"
+             help="This is the endpoint address for the tunnel that starts with this router. The endpoint can be the LAN interface (assuming the LAN is an IPv4 network), or a specific LAN IPv4 address">
+             <PARAM name="localEndPointAddr"
+                    help="This is the endpoint address for the tunnel that starts with this router. The endpoint can be the LAN interface (assuming the LAN is an IPv4 network), or a specific LAN IPv4 address"
+                    ptype="END_POINT_ADDR_T"/>
+             <ACTION>lua clishCfgObjAdd ("isatapTunnel", "isatapTunnel.useLanAddress", "${localEndPointAddr}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ipv4_address"
+             help="The local end point address if not the LAN IPv4 address">
+             <PARAM name="ipv4Addr"
+                    help="The local end point address if not the LAN IPv4 address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("isatapTunnel", "isatapTunnel.localIPv4Address", "${ipv4Addr}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net ipv6_tunnel isatap" license_support="Y" help="isatap tunnel configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="net ipv6_tunnel isatap add"
+             help="isatap tunnel configuration mode."
+             view="net-isatap-tunnel-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("isatapTunnel", 
+                              isatapTunnelCfgInit, isatapTunnelCfgSave, 
+				       isatapTunnelCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="net ipv6_tunnel isatap edit"
+             help="isatap Tunnel configuration mode."
+             view="net-isatap-tunnel-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the tunnel to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("isatapTunnel", 
+                              isatapTunnelCfgInit, isatapTunnelCfgSave, 
+				       isatapTunnelCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="net ipv6_tunnel isatap delete"
+             help="isatap tunnel configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the tunnel to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("isatapTunnel", 
+                              isatapTunnelCfgInit, isatapTunnelCfgDel, 
+				       isatapTunnelCfgInputVal,"${row_id}")
+                   clishCfgObjExec("isatapTunnel")
+                   </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show net ipv6_tunnel" license_support="Y" help="."/>
+    <COMMAND name="show net ipv6_tunnel setup"
+            help="Display ipv6 tunnels configuration">
+	    <ACTION>lua clishCmdExec (ipv6TunnelsCfgGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

@@ -1,0 +1,273 @@
+<?lua
+require "teamf1lualib/bl_discoveredIpAddresses"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "ipDiscovery"
+
+
+local guiDiscoveredIps = require("com.teamf1.bl.wlan.discoveredip")
+local errorMap         = require ("com.teamf1.core.errorMap")
+local returnCodes      = require ("com.teamf1.core.returnCodes")
+
+local discoveredIpMode, discoveredIpInfo, errorCode
+local ENABLE = 1
+local DISABLE = 0
+errorCode, discoveredIpMode = guiDiscoveredIps.dicoverdIpStatus ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+errorCode, discoveredIpInfo = guiDiscoveredIps.discoverIpGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "config") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local page = "discoveredIpAddresses"
+    local removePrefix = page .. "."
+    configRow = util.removePrefix (configRow, removePrefix)
+    local errorCode = guiDiscoveredIps.dicoverdIpModeSet (configRow)
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    web.goToPage(NextPage, true, true)
+    
+    
+elseif (ButtonType and ButtonType == "delete") then
+    if (type(cgi["discoveredIpAddresses.checkbox"]) == "string") then
+        local configRow = web.cgiToLuaTable(cgi)
+        local cookieTbl = {}
+        cookieTbl.cookie = configRow["discoveredIpAddresses.checkbox"]
+        local errorCode = guiDiscoveredIps.discoveredIpDelete (cookieTbl)
+        if (errorCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorCode)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorCode)
+        end
+        web.goToPage(NextPage, true, true)
+
+    else
+        errorFlag = guiDiscoveredIps.discoveredIpDeleteAll ()
+        if (errorCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorCode)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorCode)
+        end
+        web.goToPage(NextPage, true, true)
+
+    end    
+
+elseif (ButtonType and ButtonType == "add") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local page = "discoveredIpAddresses"
+    local removePrefix = page .. "."
+    configRow = util.removePrefix (configRow, removePrefix)
+    local errorCode = guiDiscoveredIps.discoveredIpAdd (configRow)
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    web.goToPage(NextPage, true, true)
+    
+
+else
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body onLoad="onloadCall ();">
+		<!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>				
+		<form action="platform.cgi" method="post" name="tf1_frmDiscoveredIpAddresses" id="tf1_frmDiscoveredIpAddresses">		
+			<input type="hidden" name="thispage" id="thispage" value="discoveredIpAddresses.html">			
+			<div id="tf1_dialog" class="configDialog"></div>		
+		</form>		
+		<!-- Section for Pop up dialog ends -->
+		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+			<ul>
+				<li>
+					<input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, '');"/>
+					&nbsp;Select All
+				</li>
+				<li id="delete">
+					Delete
+				</li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu2");
+					</script>
+					<!-- Status message place holder... [ 1. for error use
+                    "msgError" 2. for information use "msgInfo" 3. for sucess
+                    use "msgSuccess" CSS classes ]-->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li class="current">
+									<a href="?page=discoveredIpAddresses.html">IP Discovery</a>
+								</li>
+								<li>
+									<a href="?page=discoveredVlans.html">VLANs Discovery</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$
+						</p>
+					</div>
+					<h1>IP Discovery</h1>
+					<div class="midArea">
+						<div align="left">
+							<form action="platform.cgi" method="post" name="tf1_frmDiscoveredIpAddresses2" id="tf1_frmDiscoveredIpAddresses2">		
+			<input type="hidden" name="thispage" id="thispage" value="discoveredIpAddresses.html">
+								<h2>Pool List Discovery Setup</h2>
+								<div class="configRow">
+                                    <label> L3 / IP Discovery </label>
+                                     <?lua if (discoveredIpMode == ENABLE) then
+                                                        statusStr="enable-disable-on"
+                                                        statusVar = ENABLE
+						                            else
+							                            statusStr="enable-disable-off"
+                                                        statusVar = DISABLE
+						                            end
+						                        ?>
+									<a class="$| statusStr |$" alt=""></a>
+										<input type="hidden" value=$| statusVar
+                                        |$ name="discoveredIpAddresses.status">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+
+									<input type="submit"
+                                    name="button.config.discoveredIpAddresses" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="setHiddenChks('tf1_frmDiscoveredIpAddresses2')">
+
+									<input type="reset" id="btSave" value="Cancel" title="Cancel" class="btnReset" onclick="this.form.reset(); resetImgOnOff('tf1_frmDiscoveredIpAddresses2')">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+						<h2>IP Discovered List</h2>
+						<div class="CLR">
+							<div class="demo_jui" id="tf1_discoveredIpAddresses">
+								<table cellpadding="0" cellspacing="0" border="0" class="display toolTip" id="recordsData">
+									<thead>
+										<tr>
+											<th> IP Address </th>
+											<th> Status </th>
+										</tr>
+                                    </thead>
+                                    <?lua
+                                    if (discoveredIpInfo ~= nil) then
+                                        for k, v in pairs (discoveredIpInfo) do
+                                            local row = discoveredIpInfo[k]
+                                            ?>
+                                            <tr class="gradeA"
+                                                id="discoveredIpAddresses$| row.ipAddress |$">
+                                                <td>$| row.ipAddress or '' |$</td>
+                                                <td>$| row.pollStatus or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                        end
+                                    end
+                                 ?>
+								</table>
+							</div>
+						</div>
+						<div class="buttonsRow">
+							<input type="button" id="tf1_btnShowModal" value="Add New IP Addresses to Poll" title="Add New IP Addresses to Poll" class="btnSubmit" onclick="openForm('button.add.discoveredIpAddresses.discoveredIpAddresses',-1,'tf1_dialog','discoveredIpAddresses','discoveredIpAddressesForm.html', 'tf1_discoveredIpAddressesDailogContent','');">
+						</div>
+						<div class="break">
+							&nbsp;
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript"
+            src="js/discoveredIPAddress.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+
+				$('#tf1_discoveredIpAddresses .gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'deleteMenu' : function(t, e, rowId) {
+							deleteRows('button.delete.discoveredIpAddresses.discoveredIpAddresses', 'tf1_frmDiscoveredIpAddresses', rowId, 'optionSelectAll', 'tf1_dialog', 'discoveredIpAddresses', 'discoveredIpAddresses');
+						}
+					}
+
+				});
+
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+				$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+			   	});
+			});
+		</script>
+	</body>
+</html>
+<?lua end ?>

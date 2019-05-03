@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="l2tp-server-config" prompt="l2tp-server-config[policy]> "> 
+    <COMMAND name="save" help="Save l2tp server configuration changes.">
+        <ACTION>lua clishCfgObjExec("l2tpd")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back l2tp server configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+             help="Save l2tp server configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("l2tpd")</ACTION>
+    </COMMAND>
+    <COMMAND name="enable_v4"
+             help="enable/disable L2TP server in IPv4 mode only.">
+     <PARAM name="l2tpserver_enable_v4" 
+            help="enable/disable L2TP server in IPv4 mode only."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.Xl2tpdEnable","${l2tpserver_enable_v4}")
+         </ACTION>
+     </COMMAND>
+
+    <COMMAND name="enable_v6"
+        help="enable/disable L2TP server in IPv4/IPv6 mode.">
+     <PARAM name="l2tpserver_enable_v6" 
+            help="enable/disable L2TP server in IPv4/IPv6 mode."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.Xl2tpd6Enable","${l2tpserver_enable_v6}")
+         </ACTION>
+     </COMMAND>   
+
+    <COMMAND name="Routing_mode"
+             help="select L2TP routing mode">
+     <PARAM name="route_mode" 
+            help="select L2TP routingmode"
+            ptype="ROUTE_MODE"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.l2tpRoutingMode","${route_mode}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="start_address"
+             help="L2TP server starting IP address.">
+     <PARAM name="l2tpserver_startaddress" 
+            help="L2TP server starting IP address."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.StartIPAddress","${l2tpserver_startaddress}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="end_address"
+             help="L2TP server ending IP address.">
+     <PARAM name="l2tpserver_endaddress" 
+            help="L2TP server ending IP address."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.EndIPAddress","${l2tpserver_endaddress}")
+         </ACTION>
+     </COMMAND>
+
+     <COMMAND name="ipv6_prefix"
+             help="L2TP server IPv6 Prefix">
+     <PARAM name="l2tpserver_ipv6_prefix" 
+            help="L2TP Server IPv6 prefix."
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.Xl2tpdIpv6PrefixInit","${l2tpserver_ipv6_prefix}")
+         </ACTION>
+     </COMMAND>
+
+       <COMMAND name="ipv6_prefix_length"
+             help="L2TP server IPv6 Prefix length">
+     <PARAM name="prefix_length" 
+            help="L2TP Server IPv6 prefix length"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.Xl2tpdIpv6PrefixLengthInit","${prefix_length}")
+         </ACTION>
+     </COMMAND>
+    
+     <COMMAND name="Authentication_type"
+             help="Authentication type">
+     <PARAM name="auth_type" 
+            help="L2TP Server IPv6 prefix."
+            ptype="AUTHENTICATION_TYPE"/>
+        <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.AuthenticationType","${auth_type}")
+         </ACTION>
+    </COMMAND>
+
+
+     <COMMAND name="EnablePap"
+             help="enable pap authentication">
+     <PARAM name="pap_enable" 
+            help="pap enable"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.PapEnable","${pap_enable}")
+         </ACTION>
+     </COMMAND>
+
+     <COMMAND name="EnableChap"
+             help="enable chap authentication">
+     <PARAM name="chap_enable" 
+            help="chap enable"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.ChapEnable","${chap_enable}")
+         </ACTION>
+     </COMMAND>
+    
+      <COMMAND name="EnableMSChap"
+             help="enable MSchap authentication">
+     <PARAM name="mschap_enable" 
+            help="mschap enable"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.MSChapEnable","${mschap_enable}")
+         </ACTION>
+     </COMMAND>
+
+     <COMMAND name="EnableMSChapv2"
+             help="enable MSChapv2Enable authentication">
+     <PARAM name="mschapv2_enable" 
+            help="mschapv2 enable"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.MSChapv2Enable","${mschapv2_enable}")
+         </ACTION>
+     </COMMAND>
+    
+     <COMMAND name="l2tpSecretKeyEnable"
+             help="L2TP Enanle secret key">
+     <PARAM name="l2tp_secret_key_enable" 
+            help="Enable secret key"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.l2tpSecretKeyEnable","${l2tp_secret_key_enable}")
+         </ACTION>
+     </COMMAND>
+    
+    <COMMAND name="secretKey"
+             help="L2TP secret Key">
+     <PARAM name="l2tp_secret_key" 
+            help="l2TP secret key"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.secretKey","${l2tp_secret_key}")
+         </ACTION>
+     </COMMAND>
+
+    <COMMAND name="timeout"
+             help="User Time Out">
+     <PARAM name="l2tp_timeout" 
+             help="User Time Out"
+            ptype="PPTP_USER_TIMEOUT"/>
+         <ACTION>lua clishCfgObjAdd("l2tpd", "Xl2tpServerIPRange.UserTimeOut","${l2tp_timeout}")
+         </ACTION>
+     </COMMAND>     
+
+</VIEW>
+<!--=======================================================-->
+<COMMAND name="vpn l2tp" help="vpn policy mode."/>
+<COMMAND name="vpn l2tp server" help="vpn policy mode."/>
+    <COMMAND name="vpn l2tp server configure"
+             help="l2tp server configuration mode"
+             view="l2tp-server-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("l2tpd", 
+                                       l2tpServerCfgInit, 
+                                       l2tpServerCfgSave,
+                                       l2tpServerInputVal)
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="show vpn l2tp" help="show l2tp server details"/>
+<!--=======================================================-->
+<COMMAND name="show vpn l2tp server" help="show l2tp server details"/>
+<!--=======================================================-->
+    <COMMAND name="show vpn l2tp server setup"
+	     help="Display l2tp server setup.">
+	     <ACTION>lua clishCmdExec (l2tpdtGet)
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show vpn l2tp server connections"
+	     help="Display l2tp server stats.">
+	     <ACTION>lua clishCmdExec (l2tpdtclientGet)
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

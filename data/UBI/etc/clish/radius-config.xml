@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<!--=======================================================-->
+<VIEW name="Radius-Settings" prompt="Radius-Settings> "> 
+    <COMMAND name="save" help="Save RADIUS configuration changes.">
+        <ACTION>lua clishCfgObjExec("radius")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+        help="Save RADIUS configuration changes and exit current mode." 
+        view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("radius")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="primary-radius-server" help="Set Primary RADIUS server IP address.">
+        <PARAM name="ip_address" 
+            help="RADIUS server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authserver", 
+            "${ip_address}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary-radius-server" help="Set Secondary RADIUS server IP address.">
+        <PARAM name="ip_address2" 
+            help="Secondary RADIUS server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authserver2", 
+            "${ip_address2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="optional-radius-server" help="Set Optional RADIUS server IP address.">
+        <PARAM name="ip_address3" 
+            help="Optional RADIUS server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authserver3", 
+            "${ip_address3}")
+        </ACTION>
+    </COMMAND>    
+    <COMMAND name="primary-server-authentication-port" help="Set Primary RADIUS server port.">
+        <PARAM name="port" 
+            help="Primary RADIUS server port."
+            ptype="PORT"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authport", "${port}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary-server-authentication-port" help="Set Secondary RADIUS server port.">
+        <PARAM name="port2" 
+            help="Secondary RADIUS server port."
+            ptype="PORT"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authport2", "${port2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="optional-server-authentication-port" help="Set Optional RADIUS server port.">
+        <PARAM name="port3" 
+            help="Optional RADIUS server port."
+            ptype="PORT"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authport3", "${port3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="primary-server-secret" help="Set Primary RADIUS server secret.">
+        <PARAM name="secret" 
+            help="Primary RADIUS server secret string."
+            ptype="STRING64"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authsecret", 
+            "${secret}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary-server-secret" help="Set Secondary RADIUS server secret.">
+        <PARAM name="secret2" 
+            help="Secondary RADIUS server secret string."
+            ptype="STRING64"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authsecret2", 
+            "${secret2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="optional-server-secret" help="Set Optional RADIUS server secret.">
+        <PARAM name="secret3" 
+            help="Optional RADIUS server secret string."
+            ptype="STRING64"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authsecret3", 
+            "${secret3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="primary-server-timeout" help="Set primary server connection timeout.">
+        <PARAM name="timeout" 
+            help="RADIUS server connection timeout (in seconds)."
+            ptype="RADIUS_TIMEOUT"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authtimeout", 
+            "${timeout}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary-server-timeout" help="Set secondary server connection timeout.">
+        <PARAM name="timeout2" 
+            help="RADIUS server connection timeout (in seconds)."
+            ptype="RADIUS_TIMEOUT"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authtimeout2", 
+            "${timeout2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="optional-server-timeout" help="Set optional server connection timeout.">
+        <PARAM name="timeout3" 
+            help="RADIUS server connection timeout (in seconds)."
+            ptype="RADIUS_TIMEOUT"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authtimeout3", 
+            "${timeout3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="primary-server-retries" help="Set primary server connection retry attempts.">
+        <PARAM name="retries" 
+            help="RADIUS server connection retry attempts."
+            ptype="RADIUS_RETRIES"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authretries", 
+            "${retries}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary-server-retries" help="Set secondary server connection retry attempts.">
+        <PARAM name="retries2" 
+            help="RADIUS server connection retry attempts."
+            ptype="RADIUS_RETRIES"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authretries2", 
+            "${retries2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="optional-server-retries" help="Set optional server connection retry attempts.">
+        <PARAM name="retries3" 
+            help="RADIUS server connection retry attempts."
+            ptype="RADIUS_RETRIES"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.authretries3", 
+            "${retries3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="serverCheck" help="Check the reachability of configured servers.">
+        <ACTION>lua clishCmdExec(serverStatusCheckRadius, "Radius", "radiusClient")</ACTION>
+    </COMMAND>
+    <COMMAND name="nas-iface" help="Select the nas interface out of available wan Interfaces in load balance mode" check_supported="Y">
+        <PARAM name="nas_iface" 
+            help="Radius Auth NAS interface selection in load balance case."
+            ptype="WAN_INTERFACE_TYPE"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "radiusClient.nasIface", 
+            "${nas_iface}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+
+
+<!--=======================================================-->
+<VIEW name="system-serviceRoute-add" prompt="ServicesRouting-Settings> "> 
+    <COMMAND name="save" help="Save Services Routing configuration changes.">
+        <ACTION>lua clishCfgObjExec("radius")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+        help="Save Services Routing configuration changes and exit current mode." 
+        view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("radius")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="serviceName" help="Set Service Name.">
+        <PARAM name="serviceName" 
+            help="Name of the service."
+            ptype="SERVICE_NAME"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.serviceName", 
+            "${serviceName}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="serviceInterface" help="Set the interface of the service (primary/Secondary/tertiary)">
+        <PARAM name="serviceInterface" 
+            help="interface of the service (primary/Secondary/tertiary)"
+            ptype="SERVICE_INTERFACE"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.serviceInterface", 
+            "${serviceInterface}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="routeInterface" help="Set the Route interface VLAN/IPSEC.">
+        <PARAM name="routeInterface" 
+            help="interface of the route VLAN/IPSEC"
+            ptype="ROUTE_INTERFACE"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.routeInterface", 
+            "${routeInterface}")
+        </ACTION>
+    </COMMAND>    
+    <COMMAND name="VLAN-Name" help="Set the vlan name on which route has to be taken.">
+        <PARAM name="vlanName" 
+            help="Name of the VLAN."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.vlanName", "${vlanName}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Policy-Name" help="Set the Policy name on which route has to be taken.">
+        <PARAM name="policyName" 
+            help="Name of the IPSEC Policy"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.policyName", "${policyName}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="Radius-Accounting-Server-Settings" prompt="Radius-Accounting-Server-Settings> "> 
+    <COMMAND name="save" help="Save RADIUS Accounting Server configuration changes.">
+        <ACTION>lua clishCfgObjExec("radiusAccServer")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+        help="Save RADIUS Accounting Server configuration changes and exit current mode." 
+        view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("radiusAccServer")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="primary-radius-acc-server" help="Set Primary RADIUS Accounting server IP address.">
+        <PARAM name="ip_address" 
+            help="RADIUS Accounting server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctserver", 
+            "${ip_address}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary-radius-acc-server" help="Set Secondary RADIUS Accounting server IP address.">
+        <PARAM name="ip_address2" 
+            help="Secondary RADIUS Accounting server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctserver2", 
+            "${ip_address2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="optional-radius-acc-server" help="Set Optional RADIUS Accounting server IP address.">
+        <PARAM name="ip_address3" 
+            help="Optional RADIUS Accounting server IP address."
+            ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctserver3", 
+            "${ip_address3}")
+        </ACTION>
+    </COMMAND>    
+    <COMMAND name="primary-server-accounting-port" help="Set Primary RADIUS Accounting server port.">
+        <PARAM name="port" 
+            help="Primary RADIUS Accounting server port."
+            ptype="PORT"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctport", "${port}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary-server-accounting-port" help="Set Secondary Accounting RADIUS server port.">
+        <PARAM name="port2" 
+            help="Secondary RADIUS Accounting server port."
+            ptype="PORT"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctport2", "${port2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="optional-server-accounting-port" help="Set Optional RADIUS Accounting server port.">
+        <PARAM name="port3" 
+            help="Optional RADIUS Accounting server port."
+            ptype="PORT"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctport3", "${port3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="primary-server-secret" help="Set Primary RADIUS Accounting server secret.">
+        <PARAM name="secret" 
+            help="Primary RADIUS Accounting server secret string."
+            ptype="STRING64"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctsecret", 
+            "${secret}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="secondary-server-secret" help="Set Secondary RADIUS Accounting server secret.">
+        <PARAM name="secret2" 
+            help="Secondary RADIUS Accounting server secret string."
+            ptype="STRING64"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctsecret2", 
+            "${secret2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="optional-server-secret" help="Set Optional RADIUS Accounting server secret.">
+        <PARAM name="secret3" 
+            help="Optional RADIUS Accounting server secret string."
+            ptype="STRING64"/>
+        <ACTION>lua clishCfgObjAdd ("radiusAccServer", "radiusClient.acctsecret3", 
+            "${secret3}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="system-serviceRoute-edit" prompt="ServicesRouting-Settings> "> 
+    <COMMAND name="save" help="Save Services Routing configuration changes.">
+        <ACTION>lua clishCfgObjExec("radius")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+        help="Save Services Routing configuration changes and exit current mode." 
+        view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("radius")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="serviceName" help="Set Service Name.">
+        <PARAM name="serviceName" 
+            help="Name of the service."
+            ptype="SERVICE_NAME"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.serviceName", 
+            "${serviceName}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="serviceInterface" help="Set the interface of the service (primary/Secondary/tertiary)">
+        <PARAM name="serviceInterface" 
+            help="interface of the service (primary/Secondary/tertiary)"
+            ptype="SERVICE_INTERFACE"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.serviceInterface", 
+            "${serviceInterface}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="routeInterface" help="Set the Route interface VLAN/IPSEC.">
+        <PARAM name="routeInterface" 
+            help="interface of the route VLAN/IPSEC"
+            ptype="ROUTE_INTERFACE"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.routeInterface", 
+            "${routeInterface}")
+        </ACTION>
+    </COMMAND>    
+    <COMMAND name="VLAN-Name" help="Set the vlan name on which route has to be taken.">
+        <PARAM name="vlanName" 
+            help="Name of the VLAN."
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.vlanName", "${vlanName}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Policy-Name" help="Set the Policy name on which route has to be taken.">
+        <PARAM name="policyName" 
+            help="Name of the IPSEC Policy"
+            ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("radius", "servicesRouteMgmt.policyName", "${policyName}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+
+    <COMMAND name="system Radius-Settings"
+        help="Configure Radius-Settings."
+        view="Radius-Settings" viewid="">
+        <ACTION>lua clishCfgObjNew ("radius", radiusCfgInit, 
+            radiusCfgSave, radiusCfgInputVal)
+        </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+
+    <COMMAND name="system Radius-Accounting-Server-Settings"
+        help="Configure Radius-Accounting-Server-Settings."
+        view="Radius-Accounting-Server-Settings" viewid="" check_supported="Y">
+        <ACTION>lua clishCfgObjNew ("radiusAccServer", radiusCfgInit, 
+            radiusCfgSave, radiusCfgInputVal)
+        </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="system serviceRoute" 
+        help="System services route commands."/>
+
+<!--=======================================================-->
+    <COMMAND name="system serviceRoute add"
+        help="system service route add. Use command 'show vpn ipsec policy setup' to check the available ipsec policies. Use command 'show net vlan configuration' to check the available VLANs"
+        view="system-serviceRoute-add" viewid="">
+        <ACTION>lua clishCfgObjNew ("radius", 
+            servicesRouteCfgInit, servicesRouteCfgSave, 
+            servicesRouteCfgInputVal)
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="system serviceRoute edit"
+        help="system service route edit mode. Use command 'show vpn ipsec policy setup' to check the available ipsec policies. Use command 'show net vlan configuration' to check the available VLANs"
+        view="system-serviceRoute-edit" viewid="">
+        <PARAM name="row_id" 
+            help="Row Id Of the service route to be edited.Use command 'show system serviceRoute all'  to dislay all service routes on system"
+            ptype="UINT"/>
+        <ACTION>lua clishCfgObjNew ("radius", 
+            servicesRouteCfgInit, servicesRouteCfgSave, 
+            servicesRouteCfgInputVal,"${row_id}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="system serviceRoute delete"
+        help="system service route mode.">
+        <PARAM name="row_id" 
+            help="Row Id Of the service route to be deleted.Use command 'show system serviceRoute all'  to dislay all service routes on system"
+            ptype="UINT"/>
+        <ACTION>lua clishCmdExec ( servicesRouteCfgDel,"${row_id}")
+        </ACTION>
+    </COMMAND>
+
+
+<!--=======================================================-->
+</CLISH_MODULE>

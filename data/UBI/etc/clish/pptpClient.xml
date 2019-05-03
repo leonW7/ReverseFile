@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="pptp-client-config" prompt="pptp-client-config[policy]> "> 
+    <COMMAND name="save" help="Save pptp client configuration changes.">
+        <ACTION>lua clishCfgObjExec("pptpClient")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back pptp client configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+             help="Save pptp client configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("pptpClient")</ACTION>
+    </COMMAND>
+    <COMMAND name="enable"
+             help="enable/disable PPTP client.">
+     <PARAM name="pptpclient_enable" 
+            help="enable/disable PPTP client."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.pptpClientEnable","${pptpclient_enable}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="server_address"
+             help="PPTP server IP address.">
+     <PARAM name="pptpserver_address" 
+            help="PPTP server IP address."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.ServerIp","${pptpserver_address}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="remote_network"
+             help="Remote Network Address">
+     <PARAM name="pptpclient_remotenetwork" 
+            help="Remote Network Address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.RemoteNetwork","${pptpclient_remotenetwork}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="remote_subnet"
+             help="Remote Network Subnet Mask ">
+     <PARAM name="pptpclient_remotesubnet" 
+            help="Remote Network Subnet Mask"
+            ptype="REM_NET"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.RemoteNetmask","${pptpclient_remotesubnet}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="username"
+             help="Username allocated to client ">
+     <PARAM name="pptpclient_username" 
+            help="Username allocated to client "
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.UserName","${pptpclient_username}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="password"
+             help="Password allocated to client ">
+     <PARAM name="pptpclient_password" 
+            help="Password allocated to client "
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.Password","${pptpclient_password}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="mppe_enable"
+             help="Enable mppe encryption ">
+     <PARAM name="pptpclient_enablemppe" 
+            help="Enable mppe encryption "
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.MppeEncryptionEnable","${pptpclient_enablemppe}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="time_out"
+             help="Time Out">
+     <PARAM name="pptpclient_timeout" 
+            help="Time Out"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.IdleTimeOut","${pptpclient_timeout}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_dial"
+             help="Auto Dial">
+     <PARAM name="pptpclient_autodial" 
+            help="Auto Dial"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.AutoDial","${pptpclient_autodial}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="time"
+             help="Client will try to connet to server after user specified time.">
+     <PARAM name="pptpclient_time" 
+            help="Client auto dial time in minutes"
+            ptype="AUTO_DIAL_TIMEOUT"/>
+         <ACTION>lua clishCfgObjAdd("pptpClient", "pptpClient.Time","${pptpclient_time}")
+         </ACTION>
+    </COMMAND>
+	
+</VIEW>
+<!--=======================================================-->
+<COMMAND name="vpn pptp client" help="vpn policy mode."/>
+    <COMMAND name="vpn pptp client configure"
+             help="pptp client configuration mode"
+             view="pptp-client-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("pptpClient", 
+                                       pptpClientCfgInit, 
+                                       pptpClientCfgSave,
+                                       pptpClientInputVal)
+	    </ACTION>
+    </COMMAND>
+
+<!--=======================================================-->
+<COMMAND name="vpn pptp client_action"
+            help="vpn pptp client action set.">
+    <PARAM name="action"
+            help="vpn pptp client action"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCmdExec (pptpClientActionSet,"${action}")
+	    </ACTION>
+    </COMMAND>
+
+<COMMAND name="show vpn pptp client" help="show pptp client details"/>
+<!--=======================================================-->
+    <COMMAND name="show vpn pptp client setup"
+	     help="Display pptp client setup.">
+	     <ACTION>lua clishCmdExec (pptpClientGet)
+             </ACTION>
+         </COMMAND>
+
+<COMMAND name="show vpn pptp client_status" help="show pptp client status details"/>
+<!--=======================================================-->
+    <COMMAND name="show vpn pptp client_status setup"
+	     help="Display pptp client status setup.">
+	     <ACTION>lua clishCmdExec (pptpClientStatusGet)
+             </ACTION>
+    </COMMAND>         
+</CLISH_MODULE>

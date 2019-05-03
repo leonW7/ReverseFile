@@ -1,0 +1,177 @@
+<?lua
+require "teamf1lualib/bl_apHwCapabilities"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"    
+
+    PAGE_HELP = "wireless"
+    PAGE_HELP_SECTION = "apProfile"
+
+local guiApHwSupport = require("com.teamf1.bl.wlan.aphwcapability")
+local errorMap     = require ("com.teamf1.core.errorMap")
+local returnCodes  = require ("com.teamf1.core.returnCodes")
+
+local hwInfo = util.split(cgi.configRowId , ":")
+local hwType = string.sub(hwInfo[1],1,-2)
+local hwDescription = hwInfo[2]
+
+local apHwRadioTbl, errorCode, radioCount
+errorCode, radioCount , apHwRadioTbl = guiApHwSupport.apHwRadioGet (hwType)
+if (errorCode ~= returnCodes.SUCCESS) then
+    apHwRadioTbl = {}
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+local radio1Table = {}
+local radio2Table = {}
+
+if (radioCount == 2) then
+    radio1Table = apHwRadioTbl[1]
+    radio2Table = apHwRadioTbl[2]
+elseif (radioCount == 1) then
+    radio2Table = apHwRadioTbl[1]
+end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_apHwCapabilityDailogContent">
+    <div class="topBg">
+        <h1>AP Hardware Radio Capability</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <form name action="cgi-action.html">
+                                <div class="configRow">
+									<label> Hardware Type Description</label>
+									 <p> $| hwDescription or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+                                    <label> Radio Mode</label>
+                                    <?lua if(radioCount == 2) then ?>
+                                        <p><input type="radio" name="radio" checked
+                                     onclick="$('#tf1_radio1').show();$('#tf1_radio2').hide();"> Radio - 1</p>
+                                      <p><input type="radio" name="radio"
+                                      onclick="$('#tf1_radio2').show();$('#tf1_radio1').hide();"> Radio - 2  </p>
+                                      <?lua elseif (radioCount == 1) then ?>
+                                      <p><input type="radio" name="radio"
+                                      checked onclick="$('#tf1_radio2').show();$('#tf1_radio1').hide();"> Radio - 2  </p>
+                                      <?lua end?>
+								</div>
+								<div class="break">
+									&nbsp;
+                                </div>
+                                <?lua if(radioCount == 2) then ?>
+                                <div id="tf1_radio1">
+                                <?lua elseif (radioCount == 1) then ?>
+                                <div id="tf1_radio1" style="display:none">
+                                <?lua end?>
+								<div class="configRow">
+									<label> Radio Count</label>
+									 <p> $| radioCount or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+                                </div>
+                                <div class="configRow">
+									<label> 802.11a Support</label>
+									 <p> $| radio1Table.aModeStatus or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>Radio Type Description </label>
+									 <p> $| radio1Table.radioDescription or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> 802.11bg Support </label>
+									 <p> $| radio1Table.bgModeStatus or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>VAP Count </label>
+									 <p> $| radio1Table.vapCount or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>802.11n Support </label>
+									 <p> $| radio1Table.nModeStatus or '' |$ </p>
+                                 </div>
+                                 <div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>802.11ac Support </label>
+									 <p> $| radio1Table.acModeStatus or '' |$ </p>
+                                 </div>
+                             </div>
+                             <?lua if(radioCount == 2) then ?>
+                             <div id="tf1_radio2" style="display:none">
+                                 <?lua elseif (radioCount == 1) then ?>
+                                 <div id="tf1_radio2">
+                                 <?lua end?>   
+								<div class="configRow">
+									<label> Radio Count</label>
+									 <p> $| radioCount or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+                                </div>
+                                <div class="configRow">
+									<label> 802.11a Support</label>
+									 <p> $| radio2Table.aModeStatus or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>Radio Type Description </label>
+									 <p> $| radio2Table.radioDescription or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> 802.11bg Support </label>
+									 <p> $| radio2Table.bgModeStatus or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>VAP Count </label>
+									 <p> $| radio2Table.vapCount or '' |$ </p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>802.11n Support </label>
+									 <p> $| radio2Table.nModeStatus or '' |$ </p>
+                                 </div>
+                                 <div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label>802.11ac Support </label>
+									 <p> $| radio2Table.acModeStatus or '' |$ </p>
+                                 </div>
+                                 </div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+</div>
+</div>
+

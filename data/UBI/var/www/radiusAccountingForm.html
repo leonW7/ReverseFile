@@ -1,0 +1,70 @@
+<?lua 
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/radAccounting_bl"
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "radiusAccountingForm"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag, cookie
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie,serverIp,port,secret,serverName
+        
+    if (ButtonType and ButtonType == "edit") then
+    returnCode, cookie,serverIp,port,secret,serverName =  radiusServerGet (inputCookie) 
+    end
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+
+
+
+<div id="tf1_radiusAccountingDailogContent">
+    <div class="topBg">
+        <h1>RADIUS Accounting Server Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                <div class="configRow">
+                                    <label> Accounting Server IP Address </label>
+                                    <input type="text" id="tf1_ipAddress" name="wlanRadAccClient.serverIp" value="$|serverIp or ''|$"  maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+                                    </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Accounting Server Name </label>
+                                <input type="text" id="tf1_nameServer" name="wlanRadAccClient.serverName" value="$|serverName or ''|$" maxlength="32">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>Port </label>
+                                    <input type="text" name="wlanRadAccClient.port" value="$|port or ''|$" class="one" id="tf1_portNumber" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, 'Invalid Port Number.', '');}">
+                                    <dl>
+                                        [Range: 1 - 65535] Seconds
+                                    </dl>
+                                </div>
+                                <div class="break" >&nbsp;</div>
+                                 <div class="configRow">
+                                    <label> Secret </label>
+                                <input type="password" id="tf1_secret" name="wlanRadAccClient.secret" value="$|secret or ''|$">
+                                </div>
+                                <div class="break"> &nbsp; </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    <?lua if(cgi["configRowId"] == "-1") then?>
+                     <input type="submit" class="btnSubmit" name="button.add.radiusAccounting" title="Save" value="Save" id="btSave" onclick="return radiusAccConfigValidate('tf1_frmRadiusAccConf');" >
+                    <?lua else ?>
+                   <input type="submit" class="btnSubmit" name="button.edit.radiusAccounting" title="Save" value="Save" id="btSave" onclick="return radiusAccConfigValidate('tf1_frmRadiusAccConf');" >
+                    <?lua end ?>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                </div>

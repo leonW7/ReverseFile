@@ -1,0 +1,171 @@
+<?lua
+
+require "teamf1lualib/customService_bl"
+require "teamf1lualib/ipv6_mode_bl"
+
+local ipMode6 = require("com.teamf1.bl.ipv6.mode")
+
+        local inputCookie = cgi["configRowId"]
+        local returnCode, cookie, serviceName, protocol, portType, destinationPortStart,
+    destinationPortEnd, multiPort, sourcemultiPort, sourcePortStart, sourcePortEnd 
+	portType = "1" 
+        if (ButtonType and ButtonType == "edit") then
+           returnCode, cookie, serviceName, protocol, portType, destinationPortStart,
+    destinationPortEnd, multiPort, icmpType, icmpV6Type, sourcemultiPort, sourcePortStart, sourcePortEnd =  customServicesGet (inputCookie)
+	  if (destinationPortStart == "0") then
+           destinationPortStart = ""
+           end
+          if (destinationPortEnd == "0") then
+           destinationPortEnd = ""
+           end
+           if (sourcePortStart == "0") then
+           sourcePortStart = ""
+           end
+           if (sourcePortEnd == "0") then
+           sourcePortEnd = ""
+           end
+          if (sourcemultiPort == "0") then
+           sourcemultiPort = ""
+           end
+          if (multiPort == "0") then
+           multiPort = ""
+          end
+end 		
+errMsg, cookie, mode ,ipv6GreyOutMode= ipMode6.ipModeSectionGet ()
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_customServicesDailogContent">
+                <div class="topBg">
+                    <h1 data-localize="10654">Custom Services Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow" id="tf1_customServiceName_div">
+                        <label data-localize="11748"> Name </label>
+	<?lua if(cgi["configRowId"] ~= "-1") then?>
+                        <p> $| serviceName |$ </p>
+                        <input type="hidden" name="customServices.serviceName" value="$| serviceName or '' |$" id="tf1_customServiceName" maxlength="16">
+	<?lua else?>
+			 <input type="text" name="customServices.serviceName" value="$|
+             serviceName or '' |$" id="tf1_customServiceName" maxlength="16" onkeypress="return alphaNumericCheck (event, '')">
+	<?lua end?>
+                    </div>
+                    <div class="break" id="break_customServiceName_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_customServiceType_div">
+                        <label data-localize="13173"> Type </label>
+                        <select size="1" name="customServices.protocol" id="tf1_customServiceType" onChange="checkCustomServiceType('tf1_customServiceType')">
+                            <option data-localize="13047" value="1" $| web.dropdownSelected(protocol == "1") |$ >TCP</option>
+                            <option data-localize="13175" value="2" $| web.dropdownSelected(protocol == "2") |$ >UDP</option>
+                            <option data-localize="13650" value="3" $| web.dropdownSelected(protocol == "3") |$ >Both</option>
+                            <option data-localize="11134" value="4" $| web.dropdownSelected(protocol == "4") |$ >ICMP</option>
+			    <?lua if (mode == "3") then ?>
+                            <option data-localize="30599" value="5" $| web.dropdownSelected(protocol == "5") |$ >ICMPv6</option>
+			    <?lua end ?>
+                        </select>
+                    </div>
+                    <div class="break" id="break_customServiceType_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_customServicePortType_div">
+                        <label data-localize="12483"> Port Type </label>
+                        <p>
+                            <input type="radio" id="tf1_customServicePortType1" value="1"  name="customServices.portType" $| web.radioSelected(portType == "1") |$   onclick="customServicePortTypeChange('tf1_customServicePortType1')">
+                            <span data-localize="13651">Port Range</span>
+                        </p>
+                        <p>
+                            <input type="radio" id="tf1_customServicePortType2" value="2" name="customServices.portType" $| web.radioSelected(portType == "2") |$  onclick="customServicePortTypeChange('tf1_customServicePortType2')">
+                            <span data-localize="11743">Multiple Ports</span>
+                        </p>
+                    </div>
+                    <div class="break" id="break_customServicePortType_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_customServiceIcmpType1_div">
+                        <label data-localize="13652"> ICMP Type </label>
+                        <input type="text"  id="tf1_customServiceIcmpType1" value="$| icmpType or '' |$" name="customServices.icmpType"  maxlength="2" class="one" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 40, true, LANG_LOCALE['11273'], '');}">
+                        <dl>
+                            [<span data-localize="12627">Range</span>: 0 - 40]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_customServiceIcmpType1_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_customServiceIcmpV6Type_div">
+                        <label data-localize="30584"> ICMPv6 Type </label>
+                        <input type="text"  id="tf1_customServiceIcmpV6Type" value="$| icmpV6Type or '' |$" name="customServices.icmpType"  maxlength="3" class="one" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, LANG_LOCALE['30585'], '');}">
+                        <dl>
+                            [<span data-localize="12627">Range</span>: 1 - 255]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_customServiceIcmpV6Type">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_customServiceStartPort_div">
+                        <label data-localize="30600"> Source Start Port </label>
+                        <input type="text" name="customServices.sourcePortStart" value="$| sourcePortStart or '' |$" id="tf1_customServiceStartPort" maxlength="5" class="one" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['30596'], '');}">
+                        <dl>
+                            [<span data-localize="12627">Range</span>: 1 - 65535]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_customServiceStartPort_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_customServiceEndPort_div">
+                        <label data-localize="30601"> Source Finish Port </label>
+                        <input type="text" name="customServices.sourcePortEnd" value="$| sourcePortEnd or '' |$" id="tf1_customServiceEndPort" maxlength="5" class="one" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['30597'], '');}">
+                        <dl>
+                            [<span data-localize="12627">Range</span>: 1 - 65535]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_customServiceEndPort_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_customServiceStartPort1_div">
+                        <label data-localize="30602"> Destination Start Port </label>
+                        <input type="text" name="customServices.destinationPortStart" value="$| destinationPortStart or '' |$" id="tf1_customServiceStartPort1" maxlength="5" class="one" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['30598'], '');}">
+                        <dl>
+                            [<span data-localize="12627">Range</span>: 1 - 65535]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_customServiceStartPort1_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_customServiceEndPort1_div">
+                        <label data-localize="30603"> Destination Finish Port </label>
+                        <input type="text" name="customServices.destinationPortEnd" value="$| destinationPortEnd or '' |$" id="tf1_customServiceEndPort1" maxlength="5" class="one" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['30606'], '');}">
+                        <dl>
+                            [Range: 1 - 65535]
+                        </dl>
+                    </div>
+                    <div class="break" id="break_customServiceEndPort1_div">
+                        &nbsp;
+                    </div>                    
+                    <div class="configRow" id="tf1_customServicePorts_div">
+                        <label data-localize="30604"> Source Ports </label>
+                        <input type="text" name="customServices.sourcemultiPort" value="$| sourcemultiPort or '' |$" id="tf1_customServicePorts" onKeyPress="return numericValueCheck (event, ',')">
+                    </div>
+                    <div class="break" id="break_customServicePorts_div">
+                        &nbsp;
+                    </div>
+                   <div class="configRow" id="tf1_customServicePorts1_div">
+                        <label data-localize="30605"> Destination Ports </label>
+                        <input type="text" name="customServices.multiPort" value="$| multiPort or '' |$" id="tf1_customServicePorts1" onKeyPress="return numericValueCheck (event, ',')">
+                    </div>
+                    <div class="break" id="break_customServicePorts1_div">
+                        &nbsp;
+                    </div>                    
+                </div>
+                <div class="dialogSubmitRow">
+                <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                            <?lua if(cgi["configRowId"] == "-1") then?>
+                    <input data-localize="12758" type="submit" name="button.add.customServices" onclick="return serviceAddFormValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                <?lua else?>
+                    <input data-localize="12758" type="submit" name="button.edit.customServices" onclick="return serviceAddFormValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                <?lua end?>
+                </div>
+            </div>

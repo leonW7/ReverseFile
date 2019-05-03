@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+    
+    <!--===================================================-->
+    <COMMAND name="net tahi"
+	         access="admin"
+	         help="settings for tahi test suite.">
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi add-default-route" 
+	     access="admin"
+         help="add ipv6 default route on lan interface.">
+    <PARAM name="ip_address" 
+	       help="IP address for default route."
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua tahiDefaultRouteAdd ("${ip_address}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi delete-default-route"
+	         access="admin"
+	         help="delete ipv6 default route on lan interface.">
+	<ACTION>lua tahiDefaultRouteDel ()</ACTION>
+    </COMMAND>
+     <!--===================================================-->
+    <COMMAND name="net tahi add-route" 
+	     access="admin"
+         help="add ipv6 route on lan interface.">
+    <PARAM name="ip_address" 
+	       help="IP address of route."
+           ptype="IPV6_ADDR"/>
+    <PARAM name="gw" 
+	       help="IP address of gateway."
+           ptype="IPV6_ADDR"/>   
+	<ACTION>lua tahiRouteAdd ("${ip_address}", "${gw}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi del-route" 
+	     access="admin"
+         help="add ipv6 route on lan interface.">
+    <PARAM name="ip_address" 
+	       help="IP address of route."
+           ptype="IPV6_ADDR"/>
+    <PARAM name="gw" 
+	       help="IP address of gateway."
+           ptype="IPV6_ADDR"/>   
+	<ACTION>lua tahiRouteDel ("${ip_address}", "${gw}")</ACTION>
+    </COMMAND>
+   <!--===================================================-->
+    <COMMAND name="net tahi stop-RA"
+	         access="admin"
+	         help="stop sending RA.">
+	<ACTION>lua tahiStopRA ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-AdvRetransTimer(1000)"
+	         access="admin"
+	         help="start sending RA with AdvRetransTimer as 1000.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.1000")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-AdvRetransTimer(5000)"
+	         access="admin"
+	         help="start sending RA with AdvRetransTimer as 5000.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.5000")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi startRA-Reachable(30000)Retrans(1000)"
+	         access="admin"
+	         help="start sending RA with AdvReachableTime as 30000 and AdvRetransTimer as 1000.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.b")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-AdvReachableTime(10000)"
+	         access="admin"
+	         help="start sending RA with AdvReachableTime as 10000.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.10k")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-AdvReachableTime(30000)"
+	         access="admin"
+	         help="start sending RA with AdvReachableTime as 30000.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.30k")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA(Default)"
+	         access="admin"
+	         help="start sending RA with default parameters.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.def")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-MinValues"
+	         access="admin"
+	         help="start sending RA with minimum values of parameters.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.m")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-MaxValues"
+	         access="admin"
+	         help="start sending RA with maximum values of parameters.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.x")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-MaxRtrAdvInterval(10)"
+	         access="admin"
+	         help="start sending RA with MaxRtrAdvInterval value of 10.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.10")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-MaxRtrAdvInterval(40)"
+	         access="admin"
+	         help="start sending RA with MaxRtrAdvInterval value of 40.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.40")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-MinRtrAdvInterval(198)"
+	         access="admin"
+	         help="start sending RA with MinRtrAdvInterval value of 198.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.198")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-prefix(8000::)"
+	         access="admin"
+             help="start sending RA with prefix 8000::/64.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.8000")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-prefix(fec0::)"
+	         access="admin"
+             help="start sending RA with prefix fec0::/64.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.fec0")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-AdvCurHopLimit(0)"
+	         access="admin"
+             help="start sending RA with AdvCurHopLimit value as 0.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.0")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-AdvCurHopLimit(15)"
+	         access="admin"
+             help="start sending RA with AdvCurHopLimit value as 15.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.15")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-WAN"
+	         access="admin"
+             help="start sending RA on the WAN interface.">
+    <ACTION>lua tahiStartRA ("/var/radvd.conf.wan")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi ipv6-down"
+	         access="admin"
+	         help="disable the ipv6 stack on the router.">
+    <ACTION>lua tahiProcSet (0)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi ipv6-up"
+	         access="admin"
+	         help="enable the ipv6 stack on the router.">
+    <ACTION>lua tahiProcSet (1)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi ipv6-global-up"
+	         access="admin"
+	         help="enable the ipv6 stack on the router and adds global ip.">
+    <ACTION>lua v6UpGlobal (1)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi ipv6-Alias-Add(LAN)"
+	         access="admin"
+             help="Add ipv6 address to LAN interface.">
+    <PARAM name="ip6_address" 
+	       help="IP address that is added."
+	       ptype="IPV6_ADDR"/>       
+    <ACTION>lua tahiAliasAdd ("${ip6_address}", "bdg1")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi ipv6-Alias-Del(LAN)"
+	         access="admin"
+             help="Delete an ipv6 address from LAN interface.">
+    <PARAM name="ip6_address" 
+	       help="IP address that is deleted."
+	       ptype="IPV6_ADDR"/>
+    <ACTION>lua tahiAliasDel ("${ip6_address}", "bdg1")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi ipv6-Alias-Add(WAN)"
+	         access="admin"
+             help="Add ipv6 address to WAN interface.">
+    <PARAM name="ip6_address" 
+	       help="IP address that is added."
+	       ptype="IPV6_ADDR"/>       
+    <ACTION>lua tahiAliasAdd ("${ip6_address}", "eth1")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi ipv6-Alias-Del(WAN)"
+	         access="admin"
+             help="Delete an ipv6 address from WAN interface.">
+    <PARAM name="ip6_address" 
+	       help="IP address that is deleted."
+	       ptype="IPV6_ADDR"/>
+    <ACTION>lua tahiAliasDel ("${ip6_address}", "eth1")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi neigh-cache-del"
+	         access="admin"
+	         help="deletes the ipv6 neighbor cache.">
+    <ACTION>lua tahiNeighCacheDel ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi reachable-time"
+	         access="admin"
+             help="set the reachable time of neighbour cache entries">
+    <PARAM name="time" 
+	       help="the value of reachable time."
+	       ptype="BASE_RECHABLE_TIME"/>
+    <ACTION>lua tahiReachableTimeSet ("${time}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi mcast-start"
+	         access="admin"
+             help="start ipv6 multicast">
+    <ACTION>lua tahiMcastStart ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi mcast-stop"
+	         access="admin"
+             help="stop ipv6 multicast">
+    <ACTION>lua tahiMcastStop ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi ping6"
+	         access="admin"
+             help="ping6 on LAN interface with count one">
+     <PARAM name="ip" 
+	       help="ip to which ping request is sent ."
+           ptype="IPV6_ADDR"/>
+     <PARAM name="size" 
+	       help="data size of ping"
+           ptype="PING_SIZE"/>
+       <ACTION>lua tahiPing6 ("${ip}", "${size}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi mping6"
+	         access="admin"
+             help="multicast ping6 on LAN">
+     <PARAM name="mip" 
+	       help="multicast ip to which ping request is sent ."
+           ptype="IPV6_ADDR"/>
+       <ACTION>lua tahiMping6 ("${mip}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi bping6"
+	         access="admin"
+             help="ping6">
+     <PARAM name="bip" 
+	       help=" ip to which ping request is sent ."
+           ptype="IPV6_ADDR"/>
+     <PARAM name="psize" 
+	       help="data size of ping"
+           ptype="PING_SIZE"/>
+       <ACTION>lua tahiBPing6 ("${bip}", "${psize}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi pmtu-route-add" 
+	     access="admin"
+         help="add ipv6 route on lan interface.">
+    <PARAM name="ipAdd" 
+	       help="IP address of route."
+           ptype="IPV6_ADDR"/>
+	<ACTION>lua tahiPmtuRouteAdd ("${ipAdd}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi disable-ipv6-firewall" 
+	     access="admin"
+         help="disable ipv6 firewall.">
+	<ACTION>lua firewall6Disable ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi show-LAN-ip" 
+	     access="admin"
+         help="show ipv6 addresses of LAN interface.">
+	<ACTION>lua lanIpShow ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi interface-down" 
+             access="admin"
+         help="brings selected interface down.">
+    <PARAM name="interface" 
+               help="interface name"
+           ptype="INTERFACE_NAME"/>
+        <ACTION>lua lanIpInterface ("${interface}", "down")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi interface-up" 
+             access="admin"
+         help="brings selected interface up.">
+    <PARAM name="interface" 
+               help="interface name"
+           ptype="INTERFACE_NAME"/>
+        <ACTION>lua lanIpInterface ("${interface}", "up")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="net tahi start-RA-custom" 
+             access="admin"
+         help="starts RA with configuration file obtained through tftp.">
+    <PARAM name="fileName" 
+               help="file name to be tftp to DUT"
+           ptype="STRING"/>
+    <PARAM name="ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+    <ACTION>lua runTftpRadvd ("${fileName}", "${ipAddr}")</ACTION>
+    </COMMAND>
+<!--===================================================-->
+<VIEW name="net-tahi-RA-config" prompt="net-tahi[RA-config]>">
+    <COMMAND name="save" help="Save RA configuration changes.">
+	     <ACTION>lua clishCfgObjExec("RA-Start")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="start RA and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("RA-Start")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back RA configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+   
+    <COMMAND name="Interface" 
+             help="interface on which RA should be sent">
+             <PARAM name="interface" 
+                    help="interface on which RA should be sent"
+                    ptype="INTERFACE_NAME"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "interface", "${interface}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvSendAdvert" 
+             help="sets AdvSendAdvert value">
+             <PARAM name="AdvSendAdvert"
+                    help="sets AdvSendAdvert value"
+                    ptype="ON_OFF"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvSendAdvert", "${AdvSendAdvert}")</ACTION>
+    </COMMAND>
+    <COMMAND name="MaxRtrAdvInterval" 
+               help="sets MaxRtrAdvInterval value">
+               <PARAM name="MaxRtrAdvInterval" 
+                      help="sets MaxRtrAdvInterval value"
+                      ptype="RADVD_MAXRTRADVINTERVAL"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "MaxRtrAdvInterval", "${MaxRtrAdvInterval}")</ACTION>
+    </COMMAND>
+    <COMMAND name="MinRtrAdvInterval" 
+               help="sets MinRtrAdvInterval value">
+              <PARAM name="MinRtrAdvInterval" 
+               help="sets MinRtrAdvInterval value"
+               ptype="RADVD_MINRTRADVINTERVAL"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "MinRtrAdvInterval", "${MinRtrAdvInterval}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvCurHopLimit" 
+             help="sets AdvCurHopLimit value">
+             <PARAM name="AdvCurHopLimit" 
+                    help="sets AdvCurHopLimit value"
+                    ptype="RADVD_ADVCURHOPLIMIT"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvCurHopLimit", "${AdvCurHopLimit}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvManagedFlag" 
+             help="sets AdvManagedFlag value">
+             <PARAM name="AdvManagedFlag" 
+                    help="sets AdvManagedFlag value"
+                    ptype="ON_OFF"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvManagedFlag", "${AdvManagedFlag}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvOtherConfigFlag" 
+             help="sets AdvOtherConfigFlag value">
+             <PARAM name="AdvOtherConfigFlag" 
+                    help="sets AdvOtherConfigFlag value"
+                    ptype="ON_OFF"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvOtherConfigFlag", "${AdvOtherConfigFlag}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvDefaultLifetime" 
+             help="sets AdvDefaultLifetime value">
+             <PARAM name="AdvDefaultLifetime" 
+                    help="sets AdvDefaultLifetime value"
+                    ptype="RADVD_ADVDEFAULTLIFETIME"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvDefaultLifetime", "${AdvDefaultLifetime}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvReachableTime" 
+             help="sets AdvReachableTime value">
+             <PARAM name="AdvReachableTime" 
+                    help="sets AdvReachableTime value"
+                    ptype="RADVD_ADVREACHABLETIME"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvReachableTime", "${AdvReachableTime}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvRetransTimer" 
+             help="sets AdvRetransTimer value">
+             <PARAM name="AdvRetransTimer" 
+                    help="sets AdvRetransTimer value"
+                    ptype="RADVD_ADVRETRANSTIMER"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvRetransTimer", "${AdvRetransTimer}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvLinkMTU" 
+             help="sets AdvLinkMTU value">
+             <PARAM name="AdvLinkMTU" 
+                    help="sets AdvLinkMTU value"
+                    ptype="RADVD_ADVLINKMTU"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvLinkMTU", "${AdvLinkMTU}")</ACTION>
+    </COMMAND>
+    <COMMAND name="prefix" 
+             help="prefix to be advertised">
+             <PARAM name="prefix" 
+                    help="prefix to be advertised (in aabb:ccdd:eeff:gghh:: form)"
+                    ptype="IPV6_ADDR"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "prefix", "${prefix}")</ACTION>
+    </COMMAND>
+    <COMMAND name="prefixLength" 
+             help="sets prefix length value">
+             <PARAM name="prefixLength" 
+                    help="sets prefix length value"
+                    ptype="IPV6_PREFIX_LENGTH"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "prefixLength", "${prefixLength}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvOnLink" 
+             help="sets AdvOnLink value">
+             <PARAM name="AdvOnLink" 
+                    help="sets AdvOnLink value"
+                    ptype="ON_OFF"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvOnLink", "${AdvOnLink}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvAutonomous" 
+             help="sets AdvAutonomous value">
+             <PARAM name="AdvAutonomous" 
+                    help="sets AdvAutonomous value"
+                    ptype="ON_OFF"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvAutonomous", "${AdvAutonomous}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvValidLifetime" 
+             help="sets AdvValidLifetime value">
+             <PARAM name="AdvValidLifetime" 
+                    help="sets AdvValidLifetime value"
+                    ptype="RADVD_ADVVALIDLIFETIME"/>
+    <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvValidLifetime", "${AdvValidLifetime}")</ACTION>
+    </COMMAND>
+    <COMMAND name="AdvPreferredLifetime" 
+             help="sets AdvPreferredLifetime value">
+             <PARAM name="AdvPreferredLifetime" 
+                    help="sets AdvPreferredLifetime value"
+                    ptype="RADVD_ADVPREFERREDLIFETIME"/>
+       <ACTION>lua clishCfgObjAdd ("RA-Start", "AdvPreferredLifetime", "${AdvPreferredLifetime}")</ACTION>
+   </COMMAND>
+</VIEW>
+<!--===================================================-->
+<COMMAND name="net tahi RA-Start" 
+         access="admin"
+         help="starts RA with custom configuration."
+         view="net-tahi-RA-config" viewid="">
+         <ACTION>lua clishCfgObjNew ("RA-Start", runCustomRadvdInit, 
+                                     runCustomRadvd, customRadvdInputVal)
+         </ACTION>
+</COMMAND>
+<!--===================================================-->
+</CLISH_MODULE>

@@ -1,0 +1,173 @@
+<?lua
+require "teamf1lualib/deviceStatistics_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "status"
+    PAGE_HELP_SECTION = "deviceStatistics"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require ("com.teamf1.core.errorMap")
+local deviceStatistics_bl = require ("com.teamf1.bl.deviceStatistics")
+
+local returnCode, primayRow, configRow, lanRow, vlanRow = 
+       deviceStatistics_bl.deviceStatisticsSectionGetAll ()
+local configPort = deviceStatistics_bl.configPortUsageGet ()       
+    
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+   LANG_LOCALE = "10728,12467,13171,12752,10542,13170,12751,30030,30014,13301,11515,10551,30545,10777"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body onload="onloadCall ();">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+		    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?> 
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['10728'] |$</h1>
+					<div class="CLR">
+						<div class="demo_jui">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th>$| LANG_LOCALE['12467'] |$</th>
+										<th>$| LANG_LOCALE['13171'] |$</th>
+										<th>$| LANG_LOCALE['12752'] |$</th>
+										<th>$| LANG_LOCALE['10542'] |$</th>
+										<th>$| LANG_LOCALE['13170'] |$</th>
+										<th>$| LANG_LOCALE['12751'] |$</th>
+										<th>$| LANG_LOCALE['30030'] |$</th>																				
+									</tr>
+								</thead>
+								<tr class="gradeA">
+                                <td>$| LANG_LOCALE['30014'] |$</td>
+									<td>$| primayRow["tx_packets"] or '' |$</td>
+									<td>$| primayRow["rx_packets"] or '' |$ </td>
+									<td>$| primayRow["collisions"] or '' |$ </td>
+									<td>$| primayRow["tx_bytes_rate"] or '' |$ </td>
+                                    <td>$| primayRow["rx_bytes_rate"] or '' |$ </td>
+                                    <?lua if (primayRow["wanUptime"] == "Not Yet Available") then
+                                        primayRow["wanUptime"] = LANG_LOCALE['30545']
+                                    end ?>
+									<td>$| primayRow["wanUptime"] or '' |$ </td>
+								</tr>
+                               <?lua if(configPort == "WAN2") then ?>
+								<tr class="gradeA">
+									<td> $| LANG_LOCALE['10551'] |$ $| configRow["interfaceName"] or '' |$</td>
+									<td>$| configRow["tx_packets"] or '' |$</td>
+									<td>$| configRow["rx_packets"] or '' |$ </td>
+									<td>$| configRow["collisions"] or '' |$ </td>
+									<td>$| configRow["tx_bytes_rate"] or '' |$ </td>
+									<td>$| configRow["rx_bytes_rate"] or '' |$ </td>
+                                    <?lua if (configRow["wanUptime"] == "Not Yet Available") then
+                                        configRow["wanUptime"] = LANG_LOCALE['30545']
+                                    end ?>
+									<td>$| configRow["wanUptime"] or '' |$ </td>
+								</tr>
+                                   <?lua else
+									if (configPort == "DMZ") then ?>
+									<tr class="gradeA">
+									<td>$| LANG_LOCALE['10777'] |$</td>
+									<td>$| configRow["tx_packets"] or '' |$</td>
+									<td>$| configRow["rx_packets"] or '' |$ </td>
+									<td>$| configRow["collisions"] or '' |$ </td>
+									<td>$| configRow["tx_bytes_rate"] or '' |$ </td>
+									<td>$| configRow["rx_bytes_rate"] or '' |$ </td>
+                                    <?lua if (lanRow["wanUptime"] == "Not Yet Available") then
+                                        lanRow["wanUptime"] = LANG_LOCALE['30545']
+                                    end ?>
+									<td>$| configRow["wanUptime"] or '' |$ </td>
+								</tr>
+								<?lua end end ?>
+								<tr class="gradeA">
+									<td>$| LANG_LOCALE['11515'] |$</td>
+									<td>$| lanRow["tx_packets"] or '' |$</td>
+									<td>$| lanRow["rx_packets"] or '' |$ </td>
+									<td>$| lanRow["collisions"] or '' |$ </td>
+									<td>$| lanRow["tx_bytes_rate"] or '' |$ </td>
+									<td>$| lanRow["rx_bytes_rate"] or '' |$ </td>
+                                    <?lua if (lanRow["wanUptime"] == "Not Yet Available") then
+                                        lanRow["wanUptime"] = LANG_LOCALE['30545']
+                                    end ?>
+									<td>$| lanRow["wanUptime"] or '' |$ </td>
+								</tr>
+                                                                <?lua 
+                                                                  local i =0
+                                                                  for k,v in pairs (vlanRow) do
+                                                                      i = i +1
+                                                                      local row = vlanRow[i]
+                                                                ?>
+                                                                <tr class="gradeA">
+									<td> $| row["interfaceName"] or '' |$ </td>
+									<td>$| row["tx_packets"] or '' |$</td>
+									<td>$| row["rx_packets"] or '' |$ </td>
+									<td>$| row["collisions"] or '' |$ </td>
+									<td>$| row["tx_bytes_rate"] or '' |$ </td>
+									<td>$| row["rx_bytes_rate"] or '' |$ </td>
+									<td>$| row["lanUptime"] or '' |$ </td>
+								</tr>
+                                                                <?lua end?>    
+								
+							</table>
+						</div>
+					</div>
+		</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+            

@@ -1,0 +1,316 @@
+<?lua 
+ROWID = "1"
+require "teamf1lualib/staticRouting_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+if (UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-150" and UNIT_NAME ~= "DSR-150N") then
+    if (PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000AC_Ax" or 
+        PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+        PAGE_HELP_SECTION = "staticRoutesAC"
+    else
+	    PAGE_HELP_SECTION = "staticRoutes"
+    end
+else
+	PAGE_HELP_SECTION = "staticRoutesEcona"
+end
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag
+
+if (ButtonType and ButtonType == "delete") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["staticRouting.checkbox"]) == "string") then
+                inputTable["staticRouting.cookie"] = cgi["staticRouting.checkbox"]
+                errorFlag = staticRoutingSectionDelete (inputTable)
+        elseif (type(cgi["staticRouting.checkbox"]) == "table") then
+                errorFlag = staticRoutingSectionDeleteAll ()
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "add") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        errorFlag, cookie = staticRoutingSectionCreate (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "edit") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        inputTable["staticRouting.cookie"] = cgi["configRowId"]
+        errorFlag, cookie = staticRoutingSectionSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "disable") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        inputTable["staticRouting.cookie"] = cgi["staticRouting.checkbox"]
+        errorFlag, cookie = staticRoutingSectionDisable (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "enable") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        inputTable["staticRouting.cookie"] = cgi["staticRouting.checkbox"]
+        errorFlag, cookie = staticRoutingSectionEnable (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+
+else
+    local staticRoutingInfo
+    errorFlag, staticRoutingInfo = staticRoutingSectionGetAll ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "12997,11748,13454,11057,11187,11709,10070,12549,10162,12995,12726,10712,11413,13301,30016,30132,10777,11058,11709,11303,12368,12251,12293,12184,12187,11342,30463,30464,30442,11781,12795,10862,10695,10749,10875,13017,30154,30436,30014"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmStaticRouting" id="tf1_frmStaticRouting">        
+            <input type="hidden" name="thispage" id="thispage" value="staticRouting.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'edit disable enable');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+                <li id="disable">
+                   $| LANG_LOCALE['10749'] |$
+                </li>
+                <li id="enable">
+                    $| LANG_LOCALE['10875'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                    <div class="FL2">
+                        <p class="hint">
+                         $| helpHintText |$  
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['12997'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_staticRouting">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11748'] |$</th>
+                                        <th>$| LANG_LOCALE['13454'] |$</th>
+                                        <th>$| LANG_LOCALE['13017'] |$</th>
+                                        <th>$| LANG_LOCALE['11057'] |$</th>
+                                        <th>$| LANG_LOCALE['11187'] |$</th>
+                                        <th>$| LANG_LOCALE['11709'] |$</th>
+                                        <th>$| LANG_LOCALE['10070'] |$</th>
+                                        <th>$| LANG_LOCALE['12549'] |$</th>
+                                    </tr>
+                                </thead>
+                                                 <?lua 
+                                                        local i = 0
+                                                        local activeStatus
+                                                        local privateStatus
+                                                        local interface
+                                                        local vlanId
+                                                        local vlanName
+                                                        local errorCode
+                                                     for k, v in pairs (staticRoutingInfo) do
+                                                        i=i+1
+                                                        local row = staticRoutingInfo[i]
+                                                        if (row[static_routesTable.."."..attribute.active] == 'Yes') then
+                                                            activeStatus = LANG_LOCALE['30442']
+                                                        else
+                                                            activeStatus = LANG_LOCALE['11781']
+                                                        end
+                                                        
+                                                        if (row[static_routesTable.."."..attribute.private] == 'Yes') then
+                                                            privateStatus = LANG_LOCALE['30442']
+                                                        else
+                                                            privateStatus = LANG_LOCALE['11781']
+                                                        end
+
+                                                        interface = row[static_routesTable.."."..attribute.interface]
+                                                        if (string.sub(interface,1,3) == 'LAN') then
+                                                           vlanId = interface:sub(4)
+                                                           if (vlanId ~= '') then
+                                                              errorCode, vlanName = vlanNameByIdGet (vlanId)
+                                                              row[static_routesTable.."."..attribute.interface] = vlanName                                                        
+                                                           end
+                                                        end
+                                                 ?>
+                                <tr class="gradeA" id="staticRouting$| row[static_routesTable.."._ROWID_"] |$" status="$| row[static_routesTable.."."..attribute.active] or '' |$">
+                                    <td>$| row[static_routesTable.."."..attribute.routeName] or '' |$</td>
+                                    <td>$| row[static_routesTable.."."..attribute.destinationIpAddress] or '' |$</td>
+                                    <td>$| row[static_routesTable.."."..attribute.subnetMask] or '' |$</td>
+                                    <td>$| row[static_routesTable.."."..attribute.gatewayIpAddress] or '' |$</td>
+                                    <td>$| row[static_routesTable.."."..attribute.interface] or '' |$</td>
+                                    <td>$| row[static_routesTable.."."..attribute.metric] or '' |$</td>
+                                    <td>$| activeStatus or '' |$</td>
+                                    <td>$| privateStatus or '' |$</td>
+                                </tr>
+                                                 <?lua end?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModal">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10162'] |$" value="$| LANG_LOCALE['10162'] |$" id="btSave" onclick="openForm('button.add.staticRouting.staticRouting',-1,'tf1_dialog','staticRouting','staticRoutingForm.html', 'tf1_staticRoutingDailogContent','');">
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/staticRoutingConfig.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+
+                $('#tf1_staticRouting .gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'editMenu' : function(t, e, rowId) {
+                            openForm('button.edit.staticRouting.staticRouting',rowId,'tf1_dialog','staticRouting','staticRoutingForm.html', 'tf1_staticRoutingDailogContent','');
+                        },
+                        'deleteMenu' : function(t, e, rowId) {
+                            deleteRows('button.delete.staticRouting.staticRouting', 'tf1_frmStaticRouting', rowId, 'optionSelectAll', 'tf1_dialog', 'staticRouting', 'staticRouting');
+                        },
+                        'disableMenu' : function(t, e, rowId) {
+                            changeRowStauts('disable', 'tf1_frmStaticRouting', rowId, 'tf1_dialog', 'staticRouting', 'staticRouting', 'staticRouting.staticRouting');
+                        },
+                        'enableMenu' : function(t, e, rowId) {
+                            changeRowStauts('enable', 'tf1_frmStaticRouting', rowId, 'tf1_dialog', 'staticRouting', 'staticRouting', 'staticRouting.staticRouting');
+                         }
+                    },
+                     onShowMenu: function(e,menu,rowId) {
+                          if ($("#"+rowId).attr("status") == "Yes"){                            
+                              $('#enableMenu', menu).remove();
+                          } else {
+                              $('#disableMenu', menu).remove();
+                          }
+                          return menu;
+                      }
+                });
+
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 1 },
+                        { type: 'ip-address', targets: 3 }
+                    ]
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+                   onloadCall();
+
+            });
+/**
+ * This function sets the value of the hidden field id
+ * @method setSelectAll
+ * @param thisObjId - selected checkbox id
+ * @param editId - prefixId of the edit field
+ */
+function setSelectAll(thisObjId, editId){
+    var thisObj = document.getElementById(thisObjId);
+    if (!thisObj) 
+        return;
+    if(!editId) return;	
+    var objIdArr = editId.split(" ");
+    for (idx in objIdArr) {
+        var editIdObj = document.getElementById(objIdArr[idx] + idSuffix);
+        if (thisObj && thisObj.checked && editIdObj) {
+            editIdObj.style.display = "none";
+        }
+        else if (editIdObj) {
+            editIdObj.style.display = "block";
+        }
+    }
+}
+
+        </script>
+    </body>
+</html>
+<?lua end ?>

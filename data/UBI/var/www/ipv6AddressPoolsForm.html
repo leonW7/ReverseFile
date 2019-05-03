@@ -1,0 +1,73 @@
+<?lua
+require "teamf1lualib/ipv6_lanAddrPools_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/vlan_vlan"
+
+local vlan_vlan   = require ("com.teamf1.core.vlan.vlan")
+local addrPools6 = require("com.teamf1.bl.ipv6.lanAddressPools")
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, cookie
+    local addrPoolTbl = {}
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, addrPoolTbl = addrPools6.dhcpAddressPoolSectionGetCur(configRowId)
+    else
+        configRowId = "-1"
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<div id="tf1_ipv6AddressPoolsDailogContent">
+				<div class="topBg">
+					<h1 data-localize="11446">IPv6 Address Pools Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+				<div class="dialogMidArea">
+					<div class="configRow">
+						<label data-localize="13661"> Start IPv6 Address </label>
+						<input type="text" name="ipv6AddressPools.startIpAddress" value="$| addrPoolTbl["ipv6AddressPools.startIpAddress"] or '' |$" id="tf1_txtIpv6StAddr" maxlength="40" onKeyPress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onKeyDown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label data-localize="13662"> End IPv6 Address </label>
+						<input type="text" name="ipv6AddressPools.endIpAddress" value="$| addrPoolTbl["ipv6AddressPools.endIpAddress"] or '' |$" id="tf1_txtIpv6EndAddr" maxlength="40" onKeyPress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onKeyDown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+					<div class="configRow">
+						<label data-localize="12525"> Prefix Length </label>
+						<input type="text" name="ipv6AddressPools.prefixLength" value="$| addrPoolTbl["ipv6AddressPools.prefixLength"] or '' |$" id="tf1_txtIpv6PrefLen" maxlength="3" class="one" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 128, true, LANG_LOCALE['11321']+': ', ''); }">
+						<dl>
+                            [<span data-localize="12627">Range</span>: 1 - 128]
+						</dl>
+					</div>
+					<div class="break">
+						&nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label data-localize="50104">VLAN Interface</label>
+                        <select size="1" name="ipv6AddressPools.vlanInterface" id="tf1_vlanInterface">
+                            <option value="LAN" $| web.dropdownSelected(addrPoolTbl["ipv6AddressPools.vlanInterface"] == "LAN") |$ >Default </option>
+                            <?
+                            local errorCode1, vlanIdInfo = vlan_vlan.ipv6VlanIdGetAll ()
+                            local errorCode2, vlanName
+                            for u,v in pairs(vlanIdInfo) do    
+                                if (v["vlanId"]~="1") then
+                                    errorCode2, vlanName = vlan_vlan.vlanNameByIdGet (v["vlanId"])
+                            ?>
+                            <option value="LAN$| v["vlanId"] |$" $| web.dropdownSelected(addrPoolTbl["ipv6AddressPools.vlanInterface"] == "LAN"..v["vlanId"]) |$ >$| vlanName |$ </option>
+                            <?lua end end?>
+                        </select>
+                    </div>
+                    <div class="break"> &nbsp; </div>
+				</div>
+				<div class="dialogSubmitRow">
+					<input data-localize="12758" type="submit" onclick="return ipv6AddressPoolsValidate()" class="btnSubmit" title="Save" value="Save" id="btSave" name="button.config.ipv6AddressPools.ipv6AddressPools.$| configRowId |$"> 
+				</div>
+			</div>
+<?lua end ?>

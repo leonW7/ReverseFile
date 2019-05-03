@@ -1,0 +1,131 @@
+<?lua
+require "teamf1lualib/ipv6_radvdPrefixes_bl"
+require "teamf1lualib/vlan_vlan"
+require "teamf1lualib/returnCodes"
+local radvdPrefixes = require("com.teamf1.bl.ipv6.radvdPrefixes")
+local vlan_vlan   = require ("com.teamf1.core.vlan.vlan")
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, cookie
+    local radvdPrefixesTbl = {}
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, radvdPrefixesTbl = radvdPrefixes.radvdAdvPrefixesSectionGetCur(configRowId)
+        else
+        radvdPrefixesTbl["advertisementPrefixes.prefixType"] = "1"
+        configRowId = "-1"
+    end
+?>
+
+<div id="tf1_advertisementPrefixesDailogContent">
+				<div class="topBg">
+					<h1 data-localize="10191">Advertisement Prefix Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+				<div class="dialogMidArea">
+					<div class="configRow">
+						<label data-localize="11466"> IPv6 Prefix Type </label>
+				    <?lua if (radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "3") then ?>
+						<p>
+                                                        
+							<input type="radio" id="tf1_global" value="3" name="advertisementPrefixes.prefixType" $|  web.radioSelected(radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "3") |$  onClick="advPrefixConfig('tf1_global');">
+                            <span data-localize="50103">DHCPv6 Prefix</span>
+						</p>
+						<p>
+							<input type="hidden"  id ="tf1_6to4" value="1"  name="advertisementPrefixes.prefixType" $|  web.radioSelected(radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "1") |$  onClick="advPrefixConfig('tf1_6to4');">
+						</p>
+                  	<?lua else?>
+						<p>
+							<input type="radio" id ="tf1_6to4" value="1"  name="advertisementPrefixes.prefixType" $|  web.radioSelected(radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "1") |$  onClick="advPrefixConfig('tf1_6to4');">
+                            <span data-localize="30185">6to4</span>
+						</p>
+						<p>
+							<input type="radio" id="tf1_global" value="2" name="advertisementPrefixes.prefixType" $|  web.radioSelected(radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "2") |$  onClick="advPrefixConfig('tf1_global');">
+                            <span data-localize="11070">Global /Local/ISATAP</span>
+						</p>
+						<?lua end?>							
+				  </div>
+					<div class="break" id="break1_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_slaId_div">
+						<label data-localize="12867"> SLA ID </label>
+						<input type="text" name="advertisementPrefixes.sla" value="$| radvdPrefixesTbl["advertisementPrefixes.sla"] or '' |$" id="tf1_slaId" maxlength="3" class="one" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 999, true, LANG_LOCALE['13643']+': ', '');}">
+						<dl>
+                            [<span data-localize="12627">Range</span>: 0 - 999]
+						</dl>
+					</div>
+					<div class="break" id="break2_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_prefix_div">
+						<label data-localize="11462"> IPv6 Prefix </label>
+                     <?lua if (radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "3") then ?>
+   						<input type="hidden"  name="advertisementPrefixes.prefix" value="$| radvdPrefixesTbl["advertisementPrefixes.prefix"] or '' |$" id="tf1_prefix" class="one"><p>$| radvdPrefixesTbl["advertisementPrefixes.prefix"] or '' |$</p>
+                     <?lua else?>
+						<input type="text" name="advertisementPrefixes.prefix" value="$| radvdPrefixesTbl["advertisementPrefixes.prefix"] or '' |$" id="tf1_prefix" maxlength="40" onKeyPress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onKeyDown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+					 <?lua end?>
+					</div>
+					<div class="break" id="break3_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_ipv6PreLen_div">
+						<label data-localize="11463"> IPv6 Prefix Length </label>
+					<?lua if (radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "3") then ?>
+                          <input type="hidden" class="one" name="advertisementPrefixes.prefixLength" value="$| radvdPrefixesTbl["advertisementPrefixes.prefixLength"] or '' |$" id="tf1_ipv6PreLen" > <p>$| radvdPrefixesTbl["advertisementPrefixes.prefixLength"] or '' |$</p>
+
+					<?lua else?>
+						<input type="text" class="one" name="advertisementPrefixes.prefixLength" value="$| radvdPrefixesTbl["advertisementPrefixes.prefixLength"] or '' |$" id="tf1_ipv6PreLen" maxlength="3" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 128, true, LANG_LOCALE['11286']+': ', '');}">
+						<dl>
+							[<span data-localize="12627">Range</span>: 0 - 128]
+						</dl>
+					<?lua end?>
+
+					</div>
+					<div class="break" id="break3_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_prefLifeTime_div">
+						<label data-localize="12526"> Prefix Lifetime </label>
+					<?lua if (radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "3") then ?>
+					<input type="hidden" class="one" name="advertisementPrefixes.prefixLifeTime" value="$| radvdPrefixesTbl["advertisementPrefixes.prefixLifeTime"] or '' |$" id="tf1_prefLifeTime" > <p>$| radvdPrefixesTbl["advertisementPrefixes.prefixLifeTime"] or '' |$ Seconds</p>
+					<?lua else?>
+						<input type="text" class="one" name="advertisementPrefixes.prefixLifeTime" value="$| radvdPrefixesTbl["advertisementPrefixes.prefixLifeTime"] or '' |$" id="tf1_prefLifeTime" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 5, 65536, true, LANG_LOCALE['11322']+': ', LANG_LOCALE['12732']);}">
+						<dl>
+							[<span data-localize="12627">Range</span>: 5 - 65536] <span data-localize="12732">Seconds</span>
+						</dl>
+					<?lua end?>
+					</div>
+					<div class="break" id="break4_div">
+						&nbsp;
+                    </div>
+                    <div class="configRow">
+                       <label data-localize="50104">VLAN Interface</label>
+                       <select size="1" name="advertisementPrefixes.vlanInterface" id="tf1_vlanInterface">
+                       <?
+                       local errorCode1, radvdInterfaceTbl = radvdPrefixes.radvdEnabledVlanIdGetAll ()
+                       for u, v in pairs (radvdInterfaceTbl) do
+                          if (v["LogicalIfName"] == "LAN") then
+                       ?>
+                          <option value="LAN" $|web.dropdownSelected(radvdPrefixesTbl["advertisementPrefixes.vlanInterface"]== "LAN") |$ > Default </option>
+                       <?
+                       else
+                              vlanId = v["LogicalIfName"]:sub (4)
+                              errorCode2, vlanName = vlan_vlan.vlanNameByIdGet (vlanId)
+                       ?>
+                       <option value="LAN$| vlanId |$" $| web.dropdownSelected(radvdPrefixesTbl["advertisementPrefixes.vlanInterface"] == "LAN".. vlanId ) |$ >$| vlanName |$ </option>
+                       <?lua end end?>
+                       </select>
+                </div>
+				</div>
+				<?lua if (radvdPrefixesTbl["advertisementPrefixes.prefixType"] == "3") then ?>
+				<p class="FL" style="line-height: 46px; padding: 0px 10px;"> Note : Prefix Obtain by  DHCPv6 server supports Non-Edit format</p>
+				<?lua else?>
+				<div class="dialogSubmitRow">
+					<input data-localize="12758" type="submit" onclick="return advertisementPrefixValidate('tf1_frmAdvertisementPrefixes')" class="btnSubmit" title="Save" value="Save" id="btSave" name="button.config.advertisementPrefixes.advertisementPrefixes.$| configRowId |$">
+				</div>
+				<?lua end?>
+			</div>
+<?lua end?>

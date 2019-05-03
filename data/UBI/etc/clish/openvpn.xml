@@ -1,0 +1,1147 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+
+ <VIEW name="openvpn-config" prompt="openvpn-config[policy]> ">
+     <COMMAND name="save" help="Save openvpn configuration changes">
+         <ACTION>lua clishCfgObjExec("OpenVpn")</ACTION>
+     </COMMAND>
+     <COMMAND name="cancel" help="Roll back openvpn configuration changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="exit" 
+              help="Save openvpn configuration changes and exit current mode."
+              view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("OpenVpn")</ACTION>
+     </COMMAND>
+     <COMMAND name="enable"
+              help="enable/disable openvpn client/server">
+      <PARAM name="openvpn_enable" 
+             help="enable/disable openvpn clien/servert"
+             ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.ServerEnable","${openvpn_enable}")
+
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="mode"
+              help="OpenVPN daemon mode. It can run in server mode, client mode or access server client mode">
+      <PARAM name="openvpn_mode" 
+             help="openvpn mode"
+             ptype="OPENVPN_MODE"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.OpenVpnMode","${openvpn_mode}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="server_identifier_type" help="OpenVPN server identifier type">
+      <PARAM name="openvpn_serveridentifiertype" 
+             help="OpenVPN server identifier type"
+             ptype="OPENVPN_SERVERIPTYPE"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.RemoteIpType","${openvpn_serveridentifiertype}")
+          </ACTION>
+     </COMMAND>
+<COMMAND name="server_ip" help="OpenVPN server IP address/FQDN to which the client connect."/>
+     <COMMAND name="server_ip ip_address" help="OpenVPN server IP address to which the client connect."> 
+      <PARAM name="openvpn_server_ip" 
+             help="The IP address of openvpn server"
+             ptype="ADDR"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.RemoteIp","${openvpn_server_ip}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="server_ip fqdn" help="OpenVPN server FQDN to which the client connect.">
+      <PARAM name="openvpn_server_ip" 
+             help="The FQDN of openvpn server"
+             ptype="STRING"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.RemoteIp","${openvpn_server_ip}")
+          </ACTION>
+     </COMMAND>
+    <COMMAND name="failover_server_identifier_type" help="OpenVPN failover server identifier type">
+      <PARAM name="openvpn_failover_serveridentifiertype" 
+             help="OpenVPN failover server identifier type"
+             ptype="OPENVPN_SERVERIPTYPE"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.FailoverRemoteIpType","${openvpn_failover_serveridentifiertype}")
+          </ACTION>
+     </COMMAND>
+
+    <COMMAND name="failover_server_ip" help="OpenVPN failover server IP address/FQDN to which the client connect."/>
+     <COMMAND name="failover_server_ip ip_address" help="OpenVPN failover server IP address to which the client connect."> 
+      <PARAM name="openvpn_failover_server_ip" 
+             help="The IP address of openvpn server"
+             ptype="ADDR"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.FailoverRemoteIp","${openvpn_failover_server_ip}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="failover_server_ip fqdn" help="OpenVPN failover server FQDN to which the client connect.">
+      <PARAM name="openvpn_failover_server_ip" 
+             help="The FQDN of openvpn server"
+             ptype="STRING"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.FailoverRemoteIp","${openvpn_failover_server_ip}")
+          </ACTION>
+     </COMMAND>
+
+     <COMMAND name="vpn_network"
+              help="Address of the Virtual Network">
+      <PARAM name="vpn_network" 
+             help="Address of the Virtual Network"
+             ptype="IP_ADDR"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.OpenVpnNetwork","${vpn_network}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="vpn_netmask"
+              help="Netmask of the Virtual Network">
+      <PARAM name="vpn_netmask" 
+             help="Netmask of the Virtual Network"
+             ptype="IP_ADDR"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.OpenVpnNetmask","${vpn_netmask}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="port"
+              help="The port number on which openvpn server(or Access Server) runs">
+      <PARAM name="openvpn_port" 
+             help="The port number on which openvpn server(or Access Server) runs"
+             ptype="PORT"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.Port","${openvpn_port}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="tunnel_protocol"
+              help="The protocol used to communicate with the remote host.Ex: Tcp, Udp. Udp is the default.">
+      <PARAM name="tunnel_protocol" 
+             help="The protocol used to communicate with the remote host.Ex: Tcp, Udp. Udp is the default."
+             ptype="PROTOCOL"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.TunnelProtocol","${tunnel_protocol}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="encription_algorithm"
+              help="The cipher with which the packets are encrypted. Ex: BF-CBC, AES-128,AES-192 and AES-256. BF-CBC is the default">
+      <PARAM name="encription_algorithm" 
+             help="The cipher with which the packets are encrypted. Ex: BF-CBC, AES-128,AES-192 and AES-256. BF-CBC is the default"    
+             ptype="ENCR_ALRTM"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.EncryptionAlgorithm","${encription_algorithm}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="hash_algorithm"
+              help="Message digest algorithm used to authenticate packets. Ex: SHA1, SHA256 and SHA512. SHA1 is the default.">
+      <PARAM name="hash_algorithm" 
+             help="Message digest algorithm used to authenticate packets. Ex: SHA1, SHA256 and SHA512. SHA1 is the default."
+             ptype="HASH_ALRTM"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.HashAlgorithm","${hash_algorithm}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="tunnel_type"
+              help="Select Full Tunnel to redirect all the traffic through the tunnel. Select Split Tunnel to redirect traffic to only specified resources (added from openVpnClient Routes) through the tunnel. Full Tunnel is the default.">
+      <PARAM name="tunnel_type" 
+             help="Select Full Tunnel to redirect all the traffic through the tunnel. Select Split Tunnel to redirect traffic to only specified resources (added from openVpnClient Routes) through the tunnel. Full Tunnel is the default."
+             ptype="TUNNEL_TYPE"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.TunnelType","${tunnel_type}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="allow_client_to_client"
+              help="Enable this to allow openvpn clients to communicate with each other in split tunnel case. Disabled by default.">
+      <PARAM name="allow_client_to_client" 
+             help="Enable this to allow openvpn clients to communicate with each other in split tunnel case. Disabled by default."
+             ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.AllowClientToClient","${allow_client_to_client}")
+          </ACTION>
+     </COMMAND>
+
+     <COMMAND name="enable_tls_authkey"
+              help="Enabling this adds Tls authentication which adds an additional layer of authentication. Can be checked only when the tls key is uploaded. Disabled by default.">
+      <PARAM name="enable_tls_authkey" 
+             help="Enabling this adds Tls authentication which adds an additional layer of authentication. Can be checked only when the tls key is uploaded. Disabled by default."
+             ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.TlsEnabled","${enable_tls_authkey}")
+          </ACTION>
+       </COMMAND>
+       <COMMAND name="block_invalid_client_certificates"
+                help="Enabling this blocks invalid client certificates based on the CRL certificate uploaded. Can be checked only when the CRL certificate is uploaded. Disabled by default.">
+         <PARAM name="block_invalid_client_certificates" 
+                help="Enabling this blocks invalid client certificates based on the CRL certificate uploaded. Can be checked only when the CRL certificate is uploaded. Disabled by default."
+                ptype="BOOL"/>
+            <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.BlockCertWithCRL","${block_invalid_client_certificates}")
+            </ACTION>
+        </COMMAND>
+     <COMMAND name="duplicate_cn"
+              help="Enable this to allow multiple clients to connectd.">
+       <PARAM name="duplicateCN" 
+             help="Enable/Disable"
+             ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.duplicateCN","${duplicateCN}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="user_based_auth"
+              help="Enable this to allow clients to authenticate with server.">
+       <PARAM name="userAuthSupportEnable" 
+             help="Enable/Disable"
+             ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.userAuthSupportEnable","${userAuthSupportEnable}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="username"
+              help="username to authenticate to server.">
+       <PARAM name="openvpn_client_username" 
+             help="username for authenticating to server."
+             ptype="STRING"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.UserName","${openvpn_client_username}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="password"
+              help="password to authenticate to server.">
+       <PARAM name="openvpn_client_password" 
+             help="password for authenticating to server."
+             ptype="STRING"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.Password","${openvpn_client_password}")
+          </ACTION>
+     </COMMAND>
+    <COMMAND name="openvpn-portal-user" help="openvpn portal type "/>
+ 	<COMMAND name="openvpn-portal-user auth-mode" help="authentication-server for user">
+	    <PARAM name="authMode"
+            help=" authentication type"
+            ptype="OPENVPN_AUTH_MODE"/>
+         <ACTION>lua clishCfgObjAdd ("OpenVpn", "OpenVpn.authMode","${authMode}")
+             </ACTION>
+    </COMMAND>
+       <COMMAND name="openvpn-portal-user auth-type" help="authentication-type for user">
+	<PARAM name="authType"
+            help=" authentication server type"
+            ptype="OPENVPN_AUTH_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("OpenVpn", "OpenVpn.authType","${authType}")
+             </ACTION>
+    </COMMAND>
+
+
+     <COMMAND name="certificate_verification"
+              help="Enable Certificate Verification .">
+       <PARAM name="certificate_verification" 
+             help="Enable/Disable"
+             ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpn", "OpenVpn.certificateVerification","${certificate_verification}")
+          </ACTION>
+     </COMMAND>
+      <COMMAND name="certs_selection" help="See available server client upload certificates list by show command">
+	<PARAM name="certs_selection" 
+        help="select the certificates for openvpn ."
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("OpenVpn", "OpenVpn.serverClientCertsName","${certs_selection}")
+	</ACTION>
+      </COMMAND>
+      <COMMAND name="tls_certs_selection" help="See available tls upload certificates list by show command">
+	<PARAM name="tls_certs_selection" 
+        help="select the tls certificates for openvpn ."
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("OpenVpn", "OpenVpn.TlsCertsName","${tls_certs_selection}")
+	</ACTION>
+      </COMMAND>
+      <COMMAND name="crl_certs_selection" help="See available crl upload certificates list by show command">
+	<PARAM name="crl_certs_selection" 
+        help="select the crl certificates for openvpn ."
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("OpenVpn", "OpenVpn.CrlCertsName","${crl_certs_selection}")
+	</ACTION>
+      </COMMAND>
+
+
+ </VIEW>
+
+<!--=======================================================-->
+<COMMAND name="vpn openvpn" help="Display openvpn configure commands"/>
+
+<!--=======================================================-->
+<COMMAND name="show vpn openvpn" help="Display openvpn commands"/>
+
+<!--=======================================================-->
+    <COMMAND name="vpn openvpn config"
+             help="openvpn configuration mode"
+             view="openvpn-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("OpenVpn", 
+                                       openVpnCfgInit, 
+                                       openVpnCfgSave,
+                                       openVpnCfgInputVal)
+	    </ACTION>
+    </COMMAND>
+<!--===================================================-->
+   <COMMAND name="show vpn openvpn server_client_upload_certificates_all"
+             help="Display list of available server/client certificates">
+             <ACTION>lua clishCmdExec (certificatesListGet )
+                 </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+   <COMMAND name="show vpn openvpn tls_upload_certificates_all"
+             help="Display list of available tls certificates">
+             <ACTION>lua clishCmdExec (tlscertificatesListGet )
+                 </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+
+   <COMMAND name="show vpn openvpn crl_upload_certificates_all"
+             help="Display list of available crl certificates">
+             <ACTION>lua clishCmdExec (crlCerticatesListGet )
+                 </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+
+    <COMMAND name="show vpn openvpn config"
+             help="Display openvpn configuration">
+             <ACTION>lua clishCmdExec (openVpnConfigGet)
+             </ACTION>
+    </COMMAND>
+
+<!--=======================================================-->
+
+ <VIEW name="openvpn-remote-network-config" prompt="openvpn-remote-network[config]> ">
+     <COMMAND name="save" help="Save Remote network changes">
+         <ACTION>lua clishCfgObjExec("OpenVpnGwRoutes")</ACTION>
+     </COMMAND>
+     <COMMAND name="cancel" help="Roll back Remote network configuration changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="exit" 
+              help="Save Remote network configuration changes and exit current mode."
+              view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("OpenVpnGwRoutes")</ACTION>
+     </COMMAND>
+
+    <COMMAND name="common_name"
+              help="Common Name of the OpenVPN client certificate">
+      <PARAM name="common_name" 
+             help="Common Name of the OpenVPN client certificate"
+             ptype="STRING"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpnGwRoutes", "OpenVpnGwRoutes.CommonName","${common_name}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="remote_network"
+              help="Network address of the remote resource.">
+      <PARAM name="remote_network" 
+             help="Network address of the remote resource."
+             ptype="IP_ADDR"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpnGwRoutes", "OpenVpnGwRoutes.Network","${remote_network}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="remote_netmask"
+              help="Netmask of the remote resource.">
+      <PARAM name="remote_netmask" 
+             help="Netmask of the remote resource."
+             ptype="IP_ADDR"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpnGwRoutes", "OpenVpnGwRoutes.Netmask","${remote_netmask}")
+          </ACTION>
+   </COMMAND>
+</VIEW>
+
+
+
+
+<!--=======================================================-->
+     <COMMAND name="vpn openvpn remote_network" 
+         help="open vpn remote networks configuration commands."/>
+ 
+     <COMMAND name="vpn openvpn remote_network add"
+         help="add a new remote network"
+         view="openvpn-remote-network-config" viewid="">
+	<ACTION>lua clishCfgObjNew("OpenVpnGwRoutes", 
+            openVpnRemoteCfgInit, openVpnRemoteCfgSave, 
+            openVpnRemoteCfgInputVal)
+        </ACTION>
+     </COMMAND>
+ 
+     <COMMAND name="vpn openvpn remote_network edit"
+         help="remote network edit mode."
+         view="openvpn-remote-network-config" viewid="">
+         <PARAM name="row_id" 
+             help=" Row Id Of the remote network to be edited.Use command 'show openvpn remote network all'  to dislay all remote networks on system"
+             ptype="UINT"/>
+	<ACTION>lua clishCfgObjNew("OpenVpnGwRoutes",
+            openVpnRemoteCfgInit, openVpnRemoteCfgSave,
+            openVpnRemoteCfgInputVal,"${row_id}")
+        </ACTION>
+     </COMMAND>
+ 
+     <COMMAND name="vpn openvpn remote_network delete"
+         help="openvpn remote network delete mode.">
+         <PARAM name="row_id" 
+             help="Row Id Of the remote network to be deleted.Use command 'show openvpn remote network all'  to dislay all remote networks on system"
+             ptype="UINT"/>
+         <ACTION>lua clishCmdExec(openVpnGwRoutesCfgDel,"${row_id}")
+         </ACTION>
+     </COMMAND>
+
+ 
+     <!--=======================================================-->
+     <COMMAND name="show vpn openvpn remote_network_all"
+         help="Display all openvpn remote network  on system">
+         <ACTION>lua clishCmdExec (openVpnGwRoutesGetAll) </ACTION>
+     </COMMAND>
+<!--=======================================================-->
+
+ <VIEW name="openvpn-local-network-config" prompt="openvpn-local-network[config]> ">
+     <COMMAND name="save" help="Save local network changs">
+         <ACTION>lua clishCfgObjExec("OpenVpnLanRoutes")</ACTION>
+     </COMMAND>
+     <COMMAND name="cancel" help="Roll back local network configuration changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="exit" 
+              help="Save local network configuration changes and exit current mode."
+              view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("OpenVpnLanRoutes")</ACTION>
+     </COMMAND>
+     <COMMAND name="local_network"
+              help="Network address of the local resource.">
+      <PARAM name="local_network" 
+             help="Network address of the local resource."
+             ptype="IP_ADDR"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpnLanRoutes", "OpenVpnLanRoutes.Network","${local_network}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="local_netmask"
+              help="Netmask of the local resource.">
+      <PARAM name="local_netmask" 
+             help="Netmask of the local resource."
+             ptype="IP_ADDR"/>
+          <ACTION>lua clishCfgObjAdd("OpenVpnLanRoutes", "OpenVpnLanRoutes.Netmask","${local_netmask}")
+          </ACTION>
+   </COMMAND>
+</VIEW>
+
+
+<!--=======================================================-->
+     <COMMAND name="vpn openvpn local_network" 
+         help="open vpn local networks configuration commands."/>
+
+     <!--=======================================================-->
+     <COMMAND name="vpn openvpn local_network add"
+         help="add a new local network"
+         view="openvpn-local-network-config" viewid="">
+         <ACTION>lua clishCfgObjNew ("OpenVpnLanRoutes",
+             openVpnLanRoutesCfgInit, openVpnLanRoutesCfgSave,
+             openVpnLanRoutesCfgInputVal)
+         </ACTION>
+     </COMMAND>
+    <COMMAND name="vpn openvpn local_network edit"
+         help="local network edit mode."
+         view="openvpn-local-network-config" viewid="">
+         <PARAM name="row_id" 
+             help=" Row Id Of the local network to be edited.Use command 'show openvpn local network all'  to dislay all local networks on system"
+             ptype="UINT"/>
+         <ACTION>lua clishCfgObjNew ("OpenVpnLanRoutes",
+             openVpnLanRoutesCfgInit, openVpnLanRoutesCfgSave,
+             openVpnLanRoutesCfgInputVal,"${row_id}")
+         </ACTION>
+     </COMMAND>
+
+     <COMMAND name="vpn openvpn local_network delete"
+         help="openvpn local network delete mode.">
+         <PARAM name="row_id" 
+             help="Row Id Of the local network to be deleted.Use command 'show openvpn local network all'  to dislay all local networks on system"
+             ptype="UINT"/>
+         <ACTION>lua clishCmdExec (openVpnLanRoutesCfgDel,"${row_id}")
+         </ACTION>
+     </COMMAND>
+
+
+     <!--=======================================================-->
+     <COMMAND name="show vpn openvpn local_network_all"
+         help="Display all openvpn local network  on system">
+         <ACTION>lua clishCmdExec (openVpnLanRoutesGetAll) </ACTION>
+     </COMMAND>
+<!--=======================================================-->
+
+<COMMAND name="vpn openvpn cert_upload" help="openvpn local network display mode"/>
+<!--=======================================================-->
+ <VIEW name="openvpn-certs-upload-config" prompt="openvpn-certs-upload[config]> ">
+     <COMMAND name="save" help="Save openvpn client/server certificates configuration ">
+         <ACTION>lua clishCfgObjExec("OpenvpnAuthCertificates")</ACTION>
+     </COMMAND>
+     <COMMAND name="cancel" help="Roll back local network configuration changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="exit" 
+              help="Save certificates client server configuration changes and exit current mode."
+              view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("OpenvpnAuthCertificates")</ACTION>
+     </COMMAND>
+
+ <COMMAND name="name"
+              help="Unique name of the openvpn server_client certs identification name .">
+      <PARAM name="server_client_name" 
+             help="Unique name of the openvpn server_client certs identification name."
+             ptype="STRING_ALPHA_NUM"/>
+          <ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "serverClientCertificate.certificateName","${server_client_name}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="upload_ca_filename"
+              help="upload the CA certificate corresponding client server Certificate.">
+      <PARAM name="ca_fileName" 
+             help="file name of CA cert located in tftp server root directory."
+             ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "OpenvpnAuthCertificates.ca_fileName","${ca_fileName}")
+          </ACTION>
+
+     </COMMAND>
+     <COMMAND name="upload_ca_ipaddress"
+              help="give the ipaddress for ca.crt">
+
+	<PARAM name="ca_ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "OpenvpnAuthCertificates.ca_ipAddr","${ca_ipAddr}")
+          </ACTION>
+     </COMMAND>
+	 <COMMAND name="upload_crt_filename"
+              help="upload the CRT certificate corresponding client server Certificate.">
+      <PARAM name="crt_fileName" 
+             help="file name of CRT cert located in tftp server root directory."
+             ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "OpenvpnAuthCertificates.crt_fileName","${crt_fileName}")
+          </ACTION>
+
+     </COMMAND>
+     <COMMAND name="upload_crt_ipaddress"
+              help="give the ipaddress for ca.crt">
+
+	<PARAM name="crt_ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "OpenvpnAuthCertificates.crt_ipAddr","${crt_ipAddr}")
+          </ACTION>
+     </COMMAND>
+      <COMMAND name="upload_key_filename"
+              help="upload the Key corresponding client server Certificate.">
+      <PARAM name="key_fileName" 
+             help="file name of Key located in tftp server root directory."
+             ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "OpenvpnAuthCertificates.key_fileName","${key_fileName}")
+          </ACTION>
+
+     </COMMAND>
+     <COMMAND name="upload_key_ipaddress"
+              help="give the ipaddress for server.key">
+
+	<PARAM name="key_ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "OpenvpnAuthCertificates.key_ipAddr","${key_ipAddr}")
+          </ACTION>
+     </COMMAND>
+    <COMMAND name="upload_dh_filename"
+              help="upload the dh corresponding client server Certificate.">
+      <PARAM name="dh_fileName" 
+             help="file name of dh.pem located in tftp server root directory."
+             ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "OpenvpnAuthCertificates.dh_fileName","${dh_fileName}")
+          </ACTION>
+
+     </COMMAND>
+     <COMMAND name="upload_dh_ipaddress"
+              help="give the ipaddress for dh.pem">
+
+	<PARAM name="dh_ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnAuthCertificates", "OpenvpnAuthCertificates.dh_ipAddr","${dh_ipAddr}")
+          </ACTION>
+     </COMMAND>
+
+</VIEW>
+
+
+
+    <COMMAND name="vpn openvpn cert_upload config"
+        help="upload the pem formatted config file">
+                <PARAM name="fileName" 
+               help="file name of config file located in tftp server root directory"
+           ptype="STRING"/>
+    <PARAM name="ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+
+       <ACTION>lua openvpnConfigCertUpload ("${fileName}","${ipAddr}")</ACTION>
+    </COMMAND>
+
+
+<!--=======================================================-->
+     <COMMAND name="vpn openvpn certs_upload_config" 
+         help="openvpn certs upload client/server configuration commands."/>
+<!--===================================================-->
+
+ <COMMAND name="vpn openvpn certs_upload_config add"
+         help="add a new certificates configuration"
+         view="openvpn-certs-upload-config" viewid="">
+         <ACTION>lua clishCfgObjNew ("OpenvpnAuthCertificates",
+             OpenvpnAuthCertificatesConfigCfgInit, OpenvpnAuthCertificatesConfigCfgSave,
+             OpenvpnAuthCertificatesConfigCfgInputVal)
+         </ACTION>
+     </COMMAND>
+
+     <COMMAND name="vpn openvpn certs_upload_config delete"
+         help="openvpn certificates configuration delete mode.">
+         <PARAM name="row_id" 
+             help="Row Id Of the openvpn certificates configuration to be deleted.Use command 'show openvpn certs configuration all'  to dislay all openvpn client server configurations on system"
+             ptype="UINT"/>
+         <ACTION>lua clishCmdExec (OpenvpnAuthCertificatesConfigCfgDel,"${row_id}")
+         </ACTION>
+     </COMMAND>
+     
+<!--=======================================================-->
+ <VIEW name="openvpn-tls-upload-config" prompt="openvpn-tls-upload[config]> ">
+     <COMMAND name="save" help="Save tls certs configuration changes">>
+         <ACTION>lua clishCfgObjExec("OpenvpnTlsCertificates")</ACTION>
+     </COMMAND>
+     <COMMAND name="cancel" help="Roll back local network configuration changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="exit" 
+              help="Save tls certs configuration changes and exit current mode."
+              view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("OpenvpnTlsCertificates")</ACTION>
+     </COMMAND>
+     <COMMAND name="tls_name"
+              help="Unique name of the openvpn tls certificate.">
+      <PARAM name="tls_name" 
+             help="Unique name of the openvpn tls certificate."
+             ptype="STRING_ALPHA_NUM"/>
+          <ACTION>lua clishCfgObjAdd("OpenvpnTlsCertificates", "OpenvpnTlsCertificates.name","${tls_name}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="tls_key_upload_filename"
+              help="upload the TLS Key corresponding TA Certificate.">
+      <PARAM name="fileName" 
+             help="file name of TA Key located in tftp server root directory."
+             ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnTlsCertificates", "OpenvpnTlsCertificates.fileName","${fileName}")
+          </ACTION>
+
+     </COMMAND>
+     <COMMAND name="tls_key_upload_ipaddress"
+              help="give the ipaddress for ta.key">
+
+	<PARAM name="ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnTlsCertificates", "OpenvpnTlsCertificates.ipAddr","${ipAddr}")
+          </ACTION>
+     </COMMAND>
+</VIEW> 
+
+<!--=======================================================-->
+    <COMMAND name="vpn openvpn tls_upload_config" 
+         help="openvpn tls upload commands."/>
+
+<!--===================================================-->
+ <COMMAND name="vpn openvpn tls_upload_config add"
+         help="add a new tls certificates configuration"
+         view="openvpn-tls-upload-config" viewid="">
+         <ACTION>lua clishCfgObjNew ("OpenvpnTlsCertificates",
+             OpenvpnTlsCertificatesCfgInit, OpenvpnTlsCertificatesCfgSave,
+             OpenvpnTlsCertificatesCfgInputVal)
+         </ACTION>
+     </COMMAND>
+
+ <COMMAND name="vpn openvpn tls_upload_config delete"
+         help="openvpn tls certificates configuration delete mode.">
+         <PARAM name="row_id" 
+             help="Row Id Of the openvpn tls certificates configuration to be deleted.Use command 'show openvpn tls configuration all'  to dislay all openvpn tls configurations on system"
+             ptype="UINT"/>
+         <ACTION>lua clishCmdExec (OpenvpnTlsCertificatesCfgDel,"${row_id}")
+         </ACTION>
+     </COMMAND>
+     
+<!--===================================================-->
+<VIEW name="openvpn-crl-upload-config" prompt="openvpn-crl-upload[config]> ">
+     <COMMAND name="save" help="Save crl certs configuration changes">
+         <ACTION>lua clishCfgObjExec("OpenvpnCrlCertificates")</ACTION>
+     </COMMAND>
+     <COMMAND name="cancel" help="Roll back local network configuration changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="exit" 
+              help="Save crl certs configuration changes and exit current mode."
+              view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("OpenvpnCrlCertificates")</ACTION>
+     </COMMAND>
+     <COMMAND name="crl_name"
+              help="Unique name of the openvpn crl certificate.">
+      <PARAM name="crl_name" 
+             help="Unique name of the openvpn crl certificate."
+             ptype="STRING_ALPHA_NUM"/>
+          <ACTION>lua clishCfgObjAdd("OpenvpnCrlCertificates", "OpenvpnCrlCertificates.name","${crl_name}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="crl_key_upload_filename"
+              help="upload the crl pem corresponding crl.pem .">
+      <PARAM name="fileName" 
+             help="file name of crl pem located in tftp server root directory."
+             ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnCrlCertificates", "OpenvpnCrlCertificates.fileName","${fileName}")
+          </ACTION>
+
+     </COMMAND>
+     <COMMAND name="crl_key_upload_ipaddress"
+              help="give the ipaddress for crl.pem">
+
+	<PARAM name="ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnCrlCertificates", "OpenvpnCrlCertificates.ipAddr","${ipAddr}")
+          </ACTION>
+     </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+    <COMMAND name="vpn openvpn crl_upload_config" 
+         help="openvpn crl upload commands."/>
+
+<!--===================================================-->
+ <COMMAND name="vpn openvpn crl_upload_config add"
+         help="add a new crl certificates configuration"
+         view="openvpn-crl-upload-config" viewid="">
+         <ACTION>lua clishCfgObjNew ("OpenvpnCrlCertificates",
+             OpenvpnCrlCertificatesConfigCfgInit,OpenvpnCrlCertificatesConfigCfgSave,
+             OpenvpnCrlCertificatesConfigCfgInputVal)
+         </ACTION>
+     </COMMAND>
+    
+     <COMMAND name="vpn openvpn crl_upload_config delete"
+         help="crl cert configuration delete mode.">
+         <PARAM name="row_id" 
+             help="Row Id Of the crl cert configuration to be deleted.Use command 'show openvpn crl configuration all'  to dislay all crl certs configurations on system"
+             ptype="UINT"/>
+         <ACTION>lua clishCmdExec (OpenvpnCrlCertificatesConfigCfgDel,"${row_id}")
+         </ACTION>
+     </COMMAND>
+
+
+
+<!--=======================================================-->
+
+ <VIEW name="openvpn-omnissl-client-config" prompt="openvpn-omnissl-client[config]> ">
+     <COMMAND name="save" help="Save omnissl client configuration changes">
+         <ACTION>lua clishCfgObjExec("OpenvpnClientConfig")</ACTION>
+     </COMMAND>
+     <COMMAND name="cancel" help="Roll back local network configuration changes.">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="exit" 
+              help="Save omnissl client configuration changes and exit current mode."
+              view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("OpenvpnClientConfig")</ACTION>
+     </COMMAND>
+     <COMMAND name="client_name"
+              help="Unique client name of the openvpn user.">
+      <PARAM name="client_name" 
+             help="Unique client name of the openvpn user."
+             ptype="STRING_ALPHA_NUM"/>
+          <ACTION>lua clishCfgObjAdd("OpenvpnClientConfig", "OpenvpnClientConfig.clientName","${client_name}")
+          </ACTION>
+     </COMMAND>
+     <COMMAND name="ca_key_upload_filename"
+              help="upload the CA Key corresponding CA Certificate.">
+      <PARAM name="fileName" 
+             help="file name of CA Key located in tftp server root directory."
+             ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnClientConfig", "OpenvpnClientConfig.fileName","${fileName}")
+          </ACTION>
+
+     </COMMAND>
+     <COMMAND name="ca_key_upload_ipaddress"
+              help="give the ipaddress for ca.key">
+
+	<PARAM name="ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd("OpenvpnClientConfig", "OpenvpnClientConfig.ipAddr","${ipAddr}")
+          </ACTION>
+     </COMMAND>
+
+
+
+</VIEW>
+
+
+<!--=======================================================-->
+     <COMMAND name="vpn openvpn omnissl_configuration" 
+         help="openvpn omnissl client configuration commands."/>
+<!--===================================================-->
+
+ <COMMAND name="vpn openvpn omnissl_configuration add"
+         help="add a new omnissl client configuration"
+         view="openvpn-omnissl-client-config" viewid="">
+         <ACTION>lua clishCfgObjNew ("OpenvpnClientConfig",
+             OpenvpnClientConfigCfgInit, OpenvpnClientConfigCfgSave,
+             OpenvpnClientConfigCfgInputVal)
+         </ACTION>
+     </COMMAND>
+
+     <COMMAND name="vpn openvpn omnissl_configuration delete"
+         help="omnissl client configuration delete mode.">
+         <PARAM name="row_id" 
+             help="Row Id Of the omnissl client configuration to be deleted.Use command 'show openvpn omnissl configuration all'  to dislay all omnissl client configurations on system"
+             ptype="UINT"/>
+         <ACTION>lua clishCmdExec (OpenvpnClientConfigCfgDel,"${row_id}")
+         </ACTION>
+     </COMMAND>
+     
+<!--===================================================-->
+
+     <COMMAND name="show vpn openvpn omnissl-client-config_all"
+         help="Display all openvpn client configurations on system">
+         <ACTION>lua clishCmdExec (openVpnClientConfigGetAll) </ACTION>
+     </COMMAND>
+
+<!--=======================================================-->
+<VIEW name="openvpn-policy-edit" prompt="[openvpn-policy-settings]> "> 
+    <COMMAND name="save" help="Save openvpn policy settings">
+	     <ACTION>lua clishCfgObjExec("OpenVpnConfigPolicy")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save openvpn policy settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("OpenVpnConfigPolicy")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back openvpn policy settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="policy_address"
+             help="policy address">
+             <PARAM name="policy_address"
+                    help="policy address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.Address", "${policy_address}")
+             </ACTION>
+ 	</COMMAND>
+	<COMMAND name="policy_masklength"
+             help="policy masklength">
+             <PARAM name="policy_masklength"
+                    help="policy masklength"
+                    ptype="MASK_LENGTH"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.MaskLength", "${policy_masklength}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="start_port"
+             help="start port">
+             <PARAM name="start_port"
+                    help="start port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.StartPort", "${start_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="end_port"
+             help="end port">
+             <PARAM name="end_port"
+                    help="end port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.EndPort", "${end_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_permission"
+             help="policy permission">
+             <PARAM name="policy_permission"
+                    help="policy permission"
+                    ptype="OPENVPN_POLICY_PERMISSION"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.Permission", "${policy_permission}")
+             </ACTION>
+    </COMMAND>
+    	<COMMAND name="icmp"
+             help="include icmp traffic">
+             <PARAM name="icmp"
+                    help="include icmp traffic"
+                    ptype="SSL_ICMP_BLOCK"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.IcmpBlock", "${icmp}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="openvpn-policy" prompt="[openvpn-policy-settings]> "> 
+    <COMMAND name="save" help="Save openvpn policy settings">
+	     <ACTION>lua clishCfgObjExec("OpenVpnConfigPolicy")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save openvpn policy settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("OpenVpnConfigPolicy")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back openvpn policy settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="policy_type"
+             help="policy type">
+             <PARAM name="policy_type"
+                    help="policy type"
+                    ptype="OPENVPN_POLICY_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.PolicyType", "${policy_type}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_owner"
+             help="policy owner">
+             <PARAM name="policy_owner"
+                    help="policy owner"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.PolicyOwnerName", "${policy_owner}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="destination_objecttype"
+             help="destination object type">
+             <PARAM name="destination_objecttype"
+                    help="destination object type"
+                    ptype="OPENVPN_POLICY_DESTINATION_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.DestinationObjectType", "${destination_objecttype}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_name"
+             help="policy name">
+             <PARAM name="policy_name"
+                    help="policy name"
+                    ptype="STRING_ALPHA_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.PolicyName", "${policy_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_address"
+             help="policy address">
+             <PARAM name="policy_address"
+                    help="policy address"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.Address", "${policy_address}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_masklength"
+             help="policy masklength">
+             <PARAM name="policy_masklength"
+                    help="policy masklength"
+                    ptype="MASK_LENGTH"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.MaskLength", "${policy_masklength}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="start_port"
+             help="start port">
+             <PARAM name="start_port"
+                    help="start port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.StartPort", "${start_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="end_port"
+             help="end port">
+             <PARAM name="end_port"
+                    help="end port"
+                    ptype="PORT"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.EndPort", "${end_port}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="policy_permission"
+             help="policy permission">
+             <PARAM name="policy_permission"
+                    help="policy permission"
+                    ptype="OPENVPN_POLICY_PERMISSION"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.Permission", "${policy_permission}")
+             </ACTION>
+    </COMMAND>
+    	<COMMAND name="icmp"
+             help="include icmp traffic">
+             <PARAM name="icmp"
+                    help="include icmp traffic"
+                    ptype="SSL_ICMP_BLOCK"/>
+             <ACTION>lua clishCfgObjAdd ("OpenVpnConfigPolicy", "OpenVpnConfigPolicy.IcmpBlock", "${icmp}")
+             </ACTION>
+    </COMMAND>
+</VIEW>
+
+
+<!--=======================================================-->
+<COMMAND name="vpn openvpn policy" 
+	help="openvpn policy configuration commands"/>
+<!--=======================================================-->
+	<COMMAND name="vpn openvpn policy add"
+             help="Add an openvpn policy"
+             view="openvpn-policy" viewid="">
+                   <ACTION>lua clishCfgObjNew ("OpenVpnConfigPolicy", 
+                              openvpnPolicyCfgInit, openvpnPolicyCfgSave, 
+				       openvpnPolicyCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn openvpn policy edit"
+             help="Edit an openvpn policy"
+             view="openvpn-policy-edit" viewid="">
+	<PARAM name="row_id" 
+	       help="Row Id Of the policy to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("OpenVpnConfigPolicy", 
+                              openvpnPolicyCfgInit, openvpnPolicyCfgSave, 
+							  openvpnPolicyCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn openvpn policy delete"
+		help="Delete an openvpn policy">
+	<PARAM name="row_id" 
+	       help="Row Id Of the openvpn policy to be deleted"
+	       ptype="UINT"/>
+			 	   <ACTION>lua clishCmdExec(openvpnPolicyCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+     
+<!--===================================================-->
+<COMMAND name="show vpn openvpn policy" 
+	help="show openvpn policy settings">
+	 	  <ACTION>lua clishCmdExec(openvpnPolicyShow)</ACTION>
+</COMMAND>
+
+<!--=======================================================-->
+<VIEW name="openvpn-certificates" prompt="[openvpn-certificates-settings]> "> 
+    <COMMAND name="save" help="Save openvpn certificates settings">
+	     <ACTION>lua clishCfgObjExec("OpenvpnCertificates")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save openvpn certificates settings and exit current mode" 
+	     view="root-view" viewid="">
+		 <ACTION>lua clishCfgObjExec("OpenvpnCertificates")
+		 </ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back openvpn certificates settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+	</COMMAND>
+	<COMMAND name="country_name"
+             help="country name">
+             <PARAM name="country_name"
+                    help="country name"
+                    ptype="STRING2"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.countryName", "${country_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="state"
+             help="state">
+             <PARAM name="state"
+                    help="state"
+                    ptype="STRING20"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.provinceName", "${state}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="locality_name"
+             help="locality name">
+             <PARAM name="locality_name"
+                    help="locality name"
+                    ptype="STRING20"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.localityName", "${locality_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="organization_name"
+             help="organization name">
+             <PARAM name="organization_name"
+                    help="organization name"
+                    ptype="STRING20"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.organizationName", "${organization_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="org_unit_name"
+             help="organizational Unit Name">
+             <PARAM name="org_unit_name"
+                    help="org_unit_name"
+                    ptype="STRING20"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.orgUnitName", "${org_unit_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="common_name"
+             help="common name">
+             <PARAM name="common_name"
+                    help="common name"
+                    ptype="STRING32"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.commonName", "${common_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="email_name"
+             help="email name">
+             <PARAM name="email_name"
+                    help="email name"
+                    ptype="STRING32"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.emailName", "${email_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="server_name"
+             help="serverName">
+             <PARAM name="server_name"
+                    help="serverName"
+                    ptype="STRING15"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.serverName", "${server_name}")
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="client_name"
+             help="clientName">
+             <PARAM name="client_name"
+                    help="clientName"
+                    ptype="STRING15"/>
+             <ACTION>lua clishCfgObjAdd ("OpenvpnCertificates", "openvpnCertificates.clientName", "${client_name}")
+             </ACTION>
+    </COMMAND>
+   </VIEW>
+
+<!--=======================================================-->
+<COMMAND name="vpn openvpn certificates" 
+	help="openvpn certificates configuration commands"/>
+<!--=======================================================-->
+	<COMMAND name="vpn openvpn certificates add"
+             help="Add an openvpn certificates"
+             view="openvpn-certificates" viewid="">
+                   <ACTION>lua clishCfgObjNew ("OpenvpnCertificates", 
+                              openvpnCertificatesCfgInit, openvpnCertificatesCfgSave, 
+				       openvpnCertificatesCfgInputVal,nil)
+                   </ACTION>
+    </COMMAND>
+	<COMMAND name="vpn openvpn certificates delete"
+		help="Delete an openvpn certificates">
+	<PARAM name="row_id" 
+	       help="Row Id Of the openvpn certificates to be deleted"
+	       ptype="UINT"/>
+			 	   <ACTION>lua clishCmdExec(openvpnCertificatesCfgDel,"${row_id}")</ACTION>
+    </COMMAND>
+<!--===================================================-->
+    <COMMAND name="vpn openvpn certificates download"
+             access="admin"
+        help="Download openvpn certificates to the host machine">
+		<PARAM name="row_id" 
+	       help="Row Id Of the openvpn certificates to be generated"
+	       ptype="UINT"/>
+ 
+        	<PARAM name="fileName" 
+	       help="create a file openVpnCerts.tgz in the tftp server root directory to 
+	  which the openVpnCerts will be transfered."
+           ptype="STRING_FILE"/>
+    <PARAM name="ipAddr" 
+	       help="ip address of tftp server"
+	       ptype="IP_ADDR"/>
+       <ACTION>lua openvpnCLICertificatesDownload ("${row_id}","${fileName}","${ipAddr}")</ACTION>
+    </COMMAND>
+
+<!--===================================================-->
+    <COMMAND name="vpn openvpn certificates default_server"
+             access="admin"
+        help="Default certificates as server certificates">
+		<PARAM name="row_id" 
+	       help="Row Id Of the openvpn certificates as default server certificates"
+	       ptype="UINT"/>
+ 
+       <ACTION>lua openvpnCLICertificatesDefaultServer ("${row_id}")</ACTION>
+    </COMMAND>
+<!--===================================================-->
+    <COMMAND name="vpn openvpn certificates default_client"
+             access="admin"
+        help="Default certificates as client certificates">
+		<PARAM name="row_id" 
+	       help="Row Id Of the openvpn certificates as default client certificates"
+	       ptype="UINT"/>
+ 
+       <ACTION>lua openvpnCLICertificatesDefaultClient ("${row_id}")</ACTION>
+    </COMMAND>
+<!--===================================================-->
+
+     <COMMAND name="show vpn openvpn certificates"
+         help="Display all openvpn certificates on system">
+         <ACTION>lua clishCmdExec (openvpnCertificatesShow) </ACTION>
+     </COMMAND>
+
+
+ <!--=======================================================-->
+
+</CLISH_MODULE>
+

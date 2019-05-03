@@ -1,0 +1,1647 @@
+<?lua
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!--Controller Wizard -->
+
+<div id="tf1Wizard_controllerWizardDailogContent">
+
+<form id="tf1Wizard_controllerForm" method="post">
+    <input type="hidden" name="thispage" id="tf1Wizard_thispage" value="wizard.html">
+    <input type="hidden" name="button.controller.wizard" value="controller">
+	<input type="hidden" id="tf1Wizard_licenceStatus" name="licenceStatus" value="<?lua if( VPN_LICENCE_STATUS == false) then ?>0<?lua else ?>1<?lua end ?>">
+
+<?lua
+
+require "teamf1lualib/groups_bl"
+require "teamf1lualib/users_bl"
+local gui_groups = require("com.teamf1.bl.userdb.groups")
+local gui_users = require("com.teamf1.bl.userdb.users")
+local userTable = {}
+returnCode, cookie, userTable  = gui_users.loggedInProfileGetRow ()
+?>
+
+<!-- Users Start -->
+
+<div id="tf1Wizard_usersWizardDailogContent" class="divStep">
+  <div class="topBgWizard">
+    <h1>Controller Wizard - [User]</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard"> 
+  	
+
+	
+    <div id="tf1Wizard_divStep1Users">
+ 
+    <div class="wizardMessage">
+      <p>Configure Logged in User Password</p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingUser" >User Configuration</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>User Name</label>
+            <input type="text" name="userTable.userName" style="display:none"  headingId="tf1Wizard_headingUser" class="wizardField" field-type="text" onkeypress="return alphaNumericCheck (event, '_')" maxlength="32" value='$| userTable["name"] |$'><p>$|userTable["name"]|$</p>
+     
+          </div>
+          <div class="break"> &nbsp; </div>
+
+					<div class="configRowWizard" id="tf1Wizard_editPwd_div" >
+            <label>Do you want to change Old Password</label>
+            <a alt="" class="enable-disable-off" id="tf1Wizard_editPwd" ></a>
+            <input type="hidden" value="0" name="userTable.editPwd"  headingId="tf1Wizard_headingUser" class="wizardField" field-type="on-off">
+          </div>
+          <div class="break" id="break_editPwd_div"> &nbsp; </div>
+
+           <div class="configRowWizard" id="tf1Wizard_oldPassword_div" >
+            <label>Old Password</label>
+            <input type="password" name="userTable.curAdminPwd" id="tf1Wizard_oldPassword" headingId="tf1Wizard_headingUser" class="wizardField" field-type="password" >
+          </div>
+          <div class="break" id="break_oldPassword_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_newPassword_div">
+            <label>New Password</label>
+            <input type="password" name="userTable.password" id="tf1Wizard_newPassword" headingId="tf1Wizard_headingUser" class="wizardField" field-type="password" >
+          </div>
+          <div class="break" id="break_password_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_reTypePassword_div">
+            <label>Confirm New Password</label>
+            <input type="password" name="conf_password" id="tf1Wizard_reTypePassword" headingId="tf1Wizard_headingUser" class="wizardField" field-type="password">
+          </div>
+          <div class="break" id="break_reTypePassword_div"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>Group</label><p>$| userTable["groupName"] or '' |$</p>
+<input name="userTable.groupName" id="tf1Wizard_groupType" style="display:none" headingId="tf1Wizard_headingUser" class="wizardField" field-type="text" value="ADMIN">
+           
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [1 of <dt class="lastStep">12</dt>] <span id="tf1Wizard_Step1StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wizardForm.html', 'tf1Wizard_dashboardWizardDailogContent','');">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext" onclick="controllerUserValidate()" >
+        </div>
+      </div>
+    </div>
+    
+    </div>    
+    
+    
+    
+  </div>
+</div>
+
+
+<!-- Users End -->
+
+
+<?lua 
+
+require "teamf1lualib/wanWizard_bl"
+
+local wanWizard = require("com.teamf1.bl.wan.wan_wizard")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local DHCP              = "dhcpc"
+local STATIC            = "ifStatic"
+local L2TP              = "l2tp"
+local PPTP              = "pptp"
+local PPPOE             = "pppoe"
+local RL2TP             = "rl2tp"
+local RPPTP             = "rpptp"
+local JPPPOE            = "jpppoe"
+local DUALACCESSPPPOE   = "dualPppoe"
+
+
+
+local returnCode, ispType, clientType = wanWizard.wanWizardSectionGet ()
+
+?>
+
+
+<!-- InterNet Connection Start -->
+
+<div id="tf1Wizard_internetConnectionWizardDailogContent" style="display:none">
+
+<div class="topBgWizard">
+  <h1>Controller Wizard - [Internet Connection]</h1>
+  <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+</div>
+<div class="dialogMidAreaWizard">
+ 
+    
+  
+	 
+    
+<!-- Internet Step 1 starts  -->  	  
+
+  <div id="tf1Wizard_divStep1Internet">
+      <div class="wizardMessage">
+      <p>Current Connection type <?lua if(ispType == DHCP) then?>
+                                  DHCP
+                                 <?lua elseif(ispType == PPTP) then?>
+                                  PPTP
+                                 <?lua elseif(ispType == L2TP) then?>
+                                  L2TP
+                                 <?lua elseif(ispType == STATIC) then?>
+                                  Static
+				<?lua elseif(ispType == DUALACCESSPPPOE) then?>
+                                  DUALACCESSPPPOE
+				<?lua elseif(ispType == PPPOE) then?>
+                                  PPPoE
+                                <?lua end?>
+                                 </p>
+    </div>
+    <div class="wizardBlock">
+      <h1>Internet Connection</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>DHCP </label>
+        <?lua 
+
+local selConnection = ""
+
+            if (ispType == DHCP) then
+                statusStr="enable-disable-on-wizard connection-type"
+                statusVar = "1"
+                selConnection = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="1" id="" style="margin-right:0 !important"  db-id="1"></a>
+           
+            <div class="description">
+            	Choose this if your Internet connection automatically provides you with an IP Address.
+            	Most Cable Modems use this type of connection
+            </div>
+          </div>
+          <div class="break"> &nbsp; </div>
+<?lua 
+if(VPN_LICENCE_STATUS == true) then ?>
+          <div class="configRowWizard">
+            <label>PPTP </label>
+        <?lua 
+
+            if (ispType == PPTP) then
+                statusStr="enable-disable-on-wizard connection-type"
+                selConnection = "2"
+                statusVar = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="2" style="margin-right:0 !important" db-id="2"></a>
+           
+            <div class="description">Choose this if your Internet connection requires PPTP username and password to get online</div>
+            
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>L2TP </label>
+        <?lua 
+
+            if (ispType == L2TP) then
+                selConnection = "5"
+                statusStr="enable-disable-on-wizard connection-type"
+                statusVar = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="5" style="margin-right:0 !important"  db-id="5"></a>
+          
+            <div class="description">Choose this if your Internet connection requires L2TP username and password to get online</div>
+            
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>PPPoE</label>
+        <?lua 
+
+            if (ispType == PPPOE or ispType == DUALACCESSPPPOE) then
+                selConnection = "4"
+                statusStr="enable-disable-on-wizard connection-type"
+                statusVar = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="4" style="margin-right:0 !important"  db-id="4"></a>
+            
+            <div class="description"> Choose this option if your Internet connection requires a username and password to get online. Most DSL modems use this type of connection </div>
+          </div>
+          <div class="break"> &nbsp; </div>
+<?lua end ?>
+          <div class="configRowWizard">
+            <label>Static IP Address </label>
+        <?lua 
+
+            if (ispType == STATIC) then
+                selConnection = "3"
+                statusStr="enable-disable-on-wizard connection-type"
+                statusVar = "1"
+            else
+                statusStr="enable-disable-off-wizard connection-type"
+                statusVar = "0"
+            end
+        ?>
+            <a alt="" class="$|statusStr|$" value="3" style="margin-right:0 !important"  db-id="3"></a>
+           
+            <div class="description"> Choose this option if your Internet Setup Provider provided you with IP Address information that has to be manually configured </div>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [2 of <dt class="lastStep">12</dt>] <span class="wizardInfoMsg" id="internetWizardStatusMsgStep1">&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="tf1Wizard_btPreviousStep1" value="Previous" title="Previous" class="wizardBtnNext btStep btStep1" 
+onClick="showControllerWizardDiv('tf1Wizard_usersWizardDailogContent','tf1Wizard_internetConnectionWizardDailogContent','')">
+          <input type="button" id="tf1Wizard_btNextStep1" value="Next" title="Next" class="wizardBtnNext  btStep btStep1"  onclick="controllerMoveToConnectionDetails()">
+        </div>
+      </div>
+    </div>
+  </div>
+<input type="hidden" name="Wan.IspType" id="tf1Wizard_wlanIspType" value="$|selConnection|$">
+ <!-- Step1 ends -->
+  
+<!-- Internet Step2 starts -->
+   <div id="tf1Wizard_divStep2Internet" style="display:none">     
+    <div class="wizardMessage">
+      <p>Current DHCP Connection is Use Default Address</p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingConnectionType"></h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+         <div class="configRowWizard" id="tf1Wizard_loginName_div">
+            <label>User Name</label>
+           <input type="text" id="tf1Wizard_loginName" name="Wan.LoginName" class="wizardField" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return alphaNumericCheck (event, '_')" maxlength="16">
+          </div>
+          <div class="break" id="break_loginName_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_macAddressSource_div">
+            <label>MAC Address Source</label>
+            <select id="tf1Wizard_macAddressSource" size="1" name="Wan.UseMac" onchange="dhcpMacAddressCheck()"
+             size="1" label="MAC Address Source" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="select">
+             <option value="1" selected >Use Default Address</option>
+				<option value="2">Clone your PC's MAC Address</option>
+				<option value="3">Use this MAC Address</option>
+            </select>
+          </div>
+          <div class="break" id="break_macAddressSource_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_macAddress_div">
+            <label>MAC Address</label>
+            <input type="text" id="tf1Wizard_macAddress" name="Wan.macAddress" maxlength="17" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+          </div>
+          <div class="break" id="break_macAddress_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_reconnectMode_div">
+            <label>Reconnect Mode</label>
+            <select size="1" name="Wan.IdleTimeOutFlag" id="tf1Wizard_reconnectMode" onchange="internetConnectionReconnectModeChange()" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="select">
+        		<option value="1">Always On</option>
+        		<option value="2">On Demand</option>
+        	</select>
+          </div>
+          <div class="break" id="break_reconnectMode_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_addressMode_div">
+            <label>Address Mode</label>
+            <select size="1" name="Wan.addressMode" id="tf1Wizard_addressMode" onchange="internetConnectionAddressModeChange()" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="select">
+        		<option value="1">Dynamic</option>
+        		<option value="2">Static</option>
+        	</select>
+          </div>
+          <div class="break" id="break_addressMode_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_ipAddr_div">
+            <label>IP Address</label>
+            <input type="text" id="tf1Wizard_ipAddr" name="Wan.staticIPAddress" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+          </div>
+          <div class="break" id="break_ipAddr_div"> &nbsp; </div>          
+          <div class="configRowWizard" id="tf1Wizard_gateWayIpAddress_div">
+            <label>Gateway IP Address</label>
+            <input type="text" name="Wan.gateway" id="tf1Wizard_gateWayIpAddress" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+          </div>
+          <div class="break" id="break_gateWayIpAddress_div"> &nbsp; </div>
+          
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard" id="tf1Wizard_macHostName_div">
+            <label>Host Name</label>
+            <input type="text" name="Wan.HostName" id="tf1Wizard_macHostName" maxlength="255" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text">
+          </div>
+          <div class="break" id="break_macHostName_div"> &nbsp; </div>
+          
+          <div class="configRowWizard" id="tf1Wizard_loginPassword_div">
+            <label>Password</label>
+            <input type="password" id="tf1Wizard_loginPassword" name="Wan.LoginPassword" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="password" maxlength="16">
+          </div>
+          <div class="break" id="break_loginPassword_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_idleTime_div">
+            <label>Idle Time</label>
+             <input type="text" name="Wan.maxIdleTime" id="tf1Wizard_idleTime" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Idle Time.', '');}" maxlength="2">
+          </div>
+          <div class="break" id="break_idleTime_div"> &nbsp; </div> 
+          <div class="configRowWizard" id="tf1Wizard_serverIpAddress_div">
+            <label>Server IP Address</label>
+            <input type="text" id="tf1Wizard_serverIpAddress" name="Wan.serverIPAddress" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" maxlength="64">
+          </div>
+          <div class="break" id="break_serverIpAddress_div"> &nbsp; </div>
+
+          <div class="configRowWizard" id="tf1Wizard_ipAddress_div">
+        <label>My IP Address</label>
+         <input type="text" id="tf1Wizard_ipAddress" name="Wan.myIp" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+         <p class="fieldValue" field-id="tf1Wizard_ipAddress" field-type="text"></p>
+      </div>
+      <div class="break" id="break_ipAddress_div"> &nbsp;</div>
+
+                   
+          <div class="configRowWizard" id="tf1Wizard_ipSubnetMask_div">
+            <label>IP Subnet Mask</label>
+            <input type="text" name="Wan.netmask" id="tf1Wizard_ipSubnetMask" headingId="tf1Wizard_headingConnectionType" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }">
+          </div>
+          <div class="break" id="break_ipSubnetMask_div"> &nbsp; </div>
+        </div>
+      </div>
+      <h1 id="tf1Wizard_dnsSettings">DNS settings</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard" id="tf1Wizard_dnsIpMode_div">
+            <label>DNS Server Source</label>
+            <select id="tf1Wizard_dnsIpMode" name="Wan.useIspDns" size="1" onchange="internetConnectionDnsChange()" headingId="tf1Wizard_dnsSettings"  headingId="tf1Wizard_dnsSettings" class="wizardField" field-type="select" >
+		<option value="1">Get Dynamically from ISP</option>
+		<option value="2">Use These DNS Servers</option>
+		</select>
+          </div>
+          <div class="break" id="break_dnsIpMode_div" > &nbsp; </div>
+					<div class="configRowWizard" id="tf1Wizard_primaryDnsServer_div">
+            <label> Primary DNS Server</label>
+            <input type="text" name="Wan.primaryDNS" id="tf1Wizard_primaryDnsServer" headingId="tf1Wizard_dnsSettings" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+          </div>
+          <div class="break" id="break_primaryDnsServer_div"> &nbsp; </div>          
+        </div>
+        <div class="rightBlock">
+					<div class="configRowWizard" id="tf1Wizard_secondaryDnsServer_div">
+            <label>Secondary DNS Server</label>
+            <input type="text" name="Wan.secondaryDNS" id="tf1Wizard_secondaryDnsServer" headingId="tf1Wizard_dnsSettings" class="wizardField" field-type="text" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+          </div>
+          <div class="break" id="break_secondaryDnsServer_div"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [3 of <dt class="lastStep">12</dt>] <span id="tf1Wizard_step2StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="showControllerWizardDiv('tf1Wizard_divStep1Internet','tf1Wizard_divStep2Internet','')">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext"  onClick="controllerinternetConnectionValidate()">
+        </div>
+      </div>
+    </div>
+
+   
+   </div>
+   
+<!--Internet Step2 ends -->
+     
+</div>
+</div>
+
+<!-- InterNet Connection ends -->
+
+
+<?lua 
+
+require "teamf1lualib/dynamicDns_bl"
+
+local dnsConfig =  require("com.teamf1.bl.services.ddns")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorCode, ddnsTbl1, ddnsTbl2 =  dnsConfig.dynamicDnsWizardGet ()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+?>
+<?lua if(VPN_LICENCE_STATUS == true) then ?>
+<!--Dynamic DNS Wizard -->
+<div id="tf1Wizard_dynamicDnsWizardDailogContent" style="display:none">
+  <div class="topBgWizard">
+    <h1>Controller Wizard - [Dynamic DNS]</h1>
+    <close><a title="Close"  id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard">
+
+	<!-- Dynamic DNS Step 1 starts  -->  	
+<?lua
+local dynDnsStatus1 = ""
+if (ddnsTbl1["ddns.ddnsService"] == "None") then
+    dynDnsStatus1 = "is not configured"
+else
+    dynDnsStatus1 = "in "..ddnsTbl1["ddns.ddnsService"].." mode"
+end
+local dynDnsStatus2 = ""
+if (ddnsTbl2["ddns.ddnsService"] == "None") then
+    dynDnsStatus2 = "is not configured"
+else
+    dynDnsStatus2 = "in "..ddnsTbl2["ddns.ddnsService"].." mode"
+end
+?> 
+
+  	<div id="tf1Wizard_divStep1dynamicDns">
+<input type="hidden" id ="tf1Wizard_Option1Status" value="$| "Currently "..ddnsTbl1["ddns.interfaceName"].." "..dynDnsStatus1|$">
+<input type="hidden" id ="tf1Wizard_Option2Status" value="$| "Currently "..ddnsTbl2["ddns.interfaceName"].." "..dynDnsStatus2|$">
+    
+    <div class="wizardMessage" id="tf1Wizard_step1WizardMessage">
+
+      <p>$| "Currently "..ddnsTbl1["ddns.interfaceName"].." "..dynDnsStatus1|$ </p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingDynamicDns">Dynamic DNS</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>Dynamic DNS </label>
+            <select size="1" name="dynamicDns.option" id="tf1Wizard_dynamicDnsOption" onchange="dynamicDnsWizardOptionChange()" 
+             headingId="tf1Wizard_headingDynamicDns" class="wizardField" field-type="select"
+            >
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+            </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock"> &nbsp; </div>
+      </div>
+      <h1 id="tf1Wizard_headingDynamicDnsOptionType">Dynamic DNS Option1</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>NTP Server Type </label>
+            <select size="1" name="dynamicDns.ntpServerType" id="tf1Wizard_ntpServerTypeDns" onchange="controllerDynamicDnsNtpServerTypeChange()"  headingId="tf1Wizard_headingDynamicDnsOptionType" class="wizardField" field-type="select"
+>
+              <option value="1"> DynDNS</option>
+              <option value="2"> ORAY</option>
+              <option value="3"> DLINKDDNS</option>
+              <option value="4"> None</option>
+            </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+         
+         <div class="configRowWizard" id="tf1Wizard_userName_div">
+            <label>User Name </label>
+            <input type="text" name="dynamicDns.userName" id="tf1Wizard_userName" maxlength='64' headingId="tf1Wizard_headingDynamicDnsOptionType" class="wizardField" field-type="text" />
+          </div>
+          <div class="break" id="break_userName_div"> &nbsp; </div>
+          
+          <div class="configRowWizard" id="tf1Wizard_allowWildCards_div">
+            <label>Allow Wildcards</label>
+            <a alt="" class="enable-disable-off" id="tf1Wizard_dateTimeNetwork" ></a>
+            <input type="hidden" value="0" name="dynamicDns.allowWildCards" id="tf1Wizard_allowWildCards" headingId="tf1Wizard_headingDynamicDnsOptionType" class="wizardField" field-type="on-off">
+          </div>
+          <div class="break" id="break_allowWildCards_div"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+         <div class="configRowWizard" id="tf1Wizard_domainName_div">
+            <label>Domain Name</label>
+            <input type="text" name="dynamicDns.domainName" id="tf1Wizard_domainName" maxlength='64' headingId="tf1Wizard_headingDynamicDnsOptionType" class="wizardField" field-type="text" />
+          </div>
+          <div class="break" id="break_domainName_div"> &nbsp; </div>         
+          <div class="configRowWizard" id="tf1Wizard_password_div">
+            <label> Password </label>
+            <input type="password" name="dynamicDns.password" id="tf1Wizard_password" maxlength='192' headingId="tf1Wizard_headingDynamicDnsOptionType" class="wizardField" field-type="password"/>
+          </div>
+          <div class="break" id="break_password_div"> &nbsp; </div>
+         
+          <div class="configRowWizard" id="tf1Wizard_periodicUpdate_div">
+            <label>Update Periodically<br />
+            </label>
+            <a alt="" class="enable-disable-off" id="tf1Wizard_dateTimeNetwork"></a>
+            <input type="hidden" name="dynamicDns.periodicUpdate" value="0" id="tf1Wizard_periodicUpdate" headingId="tf1Wizard_headingDynamicDnsOptionType" class="wizardField" field-type="on-off">
+            <dl>
+              (30 Days)
+            </dl>
+          </div>
+          <div class="break"  id="break_periodicUpdate_div"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [4 of <dt class="lastStep">12</dt>] <span id='wizardDynamicDnsStatus'>&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="showControllerWizardDiv('tf1Wizard_internetConnectionWizardDailogContent','tf1Wizard_dynamicDnsWizardDailogContent','')">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext" onclick="controllerDynamicDnsWizardValidate()" >
+        </div>
+      </div>
+    </div>
+  </div>
+   <!-- Dynamic DNS Step 1 ends  -->  
+   
+   
+  </div>
+ 
+ 
+</div>
+
+<!-- Dynamic DNS ends -->
+<?lua end ?>
+
+<!-- WLAN Start -->
+
+<?lua 
+require "teamf1lualib/wlanGeneral_bl"
+require "teamf1lualib/bl_wlanWizard"
+
+local wlanGlobal  = require("com.teamf1.bl.wlan.wlanGeneral")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local wlanWizard  = require ("com.teamf1.bl.wlan.wizard")  
+
+local authFailedApsInfo, errorCode
+local wlanTable = {}
+returnCode, wlanTable = wlanGlobal.wlanGeneralGet()
+if (returnCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (returnCode)
+end
+
+errorCode, authFailedApsInfo = wlanWizard.wlanWizardAuthFailedApGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+
+?>
+<!-- Wireless Global Configuration -->
+
+<div id="tf1Wizard_wlanWizardDailogContent" style="display:none">
+
+  <div class="topBgWizard">
+    <h1>Controller Wizard - [WLAN]</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard" >  
+     
+	<!-- Step 1 starts  -->  	  
+
+  	<div id="tf1Wizard_divStep1Wlan">
+    
+    <div class="wizardMessage">
+      <p>Current Code $| wlanTable["country"] |$</p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingWirelessGobal">Wireless Global Configuration</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard" id="tf1Wizard_wlanCountryCode_div">
+            <label>Country Code</label>
+            <select name="wlan.countryCode" size="1" id="tf1Wizard_wlanCountryCode" 
+             headingId="tf1Wizard_headingWirelessGobal" class="wizardField" field-type="select"
+            >
+              <option value="AE" $| web.dropdownSelected(wlanTable["country"] == "AE - United Arab Emirates" ) |$ >AE - United Arab Emirates</option>
+                                        <option value="AG" $| web.dropdownSelected(wlanTable["country"] == "AG - Antigua and Barbuda" ) |$>AG - Antigua and Barbuda</option>
+                                        <option value="AN" $| web.dropdownSelected(wlanTable["country"] == "AN - Netherlands Antilles" ) |$>AN - Netherlands Antilles</option>
+                                        <option value="AR" $| web.dropdownSelected(wlanTable["country"] == "AR - Argentina" ) |$>AR - Argentina</option>
+                                        <option value="AS" $| web.dropdownSelected(wlanTable["country"] == "AS - American Somoa" ) |$>AS - American Somoa</option>
+                                        <option value="AT" $| web.dropdownSelected(wlanTable["country"] == "AT - Austria" ) |$>AT - Austria</option>
+                                        <option value="AU" $| web.dropdownSelected(wlanTable["country"] == "AU - Australia" ) |$>AU - Australia</option>
+                                        <option value="AW" $| web.dropdownSelected(wlanTable["country"] == "AW - Aruba" ) |$>AW - Aruba</option>
+                                        <option value="AZ" $| web.dropdownSelected(wlanTable["country"] == "AZ - Azerbaijan" ) |$>AZ - Azerbaijan</option>
+                                        <option value="BA" $| web.dropdownSelected(wlanTable["country"] == "BA - Bosnia" ) |$>BA - Bosnia</option>
+                                        <option value="BB" $| web.dropdownSelected(wlanTable["country"] == "BB - Barbados" ) |$>BB - Barbados</option>
+                                        <option value="BD" $| web.dropdownSelected(wlanTable["country"] == "BD - Bangladesh" ) |$>BD - Bangladesh</option>
+                                        <option value="BE" $| web.dropdownSelected(wlanTable["country"] == "BE - Belgium" ) |$>BE - Belgium</option>
+                                        <option value="BG" $| web.dropdownSelected(wlanTable["country"] == "BG - Bulgaria" ) |$>BG - Bulgaria</option>
+                                        <option value="BH" $| web.dropdownSelected(wlanTable["country"] == "BH - Bahrain" ) |$>BH - Bahrain</option>
+                                        <option value="BM" $| web.dropdownSelected(wlanTable["country"] == "BM - Bermuda" ) |$>BM - Bermuda</option>
+                                        <option value="BN" $| web.dropdownSelected(wlanTable["country"] == "BN - Brunei" ) |$>BN - Brunei</option>
+                                        <option value="BO" $| web.dropdownSelected(wlanTable["country"] == "BO - Bolivia" ) |$>BO - Bolivia</option>
+                                        <option value="BR" $| web.dropdownSelected(wlanTable["country"] == "BR - Brazil " ) |$>BR - Brazil</option>
+                                        <option value="BS" $| web.dropdownSelected(wlanTable["country"] == "BS - Bahamas" ) |$>BS - Bahamas</option>
+                                        <option value="BT" $| web.dropdownSelected(wlanTable["country"] == "BT - Bhutan" ) |$>BT - Bhutan</option>
+                                        <option value="BY" $| web.dropdownSelected(wlanTable["country"] == "BY - Belarus" ) |$>BY - Belarus</option>
+                                        <option value="CA" $| web.dropdownSelected(wlanTable["country"] == "CA - Canada" ) |$>CA - Canada</option>
+                                        <option value="CH" $| web.dropdownSelected(wlanTable["country"] == "CH - Switzerland" ) |$>CH - Switzerland</option>
+                                        <option value="CL" $| web.dropdownSelected(wlanTable["country"] == "CL - Chile" ) |$>CL - Chile</option>
+                                        <option value="CN" $| web.dropdownSelected(wlanTable["country"] == "CN - China" ) |$>CN - China</option>
+                                        <option value="CO" $| web.dropdownSelected(wlanTable["country"] == "CO - Colombi" ) |$>CO - Colombia</option>
+                                        <option value="CR" $| web.dropdownSelected(wlanTable["country"] == "CR - Costa Rica" ) |$>CR - Costa Rica</option>
+                                        <option value="CU" $| web.dropdownSelected(wlanTable["country"] == "CU - Cuba" ) |$>CU - Cuba</option>
+                                        <option value="CV" $| web.dropdownSelected(wlanTable["country"] == "CV - Cape Verde" ) |$>CV - Cape Verde</option>
+                                        <option value="CY" $| web.dropdownSelected(wlanTable["country"] == "CY - Cyprus" ) |$>CY - Cyprus</option>
+                                        <option value="CZ" $| web.dropdownSelected(wlanTable["country"] == "CZ - Czech Republic" ) |$>CZ - Czech Republic</option>
+                                        <option value="DE" $| web.dropdownSelected(wlanTable["country"] == "DE - Germany" ) |$>DE - Germany</option>
+                                        <option value="DK" $| web.dropdownSelected(wlanTable["country"] == "DK - Denmark" ) |$>DK - Denmark</option>
+                                        <option value="DM" $| web.dropdownSelected(wlanTable["country"] == "DM - Dominica" ) |$>DM - Dominica</option>
+                                        <option value="DO" $| web.dropdownSelected(wlanTable["country"] == "DO - Dominican Republic" ) |$>DO - Dominican Republic</option>
+                                        <option value="EC" $| web.dropdownSelected(wlanTable["country"] == "EC - Ecuador" ) |$>EC - Ecuador</option>
+                                        <option value="EE" $| web.dropdownSelected(wlanTable["country"] == "EE - Estonia" ) |$>EE - Estonia</option>
+                                        <option value="EG" $| web.dropdownSelected(wlanTable["country"] == "EG - Egypt" ) |$>EG - Egypt</option>
+                                        <option value="ES" $| web.dropdownSelected(wlanTable["country"] == "ES - Spain" ) |$>ES - Spain</option>
+                                        <option value="FI" $| web.dropdownSelected(wlanTable["country"] == "FI - Finland" ) |$>FI - Finland</option>
+                                        <option value="FK" $| web.dropdownSelected(wlanTable["country"] == "FK - Faulkland Islands" ) |$>FK - Faulkland Islands</option>
+                                        <option value="FM" $| web.dropdownSelected(wlanTable["country"] == "FM - Federated States of Micronesia" ) |$>FM - Federated States of Micronesia</option>
+                                        <option value="FR" $| web.dropdownSelected(wlanTable["country"] == "FR - France" ) |$>FR - France</option>
+                                        <option value="GB" $| web.dropdownSelected(wlanTable["country"] == "GB - United Kingdom" ) |$ >GB - United Kingdom</option>
+                                        <option value="GF" $| web.dropdownSelected(wlanTable["country"] == "GF - French Guiana" ) |$>GF - French Guiana</option>
+                                        <option value="GG" $| web.dropdownSelected(wlanTable["country"] == "GG - Guernsey" ) |$>GG - Guernsey</option>
+                                        <option value="GI" $| web.dropdownSelected(wlanTable["country"] == "GI - Gibralter" ) |$>GI - Gibralter</option>
+                                        <option value="GP" $| web.dropdownSelected(wlanTable["country"] == "GP - Guadeloupe" ) |$>GP - Guadeloupe</option>
+                                        <option value="GR" $| web.dropdownSelected(wlanTable["country"] == "GR - Greece" ) |$>GR - Greece</option>
+                                        <option value="GT" $| web.dropdownSelected(wlanTable["country"] == "GT - Guatemala" ) |$>GT - Guatemala</option>
+                                        <option value="GU" $| web.dropdownSelected(wlanTable["country"] == "GU - Guam" ) |$>GU - Guam</option>
+                                        <option value="HK" $| web.dropdownSelected(wlanTable["country"] == "HK - Hong Kong" ) |$>HK - Hong Kong</option>
+                                        <option value="HN" $| web.dropdownSelected(wlanTable["country"] == "HN - Honduras" ) |$>HN - Honduras</option>
+                                        <option value="HR" $| web.dropdownSelected(wlanTable["country"] == "HR - Croatia" ) |$>HR - Croatia</option>
+                                        <option value="HT" $| web.dropdownSelected(wlanTable["country"] == "HT - Haiti" ) |$>HT - Haiti</option>
+                                        <option value="HU" $| web.dropdownSelected(wlanTable["country"] == "HU - Hungary" ) |$>HU - Hungary</option>
+                                        <option value="ID" $| web.dropdownSelected(wlanTable["country"] == "ID - Indonesia" ) |$>ID - Indonesia</option>
+                                        <option value="IE" $| web.dropdownSelected(wlanTable["country"] == "IE - Ireland" ) |$>IE - Ireland</option>
+                                        <option value="IL" $| web.dropdownSelected(wlanTable["country"] == "IL - Israel" ) |$>IL - Israel</option>
+                                        <option value="IM" $| web.dropdownSelected(wlanTable["country"] == "IM - Isle of Man" ) |$>IM - Isle of Man</option>
+                                        <option value="IN" $| web.dropdownSelected(wlanTable["country"] == "IN - India" ) |$>IN - India</option>
+                                        <option value="IR" $| web.dropdownSelected(wlanTable["country"] == "IR - Iran<" ) |$>IR - Iran</option>
+                                        <option value="IS" $| web.dropdownSelected(wlanTable["country"] == "IS - Iceland" ) |$>IS - Iceland</option>
+                                        <option value="IT" $| web.dropdownSelected(wlanTable["country"] == "IT - Italy" ) |$>IT - Italy</option>
+                                        <option value="JE" $| web.dropdownSelected(wlanTable["country"] == "JE - Jersey" ) |$>JE - Jersey</option>
+                                        <option value="JM" $| web.dropdownSelected(wlanTable["country"] == "JM - Jamaica" ) |$ >JM - Jamaica</option>
+                                        <option value="JO" $| web.dropdownSelected(wlanTable["country"] == "JO - Jordan" ) |$>JO - Jordan</option>
+                                        <option value="JP" $| web.dropdownSelected(wlanTable["country"] == "JP - Japan" ) |$>JP - Japan</option>
+                                        <option value="KE" $| web.dropdownSelected(wlanTable["country"] == "KE - Kenya" ) |$>KE - Kenya</option>
+                                        <option value="KI" $| web.dropdownSelected(wlanTable["country"] == "KI - Kiribati" ) |$>KI - Kiribati</option>
+                                        <option value="KR" $| web.dropdownSelected(wlanTable["country"] == "KR - Korea Republic" ) |$>KR - Korea Republic</option>
+                                        <option value="KW" $| web.dropdownSelected(wlanTable["country"] == "KW - Kuwait" ) |$>KW - Kuwait</option>
+                                        <option value="KY" $| web.dropdownSelected(wlanTable["country"] == "KY - Cayman Islands" ) |$>KY - Cayman Islands</option>
+                                        <option value="LA" $| web.dropdownSelected(wlanTable["country"] == "LA - LAO People's Democratic Republic" ) |$>LA - LAO People's Democratic Republic</option>
+                                        <option value="LB" $| web.dropdownSelected(wlanTable["country"] == "LB - Lebanon" ) |$>LB - Lebanon</option>
+                                        <option value="LI" $| web.dropdownSelected(wlanTable["country"] == "LI - Liechtenstein" ) |$>LI - Liechtenstein</option>
+                                        <option value="LK" $| web.dropdownSelected(wlanTable["country"] == "LK - Sri Lanka" ) |$>LK - Sri Lanka</option>
+                                        <option value="LS" $| web.dropdownSelected(wlanTable["country"] == "LS - Lesotho" ) |$>LS - Lesotho</option>
+                                        <option value="LT" $| web.dropdownSelected(wlanTable["country"] == "LT - Lithuania" ) |$>LT - Lithuania</option>
+                                        <option value="LU" $| web.dropdownSelected(wlanTable["country"] == "LU - Luxembourg" ) |$>LU - Luxembourg</option>
+                                        <option value="LV" $| web.dropdownSelected(wlanTable["country"] == "LV - Latvia" ) |$>LV - Latvia</option>
+                                        <option value="MA" $| web.dropdownSelected(wlanTable["country"] == "MA - Morocco" ) |$>MA - Morocco</option>
+                                        <option value="MC" $| web.dropdownSelected(wlanTable["country"] == "MC - Monaco" ) |$>MC - Monaco</option>
+                                        <option value="MK" $| web.dropdownSelected(wlanTable["country"] == "MK - Macedonia" ) |$>MK - Macedonia</option>
+                                        <option value="MO" $| web.dropdownSelected(wlanTable["country"] == "MO - Macao" ) |$>MO - Macao</option>
+                                        <option value="MP" $| web.dropdownSelected(wlanTable["country"] == "MP - Northern Mariana Islands" ) |$>MP - Northern Mariana Islands</option>
+                                        <option value="MQ" $| web.dropdownSelected(wlanTable["country"] == "MQ - Martinique" ) |$>MQ - Martinique</option>
+                                        <option value="MR" $| web.dropdownSelected(wlanTable["country"] == "MR - Mauritania" ) |$>MR - Mauritania</option>
+                                        <option value="MT" $| web.dropdownSelected(wlanTable["country"] == "MT - Malta" ) |$>MT - Malta</option>
+                                        <option value="MU" $| web.dropdownSelected(wlanTable["country"] == "MU - Mauritius" ) |$>MU - Mauritius</option>
+                                        <option value="MV" $| web.dropdownSelected(wlanTable["country"] == "MV - Maldives" ) |$>MV - Maldives</option>
+                                        <option value="MW" $| web.dropdownSelected(wlanTable["country"] == "MW - Malawi" ) |$>MW - Malawi</option>
+                                        <option value="MX" $| web.dropdownSelected(wlanTable["country"] == "MX - Mexico" ) |$>MX - Mexico</option>
+                                        <option value="MY" $| web.dropdownSelected(wlanTable["country"] == "MY - Malaysia" ) |$>MY - Malaysia</option>
+                                        <option value="NG" $| web.dropdownSelected(wlanTable["country"] == "NG - Nigeria" ) |$>NG - Nigeria</option>
+                                        <option value="NI" $| web.dropdownSelected(wlanTable["country"] == "NI - Nicaragua" ) |$>NI - Nicaragua</option>
+                                        <option value="NL" $| web.dropdownSelected(wlanTable["country"] == "NL - Netherlands" ) |$>NL - Netherlands</option>
+                                        <option value="NO" $| web.dropdownSelected(wlanTable["country"] == "NO - Norway" ) |$>NO - Norway</option>
+                                        <option value="NZ" $| web.dropdownSelected(wlanTable["country"] == "NZ - New Zealand" ) |$>NZ - New Zealand</option>
+                                        <option value="OM" $| web.dropdownSelected(wlanTable["country"] == "OM - Oman" ) |$>OM - Oman</option>
+                                        <option value="PA" $| web.dropdownSelected(wlanTable["country"] == "PA - Panama" ) |$>PA - Panama</option>
+                                        <option value="PE" $| web.dropdownSelected(wlanTable["country"] == "PE - Peru" ) |$>PE - Peru</option>
+                                        <option value="PG" $| web.dropdownSelected(wlanTable["country"] == "PG - Papua New Guinea" ) |$>PG - Papua New Guinea</option>
+                                        <option value="PH" $| web.dropdownSelected(wlanTable["country"] == "PH - Philippines" ) |$>PH - Philippines</option>
+                                        <option value="PK" $| web.dropdownSelected(wlanTable["country"] == "PK - Pakistan" ) |$>PK - Pakistan</option>
+                                        <option value="PL" $| web.dropdownSelected(wlanTable["country"] == "PL - Poland" ) |$>PL - Poland</option>
+                                        <option value="PM" $| web.dropdownSelected(wlanTable["country"] == "PM - St. Pierre and Miquelon" ) |$>PM - St. Pierre and Miquelon</option>
+                                        <option value="PR" $| web.dropdownSelected(wlanTable["country"] == "PR - Puerto Rico" ) |$>PR - Puerto Rico</option>
+                                        <option value="PT" $| web.dropdownSelected(wlanTable["country"] == "PT - Portugal" ) |$>PT - Portugal</option>
+                                        <option value="RE" $| web.dropdownSelected(wlanTable["country"] == "RE - Reunion" ) |$>RE - Reunion</option>
+                                        <option value="RO" $| web.dropdownSelected(wlanTable["country"] == "RO - Romania" ) |$>RO - Romania</option>
+                                        <option value="RU" $| web.dropdownSelected(wlanTable["country"] == "RU - Russia" ) |$>RU - Russia</option>
+                                        <option value="SA" $| web.dropdownSelected(wlanTable["country"] == "SA - Saudi Arabia" ) |$>SA - Saudi Arabia</option>
+                                        <option $| web.dropdownSelected(wlanTable["country"] == "SE - Sweden" ) |$ value="SE - Sweden" >SE - Sweden</option>
+                                        <option value="SG" $| web.dropdownSelected(wlanTable["country"] == "SG - Singapore" ) |$>SG - Singapore</option>
+                                        <option value="SI" $| web.dropdownSelected(wlanTable["country"] == "SI - Slovenia" ) |$>SI - Slovenia</option>
+                                        <option value="SK" $| web.dropdownSelected(wlanTable["country"] == "SK - Slovak Republic" ) |$>SK - Slovak Republic</option>
+                                        <option value="SV" $| web.dropdownSelected(wlanTable["country"] == "SV - El Salvador" ) |$>SV - El Salvador</option>
+                                        <option value="SY" $| web.dropdownSelected(wlanTable["country"] == "SY - Syria" ) |$>SY - Syria</option>
+                                        <option value="TH" $| web.dropdownSelected(wlanTable["country"] == "TH - Thailand" ) |$>TH - Thailand</option>
+                                        <option value="TJ" $| web.dropdownSelected(wlanTable["country"] == "TJ - Tajikistan" ) |$>TJ - Tajikistan</option>
+                                        <option value="TN" $| web.dropdownSelected(wlanTable["country"] == "TN - Tunisia" ) |$>TN - Tunisia</option>
+                                        <option value="TR" $| web.dropdownSelected(wlanTable["country"] == "TR - Turkey" ) |$>TR - Turkey</option>
+                                        <option value="TT" $| web.dropdownSelected(wlanTable["country"] == "TT - Trinidad & Tobago" ) |$>TT - Trinidad &amp; Tobago</option>
+                                        <option value="TW" $| web.dropdownSelected(wlanTable["country"] == "TW - Taiwan" ) |$>TW - Taiwan</option>
+                                        <option value="TZ" $| web.dropdownSelected(wlanTable["country"] == "TZ - Tanzania" ) |$ >TZ - Tanzania</option>
+                                        <option value="UA" $| web.dropdownSelected(wlanTable["country"] == "UA - Ukraine" ) |$>UA - Ukraine</option>
+                                        <option value="UM" $| web.dropdownSelected(wlanTable["country"] == "UM - United States (Minor Outlying Islands)" ) |$>UM - United States (Minor Outlying Islands)</option>
+                                        <option value="US" $| web.dropdownSelected(wlanTable["country"] == "US - United States" ) |$ >US - United States</option>
+                                        <option value="UY" $| web.dropdownSelected(wlanTable["country"] == "UY - Uruguay" ) |$>UY - Uruguay</option>
+                                        <option value="UZ" $| web.dropdownSelected(wlanTable["country"] == "UZ - Uzbekistan" ) |$>UZ - Uzbekistan</option>
+                                        <option value="VA" $| web.dropdownSelected(wlanTable["country"] == "VA - Holy See (Vatican City State)" ) |$>VA - Holy See (Vatican City State)</option>
+                                        <option value="VE" $| web.dropdownSelected(wlanTable["country"] == "VE - Venezuela" ) |$>VE - Venezuela</option>
+                                        <option value="VG" $| web.dropdownSelected(wlanTable["country"] == "VG - Virgin Islands (British)" ) |$>VG - Virgin Islands (British)</option>
+                                        <option value="VI" $| web.dropdownSelected(wlanTable["country"] == "VI - Virgin Islands (United States)" ) |$>VI - Virgin Islands (United States)</option>
+                                        <option value="VN" $| web.dropdownSelected(wlanTable["country"] == "VN - Vietnam" ) |$>VN - Vietnam</option>
+                                        <option value="YT" $| web.dropdownSelected(wlanTable["country"] == "YT - Mayotte" ) |$>YT - Mayotte</option>
+                                        <option value="ZA" $| web.dropdownSelected(wlanTable["country"] == "ZA - South Africa" ) |$>ZA - South Africa</option>
+                                        <option value="ZM" $| web.dropdownSelected(wlanTable["country"] == "ZM - Zambia" ) |$>ZM - Zambia</option>
+            </select>
+          </div>
+          <div class="break" id="break_wlanCountryCode_div"> &nbsp; </div>
+        </div>
+        <div class="rightBlock"> &nbsp; </div>
+      </div>
+      <h1 id="tf1Wizard_headingDefaultRadio"> Wireless Default Radio Configuration</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>AP Profile Name</label>
+            <input type="text" onkeypress="return alphaNumericCheck (event,'-_')" maxlength="32" id="tf1Wizard_apProfileName" value="default" name="wlan.profileName" headingId="tf1Wizard_headingDefaultRadio" class="wizardField" field-type="text">
+            
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_state_div">
+            <label>State (802.11a/n)</label>
+            <a alt="" class="enable-disable-off" id="tf1Wizard_state"></a>
+            <input type="hidden" name="wlan.radio1State" value="0" 
+            class="wizardField" headingId="tf1Wizard_headingDefaultRadio" field-type="on-off">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>State (802.11b/g/n)</label>
+            <a alt="" class="enable-disable-off" id="tf1Wizard_state1"></a>
+            <input type="hidden" name="wlan.radio2State" value="0"
+            headingId="tf1Wizard_headingDefaultRadio" class="wizardField"
+            field-type="on-off">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>&nbsp;</label>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_mode_div">
+            <label>Mode (802.11a/n)</label>
+            <select name="wlan.radio1OperatingMode" size="1" id="tf1Wizard_mode" headingId="tf1Wizard_headingDefaultRadio" class="wizardField" field-type="select">
+              <option value="1">IEEE 802.11a</option>
+              <option value="3" selected="">IEEE 802.11a/n</option>
+              <option value="5">5GHz IEEE 802.11n</option>
+            </select>
+          </div>
+          <div class="break"  id="break_mode_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_mode1_div">
+            <label>Mode (802.11b/g/n)</label>
+            <select name="wlan.radio2OperatingMode" size="1" id="tf1Wizard_mode1"  headingId="tf1Wizard_headingDefaultRadio" class="wizardField" field-type="select">
+              <option value="2">IEEE 802.11b/g</option>
+              <option value="4" selected="">IEEE 802.11b/g/n</option>
+              <option value="6">2.4GHz IEEE 802.11n</option>
+            </select>
+          </div>
+          <div class="break" id="break_mode1_div"> &nbsp; </div>
+        </div>
+      </div>
+      <h1 id="tf1Wizard_headingDefaulVAP"> Wireless Default VAP Configuration</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>SSID</label>
+            <input type="text" onkeypress="return alphaNumericCheck (event,'`~!@#$%^&amp;*()-_=+|{};:,.?/')"  maxlength="32" id="tf1Wizard_ssid" value="dlink1" name="wlan.ssid" headingId="tf1Wizard_headingDefaulVAP" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>Security</label>
+            <select onchange="wlanSecurityOptionChange()" id="tf1Wizard_securityOpt" name="wlan.networkSecurity"  headingId="tf1Wizard_headingDefaulVAP" class="wizardField" field-type="select">
+                <option value="1" selected="">None</option>
+				<option value="2">Static WEP</option>
+				<option value="4">WPA Personal</option>
+			</select>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>&nbsp;</label>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_wepPass_div">
+            <label>WEP Key</label>
+            <input type="password" maxlength="13" id="tf1Wizard_wepPass" value="" name="wlan.wepKey" headingId="tf1Wizard_headingDefaulVAP" class="wizardField" field-type="password">
+          </div>
+          <div class="break" id="break_wepPass_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_wpaPass_div">
+            <label>WPA Key</label>
+              <input type="password" maxlength="63" id="tf1Wizard_wpaPass" value="" name="wlan.wpaKey" headingId="tf1Wizard_headingDefaulVAP" class="wizardField" field-type="password">
+          </div>
+          <div class="break" id="break_wpaPass_div"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [<dt class="step">5</dt> of <dt class="lastStep">12</dt>] <span>&nbsp;</span></div>
+        <div class="prevNext">
+			<?lua if(VPN_LICENCE_STATUS == false) then ?>
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="showControllerWizardDiv('tf1Wizard_internetConnectionWizardDailogContent','tf1Wizard_wlanWizardDailogContent','')">
+			<?lua else ?>
+		  <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="showControllerWizardDiv('tf1Wizard_dynamicDnsWizardDailogContent','tf1Wizard_wlanWizardDailogContent','')">
+			<?lua end ?>
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext"  onClick="controllerOpenWlanStep2Validate()">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Step 1 ends --->
+  
+  <!-- Step 2 starts -->
+    <div id="tf1Wizard_divStep2Wlan" style="display:none">
+    
+    <div class="wizardMessage">
+      <p>Controller Wizard - [APs Awaiting List]</p>
+    </div>
+    <div class="wizardBlock">
+      <h1>List of APs Awaiting to be Configured</h1>
+      <div class="configRowBlocks">
+        <div class="configRowtable">
+          <div class="CLR">
+            <div class="demo_jui">
+              <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                <thead>
+                  <tr>
+                    <th> IP Address</th>
+                    <th> MAC Address </th>
+                    <th>Status </th>
+                  </tr>
+              </thead>
+              <?lua
+                  local count = 0
+                  if (authFailedApsInfo ~= nil) then
+                  for k, v in pairs (authFailedApsInfo) do
+                  local row = authFailedApsInfo[k]
+                  count = count + 1
+              ?>
+              <tr class="gradeA">
+                  <td>$| row["ipAddress"] or '' |$</td>
+                  <td>$| row["macAddress"] or '' |$</td>
+                  <td>
+                  	<a alt="" class="enable-disable-off"></a>
+                    <input type="hidden" name="wlan.ap_$| k |$" value="0" id="tf1Wizard_ap$| k |$">
+                    <input type="hidden" name="wlan.apMac_$|  k |$"
+                    value="$| row["macAddress"] |$" id="tf1Wizard_ap1">
+                </td>
+               </tr>
+                  <?lua
+                  end ?>
+              <?lua     
+              end
+              ?>
+                
+            </table>
+            <p><input type="hidden" name="wlan.totalAuthFailedAp" value="$| count |$"></p>    
+            </div>
+          </div>
+        </div>
+		<div align="center" style="margin:0px 20px; color: #333333" >
+				<b>Note</b>: The number of AP that will be managed depends on DWC-1000-AP6 License. If the MAC address of the AP is followed by an asterisk (*), it is discovered by a peer controller.
+		</div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [<dt class="step">6</dt> of <dt class="lastStep">12</dt>] <span>&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="controllerOpenWlanStep1()">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext" onClick="controllerOpenWlanStep3()">
+        </div>
+      </div>
+    </div>
+   
+   </div>
+    <!-- Step 2 ends -->
+  
+  <!-- Step 3 starts -->
+  <!-- Valid Access Points Summery -->  
+  	<div id="tf1Wizard_divStep3Wlan" style="display:none">
+  
+    <div class="wizardMessage">
+      <p>Controller Wizard - [Valid Access Points]</p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingAPSummary">Valid Access Points Summary</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>MAC Address 1</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr1" name="wlan.MacAddress1" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>MAC Address 3</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr3" name="wlan.MacAddress3" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text" >
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>MAC Address 5</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr5" name="wlan.MacAddress5" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>MAC Address 2</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr2" name="wlan.MacAddress2" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>MAC Address 4</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr4" name="wlan.MacAddress4" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>MAC Address 6</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr6" name="wlan.MacAddress6" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+		<div align="center" style="margin:150px 20px 0px 20px; color: #333333" >
+				<b>Note</b>: The number of AP that will be managed depends on DWC-1000-AP6 License.
+		</div>
+      <div class="pagination">
+        <div class="pageList">Step: [<dt class="step">7</dt> of <dt class="lastStep">12</dt>] <span id="tf1Wizard_step3StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="controllerOpenWlanStep2()">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext"  onClick="controllerWLanValidate()">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- WLAN Step 3 ends --> 
+  
+
+</div>
+</div>
+<!--- WLAN Ends -->
+
+
+<?lua
+require "teamf1lualib/dateTime_bl"
+local dateAndTime = require ("com.teamf1.bl.system.time")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local returnCode, cookie, currentTime, timezone, dayligtSavings, useNtp, 
+reSyncInterval, useDefaultNtpServers, primaryNtpServer, backupNtpServer = 
+                                                   dateAndTime.dateTimeSectionGet ()
+
+?>
+<!-- Date And Time Wizard -->
+<div id="tf1Wizard_dateTimeWizardDailogContent" style="display:none">
+
+	<input type="hidden" id="tf1Wizard_currentTimeZone" value="$|timezone|$">
+  <div class="topBgWizard">
+    <h1>Controller Wizard - [Date and Time]</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard">  
+  
+	
+    <!-- Date/Time Step 1 starts -->
+    <div id="tf1Wizard_divStep1DateTime">
+    
+    <div class="wizardMessage" id="tf1Wizard_Step1CurrentHeading">
+      <p>Current Time Zone is GMT - 5.30</p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingTimeZone">Time Zone</h1>
+      <div class="break">&nbsp;</div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="map"> <a class="default" id="anchorImage">
+					<img src="images/_blank.gif" height="200px" width="350px" alt="" name="mainMap" border="0" usemap="#Map" class="defaultEmpty" id="mainMap"  />
+            <map name="Map" id="Map">
+              <area shape="poly" coords="98,110" href="#" />
+              <area shape="poly" coords="96,110,91,106,84,103,77,94,71,89,67,86,62,75,58,70,52,61,43,55,32,55,24,60,22,56,22,50,22,43,27,42,35,42,41,42,49,42,56,43,58,43,57,41,63,36,71,35,77,34,87,34,91,37,97,38,101,38,106,35,109,32,115,28,124,27,132,22,145,23,149,26,155,27,156,35,154,41,146,44,138,50,131,53,127,53,125,50,123,46,118,41,111,41,114,44,114,47,116,50,117,53,120,57,123,62,123,64,121,68,118,71,114,72,110,74,108,78,104,81,103,85,101,88,94,89,90,88,89,90,89,94,94,95,96,96,100,98" href="#" onClick="loadWizardDateTimeImage('North America')" region="North America" title="North America"/>
+              <area shape="poly" coords="113,178" href="#" />
+              <area shape="poly" coords="111,179,105,174,104,162,106,154,107,144,107,138,104,132,99,128,98,121,100,115,102,110,104,105,111,105,117,110,121,111,124,116,130,119,135,123,138,126,141,132,140,139,137,143,132,146,127,151,120,157,113,162,112,168,112,170,110,179,111,181,109,180,112,180" href="#"  id="southAmerica" onClick="loadWizardDateTimeImage('South America')" region="South America" title="South America"/>
+              <area shape="poly" coords="305,161,301,158,295,155,291,154,287,153,283,156,276,157,276,154,274,147,277,142,280,136,284,135,290,133,295,133,299,134,302,135,305,137,308,140,312,144,313,149,313,153,313,158,309,163,307,164" href="#" onClick="loadWizardDateTimeImage('Australia')" region="Australia" title="Australia" />
+              <area shape="poly" coords="220,110,214,117,210,121,210,127,210,132,211,136,215,136,218,141,214,148,211,145,207,141,205,147,203,152,198,156,193,156,188,154,186,148,183,141,184,137,184,132,183,124,183,120,180,114,179,108,176,108,173,111,170,114,165,115,162,113,159,111,158,108,158,103,158,98,160,94,163,90,166,85,173,82,178,80,185,84,186,87,189,87,195,87,197,84,202,84,203,89,206,92,207,96,208,99,213,103" href="#" onClick="loadWizardDateTimeImage('Africa')" region="Africa" title="Africa"/>
+              <area shape="poly" coords="209,73" href="#" />
+              <area shape="poly" coords="220,68,210,72,202,73,191,78,178,76,172,75,162,78,164,72,164,69,166,68,163,58,167,56,172,49,178,49,183,47,189,42,194,41,201,41,207,42,214,42,225,43,230,43,236,46,237,48,237,52,234,57,233,60,230,64,229,66,220,70,220,72,220,71" href="#" onClick="loadWizardDateTimeImage('Europe')" region="Europe" title="Europe" />
+              <area shape="poly" coords="263,116,259,106,257,101,254,96,251,96,248,100,248,106,247,110,242,108,241,104,239,102,237,98,231,94,223,90,222,98,218,102,212,100,209,93,207,89,206,80,205,76,205,73,213,73,220,72,227,69,233,62,238,54,237,47,234,44,226,41,241,38,255,39,262,36,280,37,287,40,301,40,310,40,321,42,327,43,334,44,337,47,333,52,317,52,307,56,304,61,304,67,305,74,297,80,288,81,284,87,279,94,273,98,273,103,278,106,283,111,289,116,287,121,275,126,268,124,263,116,264,115" href="#"   onClick="loadWizardDateTimeImage('Asia')" region="Asia" title="Asia" />
+            </map>
+            </a> </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock" style="width: 320px !important;">
+          <div class="configRowWizard">
+            <label style="width:107px;">Region</label>
+            <p id="tf1Wizard_regionSelected">Asia</p>						 
+						<input type="hidden" value="$| timezone |$" id="tf1Wizard_timezoneHidden">						 
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label style="width:107px;">City</label>
+
+            <select name="dateTime.timezone" id="tf1Wizard_city" size="1" headingId="tf1Wizard_headingTimeZone" class="wizardField" field-type="select">
+               <option $|  web.dropdownSelected(timezone == "0") |$  value="0">(GMT-12:00)   International Date Line West</option>
+                                        <option $|  web.dropdownSelected(timezone == "1") |$  value="1">(GMT-11:00)   Midway Island Samoa</option>
+                                        <option $|  web.dropdownSelected(timezone == "2") |$  value="2">(GMT-10:00)   Hawaii</option>
+                                        <option $|  web.dropdownSelected(timezone == "3") |$  value="3">(GMT-09:00)   Alaska</option>
+                                        <option $|  web.dropdownSelected(timezone == "4") |$  value="4">(GMT-08:00)   Tijuana Baja California</option>
+                                        <option $|  web.dropdownSelected(timezone == "5") |$  value="5" selected>(GMT-08:00)   Pacific Time (US   and Canada) </option>
+                                        <option $|  web.dropdownSelected(timezone == "6") |$  value="6">(GMT-07:00)   Mountain Time (US   and Canada) </option>
+
+                                        <option $|  web.dropdownSelected(timezone == "7") |$  value="7">(GMT-07:00)   Chihuahua La Paz Mazatlan -   Old</option>
+                                        <option $|  web.dropdownSelected(timezone == "8") |$  value="8">(GMT-07:00)   Chihuahua La Paz Mazatlan -   New</option>
+                                        <option $|  web.dropdownSelected(timezone == "9") |$  value="9">(GMT-07:00)   Arizona</option>
+                                        <option $|  web.dropdownSelected(timezone == "10") |$  value="10">(GMT-06:00)   Saskatchewan</option>
+                                        <option $|  web.dropdownSelected(timezone == "11") |$  value="11">(GMT-06:00)   Guadalajara Mexico City Monterrey -   Old</option>
+                                        <option $|  web.dropdownSelected(timezone == "12") |$  value="12">(GMT-06:00)   Guadalajara Mexico City Monterrey -   New</option>
+                                        <option $|  web.dropdownSelected(timezone == "13") |$  value="13">(GMT-06:00)   Central Time (US   and Canada) </option>
+                                        <option $|  web.dropdownSelected(timezone == "14") |$  value="14">(GMT-06:00)   Central America</option>
+                                        <option $|  web.dropdownSelected(timezone == "15") |$  value="15">(GMT-05:00)   Indiana (East) </option>
+                                        <option $|  web.dropdownSelected(timezone == "16") |$  value="16">(GMT-05:00)   Eastern Time (US   and Canada) </option>
+                                        <option $|  web.dropdownSelected(timezone == "17") |$  value="17">(GMT-05:00)   Bogota Lima Quito Rio Branco</option>
+                                        <option $|  web.dropdownSelected(timezone == "18") |$  value="18">(GMT-04:30)   Caracas</option>
+                                        <option $|  web.dropdownSelected(timezone == "19") |$  value="19">(GMT-04:00)   Santiago</option>
+                                        <option $|  web.dropdownSelected(timezone == "20") |$  value="20">(GMT-04:00)   Manaus</option>
+                                        <option $|  web.dropdownSelected(timezone == "21") |$  value="21">(GMT-04:00)   La Paz</option>
+                                        <option $|  web.dropdownSelected(timezone == "22") |$  value="22">(GMT-04:00)   Atlantic Time (Canada) </option>
+                                        <option $|  web.dropdownSelected(timezone == "23") |$  value="23">(GMT-03:30)   Newfoundland</option>
+                                        <option $|  web.dropdownSelected(timezone == "24") |$  value="24">(GMT-03:00)   Montevideo</option>
+                                        <option $|  web.dropdownSelected(timezone == "25") |$  value="25">(GMT-03:00)   Greenland</option>
+                                        <option $|  web.dropdownSelected(timezone == "26") |$  value="26">(GMT-03:00)   Georgetown</option>
+                                        <option $|  web.dropdownSelected(timezone == "27") |$  value="27">(GMT-03:00)   Buenos Aires</option>
+                                        <option $|  web.dropdownSelected(timezone == "28") |$  value="28">(GMT-03:00)   Brasilia</option>
+                                        <option $|  web.dropdownSelected(timezone == "29") |$  value="29">(GMT-02:00)   Mid-Atlantic</option>
+                                        <option $|  web.dropdownSelected(timezone == "30") |$  value="30">(GMT-01:00)   Cape Verde Is.</option>
+                                        <option $|  web.dropdownSelected(timezone == "31") |$  value="31">(GMT-01:00)   Azores</option>
+                                        <option $|  web.dropdownSelected(timezone == "32") |$  value="32">(GMT)   Casablanca</option>
+                                        <option $|  web.dropdownSelected(timezone == "33") |$  value="33">(GMT)   Greenwich Mean Time : Dublin Edinburgh Lisbon London</option>
+                                        <option $|  web.dropdownSelected(timezone == "34") |$  value="34">(GMT)   Monrovia Reykjavik</option>
+                                        <option $|  web.dropdownSelected(timezone == "35") |$  value="35">(GMT+01:00)   Amsterdam Berlin Bern Rome Stockholm Vienna</option>
+                                        <option $|  web.dropdownSelected(timezone == "36") |$  value="36">(GMT+01:00)   Belgrade Bratislava Budapest Ljubljana Prague</option>
+                                        <option $|  web.dropdownSelected(timezone == "37") |$  value="37">(GMT+01:00)   Brussels Copenhagen Madrid Paris</option>
+                                        <option $|  web.dropdownSelected(timezone == "38") |$  value="38">(GMT+01:00)   Sarajevo Skopje Warsaw Zagreb</option>
+                                        <option $|  web.dropdownSelected(timezone == "39") |$  value="39">(GMT+01:00)   West Central Africa</option>
+                                        <option $|  web.dropdownSelected(timezone == "40") |$  value="40">(GMT+02:00)   Amman</option>
+                                        <option $|  web.dropdownSelected(timezone == "41") |$  value="41">(GMT+02:00)   Athens Bucharest Istanbul</option>
+                                        <option $|  web.dropdownSelected(timezone == "42") |$  value="42">(GMT+02:00)   Beirut</option>
+                                        <option $|  web.dropdownSelected(timezone == "43") |$  value="43">(GMT+02:00)   Cairo</option>
+                                        <option $|  web.dropdownSelected(timezone == "44") |$  value="44">(GMT+02:00)   Harare Pretoria</option>
+                                        <option $|  web.dropdownSelected(timezone == "45") |$  value="45">(GMT+02:00)   Helsinki Kyiv Riga Sofia Tallinn Vilnius</option>
+                                        <option $|  web.dropdownSelected(timezone == "46") |$  value="46">(GMT+02:00)   Jerusalem</option>
+                                        <option $|  web.dropdownSelected(timezone == "47") |$  value="47">(GMT+02:00)   Minsk</option>
+                                        <option $|  web.dropdownSelected(timezone == "48") |$  value="48">(GMT+02:00)   Windhoek</option>
+                                        <option $|  web.dropdownSelected(timezone == "49") |$  value="49">(GMT+03:00)   Baghdad</option>
+                                        <option $|  web.dropdownSelected(timezone == "50") |$  value="50">(GMT+03:00)   Kuwait Riyadh</option>
+                                        <option $|  web.dropdownSelected(timezone == "51") |$  value="51">(GMT+03:00)   Moscow St. Petersburg Volgograd</option>
+                                        <option $|  web.dropdownSelected(timezone == "52") |$  value="52">(GMT+03:00)   Nairobi</option>
+                                        <option $|  web.dropdownSelected(timezone == "53") |$  value="53">(GMT+03:00)   Tbilisi</option>
+                                        <option $|  web.dropdownSelected(timezone == "54") |$  value="54">(GMT+03:30)   Tehran</option>
+                                        <option $|  web.dropdownSelected(timezone == "55") |$  value="55">(GMT+04:00)   Abu Dhabi Muscat</option>
+                                        <option $|  web.dropdownSelected(timezone == "56") |$  value="56">(GMT+04:00)   Baku</option>
+                                        <option $|  web.dropdownSelected(timezone == "57") |$  value="57">(GMT+04:00)   Caucasus Standard Time</option>
+                                        <option $|  web.dropdownSelected(timezone == "58") |$  value="58">(GMT+04:00)   Port Louis</option>
+                                        <option $|  web.dropdownSelected(timezone == "59") |$  value="59">(GMT+04:00)   Yerevan</option>
+                                        <option $|  web.dropdownSelected(timezone == "60") |$  value="60">(GMT+04:30)   Kabul</option>
+                                        <option $|  web.dropdownSelected(timezone == "61") |$  value="61">(GMT+05:00)   Ekaterinburg</option>
+                                        <option $|  web.dropdownSelected(timezone == "62") |$  value="62">(GMT+05:00)   Islamabad Karachi</option>
+                                        <option $|  web.dropdownSelected(timezone == "63") |$  value="63">(GMT+05:00)   Tashkent</option>
+                                        <option $|  web.dropdownSelected(timezone == "64") |$  value="64">(GMT+05:30)   Chennai Kolkata Mumbai New Delhi</option>
+                                        <option $|  web.dropdownSelected(timezone == "65") |$  value="65">(GMT+05:30)   Sri Jayawardenepura</option>
+                                        <option $|  web.dropdownSelected(timezone == "66") |$  value="66">(GMT+05:45)   Kathmandu</option>
+                                        <option $|  web.dropdownSelected(timezone == "67") |$  value="67">(GMT+06:00)   Almaty Novosibirsk</option>
+                                        <option $|  web.dropdownSelected(timezone == "68") |$  value="68">(GMT+06:00)   Astana Dhaka</option>
+                                        <option $|  web.dropdownSelected(timezone == "69") |$  value="69">(GMT+06:30)   Yangon (Ran goon) </option>
+                                        <option $|  web.dropdownSelected(timezone == "70") |$  value="70">(GMT+07:00)   Bangkok Hanoi Jakarta</option>
+                                        <option $|  web.dropdownSelected(timezone == "71") |$  value="71">(GMT+07:00)   Krasnoyarsk</option>
+                                        <option $|  web.dropdownSelected(timezone == "72") |$  value="72">(GMT+08:00)   Beijing Chongqing Hong Kong Urumqi</option>
+                                        <option $|  web.dropdownSelected(timezone == "73") |$  value="73">(GMT+08:00)   Irkutsk Ulaan Bataar</option>
+                                        <option $|  web.dropdownSelected(timezone == "74") |$  value="74">(GMT+08:00)   Kuala Lumpur Singapore</option>
+                                        <option $|  web.dropdownSelected(timezone == "75") |$  value="75">(GMT+08:00)   Perth</option>
+                                        <option $|  web.dropdownSelected(timezone == "76") |$  value="76">(GMT+08:00)   Taipei</option>
+                                        <option $|  web.dropdownSelected(timezone == "77") |$  value="77">(GMT+09:00)   Osaka Sapporo Tokyo</option>
+                                        <option $|  web.dropdownSelected(timezone == "78") |$  value="78">(GMT+09:00)   Seoul</option>
+                                        <option $|  web.dropdownSelected(timezone == "79") |$  value="79">(GMT+09:00)   Yakutsk</option>
+                                        <option $|  web.dropdownSelected(timezone == "80") |$  value="80">(GMT+09:30)   Adelaide</option>
+                                        <option $|  web.dropdownSelected(timezone == "81") |$  value="81">(GMT+09:30)   Darwin</option>
+                                        <option $|  web.dropdownSelected(timezone == "82") |$  value="82">(GMT+10:00)   Brisbane</option>
+                                        <option $|  web.dropdownSelected(timezone == "83") |$  value="83">(GMT+10:00)   Canberra Melbourne Sydney</option>
+                                        <option $|  web.dropdownSelected(timezone == "84") |$  value="84">(GMT+10:00)   Guam Port Moresby</option>
+                                        <option $|  web.dropdownSelected(timezone == "85") |$  value="85">(GMT+10:00)   Hobart</option>
+                                        <option $|  web.dropdownSelected(timezone == "86") |$  value="86">(GMT+10:00)   Vladivostok</option>
+                                        <option $|  web.dropdownSelected(timezone == "87") |$  value="87">(GMT+11:00)   Magadan Solomon Is. New Caledonia</option>
+                                        <option $|  web.dropdownSelected(timezone == "88") |$  value="88">(GMT+12:00)   Auckland Wellington</option>
+                                        <option $|  web.dropdownSelected(timezone == "89") |$  value="89">(GMT+12:00)   Fiji Kamchatka Marshall Is</option>
+                                        <option $|  web.dropdownSelected(timezone == "90") |$  value="90"> (GMT+13:00)
+                                            Nuku
+                                            'alofa</option>
+
+                                        <option $|  web.dropdownSelected(timezone == "91") |$  value="91">(GMT+14:00)   Kiribati,Western   Samoa</option> 
+            </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label style="width:107px;">Daylight Saving</label>
+            <?lua              
+                if(dayligtSavings == "1") then
+                    statusStr = "enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr ="enable-disable-off"
+                    statusVar = "0"
+                end
+            ?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_dateTimeNetwork"></a>
+            <input type="hidden" name="dateTime.autoDaylight" value="$| statusVar |$" headingId="tf1Wizard_headingTimeZone" class="wizardField" field-type="on-off">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [<dt class="step">8</dt> of <dt class="lastStep">12</dt>] <span id="tf1Wizard_step2StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="controllerOpenWlanStep3FromDateTime()">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext"  onClick="controllerOpenDateTimeStep2()">
+        </div>
+      </div>
+    </div>
+    
+	</div>
+    
+    <!-- Date/Time Step1 ends -->
+    
+     <!--Date/Time Step2 start -->
+  <div id="tf1Wizard_divStep2DateTime" style="display:none">
+    <div class="wizardMessage">
+      <p>Current NTP Server is <?lua if (useNtp == "1") then ?>ON<?lua else ?>OFF <?lua end ?></p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingGetTimeNetwork">Obtain Time from Network</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>NTP Server</label>
+            <?lua              
+                if(useNtp == "1") then
+                    statusStr = "enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr ="enable-disable-off"
+                    statusVar = "0"
+                end
+            ?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_ntpServer"></a>
+            <input type="hidden" name="dateTime.enabled" value="$| statusVar |$" id="tf1Wizard_hidNtpServer"  headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField" field-type="on-off">
+          </div>
+          <div class="break"> &nbsp; </div>
+					
+					<div class="configRowWizard" id="tf1Wizard_ntpServerType_div">
+            <label> NTP Server Type</label>
+            <select name="dateTime.useDefServers" id="tf1Wizard_ntpServerType" onchange="NtpSvrTypeWizardCheck()"  headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField" field-type="select">
+              <option $|  web.dropdownSelected(useDefaultNtpServers == "1") |$ value="1">Default</option>
+              <option $|  web.dropdownSelected(useDefaultNtpServers == "2") |$ value="2">Custom </option>
+            </select>
+          </div>
+          <div class="break" id="break_ntpServerType_div"> &nbsp; </div>
+
+					<div class="configRowWizard" id="tf1Wizard_timeSynchronize_div">
+            <label>Time to Synchronize</label>
+            <input type="text" value="$| reSyncInterval or ''|$" maxlength="4" name="dateTime.reSyncNtpVal" id="tf1Wizard_timeSynchronize" headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField one" field-type="text" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 5, 1440, true, 'Invalid Time to re-synchronize', '');}">
+						<!--<dl>[Default: 120,  Range: 5 - 1440] Minutes</dl>-->
+          </div>
+          <div class="break" id="break_tf1Wizard_timeSynchronize_div"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">				
+          
+          <div class="configRowWizard"  id="tf1Wizard_PrimaryNTPServer_div">
+            <label>Primary NTP Server</label>
+            <input type="text" name="dateTime.server1" value="$| primaryNtpServer or '0.us.pool.ntp.org'|$" id="tf1Wizard_PrimaryNTPServer" headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField" field-type="text" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidateWizard (this.id) || validateFQDN(this.id)); }">
+          </div>
+          <div class="break" id="break_PrimaryNTPServer_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_SecondaryNTPServer_div">
+            <label>Secondary NTP Server</label>
+            <input type="text" name="dateTime.server2" value="$|backupNtpServer or  '1.us.pool.ntp.org' |$" id="tf1Wizard_SecondaryNTPServer"  headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField" field-type="text" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidateWizard (this.id) || validateFQDN(this.id)); }">
+          </div>
+          <div class="break" id="break_SecondaryNTPServer_div"> &nbsp; </div>          
+			</div>
+      </div>
+			<div id="tf1Wizard_headingManualTimeSet_div">
+		    <h1 id="tf1Wizard_headingManualTimeSet">Manual Time</h1>
+		    <div class="break"> &nbsp; </div>
+		    <div class="configRowBlocks">
+		      <div class="leftBlock">   
+		        <div class="configRowWizard" id="tf1Wizard_dateTimePickerValue_div">
+		          <label> Set Date and Time </label>
+		          <input type="text" name="dateTime.currentTime" id="tf1Wizard_dateTimePickerValue" readonly headingId="tf1Wizard_headingManualTimeSet" class="wizardField dateTimePickerValue" field-type="text">
+		        </div>
+		        <div class="break" id="break_dateTimePickerValue_div"> &nbsp; </div>
+		        
+		        <div class="configRowWizard" id="tf1Wizard_dateTimePicker_div">
+		          <label> &nbsp; </label>
+		          <input type="hidden" id="tf1Wizard_dateTimePicker" onChange="onchangeWizardDateTimeValue()" readonly >
+		          <div id="dateTimePicker"></div>
+		        </div>
+		        <div class="break" id="break_dateTimePicker_div"> &nbsp; </div>
+		      </div>
+		      <div class="rightBlock">
+		        
+		      </div>
+		    </div>
+			</div>
+      <div class="pagination">
+        <div class="pageList">Step: [<dt class="step">9</dt> of <dt class="lastStep">12</dt>] <span>&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="controllerOpenDateTimeStep1()">
+       <?lua if(VPN_LICENCE_STATUS == false) then ?>
+			<input type="button" id="tf1Wizard_btStep12Save" value="Save" title="Save" class="wizardBtnNext" onclick="controllerDateAndTimeWizardValidate()" >
+		<?lua else ?>
+
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext" onclick="controllerDateAndTimeWizardValidate()">
+
+		<?lua end ?>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+    <!--Date/Time Step2 end --> 
+  </div>
+</div>
+
+<!-- Date/Time Ends -->
+
+<!-- Security wizard starts -->
+
+<?lua 
+    require "teamf1lualib/firewallRules_bl"
+    require "teamf1lualib/vpnPassthrough_bl"
+    errorFlag, defaultStatus = firewallRulesDefaultPolicyGet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    errorFlag, cookie, ipsecPassThroughStatus, pptpPassThroughStatus, 
+           l2tpPassThroughStatus = vpnPassthroughGet (inputTable)
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    
+?>
+<div id="tf1Wizard_securityWizardDailogContent" style="display:none">
+  <div class="topBgWizard">
+    <h1 id="tf1Wizard_controllerWizardSaveHeading">Controller Wizard - [Security]</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard">
+  
+
+<?lua if(VPN_LICENCE_STATUS == true) then ?>
+    <!-- Step1 starts -->
+    <div id="tf1Wizard_divStep1Security" >
+    
+    <div class="wizardMessage">
+      <p>Current Outbound Policy is <?lua if (defaultStatus == "1") then ?>
+         Allow
+<?lua else?>
+       Block
+<?lua end?>
+        </p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingDefaultOutbound">Default Outbound Policy for IPv4</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard" >
+            <label>Always </label>
+            <select size="1" name="firewallRules.defaultOutBoundStatus" headingId="tf1Wizard_headingDefaultOutbound" class="wizardField" field-type="select">
+              <option $| web.dropdownSelected(defaultStatus == "1") |$ value="1">Allow</option>
+              <option $| web.dropdownSelected(defaultStatus == "2") |$ value="2">Block</option>
+            </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock"> &nbsp; </div>
+      </div>
+      <h1 id="tf1Wizard_headingVPNPassthrough">VPN Passthrough</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>IPSec</label>
+            <?lua if (ipsecPassThroughStatus == "1") then
+                statusStr="enable-disable-on"
+                 statusVar = "1"
+                  else
+                 statusStr="enable-disable-off"
+                 statusVar = "0"
+               end?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_chkEnable1" style="margin-right:0 !important"></a>
+            <input type="hidden" name="vpnPassthrough.ipsecPassThroughStatus" value="$| statusVar |$" headingId="tf1Wizard_headingVPNPassthrough" class="wizardField" field-type="on-off">
+            <div class="description">Enable this to allow IPsec tunnels to pass through the route.</div>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>L2TP</label>
+            <?lua if (l2tpPassThroughStatus == "1") then
+                statusStr="enable-disable-on"
+                 statusVar = "1"
+                  else
+                 statusStr="enable-disable-off"
+                 statusVar = "0"
+               end?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_chkEnable2" style="margin-right:0 !important"></a>
+            <input type="hidden" name="vpnPassthrough.l2tpPassThroughStatus" value="$| statusVar |$" headingId="tf1Wizard_headingVPNPassthrough" class="wizardField" field-type="on-off">
+            <div class="description">Enable this to allow L2TP tunnels to pass through the router.</div>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>PPTP</label>
+            <?lua if (pptpPassThroughStatus == "1") then
+                statusStr="enable-disable-on"
+                 statusVar = "1"
+                  else
+                 statusStr="enable-disable-off"
+                 statusVar = "0"
+               end?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_chkEnable3" style="margin-right:0 !important"></a>
+            <input type="hidden" name="vpnPassthrough.pptpPassThroughStatus" value="$| statusVar |$" headingId="tf1Wizard_headingVPNPassthrough" class="wizardField" field-type="on-off">
+            <div class="description">Enable this to allow PPTP tunnels to pass through the router. To make this work, enable PPTP ALG also.</div>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+			
+
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [10 of <dt class="lastStep">12</dt>] <span>&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="controllerOpenDateTimeStep3FromSecurity()">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext" onclick="controllerOpenWizardSecurityStep2()" >
+        </div>
+      </div>
+    </div>
+    
+</div>
+
+<!-- Security Step1 ends -->
+
+<!-- Security Step2 starts -->
+    <div id="tf1Wizard_divStep2Security" style="display:none">
+    
+    <div class="wizardMessage">
+      <p>Configure VPN Type and Remote & Local Addresses</p>
+    </div>
+    <div class="wizardBlock">
+    
+      <h1 id="tf1Wizard_headingVPNType">Select VPN Type for your VPN Network</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>Select VPN Type</label>
+            <select id="tf1Wizard_selVPNType" name="policies.tunnelType" size="1" onchange="controllerWizardPeerOnChange()" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="select">
+                                                         <option value="1">Site-to-Site</option>
+                                                        <option value="2">Remote Access</option>                            
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>IP Protocol Version</label>
+            <?lua 
+                 require "teamf1lualib/ipv6_mode"
+                 local ipv6Mode = require("com.teamf1.core.ipv6.mode")
+                 returnCode, cookie, ipMode = ipv6Mode.ipv6ModeGet ()?>
+            <select id="tf1Wizard_selProtocolVer" name="policies.addressFamily" size="1" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="select">
+                                                         <option value="1">Ipv4</option>
+                                                        <?lua if(ipMode == "3") then?>
+                                                        <option value="2">Ipv6</option>
+                                                        <?lua end?>                            
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          
+          <div class="configRowWizard">
+            <label>IKE Version</label>
+            <select id="tf1Wizard_selIKEVer" name="policies.policyVersion" size="1" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="select">
+                                                         <option value="1">IKEv1</option>
+                                                        <option value="2">IKEv2</option>                            
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          
+              
+        </div>
+        <div class="rightBlock">
+        	<div class="configRowWizard">
+            <label>Connection Name</label>
+            	<input type="text" maxlength="49" id="tf1Wizard_connectionName" name="policies.policyName" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div> 
+           <div class="configRowWizard">
+            <label>Pre-Shared key</label>
+            <input type="text" maxlength="49" id="tf1Wizard_preSharedKey" name="policies.presharedKey" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1Wizard_presharedkey', 8, 49, 'Invalid pre-shared key: Please enter key with length between 8 - 49 characters');}" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          
+          <div class="configRowWizard">
+            <label>Local Gateway</label>
+            <select id="tf1Wizard_localGateway" name="policies.localGateway" size="1" headingId="tf1Wizard_headingVPNType" class="wizardField" field-type="select">
+                                                         <option value="1">Option1</option>
+                                                         
+                                                          <option value="2">Option2</option>
+                                                          
+                                                                
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+           
+        </div>
+        
+      </div>
+      
+      <h1 id="tf1Wizard_headingRemoteOptionAddr">Remote & Local Option Addresses</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>Remote Gateway Type</label>
+            <select id="tf1Wizard_remoteGatewayType" name="policies.remoteIdentifierType" size="1" headingId="tf1Wizard_headingRemoteOptionAddr" class="wizardField" field-type="select">
+                                                        <option value="1">IP Address</option>
+                                                        <option value="2">FQDN</option>
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>Local Gateway Type</label>
+            <select id="tf1Wizard_localGatewayType" name="policies.localIdentifierType" size="1" headingId="tf1Wizard_headingRemoteOptionAddr" class="wizardField" field-type="select">
+                                                         <option value="1">IP Address</option>
+                                                         <option value="2">FQDN</option>
+                                                    </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>Remote Option's IP Address / FQDN</label>
+            <input type="text" maxlength="64" id="tf1Wizard_remoteIpAddr" name="policies.remoteIdentifier" onkeydown="if (event.keyCode == 9) { return IPorFQDNCheckRemote () }" headingId="tf1Wizard_headingRemoteOptionAddr" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          
+           <div class="configRowWizard">
+            <label>Local Option's IP Address / FQDN</label>
+            <input type="text" maxlength="64" id="tf1Wizard_localIpAddr" name="policies.localIdentifier" onkeydown="if (event.keyCode == 9) { return IPorFQDNCheckLocal() }" headingId="tf1Wizard_headingRemoteOptionAddr" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+      
+      
+      <div class="pagination">
+        <div class="pageList">Step: [11 of <dt class="lastStep">12</dt>] <span id="tf1Wizard_step2StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="tf1Wizard_step11btPrevious" value="Previous" title="Previous" class="wizardBtnNext" onClick="showControllerWizardDiv('tf1Wizard_divStep1Security','tf1Wizard_divStep2Security','')">
+          <input type="button" id="tf1Wizard_btNextStep2" value="Next" title="Next" class="wizardBtnNext" onClick="controllerOpenWizardSecurityStep3()" >
+        </div>
+      </div>
+    </div>
+    
+</div>
+
+<!-- Security Step 3 starts -->
+
+<div id="tf1Wizard_divStep3Security" style="display:none">
+    
+    <div class="wizardMessage">
+      <p>Secure Connection Accessibility</p>
+    </div>
+    <div class="wizardBlock">
+    
+      <h1 id="tf1Wizard_headingSecureConnection">Configure Secure Connection Accessibility</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>Remote Network IP Address</label>
+            <input type="text" maxlength="15" id="tf1Wizard_remoteNetworkIp" name="policies.remoteStartAddress" headingId="tf1Wizard_headingSecureConnection" class="wizardField" field-type="text" onkeydown="if (event.keyCode == 9) { return IPAddrCheckSecWiz('tf1Wizard_remoteNetworkIp') }">
+          </div>
+          <div class="break" id="break_remoteNetworkIp_div"> &nbsp; </div>
+
+          <div class="configRowWizard" id="tf1Wizard_remotePrefixLength_div">
+            <label>Remote Prefix Length</label>            
+           <input type="text" maxlength="3" id="tf1Wizard_remotePrefixLength" name="policies.remotePrefixLength" headingId="tf1Wizard_headingSecureConnection" class="wizardField one" field-type="text" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 128, true, 'Invalid Remote Prefix Length', ''); }"><!--<dl>[Range: 0 - 128]</dl>-->
+          </div>
+          <div class="break" id="break_remotePrefixLength_div"> &nbsp; </div>
+          
+           <div class="configRowWizard" id="tf1Wizard_localNetIPAddr_div">
+            <label>Local Network IP Address</label>
+            <input type="text" onkeydown="if (event.keyCode == 9) { return IPAddrCheckSecWiz('tf1Wizard_localNetIPAddr') }" maxlength="15" id="tf1Wizard_localNetIPAddr" name="policies.localStartIP" headingId="tf1Wizard_headingSecureConnection" class="wizardField" field-type="text">
+          </div>
+          <div class="break" id="break_localNetIPAddr_div"> &nbsp; </div>
+              
+        </div>
+        <div class="rightBlock">
+        	<div class="configRowWizard" id="tf1Wizard_remoteNetSubnetMask_div">
+            <label>Remote Network Subnet Mask</label>
+            	<input type="text" maxlength="15" id="tf1Wizard_remoteNetSubnetMask" name="policies.remoteSubnetmask" headingId="tf1Wizard_headingSecureConnection" class="wizardField" field-type="text">
+          </div>
+          <div class="break" id="break_remoteNetSubnetMask_div"> &nbsp; </div> 
+
+          <div class="configRowWizard" id="tf1Wizard_localNetSubnetMask_div">
+            <label>Local Network Subnet Mask</label>
+           <input type="text" maxlength="15" id="tf1Wizard_localNetSubnetMask" name="policies.localSubnetmask" headingId="tf1Wizard_headingSecureConnection" class="wizardField" field-type="text">
+          </div>
+          <div class="break" id="break_localNetSubnetMask_div"> &nbsp; </div>          
+          
+          <div class="configRowWizard" id="tf1Wizard_localNetPrefixLength_div">
+            <label>Local Prefix Length</label>
+           	<input type="text" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 128, true, '', ''); }" onkeypress="return numericValueCheck (event)" maxlength="3" id="tf1Wizard_localNetPrefixLength" name="policies.localPrefixLength" headingId="tf1Wizard_headingSecureConnection" class="wizardField one" field-type="text" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 128, true, 'Invalid Local Prefix Length', ''); }" class="one">
+          </div>
+          <div class="break" id="break_localNetPrefixLength_div"> &nbsp; </div>
+           
+        </div>
+        
+      </div>
+      
+      <div class="pagination">
+        <div class="pageList">Step: [12 of <dt class="lastStep">12</dt>] <span id="tf1Wizard_step3SecurityStatusMsg">&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="tf1Wizard_btStep12Previous" value="Previous" title="Previous" class="wizardBtnNext" onClick="showControllerWizardDiv('tf1Wizard_divStep2Security','tf1Wizard_divStep3Security','')">
+          <input type="button" id="tf1Wizard_btStep12Save" value="Save" title="Save" class="wizardBtnNext" onclick="controllerWizardSave()" >
+        </div>
+      </div>
+    </div>
+    
+</div>
+
+<!-- Security Step 3 ends -->
+<?lua end ?>
+<!-- Preview -->
+    
+    <div id="tf1Wizard_errorDiv" style="display:none;">
+    
+    	<div class="wizardMessage">
+      <p>Controller Wizards Configuration Status</p>
+    </div>
+    <div class="wizardBlock" id="tf1Wizard_errorBlock">    
+     
+    </div>
+ 
+  <div class="pagination">
+    <div class="pageList"><span>&nbsp;</span></div>
+    <div class="prevNext">
+      <input type="button" id="btSave" value="Finish" title="Finish" class="wizardBtnNext" onclick="cancelWizard()" >
+    </div>
+  </div>
+</div>
+
+<!-- preview step ends -->
+
+<!-- Preview -->
+    
+    <div id="tf1Wizard_previewDiv" style="display:none;">
+    
+    	<div class="wizardMessage">
+      <p>Controller Wizard Configurations are saved successfully and the details are below</p>
+    </div>
+    <div class="wizardBlock" id="tf1Wizard_previewBlock">
+    
+     
+    </div>
+    
+ 
+ 
+  <div class="pagination">
+    <div class="pageList"><span>&nbsp;</span></div>
+    <div class="prevNext">
+      <input type="button" id="btSave" value="Finish" title="Finish" class="wizardBtnNext" onclick="cancelWizard()" >
+    </div>
+  </div>
+</div>
+
+<!-- preview step ends -->
+
+    
+  </div>
+</div>
+<!-- Security Ends -->
+
+ 
+
+
+
+</form>
+</div>

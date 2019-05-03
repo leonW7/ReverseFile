@@ -1,0 +1,106 @@
+<?lua
+cgilua.htmlheader ()
+require "teamf1lualib/bl_wdsManagedAPGroups"
+require "teamf1lualib/util"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local guiWdsManagedAps = require("com.teamf1.bl.wlan.wdsgroup")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local errorCode, wdsGroups
+errorCode , wdsGroups = guiWdsManagedAps.wdsMangedGroupGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+local groupId, srcApMacAddress, dstApMacAddress, srcRadio, dstRadio, stpPriority
+if (ButtonType and ButtonType == "edit") then
+   local cookieInfo = util.split (cgi.configRowId, "_")
+   groupId = cookieInfo[1]
+   srcApMacAddress = cookieInfo[2]
+   dstApMacAddress = cookieInfo[3]
+   srcRadio = cookieInfo[4]
+   dstRadio = cookieInfo[5]
+   stpPriority = cookieInfo[6] 
+end
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_wdsAPLinkDailogContent">
+    <div class="topBg">
+        <h1>WDS AP Link Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+       <div class="dialogMidArea">
+        <div class="configRow">
+                        <label>WDS Managed Group Id</label>
+                        <select name="wdsAPLink.wdsaplinksGROUPID" id="tf1_wdsGroupId">
+                            <?lua 
+                                if (wdsGroups ~= nil) then
+                                for k, v in pairs (wdsGroups) do
+                                    local row = wdsGroups[k]
+                            ?>    
+                            <option $|
+                                web.dropdownSelected(tonumber(groupId) ==
+                                row.wdsgroupsGROUPID) |$ >$| row.wdsgroupsGROUPID or '' |$</option>
+                            <?lua 
+                            end
+                            end
+                            ?>
+                        </select>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+        <div class="configRow">
+            <label>Source AP MAC Address</label>
+            <input type="text" value="$| srcApMacAddress or '00:00:00:00:00:00' |$" name="wdsAPLink.wdsaplinksSOURCEAPMAC" id="tf1_srcApMacAddress" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify (event, this, true, '', '')">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Source AP Radio</label>
+            <input type="text" name="wdsAPLink.wdsaplinksSOURCERADIO" value="$| srcRadio or ''|$" id="tf1_srcApRadio" maxlength="64" onkeydown="if (event.keyCode == 9) { return alphaNumericValueCheck('tf1_srcApRadio', '', 'Invalid STP Priority. '); }">
+            <dl>
+                [Length: 0 - 64]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Destination AP MAC Address</label>
+            <input type="text" value="$| dstApMacAddress or '00:00:00:00:00:00'
+            |$" name="wdsAPLink.wdsaplinksDESTINATIONAPMAC" id="tf1_destApMacAddress" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify (event, this, true, '', '')">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Destination AP Radio</label>
+            <input type="text" name="wdsAPLink.wdsaplinksDESTINATIONRADIO" value="$| dstRadio or '' |$" id="tf1_destApRadio" maxlength="64" onkeydown="if (event.keyCode == 9) { return alphaNumericValueCheck('tf1_destApRadio', '', 'Invalid STP Priority. '); }">
+            <dl>
+                [Length: 0 - 64]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Link Cost</label>
+            <input type="text" name="wdsAPLink.wdsaplinksSTPLINKCOST" value="$| stpPriority or
+            '' |$" id="tf1_linkCost" maxlength="64" onkeydown="if (event.keyCode == 9) { return alphaNumericValueCheck('tf1_linkCost', '', 'Invalid STP Priority. '); }">
+            <dl>
+                [Length: 0 - 64]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" name="button.config.wdsAPLink.wdsAPLink.$|
+        cgi.configRowId |$" onclick="return wdsApLinkConfigValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->

@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# firewallPolicyInit - initialization script for firewall Policy.
+# 
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# ------------------------
+# 01a,30sep08,chd written
+
+if [ "$INCLUDE_FIREWALL" = "y" ]; then
+
+#block INSECURE traffic
+$FIREWALL_INSTALL_PATH/bin/firewallPolicy $DB_FILENAME INSECURE
+   
+fi
+

@@ -1,0 +1,644 @@
+<?lua
+require "teamf1lualib/discoveredAps_bl"
+require "teamf1lualib/util"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bl_manageAp"
+
+local discoveredAPs = require("com.teamf1.bl.wlan.discovredAps")
+local radioChannel = require ("com.teamf1.bl.wlan.manageap")
+local returnCodes = require("com.teamf1.core.returnCodes")
+
+local radioChannels = {}
+local standAloneChannels = {}
+local DEFAULT_PROFILE = 1
+local MANAGE_MODE = 0
+
+errorCode, radioChannels, standAloneChannels = radioChannel.apProfileChannelsCurGet(DEFAULT_PROFILE)
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+
+if (ButtonType and (ButtonType == "edit" or ButtonType == "acknowledge")) then
+    local configRow = cgi
+    local macTable = util.split(configRow.configRowId, "-")
+    local macAddress = macTable[1]
+    local apProfileTbl
+    errorCode, apProfileTbl, channelsTbl = discoveredAPs.profilesChannelsGet ()
+    web.goToPage(NextPage, true, true)
+		cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!-- Section for Pop up dialog starts -->
+            <div id="tf1_discoveredApListDailogContent">
+                <div class="topBg">
+                    <h1>Manage AP</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label> MAC Address </label>
+                        <p>
+                            $| macAddress |$
+                            <input type="hidden" value="$| macAddress |$"
+                             name="discoveredApList.macAddress" >
+                        </p>
+                    </div>
+                    <div class="break" id="break1_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_apMode_div">
+                        <label> AP Mode </label>
+                        <p>
+                            <input type="radio" checked value="0" name="discoveredApList.apMode"  id="tf1_apModeManaged" onclick="changeAPMode('tf1_apModeManaged')">
+                            Managed
+                        </p>
+                        <p>
+                            <input type="radio" value="1" name="discoveredApList.apMode" id="tf1_apModeStandalone" onclick="changeAPMode('tf1_apModeStandalone')">
+                            Standalone
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="discoveredApList.apMode" id="tf1_apModeRogue"  onclick="changeAPMode('tf1_apModeRogue')">
+                            Rogue
+                        </p>
+                    </div>
+                    <div class="break" id="break2_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_location_div">
+                        <label> Location </label>
+                        <input type="text" id="tf1_location" name="discoveredApList.location" maxlength="32" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_location',0,32,'Location Length Must be below 32'); }"><dl>Optional</dl>
+                    </div>
+                    <div class="break" id="break3_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_enableAuthPassword_div">
+                        <label> Authentication Password </label>
+                        <a class="enable-disable-off" alt="" id="tf1_enableAuthPassword" onclick="enableAuthenticationPassword()"></a>
+                            <input type="hidden" value="0" name="discoveredApList.authPasswordEnable">
+                        <div class="configRow" id="tf1_authPassword_div">
+                            <input type="password" id="tf1_authPassword" name="discoveredApList.authPassword" maxlength="64" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_authPassword',8,64,'Authentication Password Length Must be between 8 and 64'); }">
+                        </div>
+                    </div>
+                    <div class="break" id="break4_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_profile_div">
+                        <label> Profile </label>
+                        <select id="tf1_profile" name="discoveredApList.profile" onchange="profileChange()">
+                            <?lua
+                             if (apProfileTbl ~= nil) then
+                             for k, v in pairs (apProfileTbl) do
+                             local row = apProfileTbl[k]
+                             ?>
+                             <option value="$| row.profilechannellistPROFILEID |$" >$| row.profilechannellistPROFILEID .."-" .. row.profilechannellistNAME or '' |$</option>
+                             <?lua
+                             end
+                             end
+                             ?>
+                        </select>
+                    </div>
+                    <div class="break" id="break5_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_expectedSSID_div">
+                        <label> Expected SSID </label>
+                        <input type="text" id="tf1_expectedSSID" name="discoveredApList.expectedSsid" maxlength="32" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_expectedSSID',0,32,'Expected SSID Length Must be below 32'); }">
+                    </div>
+                    <div class="break" id="break6_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_expectedChannel_div">
+                        <label> Expected Channel </label>
+                        <select class="txt1" id="tf1_expectedChannel" name="discoveredApList.expectedChannel" size="1">
+                              <?lua
+                             local channels = {}
+                             channels = util.split(channelsTbl,",")
+                             local channelValue
+                             if (channels ~= nil) then
+                                for k, v in pairs (channels) do
+                                    channelValue = channels[k]
+                             ?>
+                             <option class="selectfield" value="$| channelValue |$" >$| v |$</option>
+                             <?lua
+                                end
+                             end
+                             ?>
+                        </select>
+                    </div>
+                    <div class="break" id="break7_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_expectedWidsMode_div">
+                        <label> Expected WDS Mode </label>
+                        <p>
+                            <input type="radio" value="1" checked name="discoveredApList.wdsMode">
+                            Any
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="discoveredApList.wdsMode">
+                            Normal
+                        </p>
+                        <p>
+                            <input type="radio" value="3" name="discoveredApList.wdsMode">
+                            Bridge
+                        </p>
+                    </div>
+                    <div class="break" id="break8_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_expectedSecurityMode_div">
+                        <label> Expected Security Mode </label>
+                        <select size="1" name="discoveredApList.security" id="tf1_expectedSecurityMode">
+                            <option value="any_security">Any</option>
+                            <option value="open_security">Open</option>
+                            <option value="wep_security">WEP</option>
+                            <option value="wpa_security">WPA/WPA2</option>
+                        </select>
+                    </div>
+                    <div class="break" id="break9_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_expectedWiredNetworkMode_div">
+                        <label> Expected Wired Network Mode </label>
+                        <p>
+                            <input type="radio" value="1" checked name="discoveredApList.networkMode">
+                            Allowed
+                        </p>
+                        <p>
+                            <input type="radio" value="2" name="discoveredApList.networkMode">
+                            Not Allowed
+                        </p>
+                    </div>
+                    <div class="break" id="break10_div">
+                        &nbsp;
+                    </div>
+                    <div id="tf1_radio1_div">
+                        <h2>Radio 1 - 802.11a/n</h2>
+                        <div class="configRow" id="tf1_radio1Channel_div">
+                            <label> Channel </label>
+                            <select size="1" name="discoveredApList.radio1Channel" id="tf1_radio1Channel">
+                                                            <?lua for k, v in pairs (radioChannels.radio1Channels) do
+                                ?>
+                				<option value=$| v.value |$ >$| v.name |$</option>
+                                <?lua end?>
+                            </select>
+                        </div>
+                        <div class="break" id="break11_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_radio1Power_div">
+                            <label> Power </label>
+                            <select size="1" name="discoveredApList.radio1Power" id="tf1_radio1Power">
+                                <option value="Profile" selected>Profile</option>
+                                <option value="Twelve_point_five">12.5% (Max-9db)</option>
+                                <option value="Twenty_five">25% (Max-6db)</option>
+                                <option value="Fifty">50% (Max-3db)</option>
+                                <option value="Hundred">100% (Max)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="break" id="break12_div">
+                        &nbsp;
+                    </div>
+                    <div id="tf1_radio2_div">
+                        <h2>Radio 2 - 802.11b/g/n</h2>
+                        <div class="configRow" id="tf1_radio2Channel_div">
+                            <label> Channel </label>
+                            <select class="txt1" name="discoveredApList.radio2Channel" id="tf1_radio2Channel" size="1">
+
+                             <?lua for k, v in pairs (radioChannels.radio2Channels) do
+                                ?>
+                				<option value=$| v.value |$ >$| v.name |$</option>
+                                <?lua end?>
+
+                            </select>
+                        </div>
+                        <div class="break" id="break13_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_radio2Power_div">
+                            <label> Power </label>
+                            <select size="1" id="tf1_radio2Power" name="discoveredApList.radio2Power">
+                                <option value="Profile" selected>Profile</option>
+                                <option value="Twelve_point_five">12.5% (Max-9db)</option>
+                                <option value="Twenty_five">25% (Max-6db)</option>
+                                <option value="Fifty">50% (Max-3db)</option>
+                                <option value="Hundred">100% (Max)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="submit" name="button.manage.discoveredApList" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return validateDiscoveredApList('tf1_frmDiscoveredApList')" >
+                </div>
+            </div>
+
+        <!-- Section for Pop up dialog ends -->
+        <!-- Section for Pop up View Details dialog starts -->
+<?lua
+elseif(ButtonType and ButtonType == "view") then
+    
+    require "teamf1lualib/bl_managedAps"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+    require "teamf1lualib/bl_authFailedAps"
+    require "teamf1lualib/bl_rfScanAps"
+
+    local guiManagedAps = require("com.teamf1.bl.wlan.managedaplist")
+    local guiAuthFailedAps = require("com.teamf1.bl.wlan.authfailedaplist")
+    local guiRfScanAPs = require("com.teamf1.bl.wlan.rfscanaps")
+    local errorMap     = require ("com.teamf1.core.errorMap")
+    local returnCodes  = require ("com.teamf1.core.returnCodes")
+
+    local macTable = util.split(cgi.MAC, "-")
+    local macAddress = macTable[1]
+    local apType = macTable[2]
+    local errorCode
+    local apDetails = {}
+
+?>
+            <div id="tf1_discoveredApListDetailsDailogContent">
+                <div class="topBg">
+                    <h1>Discovered APs Details</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                    <div class="configRow">
+                        <label>MAC Address</label>
+                        <p>
+                            $| macAddress |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <?lua if (apType == "0") then
+                        local macInfo = {}
+                        macInfo["ModelName"] = macAddress
+                        errorCode , apDetails = guiManagedAps.managedApsDetailGet(macInfo)
+                        if (errorCode ~= returnCodes.SUCCESS) then
+                            statusErrorMessage = errorMap.errorStringGet (errorCode)
+                        end 
+                        ?>
+                        <div class="configRow">
+            <label>IP Address</label>
+            <p>$| apDetails.ipAddress or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Managing Controller </label>
+            <p>$| apDetails.managingController or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>IP Subnet Mask </label>
+            <p>$| apDetails.ipSubnetMask or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Controller MAC Address</label>
+            <p>$| apDetails.controllerMacAddress or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Status </label>
+            <p>$| apDetails.status or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Controller IP Address </label>
+            <p>$| apDetails.controllerIPAddress or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Software Version </label>
+            <p>$| apDetails.softwareVersion or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Profile </label>
+            <p>$| apDetails.profile or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Code Download Status </label>
+            <p>$| apDetails.codeDownloadStatus or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Discovery Reason </label>
+            <p>$| apDetails.discoveryReason or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Configuration Status </label>
+            <p>$| apDetails.configurationStatus or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Protocol </label>
+            <p>$| apDetails.protocol or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Vendor ID </label>
+            <p>$| apDetails.vendorID or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Authenticated Clients</label>
+            <p>$| apDetails.authenticatedClients or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Part Number</label>
+            <p>$| apDetails.partNumber or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>System Up time</label>
+            <p>$| apDetails.systemUptime or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Serial Number </label>
+            <p>$| apDetails.serialNumber or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Age</label>
+            <p>$| apDetails.age or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Hardware Type</label>
+            <p>$| apDetails.hardwareType or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+                    <?lua elseif (apType == "1") then 
+                        local macInfo = {}
+                        macInfo["MAC"] = macAddress
+                        errorCode , apDetails = guiAuthFailedAps.authFailedApsDetailGet(macInfo)
+                        if (errorCode ~= returnCodes.SUCCESS) then
+                            statusErrorMessage = errorMap.errorStringGet (errorCode)
+                        end 
+                        ?>        
+                      <div class="configRow">
+                        <label>IP Address</label>
+                        <p>
+                            $| apDetails.ipAddress or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Last Failure Type</label>
+                        <p>
+                            $| apDetails.lastFailureType or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Vendor ID</label>
+                        <p>
+                            $| apDetails.vendorID or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Protocol Version</label>
+                        <p>
+                            $| apDetails.protocolVersion or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Software version</label>
+                        <p>
+                            $| apDetails.softwareVersion or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Hardware Type</label>
+                        <p>
+                            $| apDetails.hardwareType or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Reporting Controller</label>
+                        <p>
+                            $| apDetails.reportingController or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Controller MAC Address</label>
+                        <p>
+                            $| apDetails.controllerMACAddress or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Controller IP Address</label>
+                        <p>
+                            $| apDetails.controllerIPAddress or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>validation Failures</label>
+                        <p>
+                            $| apDetails.validationFailures or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Authentication Failures</label>
+                        <p>
+                            $| apDetails.authenticationFailures or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                    <div class="configRow">
+                        <label>Age</label>
+                        <p>
+                            $| apDetails.age or '' |$
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+
+                </div>
+                <div class="dialogSubmitRow">
+                    &nbsp;
+                </div>   
+                    <?lua elseif (apType == "2") then 
+                        local macInfo = {}
+                        macInfo["MAC"] = macAddress
+                        errorCode , apDetails = guiRfScanAPs.rfScanApsDetailGet(macInfo)
+                        if (errorCode ~= returnCodes.SUCCESS) then
+                            statusErrorMessage = errorMap.errorStringGet (errorCode)
+                        end 
+                        ?> 
+                        <div class="configRow">
+            <label>BSSID</label>
+            <p>$| apDetails.BSSID or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>SSID</label>
+            <p>$| apDetails.SSID or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Physical Mode</label>
+            <p>$| apDetails.physicalMode or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Channel</label>
+            <p>$| apDetails.channel or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>        
+        <div class="configRow">
+            <label>Security Mode</label>
+            <p>$| apDetails.securityMode or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Status</label>
+            <p>$| apDetails.status or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>802.11n Mode</label>
+            <p>$| apDetails.dotNMode or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Initial Status</label>
+            <p>$| apDetails.initialStatus or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Beacon Interval</label>
+            <p>$| apDetails.beaconInterval or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Transmit Rate</label>
+            <p>$| apDetails.transmitRate or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Highest Supported Rate</label>
+            <p>$| apDetails.highestSupportedRate or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>WIDS Rogue AP Mitigation</label>
+            <p>$| apDetails.widsRogueAPMitigation or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Peer Managed AP</label>
+            <p>$| apDetails.peerManagedAP or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Age </label>
+            <p>$| apDetails.age or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Ad HOC Network</label>
+            <p>$| apDetails.adhocNetwork or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Discovered Age</label>
+            <p>$| apDetails.discoveredAge or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+             <?lua end?>
+            </div>
+<?lua end ?>
+        <!-- Section for Pop up View Details dialog ends -->

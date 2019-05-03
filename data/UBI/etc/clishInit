@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# clishInit - initialization script for clish
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_CLISH" = "y" ]; then
+
+fi

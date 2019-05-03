@@ -1,0 +1,692 @@
+<?lua 
+require "teamf1lualib/groups_bl"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "security"
+        if(UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-250N") then
+        PAGE_HELP_SECTION = "groups_econa"                     
+       	else 
+	    PAGE_HELP_SECTION = "groups"
+        end
+
+local errorMap   = require ("com.teamf1.core.errorMap")
+local gui_groups = require ("com.teamf1.bl.userdb.groups")
+
+if (ButtonType and ButtonType == "deleteGroups") then
+    local errorFlag
+    local inputTable = web.cgiToLuaTable(cgi)
+    if(type(cgi["groups.checkbox"]) == "string") then
+        inputTable["groupTable.cookie"] = cgi["groups.checkbox"]
+        errorFlag, cookie = gui_groups.groupProfileDeleteRow (inputTable)
+            if (errorFlag == 0) then
+                statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+            else
+                statusErrorMessage = errorMap.errorStringGet (errorFlag)
+            end
+    elseif (type(cgi["groups.checkbox"]) == "table") then
+        errorFlag, cookie = gui_groups.groupProfileDeleteAll ()
+            if (errorFlag == 0) then
+                statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+            else
+                statusErrorMessage = errorMap.errorStringGet (errorFlag)
+            end
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "deleteLogin") then
+    local errorFlag
+    local inputTable = web.cgiToLuaTable(cgi)
+    if(type(cgi["loginPolicies.checkbox"]) == "string") then
+        inputTable["groupTable.cookie"] = cgi["loginPolicies.checkbox"]
+        errorFlag, cookie = gui_groups.groupProfileDeleteRow (inputTable)
+            if (errorFlag == 0) then
+                statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+            else
+                statusErrorMessage = errorMap.errorStringGet (errorFlag)
+            end
+    elseif (type(cgi["loginPolicies.checkbox"]) == "table") then
+        errorFlag, cookie = gui_groups.groupProfileDeleteAll ()
+            if (errorFlag == 0) then
+                statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+            else
+                statusErrorMessage = errorMap.errorStringGet (errorFlag)
+            end
+    end
+    web.goToPage(NextPage, true, true)
+    
+
+    
+elseif (ButtonType and ButtonType == "addGroups") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["groupTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_groups.groupsCreate (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+    
+elseif (ButtonType and ButtonType == "addLogin") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["groupLoginTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_groups.groupLoginPolicySet (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "addBrowser") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["groupTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_groups.groupBrowserPolicyCreate (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "addIp") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["groupTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_groups.groupNetworkPolicyCreate (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "editGroups") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["groupTable.cookie"] = cgi["configRowId"]
+    local rebootVal = gui_groups.getGroupcapability (inputTable)
+    errorFlag, cookie = gui_groups.groupsSet (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        if (rebootVal == 1) then
+            NextPage = "progressBar"
+        end
+
+    web.goToPage(NextPage, true, true)
+    
+elseif (ButtonType and ButtonType == "editLogin") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["groupLoginTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_groups.groupLoginPolicySet (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+    
+    
+
+elseif (ButtonType and ButtonType == "allowBrowser") then
+	local errorFlag
+	if (type(cgi["browserPolicies.checkbox"]) == "string") then
+		curCookie = cgi["browserPolicies.checkbox"]
+		errorFlag = gui_groups.browserPolicyAllow(curCookie)
+	elseif (type(cgi["browserPolicies.checkbox"]) == "table") then
+		errorFlag = gui_groups.browserPolicyAllowAll (cgi["browserPolicies.checkbox"])	
+	end
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+	web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "denyBrowser") then
+	local errorFlag	
+	if (type(cgi["browserPolicies.checkbox"]) == "string") then
+		curCookie = cgi["browserPolicies.checkbox"]
+		errorFlag = gui_groups.browserPolicyDeny(curCookie)
+	elseif (type(cgi["browserPolicies.checkbox"]) == "table") then
+		errorFlag = gui_groups.browserPolicyDenyAll (cgi["browserPolicies.checkbox"])	
+	end
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+	web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "deleteNameBrowser") then
+	curCookie = cgi["configRowId"]
+	errorFlag = gui_groups.groupBrowserDelete (curCookie, cgi["browserPolicies.browserNames"])
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+
+	web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "allowIpPolicy") then
+	local errorFlag
+	if (type(cgi["ipPolicies.checkbox"]) == "string") then
+		curCookie = cgi["ipPolicies.checkbox"]
+		errorFlag = gui_groups.ipPolicyAllow(curCookie)
+	elseif (type(cgi["ipPolicies.checkbox"]) == "table") then
+		errorFlag = gui_groups.ipPolicyAllowAll (cgi["ipPolicies.checkbox"])	
+	end
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+	web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "denyIpPolicy") then
+	local errorFlag	
+	if (type(cgi["ipPolicies.checkbox"]) == "string") then
+		curCookie = cgi["ipPolicies.checkbox"]
+		errorFlag = gui_groups.ipPolicyDeny(curCookie)
+	elseif (type(cgi["ipPolicies.checkbox"]) == "table") then
+		errorFlag = gui_groups.ipPolicyDenyAll (cgi["ipPolicies.checkbox"])	
+	end
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+	web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "deleteIpPolicies") then
+	curCookie = cgi["configRowId"]
+	errorFlag = gui_groups.groupIpPolicyDelete (curCookie, cgi["users.ipPoliciesNames"])
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+
+	web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "addBrowserPolicies") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["groupBrowserTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_groups.existGroupBrowserPolicyCreate (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "addIpPolicies") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["groupNetworkTable.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = gui_groups.existGroupNetworkPolicyCreate (inputTable)
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+
+else
+    local returnCode1, groupTable = gui_groups.groupsGetAll ()
+    local returnCode2, groupLoginTable = gui_groups.groupsLoginPolicyGetAll ()
+    local returnCode3, groupBrowserTable = gui_groups.groupsBrowserPolicyGetAll ()
+    local returnCode4, groupNetworkTable = gui_groups.groupsNetworkPolicyGetAll ()
+
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "11088,11067,13243,13593,13592,10699,10214,11083,11085,11090,12516,13592,12018,11987,12022,11268,11718,11274,12065,12050,11281,11031,11296,10693,10106,12891,10103,10105,10516,30240,11391,10698,11510,13438,12957,10462,11142,11274,12732,12627,10683,12758,11620,10750,30235,11187,12891,11387,14097,11763,11281,11031,11684,11410,10425,10105,10516,20015,20030,30238,30239,10424,10702,13241,30234,11761,13594,10698,10423,10174,10103,11763,12891,11684,11409,10106,10702,11089,10127,11082,10107,13004,11619,11411,30642,12439,12795,10862,10695,50043"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>               
+        <form action="platform.cgi" method="post" name="tf1_frmGroups" id="tf1_frmGroups">     
+            <input type="hidden" name="thispage" id="thispage" value="groups.html">         
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        
+        <!-- Section for Pop up dialog ends -->     
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'edit loginPolicies browserPolicies ipPolicies');" />
+                    &nbsp;$| LANG_LOCALE['12795'] |$ 
+                   
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$ 
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$ 
+                </li>
+            </ul>
+        </div>
+	    <div class="contextMenu" id="contextMenuBrowserPolicy">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'delete edit');" />
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="enable">
+                   $| LANG_LOCALE['10214'] |$
+                </li>
+                <li id="disable">
+                    $| LANG_LOCALE['10699'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['13592'] |$
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['13593'] |$
+                </li>
+
+            </ul>
+        </div>
+	<div class="contextMenu" id="contextMenuIpPolicy">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'delete edit');" />
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="enable">
+                    $| LANG_LOCALE['10214'] |$
+                </li>
+                <li id="disable">
+                    $| LANG_LOCALE['10699'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10698'] |$
+                </li>
+                <li id="edit">
+                   $| LANG_LOCALE['13594'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgInfo">
+                    <p>Status Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+
+
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=getUsersDb.html">$| LANG_LOCALE['11067'] |$</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=groups.html">$| LANG_LOCALE['11088'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=users.html">$| LANG_LOCALE['13243'] |$</a>
+                                </li>
+                                <!--
+                                <li>
+                                    <a href="?page=knownClients.html">MAC Authentication</a>
+                                </li>
+                               -->
+                               <!-- <li>
+                                    <a href="?page=passwordRules.html">Password Rules</a>
+                                    </li>-->
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11089'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_groupsList">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11085'] |$ </th>
+                                        <th>$| LANG_LOCALE['10702'] |$ </th>
+                                    </tr>
+                                </thead>
+                                <?lua
+                            local i = 0
+                            for k, v in pairs (groupTable) do
+                            i=i+1
+                                local row = groupTable[k]
+                                if (row["UserGroups.GroupName"] ~= "Temp-CP") then
+                                local descriptionTitle = row["UserGroups.Description"] or ''
+                                local len = #(row["UserGroups.Description"])
+                                if (len > 64) then
+                                    description = string.sub(row["UserGroups.Description"],1,64) .. "..."
+                                else
+                                    description = row["UserGroups.Description"]
+                                end
+
+                            ?>
+
+                                <tr class="gradeA" id="groups$|row["UserGroups.GroupId"]|$">
+                                    <td>$|row["UserGroups.GroupName"] or ''|$</td>
+                                    <td title="$| descriptionTitle or '' |$">$| description or ''|$</td>
+                                </tr>
+                                <?lua 
+                                end
+                                end 
+                                ?>
+
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModal">
+                        <input type="button"  class="btnSubmit" title="$| LANG_LOCALE['10127'] |$" value="$| LANG_LOCALE['10127'] |$" id="btSave" onClick="openForm('button.addGroups.groups.groups',-1,'tf1_dialog','groups','groupsForm.html', 'tf1_groupsDailogContent','GroupsListPopupOnload')">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <h1>$| LANG_LOCALE['11619'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_loginPolicies">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsDataLoginPolicies">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11082'] |$ </th>
+                                        <th>$| LANG_LOCALE['13004'] |$ </th>
+                                    </tr>
+                                </thead>
+                                  <?lua 
+                                  local i = 0
+                            for k, v in pairs (groupLoginTable) do
+                                i=i+1
+                                local row = groupLoginTable[k]
+
+                            ?>
+
+                                <tr class="gradeA" id="loginPolicies$|row["UserGroups.GroupId"]|$">
+                                    <td>$|row["UserGroups.GroupName"] or ''|$</td>
+                                    <?lua
+                                   local statusStr 
+                                    if (row["UserGroups.DenyLogin"] =="0" ) then
+                                        statusStr = LANG_LOCALE['10214']
+                                    else
+                                        statusStr = LANG_LOCALE['10699']
+                                    end
+
+
+                                    ?>
+
+                                    <td>$| statusStr |$</td>
+                                </tr>
+                                <?lua 
+                                end 
+                                ?>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <h1>$| LANG_LOCALE['10423'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_browserPolicies">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsDataBrowserPolicies">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11082'] |$ </th>
+                                        <th>$| LANG_LOCALE['10174'] |$ </th>
+                                        <th>$| LANG_LOCALE['13004'] |$ </th>
+                                    </tr>
+                                </thead>
+                                <?lua 
+                                local i = 0
+                                if (returnCode3 == 0) then
+                            for k, v in pairs (groupBrowserTable) do
+                                i=i+1
+                                local row = groupBrowserTable[k]
+
+                            ?>
+
+                                <tr class="gradeA"
+                                    id="browserPolicies$|row["UserGroups.rowid"] |$">
+                                    <td>$|row["UserGroups.GroupName"] or ''|$</td>
+                                    <td>$|row["UserGroups.ClientBrowserName"] or ''|$ </td>
+                                     <?lua
+                                   local statusStr 
+                                    if (row["UserGroups.LoginFromBrowser"] =="1" ) then
+                                        statusStr = LANG_LOCALE['10214']
+                                    else
+                                        statusStr = LANG_LOCALE['10699']
+                                    end
+                                    ?>
+                            <td>$| statusStr |$ </td>
+                            </tr>
+                            <?lua 
+                            end 
+                            end
+                                ?>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModalBP">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10103'] |$" value="$| LANG_LOCALE['10103'] |$" id="btSave" onClick="openForm('button.addBrowser.browserPolicies.groups',-1,'tf1_dialog','browserPolicies','groupsForm.html', 'tf1_groupsDailogContent3','')">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <h1>$| LANG_LOCALE['11409'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_ipPolicies">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsDataIPPolicies">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11082'] |$ </th>
+                                        <th>$| LANG_LOCALE['12891'] |$ </th>
+                                        <th>$| LANG_LOCALE['11763'] |$ </th>
+                                        <th>$| LANG_LOCALE['11684'] |$ </th>
+                                        <th>$| LANG_LOCALE['13004'] |$ </th>
+                                    </tr>
+                                </thead>
+                                 <?lua 
+                                 local i = 0
+                        if (returnCode4 == 0)then
+                            for k, v in pairs (groupNetworkTable) do
+                                i=i+1
+                                local row = groupNetworkTable[k]
+
+                            ?>
+
+                                <tr class="gradeA"
+                                    id="ipPolicies$|row["UserGroups.rowid"]|$">
+                                    <td>$|row["UserGroups.GroupName"] or ''|$</td>
+                                    <td>$|row["UserGroups.AddressType"] or ''|$</td>
+                                    <td>$|row["UserGroups.Address"] or ''|$</td>
+                                    <td>$|row["UserGroups.MaskLength"] or ''|$</td>
+                                 <?lua
+                                   local statusStr 
+                                    if (row["UserGroups.LoginFromIP"] =="0" ) then
+                                        statusStr = LANG_LOCALE['10699']
+                                    else
+                                        statusStr = LANG_LOCALE['10214']
+                                    end
+                                   ?>
+                                <td>$| statusStr |$</td>
+                            </tr>
+                            <?lua 
+                            end
+                            end
+                            ?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModalIPP">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10106'] |$" value="$| LANG_LOCALE['10106'] |$" id="btSave" onClick="openForm('button.addIp.ipPolicies.groups',-1,'tf1_dialog','ipPolicies','groupsForm.html', 'tf1_groupsDailogContent4','IPPoliciesPopupOnload');">
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/groupsConfig.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+            
+              $('#tf1_groupsList .gradeA').contextMenu('contextMenu', {
+                                    bindings : {
+                                        'editMenu' : function(t, e, rowId) {
+                                            openForm('button.editGroups.groups.groups',rowId,'tf1_dialog','groups','groupsForm.html', 'tf1_groupsDailogContent','GroupsListPopupOnloadEdit');                                   
+                                        },
+                                        'deleteMenu' : function(t, e, rowId) {
+                                             
+                                            deleteRows('button.deleteGroups.groups.groups',
+                                                       'tf1_frmGroups', rowId,
+                                                       'optionSelectAll',
+                                                       'tf1_dialog', 'groups',
+                                                       'groups');
+                                        }
+                                    }
+                                });
+                                
+                $('#tf1_loginPolicies .gradeA').contextMenu('contextMenu', {
+                                    bindings : {
+                                        'editMenu' : function(t, e, rowId) {
+                                             
+                                            openForm('button.editLogin.loginPolicies.groups',rowId,'tf1_dialog','loginPolicies','groupsForm.html','tf1_groupsDailogContent2','policiesOnloadCallFn');
+                                        },
+                                        'deleteMenu' : function(t, e, rowId) {
+                                            deleteRows('button.deleteLogin.loginPolicies.groups', 'tf1_frmGroups', rowId, 'optionSelectAll', 'tf1_dialog', 'loginPolicies', 'loginPolicies');
+                                        }
+                                    }
+                                });
+        
+            $('#tf1_browserPolicies .gradeA').contextMenu('contextMenuBrowserPolicy', {
+                                    bindings : {
+                                        'enableMenu' : function(t, e, rowId) {
+                                            changeRowStauts('allowBrowser', 'tf1_frmGroups', rowId, 'tf1_dialog', 'browserPolicies', 'browserPolicies', 'browserPolicies.groups', 'optionSelectAll');
+                                        },
+					'disableMenu' : function(t, e, rowId) {
+                                            changeRowStauts('denyBrowser', 'tf1_frmGroups', rowId, 'tf1_dialog', 'browserPolicies', 'browserPolicies', 'browserPolicies.groups', 'optionSelectAll');
+                                        },
+                                        'deleteMenu' : function(t, e, rowId) {
+                                            openForm('button.deleteBrowser.browserPolicies.groups',rowId,'tf1_dialog','browserPolicies','groupsForm.html','tf1_groupsDailogContent5');
+                                        },
+                                        'editMenu' : function(t, e, rowId) {
+                                            openForm('button.addBrowser.browserPolicies.groups',rowId,'tf1_dialog','browserPolicies','groupsForm.html','tf1_groupsDailogContent8');
+                                        }
+                                    }
+                                });
+            
+            
+            
+            $('#tf1_ipPolicies .gradeA').contextMenu('contextMenuIpPolicy', {
+                                    bindings : {
+                                        'enableMenu' : function(t, e, rowId) {
+                                            changeRowStauts('allowIpPolicy', 'tf1_frmGroups', rowId, 'tf1_dialog', 'ipPolicies', 'ipPolicies', 'ipPolicies.groups', 'optionSelectAll');
+                                        },
+					'disableMenu' : function(t, e, rowId) {
+                                            changeRowStauts('denyIpPolicy', 'tf1_frmGroups', rowId, 'tf1_dialog', 'ipPolicies', 'ipPolicies', 'ipPolicies.groups', 'optionSelectAll');
+                                        },
+                                        'deleteMenu' : function(t, e, rowId) {
+                                            openForm('button.deleteIpPolicy.ipPolicies.groups',rowId,'tf1_dialog','ipPolicies','groupsForm.html','tf1_groupsDailogContent6');
+                                        },
+                                        'editMenu' : function(t, e, rowId) {
+                                            openForm('button.addIpPolicy.ipPolicies.groups',rowId,'tf1_dialog','ipPolicies','groupsForm.html','tf1_groupsDailogContent7', 'IPPoliciesPopupOnload');
+                                        }
+
+                                    }
+                                });
+            
+            
+            
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                oTable = $('#recordsDataLoginPolicies').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                oTable = $('#recordsDataBrowserPolicies').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                oTable = $('#recordsDataIPPolicies').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 2 }
+                    ]
+                });
+
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                });
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

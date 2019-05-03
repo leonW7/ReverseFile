@@ -1,0 +1,298 @@
+<?lua 
+
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bridgeBandwidthProfiles_bl"
+
+    PAGE_HELP = "network"
+    PAGE_HELP_SECTION = "bridgeBandwidthProfiles"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+-- bridgeBandwidthProfiles business Logic
+local BBWP_bl = require("com.teamf1.bl.network.bridgeBandwidthProfiles")
+
+local errorFlag
+
+if (ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local cookieTbl = {}
+    local tempVar   = 1
+    if (type(cgi["bridgeBandwidthProfiles.checkbox"]) == "string") then
+        cookieTbl[tempVar] = inputTable["bridgeBandwidthProfiles.checkbox"]
+    else
+        for k, v in pairs(cgi["bridgeBandwidthProfiles.checkbox"]) do
+            cookieTbl[tempVar] = v
+            tempVar = tempVar + 1
+        end
+    end
+
+    -- call the BL logic
+    errorFlag = BBWP_bl.bridgeBandwidthProfilesDelete (cookieTbl)
+    
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag = BBWP_bl.bridgeBandwidthProfileStatusEdit (inputTable)
+
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "config1") then
+    if(RowId == "-1") then
+       local inputTable = web.cgiToLuaTable(cgi)       
+        if (inputTable["L2BandWidthProfile.Policy"] == "0") then
+            inputTable["L2BandWidthProfile.WANID"] = "DMZ"
+        else
+            inputTable["L2BandWidthProfile.WANID"] = "LANPORT1"
+        end
+       errorFlag = BBWP_bl.bridgeBandwidthProfilesCreate (inputTable)
+
+       if (errorFlag == returnCodes.SUCCESS) then 
+          statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+       else 
+          statusErrorMessage = errorMap.errorStringGet (errorFlag)
+       end
+    else
+       local inputTable = web.cgiToLuaTable(cgi)
+       inputTable["L2BandWidthProfile.cookie"] = RowId
+        if (inputTable["L2BandWidthProfile.Policy"] == "0") then
+            inputTable["L2BandWidthProfile.WANID"] = "DMZ"
+        else
+            inputTable["L2BandWidthProfile.WANID"] = "LANPORT1"
+        end
+       errorFlag = BBWP_bl.bridgeBandwidthProfilesEdit (inputTable)
+
+       if (errorFlag == returnCodes.SUCCESS) then 
+          statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+       else 
+          statusErrorMessage = errorMap.errorStringGet (errorFlag)
+       end
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local bridgeBandwidthInfoTab = {}
+    local bridgeBandwidthStatusInfoTab = {}
+    errorFlag, bridgeBandwidthStatusInfoTab = BBWP_bl.bridgeBandwidthProfilesStatusGet ()
+    errorFlag, bridgeBandwidthInfoTab = BBWP_bl.bridgeBandwidthProfilesInfoGetAll ()
+
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "10358,13133,30148,30149,50149,30159,30160,11748,30161,30162,30163,12459,30152,30153,12562,12546,30155,11633,11705,11113,11716,14082,11686,11488,11695,12064,12059,12052,30164,30165,12795,10862,10695,12758,10449,10356,50211"
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+<link rel="stylesheet" type="text/css" href="css/menu.css" />
+<link rel="stylesheet" type="text/css" href="css/table.css" />
+<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+<?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body onload="onloadCall()">    
+    <!-- Section for Pop up dialog starts -->
+    <div id="tf1_overlay" class="configDialogMask"></div>                
+    <form action="platform.cgi" method="post" name="tf1_frmBridgeBandwidthConfig" id="tf1_frmBridgeBandwidthConfig">
+        <input type="hidden" name="thispage" id="thispage" value="bridgeBandwidthProfiles.html">
+        <div id="tf1_dialog" class="configDialog"></div>
+    </form>
+    <!-- Section for Pop up dialog ends -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+        </tr>
+    <!-- Right click Div Start -->
+    <div class="contextMenu" id="contextMenu">
+        <ul>
+            <li>
+                <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');" />&nbsp; 
+                    $| LANG_LOCALE['12795'] |$
+            </li>
+            <li id="edit">$| LANG_LOCALE['10862'] |$</li>
+            <li id="delete">$| LANG_LOCALE['10695'] |$</li>
+        </ul>
+    </div>
+    <!-- Right click Div End -->        
+        <tr>
+            <td valign="top" align="center">
+                <div class="midWidth">
+                <script language="JavaScript">
+                    mmSel("mainMenu3");
+                </script>
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+                        <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+                        </div>
+                    <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+                        <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                        </div>
+                    <?lua  end?>
+                        <div align="left">
+                            <nav class="nav-bg">
+                                <ul class="menu">
+                                    <li>
+                                        <a href="?page=bandwidthProfiles.html">$| LANG_LOCALE['10358'] |$</a>
+                                    </li>
+                                    <li>
+                                        <a href="?page=trafficSelectors.html">$| LANG_LOCALE['13133'] |$</a>
+                                    </li>
+                                    <?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                    <li class="current">
+                                        <a href="?page=bridgeBandwidthProfiles.html">$| LANG_LOCALE['30148'] |$</a>
+                                    </li>
+                                    <li>
+                                        <a href="?page=bridgeTrafficSelectors.html">$| LANG_LOCALE['30149'] |$</a>
+                                    </li>
+                                    <?lua end ?>
+                                    <li>
+                                	    <a href="?page=sessionLimit.html">$| LANG_LOCALE['50149'] |$</a>
+                                    </li>
+                                    <li>
+                                        <a href="?page=bandwidthManagement.html">$| LANG_LOCALE['10356'] |$</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="FL2">
+                            <p class="hint">
+                                $| helpHintText |$ 
+                            </p>
+                        </div>
+                        <h1>$| LANG_LOCALE['30148'] |$</h1>
+                            <div class="midArea">
+                                <div align="left">
+                                    <form name="tf1_frmBridgeBandwidthProfiles" id="tf1_frmBridgeBandwidthProfiles" action="platform.cgi" method="post">
+                                    <input type="hidden" name="thispage" id="thispage" value="bridgeBandwidthProfiles.html">
+                                        <div class="configRow">
+                                            <label>$| LANG_LOCALE['30159'] |$</label>
+                                            <?lua 
+                                                if (bridgeBandwidthStatusInfoTab["L2BandWidthProfileStatus.Status"] == "1") then
+                                                    statusStr="enable-disable-on"
+                                                    statusVar = "1"
+                                                else
+                                                    statusStr="enable-disable-off"
+                                                    statusVar = "0"
+                                                end
+                                            ?>
+                                            <a class="$| statusStr |$" alt="" id="bwStatus" ></a>
+                                            <input type="hidden" name="L2BandWidthProfileStatus.Status" value="$| statusVar |$"> 
+                                            <input type="hidden" value="$| bridgeBandwidthStatusInfoTab["L2BandWidthProfileStatus.Status"] |$" id="tf1_hdBwStatus" />
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+					<div class="submitRow">							
+                                            <input type="submit" name="button.config.bridgeBandwidthProfiles.bridgeBandwidthProfiles" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" onclick="return pageValidateBw('tf1_frmBridgeBandwidthProfiles')">							
+                                            <input type="reset" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" onclick="this.form.reset(); resetImgOnOff('tf1_frmBridgeBandwidthProfiles');">
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+                                    </form>
+                                </div> <!-- close align = left -->
+                                <div class="break">&nbsp;</div>
+                                <h2>$| LANG_LOCALE['30160'] |$</h2>
+                                    <div class="CLR">
+                                        <div class="demo_jui" id="tf1_bridgeBandwidthProfiles">
+                                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                                <thead>
+                                                    <tr>
+                                                        <th>$| LANG_LOCALE['11748'] |$</th>
+                                                        <th>$| LANG_LOCALE['30161'] |$</th>
+                                                    </tr>
+                                                </thead>
+                                                <?lua
+						local i = 0
+                                                for k,v in pairs(bridgeBandwidthInfoTab) do
+                                                    i = i + 1
+                                                    local row = bridgeBandwidthInfoTab[i]
+                                                    local range = ""
+                                                    if(row["L2BandWidthProfile.ProfileType"] == "0") then
+                                                        if(row["L2BandWidthProfile.Priority"]=="0") then
+                                                            range = "Low"
+                                                        elseif(row["L2BandWidthProfile.Priority"]=="1") then
+                                                            range = "Medium"
+                                                        elseif(row["L2BandWidthProfile.Priority"]=="2") then
+                                                            range = "High"
+                                                        end
+                                                    else
+                                                        range = row["L2BandWidthProfile.MinimumRate"] .. "-" .. row["L2BandWidthProfile.MaximumRate"] .. " " .. "Kbps."
+                                                    end
+                                                ?>
+                                                    <tr class="gradeA" id="$| row["L2BandWidthProfile._ROWID_"] |$">
+                                                        <td>$| row["L2BandWidthProfile.ProfileName"] |$</td>
+                                                        <td>$| range |$</td>
+                                                    </tr>
+                                                <?lua 
+                                                    end 
+                                                 ?>
+                                            </table>
+                                        </div>
+                                    </div> <!-- close CLR class tag -->
+                                    <div class="buttonsRow" id="tf1_btnShowModal">
+                                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['30162'] |$" value="$| LANG_LOCALE['30162'] |$" id="btSave" onclick="openForm('button.add.bridgeBandwidthProfiles.bridgeBandwidthProfiles',-1,'tf1_dialog','bridgeBandwidthProfiles','bridgeBandwidthProfilesForm.html', 'tf1_bridgeBandwidthProfilesDailogContent','onLoadBridgeBandwidthProFn')">
+                                    </div>
+                                    <div class="break">
+                                        &nbsp;
+                                    </div>
+                            </div> <!-- close midArea class tag -->
+                </div> <!-- close midWidth class tag -->
+            </td>
+        </tr>
+        <tr>
+            <td><?lua web.includeMenu("footer.html")?></td>
+        </tr>
+    </table>
+<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+<script type="text/ecmascript" language="javascript" src="js/bridgeBandwidthProfiles.js"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        $('#tf1_bridgeBandwidthProfiles .gradeA').contextMenu('contextMenu', {
+            bindings : {
+                'editMenu' : function(t, e, rowId) {
+                    openForm('button.edit.bridgeBandwidthProfiles.bridgeBandwidthProfiles',rowId,'tf1_dialog','bridgeBandwidthProfiles','bridgeBandwidthProfilesForm.html', 'tf1_bridgeBandwidthProfilesDailogContent','onLoadBridgeBandwidthProFn');                                    
+                    },
+                'deleteMenu' : function(t, e, rowId) {
+                    deleteRows('button.delete.bridgeBandwidthProfiles.bridgeBandwidthProfiles', 'tf1_frmBridgeBandwidthConfig', rowId, 'optionSelectAll', 'tf1_dialog', 'bridgeBandwidthProfiles', 'bridgeBandwidthProfiles');
+                }
+                }
+        });
+
+        oTable = $('#recordsData').dataTable({
+            "bJQueryUI" : true,
+            "sPaginationType" : "full_numbers"
+        });
+        dataRightClick(true);
+        $("#btnClose").live("click",function(e){
+            HideDialog('tf1_dialog', 'tf1_overlay');
+            e.preventDefault();
+       

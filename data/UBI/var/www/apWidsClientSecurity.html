@@ -1,0 +1,403 @@
+<?lua
+require "teamf1lualib/bl_apWidsClientSecurity"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "apWidsClientSecurity"
+	
+local gui_apWidsClient = require("com.teamf1.bl.wlan.apwidsclientsecurity")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local widsClientStatus
+local ENABLED = 1
+local DISABLED = 0
+errorCode, widsClientStatus = gui_apWidsClient.widsClientSecurityGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+
+if (ButtonType and ButtonType == "config") then
+    local configRow = web.cgiToLuaTable(cgi)
+    errorFlag, statusCode = gui_apWidsClient.widsClientSecuritySet (configRow)
+    if (errorFlag == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    
+    web.goToPage(NextPage, true, true)
+    
+else
+  cgilua.header ("Content-Type","text/html; charset=UTF-8")  
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body onload="onloadCall ();">
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                     <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=apWidsSecurity.html">AP WIDS Security</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=apWidsClientSecurity.html">AP WIDS
+                                    Client Security</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>AP WIDS Client Security</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmApWidsClientSecurity"
+                                id="tf1_frmApWidsClientSecurity"
+                                action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="apWidsClientSecurity.html">
+                                <div class="configRow">
+                                    <label class="half">Not Present in OUI Database Test </label>
+                                        <?lua if
+                                        (widsClientStatus.notPresentinOUI
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.notPresentinOUI" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Not Present in Known Client Database
+                                        Test </label>
+                                        <?lua if
+                                        (widsClientStatus.notPresentinKnownClient
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.notPresentinKnownClient" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Configured Authentication Rate Test </label>
+                                        <?lua if
+                                        (widsClientStatus.authRateTest
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.authRateTest" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Configured Probe Requests Rate Test </label>
+                                        <?lua if
+                                        (widsClientStatus.probeRequestsRateTest
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.probeRequestsRateTest" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Configured De-Authentication Requests
+                                        Rate Test </label>
+                                        <?lua if
+                                        (widsClientStatus.deAuthRequestsRateTest
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.deAuthRequestsRateTest" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Maximum Authentication Failures
+                                        Test </label>
+                                        <?lua if
+                                        (widsClientStatus.maxAuthFailuresTest
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.maxAuthFailuresTest" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Authentication with Unknown AP Test </label>
+                                        <?lua if
+                                        (widsClientStatus.authWithUnknownAP
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.authWithUnknownAP" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Client Threat Mitigation </label>
+                                        <?lua if
+                                        (widsClientStatus.clientThreatMitigation
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.clientThreatMitigation" value="$| statusVar |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Known Client Database Lookup Method </label>
+                                        <?lua if
+                                        (widsClientStatus.knownClientDatabaseLookupMethod
+                                        == ENABLED) then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar = ENABLED
+                                               else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar = DISABLED
+                                               end
+                                          ?>
+                                          <a class="$| statusStr |$" alt="" id="tf1_chkEnable"></a>
+                                          <input type="hidden"
+                                          name="apWidsClientSecurity.knownClientDatabaseLookupMethod" value="$| statusVar |$">        
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Known Client Database Radius Server
+                                        Name </label>
+                                    <input type="text"
+                                    name="apWidsClientSecurity.knownClientDatabaseRadiusServerName" value="$|
+                                    widsClientStatus.knownClientDatabaseRadiusServerName |$" id="tf1_serverName">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Rogue Detected Trap Interval </label>
+                                    <input class="one" type="text" name="apWidsClientSecurity.rogueDetectedTrapInterval" value="$| widsClientStatus.rogueDetectedTrapInterval |$" id="tf1_rogueDTI" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 3600, true, 'Invalid Rogue Detected Trap Interval.', 'Seconds');}">
+                                    <dl>
+                                        [Range: 60 - 3600, 0 - Disable] Seconds
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">De-Authentication Requests Threshold
+                                        Interval </label>
+                                    <input class="one" type="text" name="apWidsClientSecurity.deAuthRequestsThresholdInterval"
+                                    value="$| widsClientStatus.deAuthRequestsThresholdInterval |$" id="tf1_deAuthTI" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 3600, true, 'Invalid De-Authentication Requests Threshold Interval.', 'Seconds');}">
+                                    <dl>
+                                        [Range: 1 - 3600] Seconds
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">De-Authentication Requests Threshold
+                                        Value </label>
+                                    <input class="one" type="text" name="apWidsClientSecurity.deAuthRequestsThresholdValue" 
+                                    value="$| widsClientStatus.deAuthRequestsThresholdValue |$" id="tf1_deAuthTV" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 99999, true, 'Invalid De-Authentication Requests Threshold Value.', '');}">
+                                    <dl>
+                                        [Range: 1 - 99999]
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Authentication Requests Threshold
+                                        Interval </label>
+                                    <input class="one" type="text" name="apWidsClientSecurity.authRequestsThresholdInterval" 
+                                    value="$| widsClientStatus.authRequestsThresholdInterval |$" id="tf1_authTI" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 3600, true, 'Invalid Authentication Requests Threshold Interval.', 'Seconds');}">
+                                    <dl>
+                                        [Range: 1 - 3600] Seconds
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Authentication Requests Threshold
+                                        Value </label>
+                                    <input class="one" type="text" name="apWidsClientSecurity.authRequestsThresholdValue" value="$| widsClientStatus.authRequestsThresholdValue |$" id="tf1_authTV" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 99999, true, 'Invalid Authentication Requests Threshold Value.', '');}">
+                                    <dl>
+                                        [Range: 1 - 99999]
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Probe Requests Threshold Interval </label>
+                                    <input class="one" type="text" name="apWidsClientSecurity.probeRequestsThresholdInterval" value="$| widsClientStatus.probeRequestsThresholdInterval |$" id="tf1_probeTI" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 3600, true, 'Invalid Probe Requests Threshold Interval.', 'Seconds');}">
+                                    <dl>
+                                        [Range: 1 - 3600] Seconds
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Probe Requests Threshold Value </label>
+                                    <input class="one" type="text" name="apWidsClientSecurity.probeRequestsThresholdValue" value="$| widsClientStatus.probeRequestsThresholdValue |$" id="tf1_probeTV" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 99999, true, 'Invalid Probe Requests Threshold Value.', '');}">
+                                    <dl>
+                                        [Range: 1 - 99999]
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label class="half">Authentication Failure Threshold
+                                        Value </label>
+                                    <input class="one" type="text" name="apWidsClientSecurity.authFailureThresholdValue" value="$| widsClientStatus.authFailureThresholdValue |$" id="tf1_authFailureTV" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 99999, true, 'Invalid Authentication Failure Threshold Value.', '');}">
+                                    <dl>
+                                        [Range: 1 - 99999]
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit"
+                                    name="button.config.apWidsClientSecurity" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return widsClientValidate('tf1_frmApWidsClientSecurity')">
+                                    <input type="reset" id="btSave" value="Cancel" title="Cancel" class="btnReset" onclick="this.form.reset(); resetImgOnOff('tf1_frmApWidsClientSecurity');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/widsClient.js"></script>
+    </body>
+
+</html>
+<?lua end ?>

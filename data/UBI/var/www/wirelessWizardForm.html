@@ -1,0 +1,130 @@
+<!--Wireless  Wizard -->
+<?lua
+
+ 
+?>
+
+<div id="tf1Wizard_wirelessWizardDailogContent">
+  <div class="topBgWizard">
+    <h1 data-localize="30366">Wireless Wizard</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard">
+   	<form id="tf1Wizard_wirelessForm">
+    <input type="hidden" name="thispage" id="tf1Wizard_thispage" value="wizard.html">
+
+	<input type="hidden" name="button.wirelessWizard.wizard" id="tf1Wizard_btnConnect" value="testconnect">
+    <div id="tf1Wizard_divStep1" class="divStep">
+ 
+    <div class="wizardMessage">
+        <p id="tf1Wizard_headingWireless"><span data-localize="30386">Wireless Wizard Configuration</span></p>
+    </div>
+    <div class="wizardBlock">
+       
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+            <?lua 
+            -- While Merging super-ac, below part of code related to super-ac code
+            if (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then
+                require "teamf1lualib/profileConfig_bl"
+        	    local wirelessWizard = require ("com.teamf1.bl.wireless.profile")
+                local returnCode, statusMessage, profileTbl =  wirelessWizard.wirelessProfileGetAll () 
+            ?>
+    	    <div class="configRowWizard">
+              <label>Profile Name</label>
+          	      <select id="tf1Wizard_profileType"  class="wizardField" name ="dot11Profile.rowID">
+	              <?lua 
+		              for k, v in pairs (profileTbl) do
+                          local row = profileTbl[k]
+		          ?>	
+		              <option value="$| row["dot11Profile.profileName"].."@"..row["dot11Profile._ROWID_"].."@"..row["dot11Profile.radioMode"] or '1' |$">$| row["dot11Profile.profileName"] |$</option>
+	              <?lua end?>	
+	              </select>
+            </div>
+            <?lua end ?>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="30387">Network Name (SSID)</label>
+            <input type="text" name="dot11Profile.ssid" id="tf1Wizard_Ssid" headingId="tf1Wizard_headingWireless" class="wizardField" field-type="text" onkeypress="return alphaNumericCheck (event, '_')" maxlength="32">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="hide" id="tf1Wizard_key_div" >
+            <label data-localize="30388">Wireless Security Password</label>
+            <input type="password" name="dot11Profile.pskPassAscii" id="tf1Wizard_preSharedKey" headingId="tf1Wizard_headingWireless" class="wizardField" field-type="text" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1Wizard_preSharedKey', 8, 63, LANG_LOCALE['30478']);}" maxlength="63" disabled="disabled">
+	
+            <div class="description"><span data-localize="30389">Wireless Security Password: Between 8 and 63 characters (A longer WPA key is more secure than a short one)</span></div>
+          </div>
+          <div class="hide" id="break_tf1Wizard_key_div"> &nbsp; </div>
+	<div class="hide" >
+           <label data-localize="30379">Cipher Type</label>
+	    <input type="hidden" field-type="text" class="wizardField" value="TKIP and AES" headingId="tf1Wizard_headingWireless">
+	
+         </div>
+          <div class="break"> &nbsp; </div>
+	 
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+           <label data-localize="30390">Network Key Type</label>
+	   <select onchange="wizard_changeWirelessKeyType()" id="tf1Wizard_networkType"  class="wizardField" name ="dot11Profile.networkType">
+		<option data-localize="10333" value="1" selected>Auto</option>
+		<option data-localize="11676" value="2">Manual</option>
+	  </select>
+	  <div class="break"> &nbsp; </div>
+      <div class="description"><span data-localize="30391">Automatic: To prevent outsiders from accessing your network, the router will automatically assign a security to your network</span>.</div>
+	  <div class="break"> &nbsp; </div>
+      <div class="description"><span data-localize="30392">Manual: Use this options if you prefer to create our own key</span>. </div>
+		
+          </div>
+          <div class="break"> &nbsp; </div>
+	 
+ 	<div class="hide">
+           <label data-localize="13716">Security Mode</label>
+	    <input type="hidden" field-type="text" value="Auto (WPA or WPA2) - Personal" headingId="tf1Wizard_headingWireless" class="wizardField">   
+	   
+         </div>
+          <div class="break"> &nbsp; </div>
+          
+        </div>
+	 
+      </div>
+      <div class="pagination">
+          <div class="pageList"><span data-localize="13008">Step</span>: [1 <span data-localize="13836">of</span> 1] <span id="wirelessStatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wizardForm.html', 'tf1Wizard_dashboardWizardDailogContent','');">
+          <input data-localize="12758" type="button" id="btSave" value="Save" title="Save" class="wizardBtnNext" onclick="validateWizardWireless()" >
+        </div>
+      </div>
+    </div>
+    
+    </div></form>
+    
+    
+    <!-- Preview -->
+    
+    <div id="tf1Wizard_previewDiv" style="display:none;">
+    
+    	<div class="wizardMessage">
+            <p><span data-localize="30381">Wireless setting saved successfully</span></p>
+    </div>
+    <div class="wizardBlock" id="tf1Wizard_previewBlock">
+    
+     
+    </div>
+    
+ 
+ 
+  <div class="pagination">
+    <div class="pageList"><span id="wirelessStatusMessage">&nbsp;</span></div>
+    <div class="prevNext">
+      <input data-localize="14066" type="button" id="btSave" value="Finish" title="Finish" class="wizardBtnNext" onclick="cancelWizard()" >
+    </div>
+  </div>
+</div>
+
+<!-- preview step ends -->
+    
+    
+  </div>
+</div>

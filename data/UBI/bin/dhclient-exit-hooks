@@ -1,0 +1,89 @@
+#!/bin/sh
+
+#
+# Local definitions
+#
+export LD_LIBRARY_PATH=/pfrm2.0/lib
+COMP_NAME="NONE"
+LOG_LEVEL=8
+ADP_LOG="/pfrm2.0/bin/adpLog $COMP_NAME $LOG_LEVEL "
+
+touch /var/resolv1.conf
+chmod 666 /var/resolv1.conf
+if [ -n "$new_domain_name_servers" ]; then
+    for nameserver in $new_domain_name_servers; do
+      echo "nameserver $nameserver" >>/var/resolv1.conf
+    done
+fi
+
+new_dns_address1=`cat /var/resolv1.conf | awk 'NR == 1 {print }' |  \
+                  cut -d ' ' -f 2`
+
+new_dns_address2=`cat /var/resolv1.conf | awk 'NR == 2 {print }' |  \
+                  cut -d ' ' -f 2`
+
+if [ -z "$new_ip_address" ]
+then
+    exit
+fi
+
+#log WAN UP time for IPv4
+#/pfrm2.0/bin/timeShow > /var/wan"$(($LINKNAME))"Time-2
+
+$ADP_LOG "IP:             $new_ip_address"
+$ADP_LOG "BCAST:          $new_broadcast_address"
+$ADP_LOG "SUBNET:         $new_subnet_mask"
+$ADP_LOG "GW:             $new_routers"
+$ADP_LOG "DNS1:           $new_dns_address1"
+$ADP_LOG "DNS2:           $new_dns_address2"
+$ADP_LOG "Interface:      $interface"
+$ADP_LOG "LogicalIfName:  $LOGICAL_IFNAME"
+
+if [ -z "$new_routers" ]
+then
+    new_routers="0.0.0.0"
+fi
+
+if [ -z "$new_subnet_mask" ]
+then
+    new_subnet_mask="0.0.0.0"
+fi
+
+if [ -z "$new_broadcast_address" ]
+then
+    new_broadcast_address="0.0.0.0"
+fi
+
+if [ -z "$new_dns_address1" ]
+then
+    new_dns_address1="0.0.0.0"
+fi
+
+if [ -z "$new_dns_address2" ]
+then
+    new_dns_address2="0.0.0.0"
+fi
+
+export LD_LIBARY_PATH=$LD_LIBARY_PATH:/pfrm2.0/lib
+
+/pfrm2.0/bin/statelessRtConfig $new_rfc3442_classless_static_routes
+
+if [ -z $LOGICAL_IFNAME ]; then
+/pfrm2.0/bin/dhclientHook -d /tmp/system.db -a $new_ip_address            \
+                                            -g $new_routers               \
+                                            -m $new_subnet_mask           \
+                                            -b $new_broadcast_address     \
+                                            -p $new_dns_address1          \
+                                            -s $new_dns_address2          \
+					                        -i $interface                 
+else
+/pfrm2.0/bin/dhclientHook -d /tmp/system.db -a $new_ip_address            \
+                                            -g $new_routers               \
+                                            -m $new_subnet_mask           \
+                                            -b $new_broadcast_address     \
+                                            -p $new_dns_address1          \
+                                            -s $new_dns_address2          \
+                                            -i $interface                 \
+                                            -l $LOGICAL_IFNAME
+fi
+rm /var/resolv1.conf

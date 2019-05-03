@@ -1,0 +1,68 @@
+<?lua
+require "teamf1lualib/macBasedVlan_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local macBasedVlan = require ("com.teamf1.bl.vlan.macvlan")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if(ButtonType == "add" or ButtonType == "edit") then
+    local returnCode, macAddress, vlan, interface
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, macAddress, vlan, interface = 
+                macBasedVlan.macBasedVlanSectionGetCur(configRowId)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+    else
+        configRowId = "-1"
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_macBasedVlanDailogContent">
+    <div class="topBg">
+        <h1>MAC Based VLAN Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>MAC Address </label>
+            <input type="text" id="tf1_txtMacAddr" 
+            name="macBasedVlan.macAddress" value= "$| macAddress or '' |$" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify (event, this, true, '', '')">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>VLAN </label>
+            <input type="text" id="tf1_txtMacVlanId" 
+            name="macBasedVlan.vlan" value= "$| vlan or '' |$" 
+            class="one" maxlength="4" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 4096, true, 'Invalid Vlan Id:', '');}">
+            <dl>
+                [Range: 1 - 4096]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Interface </label><select size="1" name="macBasedVlan.port">
+                <option $| web.dropdownSelected(interface == "1") |$ value="1">Port1</option>
+            <option $| web.dropdownSelected(interface == "2") |$ value="2">Port2</option>
+            <option $| web.dropdownSelected(interface == "3") |$ value="3">Port3</option>
+            <option $| web.dropdownSelected(interface == "4") |$ value="4">Port4</option>
+            </select> </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" 
+        name="button.config.macBasedVlan.macBasedVlan.$| configRowId |$" 
+        onclick="return macBasedVlanConfigValidate ()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<?lua end ?>

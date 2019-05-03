@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="security-mac-filter-config" prompt="security-config[mac-filter]> "> 
+    <COMMAND name="save" help="Save mac filter configuration changes.">
+	     <ACTION>lua clishCfgObjExec("MacFilter")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save mac filter configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("MacFilter")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back mac filter configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="enable"
+             help="Enable/Disable the mac filter status">
+             <PARAM name="status"
+                    help="Enable/Disable the mac filter status"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("MacFilter", "MACFiltering.MACFilterEnable", "${status}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="policy"
+             help="Set the mac address policy">
+             <PARAM name="policy"
+                    help="set the mac address policy"
+                    ptype="MAC_ADDR_POLICY_T"/>
+             <ACTION>lua clishCfgObjAdd ("MacFilter", "MACFiltering.MACAddressPolicy", "${policy}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-mac-filter-source-config" prompt="security-config[mac-filter-source]> "> 
+    <COMMAND name="save" help="Save source mac filter configuration changes.">
+	     <ACTION>lua clishCfgObjExec("SourceMacFilter")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save source mac filter configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("SourceMacFilter")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back source mac filter configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="address"
+             help="enter mac address to which policies will be applied">
+             <PARAM name="macAddr"
+                    help="enter mac address to which policies will be applied"
+                    ptype="MAC_ADDR_T"/>
+             <ACTION>lua clishCfgObjAdd ("SourceMacFilter", "SourceMACAddress.SourceMACAddress", "${macAddr}")              
+             </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-ip-or-mac-binding-config" prompt="security-config[ip-or-mac-binding]> "> 
+    <COMMAND name="save" help="Save ip mac binding configuration changes.">
+	     <ACTION>lua clishCfgObjExec("IpMacBinding")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save ip mac binding configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("IpMacBinding")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ip mac binding configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="host_name"
+             help="Specify a unique host name for this rule.">
+             <PARAM name="name"
+                    help="Specify a unique host name for this rule."
+                    ptype="STRING32"/>
+             <ACTION>lua clishCfgObjAdd ("IpMacBinding", "IPMACBinding.Name", "${name}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="mac_address"
+             help="enter mac address to which policies will be applied">
+             <PARAM name="macAddr"
+                    help="enter mac address to which policies will be applied"
+                    ptype="MAC_ADDR_T"/>
+             <ACTION>lua clishCfgObjAdd ("IpMacBinding", "IPMACBinding.SourceMACAddress", "${macAddr}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ip_address"
+             help="enter ip address to which policies will be applied">
+             <PARAM name="ipAddr"
+                    help="enter ip address to which policies will be applied"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("IpMacBinding", "IPMACBinding.IPAddress", "${ipAddr}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="log_dropped_packets"
+             help="Specify logging option for this rule">
+             <PARAM name="logStat"
+                    help="Specify logging option for this rule"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("IpMacBinding", "IPMACBinding.LogStatus", "${logStat}")              
+             </ACTION>
+     </COMMAND>
+    <!--<COMMAND name="Association" help="Select to Associate with DHCP Reserved IP">
+	<PARAM name="association" 
+        help="Select to Associate with DHCP Reserved IP"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("IpMacBinding", "IPMACBinding.AssociatingEnabled",
+                                   "${association}")
+	</ACTION>
+   </COMMAND>-->
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-ip-or-mac-binding-edit" prompt="security-config[ip-or-mac-binding]> "> 
+    <COMMAND name="save" help="Save ip mac binding configuration edit changes.">
+	     <ACTION>lua clishCfgObjExec("IpMacBinding")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save ip mac binding configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("IpMacBinding")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ip mac binding configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="mac_address"
+             help="enter mac address to which policies will be applied">
+             <PARAM name="macAddr"
+                    help="enter mac address to which policies will be applied"
+                    ptype="MAC_ADDR_T"/>
+             <ACTION>lua clishCfgObjAdd ("IpMacBinding", "IPMACBinding.SourceMACAddress", "${macAddr}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="ip_address"
+             help="enter ip address to which policies will be applied">
+             <PARAM name="ipAddr"
+                    help="enter ip address to which policies will be applied"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("IpMacBinding", "IPMACBinding.IPAddress", "${ipAddr}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="log_dropped_packets"
+             help="Specify logging option for this rule">
+             <PARAM name="logStat"
+                    help="Specify logging option for this rule"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("IpMacBinding", "IPMACBinding.LogStatus", "${logStat}")              
+             </ACTION>
+     </COMMAND> 
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="security mac_filter" help="source mac filter configuration mode."/>
+<!--=======================================================-->
+    <COMMAND name="security ip_or_mac_binding" license_support="Y" help="ip mac binding configuration mode."/>
+    <!--=======================================================-->
+    <COMMAND name="security mac_filter configure"
+             help="source mac filter configuration mode."
+             view="security-mac-filter-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("MacFilter", 
+                              macFilteringCfgInit, macFilteringCfgSave, 
+				       NULL)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security mac_filter source" help="."/>
+    <COMMAND name="security mac_filter source add"
+             help="Source Mac Filter configuration mode."
+             view="security-mac-filter-source-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("SourceMacFilter", 
+                              sourceMacFilteringCfgInit, sourceMacFilteringCfgSave, 
+				       sourceMacFilteringCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security mac_filter source edit"
+             help="Source Mac Filter configuration mode."
+             view="security-mac-filter-source-config" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the mac address to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("SourceMacFilter", 
+                              sourceMacFilteringCfgInit, sourceMacFilteringCfgSave, 
+				       sourceMacFilteringCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security mac_filter source delete"
+             help="Source Mac Filter configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the mac address to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("SourceMacFilter", 
+                              sourceMacFilteringCfgInit, sourceMacFilteringCfgDel, 
+				       sourceMacFilteringCfgInputVal,"${row_id}")
+                   clishCfgObjExec("SourceMacFilter")
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security ip_or_mac_binding add"
+             help="ip/mac binding configuration mode."
+             view="security-ip-or-mac-binding-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("IpMacBinding", 
+                              ipMacBindingCfgInit, ipMacBindingCfgSave, 
+				       ipMacBindingCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security ip_or_mac_binding edit"
+             help="ip/mac binding configuration edit mode."
+             view="security-ip-or-mac-binding-edit" viewid="">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be edited"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("IpMacBinding", 
+                              ipMacBindingCfgInit, ipMacBindingCfgSave, 
+				       ipMacBindingCfgInputVal,"${row_id}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="security ip_or_mac_binding delete"
+             help="ip/mac binding configuration mode.">
+	<PARAM name="row_id" 
+	       help=" Row Id Of the rule to be deleted"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("IpMacBinding", 
+                              ipMacBindingCfgInit, ipMacBindingCfgDel, 
+				       ipMacBindingCfgInputVal,"${row_id}")
+                   clishCfgObjExec("IpMacBinding")
+                   </ACTION>
+     </COMMAND>
+     <COMMAND name="security ip_or_mac_binding deleteAll"
+        help="Delete all the ip_or_mac binding rules.">
+        <ACTION>lua clishCmdExec(ipMacBindingCfgDelall)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security mac_filter" help="."/>
+    <COMMAND name="show security mac_filter setup"
+            help="Display Source Mac Filter configuration">
+	    <ACTION>lua clishCmdExec (sourceMacFilteringCfgGet)</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show security ip_or_mac_binding" license_support="Y" help="."/>
+    <COMMAND name="show security ip_or_mac_binding setup"
+            help="Display IP/MAC Binding configuration">
+	    <ACTION>lua clishCmdExec (ipMacBindingCfgGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

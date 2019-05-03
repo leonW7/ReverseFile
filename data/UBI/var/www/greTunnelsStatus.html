@@ -1,0 +1,150 @@
+<?lua
+    require "teamf1lualib/greTunnels_bl"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+    
+    PAGE_HELP = "status"
+	PAGE_HELP_SECTION = "greTunnelStatus"
+    
+    local errorMap    = require ("com.teamf1.core.errorMap")
+    local returnCodes = require ("com.teamf1.core.returnCodes")
+    local greBL = require("com.teamf1.bl.vpn.gre")
+
+    local configRow = {}
+    local statusErrorMessage
+    local returnCode, configRow = 
+                    greBL.greTunnelsStatusGetAll()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE = "11425,12935,12519,11821,11512,30580,30581,13161,11599,12663,13004"
+?>
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgInfo">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end?>
+                     <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=activeVpns.html">$| LANG_LOCALE['11425'] |$</a>
+                                </li>
+                                <?lua if (HIGH_SEC == "HIGH") then ?> 
+                                <li >
+                                    <a href="?page=activeSslVpns.html">$| LANG_LOCALE['12935'] |$</a>
+                                </li>
+                                <?lua end ?>
+                                <li>
+                                    <a href="?page=activePptpVpns.html">$| LANG_LOCALE['12519'] |$</a>
+                                </li>
+                                <?lua if (HIGH_SEC == "HIGH") then ?> 
+                                <li>
+                                    <a href="?page=activeOpenVpns.html">$| LANG_LOCALE['11821'] |$</a>
+                                </li>
+                                <?lua end ?>
+                                <li>
+                                    <a href="?page=activeL2tpVpns.html">$| LANG_LOCALE['11512'] |$</a>
+                                </li>
+				<li class="current">
+                                    <a href="?page=greTunnelsStatus.html">$| LANG_LOCALE['30580'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div> 
+                    <div class="FL2">
+                        <p class="hint"> $| helpHintText |$</p>
+                    </div>
+                    <h1>$| LANG_LOCALE['30581'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['13161'] |$</th>
+                                        <th>$| LANG_LOCALE['11599'] |$</th>
+                                        <th>$| LANG_LOCALE['12663'] |$</th>
+                                        <th>$| LANG_LOCALE['13004'] |$</th>
+                                    </tr>
+                                </thead>
+                                <?lua
+                                    for k, v in pairs(configRow) do
+                                        local outputTable = {}
+                                        outputTable = configRow[k]
+                                        tunnelName = outputTable["TunnelName"]
+                                        localIP = outputTable["IpAddress"]
+                                        remoteIP = outputTable["GwIpAddr"]
+                                        status = outputTable["Status"]
+                               ?>
+                                <tr class="gradeA">
+                                    <td> $|tunnelName|$</td>
+                                    <td> $|localIP|$ </td>
+                                    <td> $|remoteIP|$ </td>
+                                    <td> $|status|$ </td>
+                                </tr>
+                               <?lua end ?>
+                            </table>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+</html>
+
+

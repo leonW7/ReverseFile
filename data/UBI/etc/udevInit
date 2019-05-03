@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# udevInit - initialization script for udev
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,05apr,sag  written
+
+# initialize udev  management generic database
+
+export UDEV_CONFIG_FILE=/pfrm2.0/udev/etc/udev/udev.conf
+/pfrm2.0/udev/sbin/udevd --daemon 
+/pfrm2.0/udev/sbin/udevadm trigger --subsystem-match=usb

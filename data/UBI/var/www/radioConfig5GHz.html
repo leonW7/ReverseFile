@@ -1,0 +1,231 @@
+<?lua
+require "teamf1lualib/radioConfig_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "wireless"
+    if (PRODUCT_ID == "DSR-1000AC_Ax") then
+        PAGE_HELP_SECTION = "radioConfig_1000N"
+    elseif(PRODUCT_ID == "DSR-500AC_Ax") then
+        PAGE_HELP_SECTION = "radioConfig_500N"
+    end
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local wRadioConfig = require("com.teamf1.bl.wireless.radio")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["dot11Radio.band"] = "a"
+    inputTable["dot11Radio.radioNumber"] = "1"
+    local returnCode, statusMessage = 
+            wRadioConfig.wirelessRadioConfigSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+
+else
+    local cardNumber = 1
+    local returnCode, statusMessage, wRadioConfigTab = 
+    wRadioConfig.wirelessRadioConfigGet (cardNumber)
+    
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+(Subsidiary of D-Link India)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+</head>
+<body>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes 
+                    -->
+                     <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>					
+                    <div align="left">
+						<nav class="nav-bg">
+
+							<ul class="menu">
+								<li>
+									<a href="?page=radioConfig.html">2.4 GHz</a>
+								</li>
+								<li class="current">
+									<a href="?page=radioConfig5GHz.html">5 GHz</a>
+								</li>
+
+							</ul>
+						</nav>
+
+					</div>
+
+
+					<div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>					
+                    <h1>Radio Settings 5 GHz</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmradioSettings5GHz" id="tf1_frmradioSettings5GHz" action="platform.cgi" method="post">
+								<input type="hidden" name="thispage" id="thispage" value="radioConfig5GHz.html">
+								<div class="hide" id="tf1_selRegions_div">
+                                    <label>Region</label>
+                                    <select name="REGION" id="tf1_selRegions" onChange="updateCountries ()">
+                                    </select>
+                                </div>
+                                <div class="hide" id="break_selRegions_div">&nbsp;</div>
+				<div class="hide" id="tf1__div">
+				    <label>Country</label>
+                                    <select name="dot11GlobalConfig.country" id="tf1_selCountry" onChange="updateOperationFrequency ()">
+                                    </select>
+                                </div>
+                                <div class="hide" id="break__div">&nbsp;</div>
+                                <div class="configRow" id="tf1__div" style="display:none">
+                                    <label>Operating Frequency</label>
+                                    <select name="dot11Radio.band" id="tf1_selOpFrq" size="1" onChange="updateMode ()">
+				    </select>
+				</div>
+				<div class="break" id="break__div">&nbsp;</div>
+                                <div class="configRow" id="tf1__div">
+                                    <label>Mode</label>
+                                    <select name="dot11Radio.opMode" id="tf1_selMode" onChange="updateChannelSpacing ();">
+                                    </select>
+                                </div>
+                                <div class="break" id="break__div">&nbsp;</div>
+                                <div class="configRow" id="tf1__div">
+				    <label>Channel Spacing</label>
+                                    <select name="dot11Radio11n.chanWidth" id="tf1_selChannelWidth" onChange="updateChannel ()">
+				
+                                    </select>
+                                </div>
+						<div class="break" id="break__div">&nbsp;</div>
+						
+						<div class="configRow" id="tf1_selSideBand_div">
+							<label>Control Side Band</label>
+							<select name="dot11Radio11n.ctlSideBand" class="txt1" id="tf1_selSideBand" onChange="updateChannel ()">
+								<option $| web.dropdownSelected(wRadioConfigTab["dot11Radio11n.ctlSideBand"] == "Lower") |$ value="Lower">Upper</option>
+                                <option $| web.dropdownSelected(wRadioConfigTab["dot11Radio11n.ctlSideBand"] == "Upper") |$ value="Upper">Lower</option>
+                            </select>
+						</div>
+						<div class="break" id="break_selSideBand_div">&nbsp;</div>
+
+						<div class="configRow" id="tf1_div">
+							<label>Current Channel</label>
+							<p id="tdCurChan">&nbsp;</p>
+						</div>
+						<div class="break" id="break_div">&nbsp;</div>
+
+						<div class="configRow" id="tf1__div">
+							<label>Channel</label>
+							<select name="dot11Radio.configuredChannel" class="txt1" id="tf1_selChannels">
+							</select>
+						</div>
+						<div class="break" id="break__div">&nbsp;</div>
+<?lua if(UNIT_NAME ~= "DSR-250N") then?>
+						<div class="configRow" id="tf1__div">
+							<label>Default Transmit Power</label>
+							<input type="text" maxlength="2" name="dot11Radio.txPower" value="$| wRadioConfigTab["dot11Radio.txPower"] |$" class="one" id="tf1_txtDefTransPwr" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return radioValidate ();}"><dl> [Range: 1 - 31] dBm</dl>
+						</div>
+						<div class="break" id="break__div">&nbsp;</div>
+						<div class="configRow" id="tf1__div">
+							<label>Transmit Power</label>
+							<p id="txPowerValId">&nbsp;</p>
+						</div>
+						<div class="break" id="break__div">&nbsp;</div>
+<?lua end?>
+						<div class="configRow" id="tf1__div">
+							<label>Transmission Rate</label>
+                            <input type="hidden" id="tf1_hid_selTransmitRate" value="$| wRadioConfigTab["dot11Radio.txRate"] |$">
+							<select name="dot11Radio.txRate" class="txt1" id="selTransmitRate"></select>
+					</div>
+					<div class="break" id="break__div">&nbsp;</div>
+					<input type="hidden" id="tf1_unitName" value="$| UNIT_NAME |$">
+
+						<div class="submitRow">
+							<input type="submit" name="button.config.radioConfig5GHz" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="return radioValidate()">
+                            <!-- changed type ="button" instead of reset for cancel SPR:46782 --> 
+							<input type="button" class="btnReset" title="Cancel" value="Cancel" id="btSave" onClick="radioConfig5hzReset()">
+							</div>
+						<div class="break">&nbsp;</div>
+						</form>
+						</div> 
+
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+		</table>
+      <!-- Hidden Valus -->
+		<!--<input type="hidden" id="hdWlanCountry" value="US">-->
+		<input type="hidden" id="hdWlanCountry2" value="$| wRadioConfigTab["dot11GlobalConfig.country"] or '' |$">
+		<input type="hidden" id="hdWlanOpFrq" value="$| wRadioConfigTab["dot11Radio.band"] or '' |$">
+		<input type="hidden" id="hdWlanMode" value="$| wRadioConfigTab["dot11Radio.opMode"] or '' |$">
+		<input type="hidden" id="hdWlanChannelWidth" value="$| wRadioConfigTab["dot11Radio11n.chanWidth"] or '' |$">
+		<input type="hidden" id="hdWlanChannel" value="$| wRadioConfigTab["dot11Radio.configuredChannel"] or '' |$">
+		<input type="hidden" id="hdWlanAutoChannel" value="$| wRadioConfigTab["dot11Radio.currentChannel"] or '' |$">	
+		<input type="hidden" id="hdEncType" value="$| wRadioConfigTab["dot11Profile.pairwiseCiphers"] or '' |$">
+        <input type="hidden" id="hdmodelId" value="$| UNIT_NAME |$">
+        <input type="hidden" id="hdCountry" value="$| wRadioConfigTab["configuredCountry"] |$">
+        <input type="hidden" id="hdTxPowerMax" value="$| wRadioConfigTab["txPowerMax"] |$"> 
+        <input type="hidden" id="hdVapWepCount" value="$|  wRadioConfigTab["count"] |$">
+<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/advancedWireless.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/wlNwDataAC.js"></script>
+        <script type="text/javascript" language="javascript" src="js/wlNw5GHz.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

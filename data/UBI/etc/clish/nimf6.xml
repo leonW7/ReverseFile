@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--===================================================-->
+<VIEW name="net-wan-wan1-ipv6-config" prompt="net-config[wan1-ipv6]>"> 
+    <COMMAND name="save" help="Save ipv6 wan1 configuration changes.">
+	     <ACTION>lua clishCfgObjExec("NimfConf")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ipv6 wan configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Save ipv6 wan1 configuration changes and current mode."
+    	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("NimfConf")</ACTION>
+    </COMMAND>
+    <COMMAND name="isp_type" help="Set ISP Type">
+         <PARAM name="connectionType"
+            help="Set ISP Type"
+            ptype="ISP_TYPE_V6_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "NimfConf.ConnectionType6","${connectionType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc" help="Set DHCPC Configurations"/>
+    <COMMAND name="dhcpc stateless_mode_enable" help="Set Stateless Mode">
+         <PARAM name="statelessModeEnable"
+            help="Enable Stateless Address Auto Configuration/Enable Stateful Address Auto Configuration"
+            ptype="STATELESS_MODE_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "dhcpv6c.statelessMode","${statelessModeEnable}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc prefix_delegation_enable" help="Enable prefix delegation">
+         <PARAM name="prefixDelegationEnable"
+            help="Enable prefix delegation in DHCPv6"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "dhcpv6c.prefixDelegation","${prefixDelegationEnable}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static" help="set ipv6 address"/>
+    <COMMAND name="static ip_address" help="set ipv6 address">
+         <PARAM name="ipAddress"
+            help="Set ISP Type"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.StaticIp","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static prefix" help="set prefix length">
+         <PARAM name="prefix"
+            help="set prefix length"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.PrefixLength","${prefix}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static gateway_address" help="Set ipv6 gateway address">
+         <PARAM name="ipAddress"
+            help="Set ipv6 gateway address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.Gateway","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static primary_dns" help="Set ipv6 primary dns address">
+         <PARAM name="primaryDns"
+            help="Set ipv6 primary dns address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.PrimaryDns","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static secondary_dns" help="Set ipv6 secondary dns address">
+         <PARAM name="secondaryDns"
+            help="Set ipv6 secondary dns address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.SecondaryDns","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe" help="pppoe over ipv6 configuration parameters"/>
+	<COMMAND name="pppoe session_type" help="set the session as separate or common">
+         <PARAM name="PppoeSessions"
+            help="select the IPV6 pppoe session type"
+            ptype="SESSION_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.PppoeSessions","${PppoeSessions}")
+             </ACTION>
+         </COMMAND>
+	
+    <COMMAND name="pppoe username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.UserName","${Username}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="pppoe password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING64"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.Password","${password}")
+             </ACTION>
+         </COMMAND>
+          <COMMAND name="pppoe authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the password to log in"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.AuthOpt","${authOpt}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="pppoe dhcpv6_opt" help="Enter the dhcpv6 option for configuring additional parameters.">
+         <PARAM name="dhcpv6opt"
+            help="Set DHCPV6 Type"
+            ptype="PPP6_DHCPV6_OPT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.Dhcpv6Opt","${dhcpv6opt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="pppPriDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.PrimaryDns","${pppPriDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="pppSecDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.SecondaryDns","${pppSecDns}")
+             </ACTION>
+         </COMMAND>
+</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net wan wan1 ipv6" help="ipv6 wan configuration mode"/>
+    <!--=======================================================-->
+    <COMMAND name="net wan wan1 ipv6 configure"
+             help="ipv6 wan1 configuration mode"
+             view="net-wan-wan1-ipv6-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("NimfConf", nimf6CfgInit, nimf6CfgSave, nimf6CfgInputVal)
+                 </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net wan wan1 ipv6" help="."/>
+    <COMMAND name="show net wan wan1 ipv6 status"
+	     help="Display ipv6 wan1 Information.">
+	     <ACTION>lua wanV6StatusGet ("WAN1")
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net wan wan1 ipv6 setup"
+	     help="Display Wan1 Setup Information.">
+	     <ACTION>lua wanV6SetupGet("WAN1")
+             </ACTION>
+    </COMMAND>
+<!--===================================================-->
+<VIEW name="net-wan-wan2-ipv6-config" prompt="net-config[wan2-ipv6]>"> 
+    <COMMAND name="save" help="Save ipv6 wan2 configuration changes.">
+	     <ACTION>lua clishCfgObjExec("NimfConf")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ipv6 wan2 configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Save ipv6 wan2 configuration changes and current mode."
+    	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("NimfConf")</ACTION>
+    </COMMAND>
+    <COMMAND name="isp_type" help="Set ISP Type">
+         <PARAM name="connectionType"
+            help="Set ISP Type"
+            ptype="ISP_TYPE_V6_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "NimfConf.ConnectionType6","${connectionType}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc" help="Set DHCPC Configurations"/>
+    <COMMAND name="dhcpc stateless_mode_enable" help="Set Stateless Mode">
+         <PARAM name="statelessModeEnable"
+            help="Enable Stateless Address Auto Configuration/Enable Stateful Address Auto Configuration"
+            ptype="STATELESS_MODE_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "dhcpv6c.statelessMode","${statelessModeEnable}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="dhcpc prefix_delegation_enable" help="Enable prefix delegation">
+         <PARAM name="prefixDelegationEnable"
+            help="Enable prefix delegation in DHCPv6"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "dhcpv6c.prefixDelegation","${prefixDelegationEnable}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static" help="set ipv6 address"/>
+    <COMMAND name="static ip_address" help="set ipv6 address">
+         <PARAM name="ipAddress"
+            help="Set ISP Type"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.StaticIp","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static prefix" help="set prefix length">
+         <PARAM name="prefix"
+            help="set prefix length"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.PrefixLength","${prefix}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static gateway_address" help="Set ipv6 gateway address">
+         <PARAM name="ipAddress"
+            help="Set ipv6 gateway address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.Gateway","${ipAddress}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static primary_dns" help="Set ipv6 primary dns address">
+         <PARAM name="primaryDns"
+            help="Set ipv6 primary dns address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.PrimaryDns","${primaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="static secondary_dns" help="Set ipv6 secondary dns address">
+         <PARAM name="secondaryDns"
+            help="Set ipv6 secondary dns address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "ifStatic.SecondaryDns","${secondaryDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe" help="pppoe over ipv6 configuration parameters"/>
+    <COMMAND name="pppoe session_type" help="set the session as separate or common">
+         <PARAM name="PppoeSessions"
+            help="select the IPV6 pppoe session type"
+            ptype="SESSION_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.PppoeSessions","${PppoeSessions}")
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="pppoe username" help="Enter the username to authenticate">
+         <PARAM name="Username"
+            help="Enter the username to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.UserName","${Username}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="pppoe password" help="Enter the password to authenticate">
+         <PARAM name="password"
+            help="Enter the password to log in"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.Password","${password}")
+             </ACTION>
+         </COMMAND>
+          <COMMAND name="pppoe authOpt" help="Enter the Auth Option to authenticate">
+         <PARAM name="authOpt"
+            help="Enter the password to log in"
+            ptype="PPPOE_AUTH_T"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.AuthOpt","${authOpt}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="pppoe dhcpv6_opt" help="Enter the dhcpv6 option for configuring additional parameters.">
+         <PARAM name="dhcpv6opt"
+            help="Set DHCPV6 Type"
+            ptype="PPP6_DHCPV6_OPT"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.Dhcpv6Opt","${dhcpv6opt}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe primary_dns" help="Valid primary DNS Server IP Address">
+         <PARAM name="pppPriDns"
+            help="Set primary DNS Server IP Address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.PrimaryDns","${pppPriDns}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="pppoe secondary_dns" help="Valid secondary DNS Server IP Address">
+         <PARAM name="pppSecDns"
+            help="Set secondary DNS Server IP Address"
+            ptype="IPV6_ADDR"/>
+         <ACTION>lua clishCfgObjAdd ("NimfConf", "Pppoe6.SecondaryDns","${pppSecDns}")
+             </ACTION>
+         </COMMAND> 
+</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net wan wan2 ipv6" help="ipv6 wan2 configuration mode"/>
+    <!--=======================================================-->
+    <COMMAND name="net wan wan2 ipv6 configure"
+             help="ipv6 wan2 configuration mode"
+             view="net-wan-wan2-ipv6-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("NimfConf", nimf6Wan2CfgInit, nimf6Wan2CfgSave, nimf6CfgInputVal)
+                 </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net wan wan2 ipv6" help="."/>
+    <COMMAND name="show net wan wan2 ipv6 status"
+	     help="Display ipv6 wan2 Information.">
+	     <ACTION>lua wanV6StatusGet("WAN2")
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net wan wan2 ipv6 setup"
+	     help="Display Wan2 Setup Information.">
+	     <ACTION>lua wanV6SetupGet ("WAN2")
+             </ACTION>
+    </COMMAND>
+
+</CLISH_MODULE>

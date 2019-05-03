@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# cupsInit - initialization script for cups component
+#
+# copywrite (c) 2010, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,07oct10,pnm  fix file permission issue	
+# 01a,12sep08,pnm  written.
+
+if [ "$INCLUDE_CUPS" = "y" ]; then
+
+    # Create /usr/lib/cups directory
+    echo -n "Creating directory /usr/lib/cups ..."
+    mkdir -p /usr/lib/cups/backend
+    echo "Done"
+
+    # create backend softlink in the /usr/lib directory
+    cp /pfrm2.0/lib/backend/usb  /usr/lib/cups/backend/usb
+	cp -d /pfrm2.0/lib/libcups*  /usr/lib/
+    
+    # create /var/run/cups/certs directory
+    echo -n "Creating /var/run/cups/certs ..."
+    mkdir -p /var/run/cups/certs
+    echo "Done"
+    
+    # create /var/spool/cups directory
+    echo -n "Creating /var/spool/cups ..."
+    mkdir -p /var/spool/cups
+    chmod 777 /var/spool
+    echo "Done"
+   
+    # Copying cups config
+    cp /pfrm2.0/etc/cupsd-general.conf /etc/cupsd.conf
+
+    echo -n "Creating /var/spool/cache ..."
+    mkdir -p /var/cache/cups
+    chmod 777 /var/cache
+    echo "Done"
+    
+    chmod 777 /dev/usb/lp0
+    
+    mkdir -p /var/log/cups
+    chmod 777 /var/log/cups
+
+   # Start the cups server
+   echo -n "Copying mime files ..."
+   cp /pfrm2.0/etc/mime.types /etc/.
+   cp /pfrm2.0/etc/mime.convs /etc/.
+   #cp /pfrm2.0/etc/cupsd-general.conf /etc/cupsd.conf
+   #/pfrm2.0/bin/cupsd -c /etc/cupsd.conf
+   echo "Done"
+
+fi
+

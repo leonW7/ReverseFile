@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# captivePortalInit - initialization script for intelAmt.
+#
+# Copyright (c) 2011, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,18jan11,kt  written.
+#
+# DESCRIPTION
+# This script is the initialization script for intelAmt component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_INTELAMT" = "y" ]; then
+    echo -n "Starting intelAmt daemon... "
+    $INTELAMT_INSTALL_PATH/bin/intelAmtd $DB_FILENAME &
+    echo "Done"
+fi

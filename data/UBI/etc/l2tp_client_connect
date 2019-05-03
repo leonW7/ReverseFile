@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# l2tp_client_connect - connect script for l2tp VPN Client connection.
+#
+# Copyright (c) 2012, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,17apr12,nis written. 
+#
+# DESCRIPTION
+# This script is used for making a L2TP VPN Client connection, and is dialed with pppd
+# using a 'connect' option.
+# Presently this script is dummy and is used for supporting the 'demand' dialing feature.
+return 0

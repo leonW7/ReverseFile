@@ -1,0 +1,67 @@
+<?lua
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_serverClientCertificateDailogContent">
+    <div class="topBg">
+        <h1 data-localize="50178">Server/Client Certificate Configuration</h1>
+        <close>
+            <a href="#" id="btnClose" title="Close">X</a>
+        </close>
+    </div>
+    <div class="dialogMidArea">
+        <div align="left">
+            <div class="configRow">
+                <label data-localize="11748">Name</label>
+                <input type="text" name="serverClientCertificate.certificateName" id="tf1_serverClientCertName" maxlength="">
+            </div>
+            <div class="break">
+                &nbsp;
+            </div>
+            <div class="configRow">
+                <label data-localize="50175">Trusted Certificate (CA Certificate)</label>
+                <input type="file" name="serverClientCertificate.uploadca" id="tf1_txtUploadCAFile">
+                <div class="submitRow">
+                    <input data-localize="13194" type="button" value="Upload" id="tf1_upload1" class="btnUpload" onclick="certificateUpload('tf1_txtUploadCAFile')">
+                </div>
+            </div>
+            <div class="break">
+                &nbsp;
+            </div>
+            <div class="configRow">
+                <label data-localize="50176">Server/Client Certificate</label>
+                <input type="file" name="serverClientCertificate.uploadser" id="tf1_txtUploadCertFile" onchange="hideOptional(this.id)">
+                <div class="submitRow">
+                    <input data-localize="13194" type="button" value="Upload" id="tf1_upload2" class="btnUpload" onclick="certificateUpload('tf1_txtUploadCertFile')">
+                </div>
+		    <dl id="tf1_serverCert">Optional</dl>
+            </div>
+            <div class="break">
+                &nbsp;
+            </div>
+            <div class="configRow">
+                <label data-localize="50177">Server/Client Key</label>
+                <input type="file" name="serverClientCertificate.uploadserkey" id="tf1_txtUploadKeyFile" onchange="hideOptional(this.id)">
+                <div class="submitRow">
+                    <input data-localize="13194" type="button" value="Upload" id="tf1_upload3" class="btnUpload" onclick="certificateUpload('tf1_txtUploadKeyFile')">
+                </div>
+		    <dl id="tf1_serverKey">Optional</dl>
+            </div>
+            <div class="break">
+                &nbsp;
+            </div>
+            <div class="configRow">
+                <label data-localize="10729">DH Key</label>
+                <input type="file" name="serverClientCertificate.uploaddhkey" id="tf1_txtUploadDhKeyFile">
+                <div class="submitRow">
+                    <input data-localize="13194" type="button" value="Upload" id="tf1_upload4" class="btnUpload" onclick="certificateUpload('tf1_txtUploadDhKeyFile')">
+                </div>
+            </div>
+            <div class="break">
+                &nbsp;
+            </div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.config.serverClientCertificate.serverClientCertificate" class="btnSubmit" title="Save" value="Save" onclick="return validateSerClCert()">
+    </div>
+</div>

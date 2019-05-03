@@ -1,0 +1,483 @@
+<?lua 
+require "teamf1lualib/wlanGeneral_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bl_wlanWizard"
+
+local wlanGlobal  = require("com.teamf1.bl.wlan.wlanGeneral")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local wlanWizard  = require ("com.teamf1.bl.wlan.wizard")  
+
+local authFailedApsInfo, errorCode
+local wlanTable = {}
+returnCode, wlanTable = wlanGlobal.wlanGeneralGet()
+if (returnCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (returnCode)
+end
+
+errorCode, authFailedApsInfo = wlanWizard.wlanWizardAuthFailedApGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+ cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Wireless Global Configuration -->
+
+<div id="tf1Wizard_wlanWizardDailogContent">
+
+  <div class="topBgWizard">
+    <h1>WLAN Wizard</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard" >  
+      <form id="tf1Wizard_wlanForm">
+          <input type="hidden" name="button.wlanWizard.wizard" >
+          <input type="hidden" name="thispage" value="wizard.html">
+	<!-- Step 1 starts  -->  	  
+
+  	<div id="tf1Wizard_divStep1" class="divStep">
+    
+    <div class="wizardMessage">
+      <p>Current Current Code $| wlanTable["country"] |$</p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingWirelessGobal">Wireless Global Configuration</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard" id="tf1Wizard_wlanCountryCode_div">
+            <label>Country Code</label>
+            <select name="wlan.countryCode" size="1" id="tf1Wizard_wlanCountryCode" 
+             headingId="tf1Wizard_headingWirelessGobal" class="wizardField" field-type="select"
+            >
+              <option value="AE" $| web.dropdownSelected(wlanTable["country"] == "AE - United Arab Emirates" ) |$ >AE - United Arab Emirates</option>
+                                        <option value="AG" $| web.dropdownSelected(wlanTable["country"] == "AG - Antigua and Barbuda" ) |$>AG - Antigua and Barbuda</option>
+                                        <option value="AN" $| web.dropdownSelected(wlanTable["country"] == "AN - Netherlands Antilles" ) |$>AN - Netherlands Antilles</option>
+                                        <option value="AR" $| web.dropdownSelected(wlanTable["country"] == "AR - Argentina" ) |$>AR - Argentina</option>
+                                        <option value="AS" $| web.dropdownSelected(wlanTable["country"] == "AS - American Somoa" ) |$>AS - American Somoa</option>
+                                        <option value="AT" $| web.dropdownSelected(wlanTable["country"] == "AT - Austria" ) |$>AT - Austria</option>
+                                        <option value="AU" $| web.dropdownSelected(wlanTable["country"] == "AU - Australia" ) |$>AU - Australia</option>
+                                        <option value="AW" $| web.dropdownSelected(wlanTable["country"] == "AW - Aruba" ) |$>AW - Aruba</option>
+                                        <option value="AZ" $| web.dropdownSelected(wlanTable["country"] == "AZ - Azerbaijan" ) |$>AZ - Azerbaijan</option>
+                                        <option value="BA" $| web.dropdownSelected(wlanTable["country"] == "BA - Bosnia" ) |$>BA - Bosnia</option>
+                                        <option value="BB" $| web.dropdownSelected(wlanTable["country"] == "BB - Barbados" ) |$>BB - Barbados</option>
+                                        <option value="BD" $| web.dropdownSelected(wlanTable["country"] == "BD - Bangladesh" ) |$>BD - Bangladesh</option>
+                                        <option value="BE" $| web.dropdownSelected(wlanTable["country"] == "BE - Belgium" ) |$>BE - Belgium</option>
+                                        <option value="BG" $| web.dropdownSelected(wlanTable["country"] == "BG - Bulgaria" ) |$>BG - Bulgaria</option>
+                                        <option value="BH" $| web.dropdownSelected(wlanTable["country"] == "BH - Bahrain" ) |$>BH - Bahrain</option>
+                                        <option value="BM" $| web.dropdownSelected(wlanTable["country"] == "BM - Bermuda" ) |$>BM - Bermuda</option>
+                                        <option value="BN" $| web.dropdownSelected(wlanTable["country"] == "BN - Brunei" ) |$>BN - Brunei</option>
+                                        <option value="BO" $| web.dropdownSelected(wlanTable["country"] == "BO - Bolivia" ) |$>BO - Bolivia</option>
+                                        <option value="BR" $| web.dropdownSelected(wlanTable["country"] == "BR - Brazil " ) |$>BR - Brazil</option>
+                                        <option value="BS" $| web.dropdownSelected(wlanTable["country"] == "BS - Bahamas" ) |$>BS - Bahamas</option>
+                                        <option value="BT" $| web.dropdownSelected(wlanTable["country"] == "BT - Bhutan" ) |$>BT - Bhutan</option>
+                                        <option value="BY" $| web.dropdownSelected(wlanTable["country"] == "BY - Belarus" ) |$>BY - Belarus</option>
+                                        <option value="CA" $| web.dropdownSelected(wlanTable["country"] == "CA - Canada" ) |$>CA - Canada</option>
+                                        <option value="CH" $| web.dropdownSelected(wlanTable["country"] == "CH - Switzerland" ) |$>CH - Switzerland</option>
+                                        <option value="CL" $| web.dropdownSelected(wlanTable["country"] == "CL - Chile" ) |$>CL - Chile</option>
+                                        <option value="CN" $| web.dropdownSelected(wlanTable["country"] == "CN - China" ) |$>CN - China</option>
+                                        <option value="CO" $| web.dropdownSelected(wlanTable["country"] == "CO - Colombi" ) |$>CO - Colombia</option>
+                                        <option value="CR" $| web.dropdownSelected(wlanTable["country"] == "CR - Costa Rica" ) |$>CR - Costa Rica</option>
+                                        <option value="CU" $| web.dropdownSelected(wlanTable["country"] == "CU - Cuba" ) |$>CU - Cuba</option>
+                                        <option value="CV" $| web.dropdownSelected(wlanTable["country"] == "CV - Cape Verde" ) |$>CV - Cape Verde</option>
+                                        <option value="CY" $| web.dropdownSelected(wlanTable["country"] == "CY - Cyprus" ) |$>CY - Cyprus</option>
+                                        <option value="CZ" $| web.dropdownSelected(wlanTable["country"] == "CZ - Czech Republic" ) |$>CZ - Czech Republic</option>
+                                        <option value="DE" $| web.dropdownSelected(wlanTable["country"] == "DE - Germany" ) |$>DE - Germany</option>
+                                        <option value="DK" $| web.dropdownSelected(wlanTable["country"] == "DK - Denmark" ) |$>DK - Denmark</option>
+                                        <option value="DM" $| web.dropdownSelected(wlanTable["country"] == "DM - Dominica" ) |$>DM - Dominica</option>
+                                        <option value="DO" $| web.dropdownSelected(wlanTable["country"] == "DO - Dominican Republic" ) |$>DO - Dominican Republic</option>
+                                        <option value="EC" $| web.dropdownSelected(wlanTable["country"] == "EC - Ecuador" ) |$>EC - Ecuador</option>
+                                        <option value="EE" $| web.dropdownSelected(wlanTable["country"] == "EE - Estonia" ) |$>EE - Estonia</option>
+                                        <option value="EG" $| web.dropdownSelected(wlanTable["country"] == "EG - Egypt" ) |$>EG - Egypt</option>
+                                        <option value="ES" $| web.dropdownSelected(wlanTable["country"] == "ES - Spain" ) |$>ES - Spain</option>
+                                        <option value="FI" $| web.dropdownSelected(wlanTable["country"] == "FI - Finland" ) |$>FI - Finland</option>
+                                        <option value="FK" $| web.dropdownSelected(wlanTable["country"] == "FK - Faulkland Islands" ) |$>FK - Faulkland Islands</option>
+                                        <option value="FM" $| web.dropdownSelected(wlanTable["country"] == "FM - Federated States of Micronesia" ) |$>FM - Federated States of Micronesia</option>
+                                        <option value="FR" $| web.dropdownSelected(wlanTable["country"] == "FR - France" ) |$>FR - France</option>
+                                        <option value="GB" $| web.dropdownSelected(wlanTable["country"] == "GB - United Kingdom" ) |$ >GB - United Kingdom</option>
+                                        <option value="GF" $| web.dropdownSelected(wlanTable["country"] == "GF - French Guiana" ) |$>GF - French Guiana</option>
+                                        <option value="GG" $| web.dropdownSelected(wlanTable["country"] == "GG - Guernsey" ) |$>GG - Guernsey</option>
+                                        <option value="GI" $| web.dropdownSelected(wlanTable["country"] == "GI - Gibralter" ) |$>GI - Gibralter</option>
+                                        <option value="GP" $| web.dropdownSelected(wlanTable["country"] == "GP - Guadeloupe" ) |$>GP - Guadeloupe</option>
+                                        <option value="GR" $| web.dropdownSelected(wlanTable["country"] == "GR - Greece" ) |$>GR - Greece</option>
+                                        <option value="GT" $| web.dropdownSelected(wlanTable["country"] == "GT - Guatemala" ) |$>GT - Guatemala</option>
+                                        <option value="GU" $| web.dropdownSelected(wlanTable["country"] == "GU - Guam" ) |$>GU - Guam</option>
+                                        <option value="HK" $| web.dropdownSelected(wlanTable["country"] == "HK - Hong Kong" ) |$>HK - Hong Kong</option>
+                                        <option value="HN" $| web.dropdownSelected(wlanTable["country"] == "HN - Honduras" ) |$>HN - Honduras</option>
+                                        <option value="HR" $| web.dropdownSelected(wlanTable["country"] == "HR - Croatia" ) |$>HR - Croatia</option>
+                                        <option value="HT" $| web.dropdownSelected(wlanTable["country"] == "HT - Haiti" ) |$>HT - Haiti</option>
+                                        <option value="HU" $| web.dropdownSelected(wlanTable["country"] == "HU - Hungary" ) |$>HU - Hungary</option>
+                                        <option value="ID" $| web.dropdownSelected(wlanTable["country"] == "ID - Indonesia" ) |$>ID - Indonesia</option>
+                                        <option value="IE" $| web.dropdownSelected(wlanTable["country"] == "IE - Ireland" ) |$>IE - Ireland</option>
+                                        <option value="IL" $| web.dropdownSelected(wlanTable["country"] == "IL - Israel" ) |$>IL - Israel</option>
+                                        <option value="IM" $| web.dropdownSelected(wlanTable["country"] == "IM - Isle of Man" ) |$>IM - Isle of Man</option>
+                                        <option value="IN" $| web.dropdownSelected(wlanTable["country"] == "IN - India" ) |$>IN - India</option>
+                                        <option value="IR" $| web.dropdownSelected(wlanTable["country"] == "IR - Iran<" ) |$>IR - Iran</option>
+                                        <option value="IS" $| web.dropdownSelected(wlanTable["country"] == "IS - Iceland" ) |$>IS - Iceland</option>
+                                        <option value="IT" $| web.dropdownSelected(wlanTable["country"] == "IT - Italy" ) |$>IT - Italy</option>
+                                        <option value="JE" $| web.dropdownSelected(wlanTable["country"] == "JE - Jersey" ) |$>JE - Jersey</option>
+                                        <option value="JM" $| web.dropdownSelected(wlanTable["country"] == "JM - Jamaica" ) |$ >JM - Jamaica</option>
+                                        <option value="JO" $| web.dropdownSelected(wlanTable["country"] == "JO - Jordan" ) |$>JO - Jordan</option>
+                                        <option value="JP" $| web.dropdownSelected(wlanTable["country"] == "JP - Japan" ) |$>JP - Japan</option>
+                                        <option value="KE" $| web.dropdownSelected(wlanTable["country"] == "KE - Kenya" ) |$>KE - Kenya</option>
+                                        <option value="KI" $| web.dropdownSelected(wlanTable["country"] == "KI - Kiribati" ) |$>KI - Kiribati</option>
+                                        <option value="KR" $| web.dropdownSelected(wlanTable["country"] == "KR - Korea Republic" ) |$>KR - Korea Republic</option>
+                                        <option value="KW" $| web.dropdownSelected(wlanTable["country"] == "KW - Kuwait" ) |$>KW - Kuwait</option>
+                                        <option value="KY" $| web.dropdownSelected(wlanTable["country"] == "KY - Cayman Islands" ) |$>KY - Cayman Islands</option>
+                                        <option value="LA" $| web.dropdownSelected(wlanTable["country"] == "LA - LAO People's Democratic Republic" ) |$>LA - LAO People's Democratic Republic</option>
+                                        <option value="LB" $| web.dropdownSelected(wlanTable["country"] == "LB - Lebanon" ) |$>LB - Lebanon</option>
+                                        <option value="LI" $| web.dropdownSelected(wlanTable["country"] == "LI - Liechtenstein" ) |$>LI - Liechtenstein</option>
+                                        <option value="LK" $| web.dropdownSelected(wlanTable["country"] == "LK - Sri Lanka" ) |$>LK - Sri Lanka</option>
+                                        <option value="LS" $| web.dropdownSelected(wlanTable["country"] == "LS - Lesotho" ) |$>LS - Lesotho</option>
+                                        <option value="LT" $| web.dropdownSelected(wlanTable["country"] == "LT - Lithuania" ) |$>LT - Lithuania</option>
+                                        <option value="LU" $| web.dropdownSelected(wlanTable["country"] == "LU - Luxembourg" ) |$>LU - Luxembourg</option>
+                                        <option value="LV" $| web.dropdownSelected(wlanTable["country"] == "LV - Latvia" ) |$>LV - Latvia</option>
+                                        <option value="MA" $| web.dropdownSelected(wlanTable["country"] == "MA - Morocco" ) |$>MA - Morocco</option>
+                                        <option value="MC" $| web.dropdownSelected(wlanTable["country"] == "MC - Monaco" ) |$>MC - Monaco</option>
+                                        <option value="MK" $| web.dropdownSelected(wlanTable["country"] == "MK - Macedonia" ) |$>MK - Macedonia</option>
+                                        <option value="MO" $| web.dropdownSelected(wlanTable["country"] == "MO - Macao" ) |$>MO - Macao</option>
+                                        <option value="MP" $| web.dropdownSelected(wlanTable["country"] == "MP - Northern Mariana Islands" ) |$>MP - Northern Mariana Islands</option>
+                                        <option value="MQ" $| web.dropdownSelected(wlanTable["country"] == "MQ - Martinique" ) |$>MQ - Martinique</option>
+                                        <option value="MR" $| web.dropdownSelected(wlanTable["country"] == "MR - Mauritania" ) |$>MR - Mauritania</option>
+                                        <option value="MT" $| web.dropdownSelected(wlanTable["country"] == "MT - Malta" ) |$>MT - Malta</option>
+                                        <option value="MU" $| web.dropdownSelected(wlanTable["country"] == "MU - Mauritius" ) |$>MU - Mauritius</option>
+                                        <option value="MV" $| web.dropdownSelected(wlanTable["country"] == "MV - Maldives" ) |$>MV - Maldives</option>
+                                        <option value="MW" $| web.dropdownSelected(wlanTable["country"] == "MW - Malawi" ) |$>MW - Malawi</option>
+                                        <option value="MX" $| web.dropdownSelected(wlanTable["country"] == "MX - Mexico" ) |$>MX - Mexico</option>
+                                        <option value="MY" $| web.dropdownSelected(wlanTable["country"] == "MY - Malaysia" ) |$>MY - Malaysia</option>
+                                        <option value="NG" $| web.dropdownSelected(wlanTable["country"] == "NG - Nigeria" ) |$>NG - Nigeria</option>
+                                        <option value="NI" $| web.dropdownSelected(wlanTable["country"] == "NI - Nicaragua" ) |$>NI - Nicaragua</option>
+                                        <option value="NL" $| web.dropdownSelected(wlanTable["country"] == "NL - Netherlands" ) |$>NL - Netherlands</option>
+                                        <option value="NO" $| web.dropdownSelected(wlanTable["country"] == "NO - Norway" ) |$>NO - Norway</option>
+                                        <option value="NZ" $| web.dropdownSelected(wlanTable["country"] == "NZ - New Zealand" ) |$>NZ - New Zealand</option>
+                                        <option value="OM" $| web.dropdownSelected(wlanTable["country"] == "OM - Oman" ) |$>OM - Oman</option>
+                                        <option value="PA" $| web.dropdownSelected(wlanTable["country"] == "PA - Panama" ) |$>PA - Panama</option>
+                                        <option value="PE" $| web.dropdownSelected(wlanTable["country"] == "PE - Peru" ) |$>PE - Peru</option>
+                                        <option value="PG" $| web.dropdownSelected(wlanTable["country"] == "PG - Papua New Guinea" ) |$>PG - Papua New Guinea</option>
+                                        <option value="PH" $| web.dropdownSelected(wlanTable["country"] == "PH - Philippines" ) |$>PH - Philippines</option>
+                                        <option value="PK" $| web.dropdownSelected(wlanTable["country"] == "PK - Pakistan" ) |$>PK - Pakistan</option>
+                                        <option value="PL" $| web.dropdownSelected(wlanTable["country"] == "PL - Poland" ) |$>PL - Poland</option>
+                                        <option value="PM" $| web.dropdownSelected(wlanTable["country"] == "PM - St. Pierre and Miquelon" ) |$>PM - St. Pierre and Miquelon</option>
+                                        <option value="PR" $| web.dropdownSelected(wlanTable["country"] == "PR - Puerto Rico" ) |$>PR - Puerto Rico</option>
+                                        <option value="PT" $| web.dropdownSelected(wlanTable["country"] == "PT - Portugal" ) |$>PT - Portugal</option>
+                                        <option value="RE" $| web.dropdownSelected(wlanTable["country"] == "RE - Reunion" ) |$>RE - Reunion</option>
+                                        <option value="RO" $| web.dropdownSelected(wlanTable["country"] == "RO - Romania" ) |$>RO - Romania</option>
+                                        <option value="RU" $| web.dropdownSelected(wlanTable["country"] == "RU - Russia" ) |$>RU - Russia</option>
+                                        <option value="SA" $| web.dropdownSelected(wlanTable["country"] == "SA - Saudi Arabia" ) |$>SA - Saudi Arabia</option>
+                                        <option $| web.dropdownSelected(wlanTable["country"] == "SE - Sweden" ) |$ value="SE - Sweden" >SE - Sweden</option>
+                                        <option value="SG" $| web.dropdownSelected(wlanTable["country"] == "SG - Singapore" ) |$>SG - Singapore</option>
+                                        <option value="SI" $| web.dropdownSelected(wlanTable["country"] == "SI - Slovenia" ) |$>SI - Slovenia</option>
+                                        <option value="SK" $| web.dropdownSelected(wlanTable["country"] == "SK - Slovak Republic" ) |$>SK - Slovak Republic</option>
+                                        <option value="SV" $| web.dropdownSelected(wlanTable["country"] == "SV - El Salvador" ) |$>SV - El Salvador</option>
+                                        <option value="SY" $| web.dropdownSelected(wlanTable["country"] == "SY - Syria" ) |$>SY - Syria</option>
+                                        <option value="TH" $| web.dropdownSelected(wlanTable["country"] == "TH - Thailand" ) |$>TH - Thailand</option>
+                                        <option value="TJ" $| web.dropdownSelected(wlanTable["country"] == "TJ - Tajikistan" ) |$>TJ - Tajikistan</option>
+                                        <option value="TN" $| web.dropdownSelected(wlanTable["country"] == "TN - Tunisia" ) |$>TN - Tunisia</option>
+                                        <option value="TR" $| web.dropdownSelected(wlanTable["country"] == "TR - Turkey" ) |$>TR - Turkey</option>
+                                        <option value="TT" $| web.dropdownSelected(wlanTable["country"] == "TT - Trinidad & Tobago" ) |$>TT - Trinidad &amp; Tobago</option>
+                                        <option value="TW" $| web.dropdownSelected(wlanTable["country"] == "TW - Taiwan" ) |$>TW - Taiwan</option>
+                                        <option value="TZ" $| web.dropdownSelected(wlanTable["country"] == "TZ - Tanzania" ) |$ >TZ - Tanzania</option>
+                                        <option value="UA" $| web.dropdownSelected(wlanTable["country"] == "UA - Ukraine" ) |$>UA - Ukraine</option>
+                                        <option value="UM" $| web.dropdownSelected(wlanTable["country"] == "UM - United States (Minor Outlying Islands)" ) |$>UM - United States (Minor Outlying Islands)</option>
+                                        <option value="US" $| web.dropdownSelected(wlanTable["country"] == "US - United States" ) |$ >US - United States</option>
+                                        <option value="UY" $| web.dropdownSelected(wlanTable["country"] == "UY - Uruguay" ) |$>UY - Uruguay</option>
+                                        <option value="UZ" $| web.dropdownSelected(wlanTable["country"] == "UZ - Uzbekistan" ) |$>UZ - Uzbekistan</option>
+                                        <option value="VA" $| web.dropdownSelected(wlanTable["country"] == "VA - Holy See (Vatican City State)" ) |$>VA - Holy See (Vatican City State)</option>
+                                        <option value="VE" $| web.dropdownSelected(wlanTable["country"] == "VE - Venezuela" ) |$>VE - Venezuela</option>
+                                        <option value="VG" $| web.dropdownSelected(wlanTable["country"] == "VG - Virgin Islands (British)" ) |$>VG - Virgin Islands (British)</option>
+                                        <option value="VI" $| web.dropdownSelected(wlanTable["country"] == "VI - Virgin Islands (United States)" ) |$>VI - Virgin Islands (United States)</option>
+                                        <option value="VN" $| web.dropdownSelected(wlanTable["country"] == "VN - Vietnam" ) |$>VN - Vietnam</option>
+                                        <option value="YT" $| web.dropdownSelected(wlanTable["country"] == "YT - Mayotte" ) |$>YT - Mayotte</option>
+                                        <option value="ZA" $| web.dropdownSelected(wlanTable["country"] == "ZA - South Africa" ) |$>ZA - South Africa</option>
+                                        <option value="ZM" $| web.dropdownSelected(wlanTable["country"] == "ZM - Zambia" ) |$>ZM - Zambia</option>
+            </select>
+          </div>
+          <div class="break" id="break_wlanCountryCode_div"> &nbsp; </div>
+        </div>
+        <div class="rightBlock"> &nbsp; </div>
+      </div>
+      <h1 id="tf1Wizard_headingDefaultRadio"> Wireless Default Radio Configuration</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>AP Profile Name</label>
+            <input type="text" onkeypress="return alphaNumericCheck (event,'-_')" maxlength="32" id="tf1Wizard_apProfileName" value="default" name="wlan.profileName" headingId="tf1Wizard_headingDefaultRadio" class="wizardField" field-type="text">
+            
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_state_div">
+            <label>State (802.11a/n)</label>
+            <a alt="" class="enable-disable-off" id="tf1Wizard_state"></a>
+            <input type="hidden" name="wlan.radio1State" value="0" 
+            class="wizardField" headingId="tf1Wizard_headingDefaultRadio" field-type="on-off">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>State (802.11b/g/n)</label>
+            <a alt="" class="enable-disable-off" id="tf1Wizard_state1"></a>
+            <input type="hidden" name="wlan.radio2State" value="0"
+            headingId="tf1Wizard_headingDefaultRadio" class="wizardField"
+            field-type="on-off">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>&nbsp;</label>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_mode_div">
+            <label>Mode (802.11a/n)</label>
+            <select name="wlan.radio1OperatingMode" size="1" id="tf1Wizard_mode" headingId="tf1Wizard_headingDefaultRadio" class="wizardField" field-type="select">
+              <option value="1">IEEE 802.11a</option>
+              <option value="3" selected="">IEEE 802.11a/n</option>
+              <option value="5">5GHz IEEE 802.11n</option>
+            </select>
+          </div>
+          <div class="break"  id="break_mode_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_mode1_div">
+            <label>Mode (802.11b/g/n)</label>
+            <select name="wlan.radio2OperatingMode" size="1" id="tf1Wizard_mode1"  headingId="tf1Wizard_headingDefaultRadio" class="wizardField" field-type="select">
+              <option value="2">IEEE 802.11b/g</option>
+              <option value="4" selected="">IEEE 802.11b/g/n</option>
+              <option value="6">2.4GHz IEEE 802.11n</option>
+            </select>
+          </div>
+          <div class="break" id="break_mode1_div"> &nbsp; </div>
+        </div>
+      </div>
+      <h1 id="tf1Wizard_headingDefaulVAP"> Wireless Default VAP Configuration</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>SSID</label>
+            <input type="text" onkeypress="return alphaNumericCheck (event,'`~!@#$%^&amp;*()-_=+|{};:,.?/')"  maxlength="32" id="tf1Wizard_ssid" value="dlink1" name="wlan.ssid" headingId="tf1Wizard_headingDefaulVAP" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>Security</label>
+            <select onchange="wlanSecurityOptionChange()" id="tf1Wizard_securityOpt" name="wlan.networkSecurity"  headingId="tf1Wizard_headingDefaulVAP" class="wizardField" field-type="select">
+                <option value="1" selected="">None</option>
+				<option value="2">Static WEP</option>
+				<option value="4">WPA Personal</option>
+			</select>
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>&nbsp;</label>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_wepPass_div">
+            <label>WEP Key</label>
+            <input type="password" maxlength="13" id="tf1Wizard_wepPass" value="" name="wlan.wepKey" headingId="tf1Wizard_headingDefaulVAP" class="wizardField" field-type="password">
+          </div>
+          <div class="break" id="break_wepPass_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_wpaPass_div">
+            <label>WPA Key</label>
+              <input type="password" maxlength="63" id="tf1Wizard_wpaPass" value="" name="wlan.wpaKey" headingId="tf1Wizard_headingDefaulVAP" class="wizardField" field-type="password">
+          </div>
+          <div class="break" id="break_wpaPass_div"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [1 of 3] <span>&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wizardForm.html', 'tf1Wizard_dashboardWizardDailogContent','');">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext"  onClick="openWlanStep2()">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Step 1 ends --->
+  
+  <!-- Step 2 starts -->
+    <div id="tf1Wizard_divStep2" class="divStep" style="display:none">
+    
+    <div class="wizardMessage">
+      <p>APs Awaiting List</p>
+    </div>
+    <div class="wizardBlock">
+      <h1>List of APs Awaiting to be Configured</h1>
+      <div class="configRowBlocks">
+        <div class="configRowtable">
+          <div class="CLR">
+            <div class="demo_jui">
+              <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                <thead>
+                  <tr>
+                    <th> IP Address</th>
+                    <th> MAC Address </th>
+                    <th>Status </th>
+                  </tr>
+              </thead>
+              <?lua
+                  local count = 0
+                  if (authFailedApsInfo ~= nil) then
+                  for k, v in pairs (authFailedApsInfo) do
+                  local row = authFailedApsInfo[k]
+                  count = count + 1
+              ?>
+              <tr class="gradeA">
+                  <td>$| row["ipAddress"] or '' |$</td>
+                  <td>$| row["macAddress"] or '' |$</td>
+                  <td>
+                  	<a alt="" class="enable-disable-off"></a>
+                    <input type="hidden" name="wlan.ap_$| k |$" value="0" id="tf1Wizard_ap$| k |$">
+                    <input type="hidden" name="wlan.apMac_$|  k |$"
+                    value="$| row["macAddress"] |$" id="tf1Wizard_ap1">
+                </td>
+               </tr>
+                  <?lua
+                  end ?>
+              <?lua     
+              end
+              ?>
+               <!-- <tr class="gradeA">
+                  <td>192.2.2.3</td>
+                  <td>12:ab:ca:13:ef:45</td>
+                  <td>
+                  	<a alt="" class="enable-disable-off"></a>
+                	<input type="hidden" name="wlan.ap" value="0" id="tf1Wizard_ap1">
+                </td>
+                </tr>
+                <tr class="gradeA">
+                  <td>192.2.2.4</td>
+                  <td>13:ab:da:13:ef:45</td>
+                  <td><a alt="" class="enable-disable-off"></a>
+                	<input type="hidden" name="wlan.ap" value="0" id="tf1Wizard_ap2"></td>
+                </tr>
+                 <tr class="gradeA">
+                  <td>192.2.2.6</td>
+                  <td>10:ae:ca:13:ef:45</td>
+                  <td><a alt="" class="enable-disable-off"></a>
+                	<input type="hidden" name="wlan.ap" value="0" id="tf1Wizard_ap3"></td>
+                </tr>
+                <tr class="gradeA">
+                  <td>192.2.2.9</td>
+                  <td>16:ab:da:13:ef:45</td>
+                  <td><a alt="" class="enable-disable-off"></a>
+                	<input type="hidden" name="wlan.ap" value="0" id="tf1Wizard_ap4"></td>
+            </tr>-->
+            </table>
+            <p><input type="hidden" name="wlan.totalAuthFailedAp" value="$| count |$"></p>    
+            </div>
+          </div>
+        </div>
+		<div align="center" style="margin:0px 20px; color: #333333" >
+				<b>Note</b>: The number of AP that will be managed depends on DWC-1000-AP6 License. If the MAC address of the AP is followed by an asterisk (*), it is discovered by a peer controller.
+		</div>
+      </div>
+      <div class="pagination">
+        <div class="pageList">Step: [2 of 3] <span>&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="openWlanStep1()">
+          <input type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext" onClick="openWlanStep3()">
+        </div>
+      </div>
+    </div>
+   
+   </div>
+    <!-- Step 2 ends -->
+  
+  <!-- Step 3 starts -->
+  <!-- Valid Access Points Summery -->  
+  	<div id="tf1Wizard_divStep3" class="divStep" style="display:none">
+  
+    <div class="wizardMessage">
+      <p>Valid Access Points</p>
+    </div>
+    <div class="wizardBlock">
+      <h1 id="tf1Wizard_headingAPSummary">Valid Access Points Summary</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label>MAC Address 1</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr1" name="wlan.MacAddress1" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>MAC Address 3</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr3" name="wlan.MacAddress3" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text" >
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>MAC Address 5</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr5" name="wlan.MacAddress5" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">
+          <div class="configRowWizard">
+            <label>MAC Address 2</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr2" name="wlan.MacAddress2" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>MAC Address 4</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr4" name="wlan.MacAddress4" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label>MAC Address 6</label>
+            <input type="text" onkeydown="return macAddrVerify (event, this, true, 'Invalid MAC address:', '')" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" maxlength="17" id="tf1Wizard_macAddr6" name="wlan.MacAddress6" headingId="tf1Wizard_headingAPSummary" class="wizardField" field-type="text">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+		<div align="center" style="margin:150px 20px 0px 20px; color: #333333" >
+				<b>Note</b>: The number of AP that will be managed depends on DWC-1000-AP6 License.
+		</div>
+      <div class="pagination">
+        <div class="pageList">Step: [3 of 3] <span id="tf1Wizard_step3StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="openWlanStep2()">
+          <input type="button" id="btSave" value="Save" title="Save" class="wizardBtnNext"  onClick="savewLan()">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Step 3 ends -->
+  
+  </form>
+  
+  <!-- Preview -->
+    
+    <div id="tf1Wizard_previewDiv" style="display:none;">
+    
+    	<div class="wizardMessage">
+      <p>WLAN Configuration Saved Successfully</p>
+    </div>
+    <div class="wizardBlock" id="tf1Wizard_previewBlock">
+    
+     
+    </div>
+    
+ 
+ 
+  <div class="pagination">
+    <div class="pageList"><span>&nbsp;</span></div>
+    <div class="prevNext">
+      <input type="button" id="btSave" value="Finish" title="Finish" class="wizardBtnNext" onclick="cancelWizard()" >
+    </div>
+  </div>
+</div>
+
+<!-- preview step ends -->
+  
+</div>
+
+</div>
+
+ 
+
+ 

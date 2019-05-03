@@ -1,0 +1,75 @@
+<?lua 
+require "teamf1lualib/flowControl_bl"
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie, flowName, service, sourceIpAddress, destinationIpAddress, rate
+    if (ButtonType and ButtonType == "edit") then
+    returnCode, cookie, flowName, service, sourceIpAddress, destinationIpAddress, rate  =   flowControlGet (inputCookie)
+         
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_flowControlDailogContent">
+    <div class="topBg">
+        <h1>Flow-based Control Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>Profile Name </label>
+            <?lua
+            if (ButtonType and ButtonType == "edit") then ?>
+            <p>$| flowName or '' |$</p>
+            <input type="hidden" name="flowControl.flowName" value="$| flowName or '' |$" id="tf1_profileName">
+            <?lua else ?>
+            <input type="text" name="flowControl.flowName" value="$| flowName or '' |$" id="tf1_profileName" maxlength="30" onkeypress="return alphaNumericCheck (event, '')">
+            <?lua end ?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Service </label><select size="1" name="flowControl.service" value="$| service or '' |$" id="tf1_services">
+            <?lua 
+
+		local errorCode, allServiceName = serviceNameGetAll ()
+		for u,v in pairs(allServiceName) do
+	    ?>
+            <option title value="$|  v["ServiceName"] |$" $| web.dropdownSelected(service == v["ServiceName"]) |$ >$|  v["ServiceName"] |$</option>
+	       <?lua end ?>
+            </select> </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Source IP Address </label>
+            <input type="text" name="flowControl.sourceIpAddress" value="$| sourceIpAddress or '' |$" id="tf1_sourceIP" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Destination IP Address </label>
+            <input type="text" name="flowControl.destinationIpAddress" value="$| destinationIpAddress or '' |$" id="tf1_destIP" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Bandwidth </label>
+            <input type="text" name="flowControl.rate"  value="$| rate or '' |$" id="tf1_bandwidthMBPS" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9){ return numericValueRangeCheck (this, '', '', 1, 1000, true, 'Invalid Bandwidth.', 'Mbps') }">
+            <dl>
+                [Range: 1 - 1000] Mbps
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    <?lua if(cgi["configRowId"] == "-1") then?>
+
+        <input type="submit" name="button.add.flowControl" onclick="return pageValidations()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua else ?>
+        <input type="submit" name="button.edit.flowControl" onclick="return pageValidations()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua end?>
+        
+    </div>
+</div>

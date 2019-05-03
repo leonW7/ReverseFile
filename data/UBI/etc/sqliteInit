@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# sqliteInit - initialization script for sqlite
+#
+# Copyright (c) 2008, TeamF1, Inc.
+# Copyright (c) 2015, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01d,02dec15,abd  (AC Merge) porting the changes to support AC build.
+# 01c,10Oct12,avr  changes for HOT SPOT Feature
+# 01b,24jul08,sdk  added mechanism to trigger update notifications to components 
+#                  after initial DB initialization.
+# 01a,01jun07,rks  written
+
+# initialize sqlite management generic database
+MODEL_NIMF_PRODUCT_ID=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+DB_NIMF_FILENAME=/pfrm2.0/etc/nimf_threeg.sql
+DB_DSR_STATS_FILENAME=/pfrm2.0/etc/nimf_threeg_stats.sql
+SAVEDB_CHECK_FILE="/tmp/savedb_check_file"
+
+
+# ******* create SAVEDB_CHECK_FILE file for check running saveDb process *********
+touch $SAVEDB_CHECK_FILE
+# *****************************
+
+cp $DB_SQL_FILENAME /tmp/system.sql
+cp $STATS_DB_SQL_FILENAME /tmp/stats.sql
+if [ $MODEL_NIMF_PRODUCT_ID == "DSR-1000N" ] || [ $MODEL_NIMF_PRODUCT_ID == "DSR-1000AC" ] || [ $MODEL_NIMF_PRODUCT_ID == "DSR-1000" ]; then
+echo "wan3 related" 
+cat $DB_NIMF_FILENAME >> /tmp/system.sql
+cat $DB_DSR_STATS_FILENAME >> /tmp/stats.sql
+fi
+echo "COMMIT;" >> /tmp/system.sql
+echo "COMMIT;" >> /tmp/stats.sql
+cat /pfrm2.0/etc/system_triggers.sql >> /tmp/system.sql
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME < /tmp/system.sql
+$SQLITE_INSTALL_PATH/bin/sqlite3 $STATS_DB_FILENAME < /tmp/stats.sql
+$SQLITE_INSTALL_PATH/bin/sqlite3 /tmp/cpAcc.db < /pfrm2.0/etc/cpAcc.sql
+$SQLITE_INSTALL_PATH/bin/sqlite3 $DB_FILENAME << SQL_ENTR_TAG_1;
+.timeout 1000;
+BEGIN;
+insert into sqliteLock values (0);
+COMMIT;
+SQL_ENTR_TAG_1

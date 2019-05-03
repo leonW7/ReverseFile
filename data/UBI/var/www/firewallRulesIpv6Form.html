@@ -1,0 +1,192 @@
+<?lua
+  require "teamf1lualib/firewallRules6_bl"
+  require "teamf1lualib/errorMap"
+  require "teamf1lualib/returnCodes"
+  local returnCodes = require ("com.teamf1.core.returnCodes")
+  local errorMap = require ("com.teamf1.core.errorMap")
+  local inputCookie = cgi["configRowId"]
+  local returnCode, cookie 
+  local firewallRulesIPv6Form = {}
+  
+  -- get the firewallRulesIPv6Form Table
+  returnCode, firewallRulesIPv6Form = firewallRuleGet(inputCookie)
+  if (returnCode ~= returnCodes.SUCCESS) then
+      statusErrorMessage = errorMap.errorStringGet (returnCode)
+  end
+
+  returnCode, allServiceName = servicesGetAll()
+  if (returnCode ~= returnCodes.SUCCESS) then
+      statusErrorMessage = errorMap.errorStringGet (returnCode)
+  end
+ 
+  returnCode, allScheduleName = getAllScheduleInfo()
+  if (returnCode ~= returnCodes.SUCCESS) then
+      statusErrorMessage = errorMap.errorStringGet (returnCode)
+  end
+  cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<div id="tf1_firewallRulesIpv6DailogContent">
+	<div class="topBg">
+		<h1 data-localize="11453">IPv6 Firewall Rules Configuration</h1>
+		<close>
+			<a href="#" id="btnClose" title="Close">X</a>
+		</close>
+	</div>
+	<div class="dialogMidArea">
+		<div class="configRow">
+			<label data-localize="11046">From Zone </label>
+                <?lua
+					local wan1DisplayName = "Dedicated WAN"
+					local wan2DisplayName = "Optional WAN"
+					if (UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-250N") then
+						wan1DisplayName = "WAN"
+					end
+				?>
+                    <select size="1" name="FirewallRules6.FromZoneType" id="tf1_fromZone" onchange="updateToZones ();">
+                        <option data-localize="14193" $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.FromZoneType"] == "SECURE") |$ value="SECURE" >SECURE (LAN)</option>
+						<?lua 
+							if (UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-250N") then
+                        ?>
+						<option $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.FromZoneType"] == "INSECURE") |$ value="INSECURE" >INSECURE ($| wan1DisplayName |$/$| wan2DisplayName |$)</option>
+						<?lua	
+							else
+						?>
+						<option $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.FromZoneType"] == "INSECURE") |$ value="INSECURE" >INSECURE ($| wan1DisplayName |$)</option>
+						<?lua
+							end
+						?>
+                    </select>
+		</div>
+		<div class="break">&nbsp; </div>
+		<div class="configRow">
+			<label data-localize="13107">To Zone </label>
+		    <select size="1" name="FirewallRules6.ToZoneType" id="tf1_toZone">
+                <option data-localize="14193" $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.ToZoneType"] == "SECURE") |$ value="SECURE" >SECURE (LAN)</option>
+                <option $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.ToZoneType"] == "INSECURE") |$ value="INSECURE" >INSECURE ($| wan1DisplayName |$/$| wan2DisplayName |$)</option>
+            </select> 
+		</div>
+		<div class="break">&nbsp; </div>
+		<div class="configRow">
+            <label data-localize="12831">Service </label>
+            <select size="1" name="FirewallRules6.ServiceName" id="tf1_Service">
+		    <?lua 
+            for u,v in pairs(allServiceName) do
+            if (v["Services.Protocol"] ~= "1") then
+	        ?>
+            <option $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.ServiceName"] == v["Services.ServiceName"]) |$ value="$| v["Services.ServiceName"] |$">$| v["Services.ServiceName"] |$</option>
+	    <?lua end end ?>
+            </select>
+        </div>
+			<div class="break">&nbsp; </div>
+			
+			<div class="configRow">
+				<label data-localize="10056">Action </label>
+				<select size="1" name="FirewallRules6.Action" id="tf1_selFwAction" onchange="changeActionType ('tf1_selFwAction');">
+                    <option data-localize="30471" $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.Action"] == "DROP") |$ value="DROP" >Block Always</option>
+                    <option data-localize="30486" $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.Action"] == "ACCEPT") |$ value="ACCEPT" >Allow Always</option>
+                    <option data-localize="30434" $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.Action"] == "DROP_BY_SCHED_MATCH") |$ value="DROP_BY_SCHED_MATCH" >BLOCK by schedule</option>
+                    <option data-localize="30435" $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.Action"] == "ACCEPT_BY_SCHED_MATCH") |$ value="ACCEPT_BY_SCHED_MATCH" >ALLOW by schedule</option>
+                </select> 
+			</div>
+			<div class="break">&nbsp; </div>
+			
+			<div class="configRow" id="tf1_selSchedule_div">
+                <label data-localize="12804">Select Schedule </label>
+                <select size="1" name="FirewallRules6.ScheduleName" id="tf1_selSchedule">
+                    <?lua
+                    for k,v in pairs(allScheduleName) do
+                    ?>
+                        <option $| web.dropdownSelected(firewallRulesIPv6Form["FirewallRules6.ScheduleName"] == v["Schedules.ScheduleName"]) |$ value="$| v["Schedules.ScheduleName"] |$">$| v["Schedules.ScheduleName"] |$</option>
+                    <?lua
+                    end
+                    ?>
+                </select>
+			</div>
+			<div class="break" id="break_selSchedule_div">&nbsp; </div>
+			
+			<div class="configRow">
+				<label data-localize="12900">Source Hosts </label>
+				<p><input type="radio" value="0" $| web.radioSelected(firewallRulesIPv6Form["FirewallRules6.SourceAddressType"] == "0") |$ id="tf1_addFwSrcUser" onclick="showHideSourceHosts('tf1_addFwSrcUser')" name="FirewallRules6.SourceAddressType"> <span data-localize="10226">Any</span> </p>
+				<p><input type="radio" value="1" $| web.radioSelected(firewallRulesIPv6Form["FirewallRules6.SourceAddressType"] == "1") |$ id="tf1_addFwSrcUser" onclick="showHideSourceHosts('tf1_addFwSrcUser')" name="FirewallRules6.SourceAddressType"> <span data-localize="13712">Single Address</span> </p>
+				<p><input type="radio" value="2" $| web.radioSelected(firewallRulesIPv6Form["FirewallRules6.SourceAddressType"] == "2") |$ id="tf1_addFwSrcUser" onclick="showHideSourceHosts('tf1_addFwSrcUser')" name="FirewallRules6.SourceAddressType"> <span data-localize="13713">Address Range</span> </p>
+			</div>
+			<div class="break">&nbsp; </div>
+			
+			<div class="configRow" id="tf1_txtFwSrcUserStart_div">
+                <label data-localize="11043">From </label>
+                <input type="text" name="FirewallRules6.SourceAddressStart" value="$| firewallRulesIPv6Form["FirewallRules6.SourceAddressStart"] or '' |$"  maxlength="40" size="30" id="tf1_txtFwSrcUserStart" maxlength="40" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+			</div>
+			<div class="break" id="break_txtFwSrcUserStart_div">&nbsp; </div>
+			
+			<div class="configRow" id="tf1_txtFwSrcUserFinish_div">
+                <label data-localize="13105">To </label>
+                <input type="text" name="FirewallRules6.SourceAddressEnd" value="$| firewallRulesIPv6Form["FirewallRules6.SourceAddressEnd"] or '' |$" size="30" maxlength="40" id="tf1_txtFwSrcUserFinish" maxlength="40" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+			</div>
+			<div class="break" id="break_txtFwSrcUserFinish_div">&nbsp; </div>
+			<div class="configRow">
+				<label data-localize="10711">Destination Hosts</label>
+                <p><input type="radio" value="0" $| web.radioSelected(firewallRulesIPv6Form["FirewallRules6.DestinationAddressType"] == "0") |$ id="tf1_addFwDestUser" onclick="showHideDestHosts('tf1_addFwDestUser')" name="FirewallRules6.DestinationAddressType"><span data-localize="10226">Any</span> </p>
+				<p><input type="radio" value="1" $| web.radioSelected(firewallRulesIPv6Form["FirewallRules6.DestinationAddressType"] == "1") |$ id="tf1_addFwDestUser" onclick="showHideDestHosts('tf1_addFwDestUser')" name="FirewallRules6.DestinationAddressType"><span data-localize="13712">Single Address</span></p>
+				<p><input type="radio" value="2" $| web.radioSelected(firewallRulesIPv6Form["FirewallRules6.DestinationAddressType"] == "2") |$ id="tf1_addFwDestUser" onclick="showHideDestHosts('tf1_addFwDestUser')" name="FirewallRules6.DestinationAddressType"> <span data-localize="13713">Address Range</span> </p>
+			</div>
+			<div class="break" id="break_addFwDestUser_div">&nbsp; </div>
+			
+			<div class="configRow" id="tf1_txtFwDestUserStart_div">
+				<label data-localize="11043">From </label>
+                <input type="text" name="FirewallRules6.DestinationAddressStart" value="$| firewallRulesIPv6Form["FirewallRules6.DestinationAddressStart"] or '' |$" size="30" maxlength="40" id="tf1_txtFwDestUserStart" maxlength="40" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+			</div>
+			<div class="break" id="break_txtFwDestUserStart_div">&nbsp; </div>
+			
+			<div class="configRow" id="tf1_txtFwDestUserFinish_div">
+				<label data-localize="13105">To </label>
+                <input type="text" name="FirewallRules6.DestinationAddressEnd" value="$| firewallRulesIPv6Form["FirewallRules6.DestinationAddressEnd"] or '' |$" size="30" id="tf1_txtFwDestUserFinish" maxlength="40" maxlength="40" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+			</div>
+			<div class="break" id="break_txtFwDestUserFinish_div">&nbsp; </div>
+			<div class="configRow">
+				<label data-localize="11612">Log </label>
+				<p><input type="radio" value="1" name="FirewallRules6.LogLevel" $| web.radioSelected(firewallRulesIPv6Form["FirewallRules6.LogLevel"] == "1") |$ id="tf1_Never"> <span data-localize="11768">Never</span>
+				</p>
+				<p><input type="radio" value="2" name="FirewallRules6.LogLevel" $| web.radioSelected(firewallRulesIPv6Form["FirewallRules6.LogLevel"] == "2") |$ id="tf1_Always"> <span data-localize="10223">Always</span> </p>
+			</div>
+			<div class="break">&nbsp; </div>
+			
+		</div>
+		<div class="dialogSubmitRow">
+            <input data-localize="12758" type="submit" onclick="return firewallRulesValidate()" class="btnSubmit" title="Save" value="Save" id="btSave" name="button.config1.firewallRulesIpv6.firewallRulesIpv6.$|cgi["configRowId"]|$"> 
+		</div>
+    </div>
+    <!-- Section for Pop up dialog ends -->
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_firewallRulesDailogMoveContent6">
+    <div class="topBg">
+        <h1 data-localize="30291">IPv6 Firewall Rules Move</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+    </div>
+<?lua 
+    local firewallRulesInfo, errorFlag
+     errorFlag, firewallRulesInfo = firewallRuleGetAll ()
+?>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="14176">Select Position</label>
+            <select size="1" name="firewallRulesIpv6.toMovePriority">
+            <?lua
+			  local currentPriorityId =  cgi["configRowId"]
+              local i = 0
+              for k, v in pairs (firewallRulesInfo) do
+                  i=i+1
+                  local row = firewallRulesInfo[i]
+            ?>
+            <option value="$| row["FirewallRules6.PriorityId"] |$"  >$| row["FirewallRules6.PriorityId"] |$</option>
+            <?lua end?>
+	    </select> </div>
+     <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+	<input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+        <input data-localize="12758" type="submit" class="btnSubmit" name="button.move.firewallRulesIpv6" title="Save" value="Save" id="btSave">
+    </div>
+</div>    

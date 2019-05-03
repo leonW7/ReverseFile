@@ -1,0 +1,337 @@
+<?lua 
+require "teamf1lualib/dynamicDns_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+                                                    
+        if(UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-250N") then
+           PAGE_HELP_SECTION = "dynamicDnsWan1Settings_econa"                     
+       	else                                            
+           PAGE_HELP_SECTION = "dynamicDnsWan1Settings_octeon"                     
+        end                                             
+             
+local dnsConfig =  require("com.teamf1.bl.services.ddns")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+dynamicDns = {}
+dynamicDnsStatus = {}
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["dynamicDns.cookie"] ="1"
+    if (inputTable["dynamicDns.ddnsService"] == "13") then
+        inputTable["dynamicDns.uploadKey"] =  cgilua.cookies.get("TeamF1Login")
+    end
+    returnCode, cookie, optionMode, wanInfo, wanMode = dnsConfig.optionModeGet()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    if ((wanMode == "2") or (wanMode == "0")) then
+       returnCode =  dnsConfig.ddnsWan1Check()
+       if(returnCode ~= returnCodes.SUCCESS) then
+          statusErrorMessage = errorMap.errorStringGet (returnCode)
+       else
+          returnCode, cookie = dnsConfig.ddnsSectionSet (inputTable)
+          if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+          else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+          end
+       end
+         web.goToPage(NextPage, true, true)
+    else 
+    	returnCode, cookie = dnsConfig.ddnsSectionSet (inputTable)
+   		if (returnCode == returnCodes.SUCCESS) then
+           statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    	else 
+           statusErrorMessage = errorMap.errorStringGet (returnCode)
+        end
+      web.goToPage(NextPage, true, true)
+    end
+else
+    returnCode, cookie, optionMode = dnsConfig.optionModeGet()
+
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    returnCode, cookie, dynamicDns, dynamicDnsStatus = dnsConfig.dynamicDnsGetAll()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    returnCode, option1Status, option2Status = dnsConfig.optionStatusGet()
+
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE = "13301,10842,12843,10847,10848,13004,10643,13573,10853,14426,30548,30550,30551,30555,30556,30558,13239,11899,11122,30559,30560,30561,13173,14173,12991,10648,30562,30563,30564,10670,13207,30565,30566,30567,30568,12144,12333,12020,30569,30570,30571,30615,30549,30552,30553,30554,30557,30616,30015,13301,10749,12627,10683,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+(Subsidiary of D-Link India)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+			<?lua
+			    local wan1DispName
+				wan1DispName = LANG_LOCALE['30015']
+			?>
+                                <li class="current">
+                                    <a href="?page=dynamicDnsWan1Settings.html">$| LANG_LOCALE['10842'] |$ $|wan1DispName|$ $| LANG_LOCALE['12843'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=dynamicDnsWan2Settings.html">$| LANG_LOCALE['10847'] |$</a>
+                                </li>
+								<?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                <li>
+                                    <a href="?page=dynamicDnsWan3Settings.html">$| LANG_LOCALE['10848'] |$</a>
+                                </li>
+								<?lua end ?>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['10842'] |$ $|wan1DispName|$ $| LANG_LOCALE['12843'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmDynamicDns" id="tf1_frmDynamicDns" action="platform.cgi" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="thispage" id="thispage" value="dynamicDnsWan1Settings.html">
+                                <h2>$| LANG_LOCALE['13004'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10643'] |$</label>
+                                    <p>
+                                        $| optionMode |$
+
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['30567'] |$</label>
+                                    <p id="tf1_ddnsStatus" style="max-width: 50%; line-height:19px;"></p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>$| wan1DispName |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['13573'] |$</label>
+                                    <select id="tf1_dynDNSServiceType" name="dynamicDns.ddnsService" onchange="selDDNSServiceType ();">
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "1") |$ value="1">$| LANG_LOCALE['10749'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "2") |$ value="2">$| LANG_LOCALE['10853'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "3") |$ value="3">$| LANG_LOCALE['14426'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "4") |$ value="4">$| LANG_LOCALE['30548'] |$</option>
+                                        <!--option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "5") |$ value="5">$| LANG_LOCALE['30549'] |$</option-->
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "6") |$ value="6">$| LANG_LOCALE['30550'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "7") |$ value="7">$| LANG_LOCALE['30551'] |$</option>
+                                        <!--option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "8") |$ value="8">$| LANG_LOCALE['30552'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "9") |$ value="9">$| LANG_LOCALE['30553'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "10") |$ value="10">$| LANG_LOCALE['30554'] |$</option-->
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "11") |$ value="11">$| LANG_LOCALE['30555'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "12") |$ value="12">$| LANG_LOCALE['30556'] |$</option>
+                                        <!--option $| web.dropdownSelected(dynamicDns["ddns.ddnsService"] == "13") |$ value="13">$| LANG_LOCALE['30557'] |$</option-->
+                                    </select>
+                                <div class="break" id="break_dynDNSServiceType_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_dynDnsServer_div">
+                                    <label>$| LANG_LOCALE['30558'] |$</label>
+                                    <input name="dynamicDns.dynDNSServer" value="$| dynamicDns["ddns.server"] or '' |$" type="text" id="tf1_dynDnsServer" maxlength="64">
+                                </div>
+                                <div class="break" id="break_dynDnsServer_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_userName_div">
+                                    <label>$| LANG_LOCALE['13239'] |$</label>
+                                    <input type="text" name="dynamicDns.userName" value="$| dynamicDns["ddns.username"] or '' |$" id="tf1_userName" maxlength="64">
+                                </div>
+                                <div class="break" id="break_userName_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_password_div">
+                                    <label>$| LANG_LOCALE['11899'] |$</label>
+                                    <input type="password" name="dynamicDns.password" value = "$| dynamicDns["ddns.password"] or '' |$" id="tf1_password" maxlength="64">
+                                </div>
+                                <div class="break" id="break_password_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_hostName_div">
+                                    <label>$| LANG_LOCALE['11122'] |$</label>
+                                    <input type="text" name="dynamicDns.hostName" value="$| dynamicDns["ddns.hostname"] or '' |$" id="tf1_hostName" maxlength="64">
+                                </div>
+                                <div class="break" id="break_hostName_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_zoneName_div">
+                                    <label>$| LANG_LOCALE['30559'] |$</label>
+                                    <input type="text" name="dynamicDns.zoneName" value="$| dynamicDns["ddns.zonename"] or '' |$" id="tf1_zoneName" maxlength="64">
+                                </div>
+                                <div class="break" id="break_zoneName_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow"  id="tf1_orayUserType_div">
+                                    <label>$| LANG_LOCALE['30560'] |$</label>
+                                    <p id="tf1_orayUserType">$| dynamicDnsStatus["ddnsStatus.orayType"] or '' |$</p>
+                                </div>
+                                <div class="break" id="break_orayUserType_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow"  id="tf1_orayDomain_div">
+                                    <label>$| LANG_LOCALE['30561'] |$</label>
+                                    <p id="tf1_orayDomain">$| dynamicDnsStatus["ddnsStatus.orayDomain"] or '' |$</p>
+                                </div>
+                                <div class="break" id="break_orayDomain_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_type_div">
+                                    <label>$| LANG_LOCALE['13173'] |$</label>
+                                    <select id="tf1_type" name="dynamicDns.type">
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsType"] == "1") |$ value="1">$| LANG_LOCALE['14173'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsType"] == "2") |$ value="2">$| LANG_LOCALE['12991'] |$</option>
+                                        <option $| web.dropdownSelected(dynamicDns["ddns.ddnsType"] == "3") |$ value="3">$| LANG_LOCALE['10648'] |$</option>
+                                    </select>                               
+                                </div>                                
+                                <div class="break" id="break_type_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_wildcard_div">
+                                    <label>$| LANG_LOCALE['30562'] |$</label>
+                                    <?lua
+                                    if (dynamicDns["ddns.wildflag"] == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                              end
+                                               ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                    <input type="hidden" value="$| statusVar |$" name="dynamicDns.wildcard" id="tf1_wildcard">
+                                </div>
+                                <div class="break" id="break_wildcard_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_externalIpCheck_div">
+                                    <label>$| LANG_LOCALE['30563'] |$</label>
+                                    <?lua
+                                    if (dynamicDns["ddns.ipcheck"] == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                              end
+                                               ?>
+
+                                    <a class="$| statusStr |$" alt=""></a>
+                                    <input type="hidden" value="$| statusVar |$" name="dynamicDns.externalIpCheck" id="tf1_externalIpCheck">
+                                </div>
+
+                                <div class="break" id="break_externalIpCheck_div">
+                                    &nbsp;
+                                </div>                                
+                                <div class="configRow" id="tf1_forceUpdateInterval_div">
+                                    <label>$| LANG_LOCALE['30564'] |$</label>
+                                    <input type="text" name="dynamicDns.forceUpdateInterval" value="$| dynamicDns["ddns.timePeriod"] or '10' |$" id="tf1_forceUpdateInterval" maxlength="2" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) { return numericValueRangeCheck (this, '', '', 1, 30, true, LANG_LOCALE['30616'], LANG_LOCALE['10670']); }">
+                                    <dl>[$| LANG_LOCALE['12627'] |$: 1 - 30, $| LANG_LOCALE['10683'] |$: 10 $| LANG_LOCALE['10670'] |$]</dl>
+                                </div>
+                                <div class="break" id="break_forceUpdateInterval_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_url_div">
+                                    <label>$| LANG_LOCALE['13207'] |$</label>
+                                    <input type="text" name="dynamicDns.url" value="$| dynamicDns["ddns.ddnsUrl"] or '' |$" id="tf1_url" maxlength="128">
+                                </div>
+                                <div class="break" id="break_url_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_additionalDDNS_div">
+                                    <label>$| LANG_LOCALE['30565'] |$</label>
+                                    <input type="text" name="dynamicDns.additionalDDNS" value="$| dynamicDns["ddns.ddnsOptUrl"] or '' |$" id="tf1_additionalDDNS" maxlength="64">
+                                </div>
+                                <div class="break" id="break_additionalDDNS_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_uploadKey_div">
+                                    <label>$| LANG_LOCALE['30566'] |$</label>
+                                    <input type="file" id="tf1_uploadKey" name="dynamicDns.uploadKey" value="$| dynamicDns["dynamicDns.uploadKey"] or '' |$" size="25">
+                                </div>
+                                <div class="break" id="break_uploadKey_div">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.dynamicDnsWan1Settings" onClick="return ddnsValidate ('tf1_frmDynamicDns')" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onClick="this.form.reset(); resetImgOnOff('tf1_frmDynamicDns'); dynamicDnsOnReset();">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <input type="hidden" id="hdDynaWan" value="WAN1" />
+        <input type="hidden" id="hdDynDNSService" value="$| dynamicDns["ddns.ddnsService"] or '' |$" />
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/dynamicDns.js"></script>
+        <script type="text/javascript" language="javascript">
+        $(document).ready(function (){
+            getCurrDDNSStatus ();
+        });
+        </script>
+    </body>
+</html>
+<?lua end ?>

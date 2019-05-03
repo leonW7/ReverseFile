@@ -1,0 +1,62 @@
+<?lua
+    require "teamf1lualib/radioConfig_bl"
+    local chan = "N/A"
+    local autoChannel = ""
+    local txPowerVal = "0"
+    local radioCardNo = cgi["radioCardNo"]
+
+    local wRadioConfig = require("com.teamf1.bl.wireless.radio")
+    if (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then
+        local tempVar
+        
+        if (radioCardNo ~= nil and radioCardNo ~= '') then
+            if ( tonumber(radioCardNo) == 2) then
+	            local where = "radioList = '2' and vapEnabled = '1'"
+                tempVar = db.getAttributeWhere ( 'dot11VAP', where, "vapName");
+                if(PRODUCT_ID == "DSR-1000AC_Ax" and (tempVar == nil or tempVar =='' or tempVar ==" "))then
+                    where = "radioList = '1,2' and vapEnabled = '1'"
+                    tempVar = db.getAttributeWhere ( 'dot11VAP', where, "vapName");
+                end
+                if(tempVar ~= nil and tempVar ~='' and tempVar ~=" ")then
+                    where = "radioNo = '2' and vapName == '"..tempVar.."'"
+                    tempVar = db.getAttributeWhere ( "dot11Interface", where, "interfaceName");
+                end
+            else
+	            local where = "radioList = '1' and vapEnabled = '1'"
+                tempVar = db.getAttributeWhere ( 'dot11VAP', where, "vapName");
+                if(PRODUCT_ID == "DSR-1000AC_Ax" and (tempVar == nil or tempVar =='' or tempVar ==" "))then
+                    where = "radioList = '1,2' and vapEnabled = '1'"
+                    tempVar = db.getAttributeWhere ( 'dot11VAP', where, "vapName");
+                end
+                if(tempVar ~= nil and tempVar ~='' and tempVar ~=" ")then
+                    where = "radioNo = '1' and vapName == '"..tempVar.."'"
+                    tempVar = db.getAttributeWhere ( "dot11Interface", where, "interfaceName");
+                end
+            end
+        end
+
+        if(tempVar ~= nil and tempVar ~='' and tempVar ~=" ")then
+            local pfile = io.popen ("/pfrm2.0/bin/dot11ChannelGet " .. tempVar)
+            chan = pfile:read ("*number")
+            pfile:close()
+        else
+            chan = "N/A"
+        end
+
+        txPowerVal = wRadioConfig.wirelessTXPowerGet(radioCardNo) or "0";
+    else
+        local apname = db.getAttribute ('dot11VAP', 'vapEnabled', '1', "vapName")
+        if (apname) then
+    	    local ifname = db.getAttribute("dot11Interface", "vapName", apname, "interfaceName")
+            local pfile = io.popen ("/pfrm2.0/bin/dot11ChannelGet " .. ifname)
+            chan = pfile:read ("*number")
+            pfile:close()
+        end
+
+        if (PRODUCT_ID ~= "DSR-250N_Ax") then 
+        txPowerVal = wRadioConfig.wirelessTXPowerGet(radioCardNo) or "0";
+        end
+    end
+    autoChannel = chan;
+?>
+$|autoChannel.."||"..txPowerVal|$

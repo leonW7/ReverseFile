@@ -1,0 +1,676 @@
+<?lua
+local ROW_ID = "1"
+require "teamf1lualib/openVpnSettings_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/openVpnAuthentication_bl"
+
+	PAGE_HELP = "vpn"
+    if (UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+	    PAGE_HELP_SECTION = "openVpnSettings"
+    else
+	    PAGE_HELP_SECTION = "openVpnSettingsEcona"
+    end
+
+local openvpnSettings = require("com.teamf1.bl.vpn.openvpnSettings")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local openvpnAuth = require("com.teamf1.bl.vpn.openvpnAuth")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["openVpnSettings.cookie"] = ROW_ID
+    local returnCode, cookie = 
+            openvpnSettings.openvpnConfigSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "upload") then
+    local fileName = cgilua.cookies.get("TeamF1Login")
+    local inputTable = web.cgiToLuaTable(cgi)
+    local returnCode, cookie = 
+        openvpnAuth.uploadSectionSet("config", fileName)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local returnCode, cookie
+    local configRow = {}
+    local server = "1"
+    local protocol = "UDP"
+    local tunnelType = "1"
+    local tlsStat = "0"
+    local statVal = "0"
+    local crlStat = "1"
+    local certVerification = "1"
+    returnCode, cookie, configRow = 
+        openvpnSettings.openvpnConfigGet()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    configRow["mode"] = 
+        configRow["mode"] or server
+    configRow["tunnelProtocol"] = 
+        configRow["tunnelProtocol"] or protocol
+    configRow["tunnelType"] = 
+        configRow["tunnelType"] or tunnelType
+    
+    configRow["certVer"] =
+    configRow["certVer"] or certVerification
+
+    if(openvpnSettings.verifyCertStatusGet (configRow["mode"])) then
+        statVal = 1
+    end
+    if(configRow["mode"] == "1") then
+        if(openvpnSettings.verifyCertStatusGet ("server")) then
+            statVal1 = 1
+        end
+    end 
+    if(configRow["mode"] == "2") then
+        if(openvpnSettings.verifyCertStatusGet ("client")) then
+           statVal2 = 1
+        end
+    end
+    local certificateUploadedStatus = true
+    if (configRow["mode"] ~= "3") then
+        if (statVal and statVal~= '' and statVal~="0") then
+            certificateUploadedStatus = false
+        end
+    end
+    local uploadStatus = "No"
+    if(openvpnAuth.uploadSectionGet("config")) then
+        uploadStatus = "Yes"
+    end
+    if (certificateUploadedStatus == false) then
+        statusInfoMessage = errorMap.errorStringGet (11962)
+    end
+
+    local certsTable = {}
+    local returnCode
+    returnCode, certsTable = openvpnAuth.openvpnAuthConfigParamGet()
+    if(returnCode ~= returnCodes.SUCCESS) then
+       	statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    returnCode, tlsTable = openvpnAuth.uploadTlsSectionGet()
+    if(#tlsTable ~= 0) then
+	tlsStat = "1"
+    end	
+
+    if(returnCode ~= returnCodes.SUCCESS) then
+       	statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    returnCode, crlTable = openvpnAuth.uploadCrlSectionGet()
+    if(#crlTable ~= 0) then
+	 crlStat = "0"
+    end
+    if(returnCode ~= returnCodes.SUCCESS) then
+       	statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+
+
+LANG_LOCALE = "11828,11822,11720,12820,13448,10043,12828,14125,13295,13294,12467,11315,13163,13047,13175,10917,13637,14319,14318,14317,11102,14106,30226,30227,13165,11052,12915,10531,13195,13200,11002,50195,13194,30230,12148,12147,12082,12066,30231,12449,12448,12144,12333,13242,11899,50196,30587,11387,10683,12627,12758,10449,50024,11861,50025,50026,10866,50027,50028,50029,50030,50031,50032,50033,14077,12623,11560,12462,30469,11802,50197,50198,50199,50200,50201,50168,50202,50203,30232,50204,50205,11898,10490,14076,14075,50038,50039,12074,50041,10868,11258,11257,10867,11256,50165,50166,50040,50215"
+?>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+	<!--
+	Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+	All rights reserved.
+-->
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+<link rel="stylesheet" type="text/css" href="css/menu.css" />
+<link rel="stylesheet" type="text/css" href="css/table.css" />
+<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+<?lua web.includeMenu("metaInclude.html")?>
+</head>
+<body>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+					mmSel("mainMenu4");
+					</script>
+					<?lua
+					if (statusInfoMessage ~= returnCodes.NIL) then
+					if (statusErrorMessage == returnCodes.NIL) then
+					if (statusSuccessMessage ~= returnCodes.NIL) then
+					?>
+					<div class="msgSuccess">
+						<p>$| statusSuccessMessage |$</p>
+					</div>
+					<?lua else ?>
+					<div class="msgInfo" id="tf1_certificateStatus">
+						<p>$| statusInfoMessage |$</p>
+					</div>
+					<?lua
+					end
+					else
+					?>
+					<div class="msgError">
+						<p>$| statusErrorMessage |$</p>
+					</div>
+					<?lua
+					end
+					elseif (statusErrorMessage ~= returnCodes.NIL) then
+					?>
+					<div class="msgError">
+						<p>$| statusErrorMessage |$</p>
+					</div>
+					<?lua
+					elseif (statusSuccessMessage ~= returnCodes.NIL) then
+					?>
+					<div class="msgSuccess">
+						<p>$| statusSuccessMessage |$</p>
+					</div>
+					<?lua
+					end
+					?>
+					<div class="FL2">
+						<p class="hint">
+							$| helpHintText |$
+						</p>
+					</div>
+					<h1>$| LANG_LOCALE['11828'] |$</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmOpenVpnSettings" id="tf1_frmOpenVpnSettings" action="platform.cgi" method="post" enctype="multipart/form-data">
+								<input type="hidden" name="thispage" id="thispage" value="openVpnSettings.html">
+								<div class="configRow">
+									<label>$| LANG_LOCALE['11822'] |$</label>
+									<?lua
+									if (configRow["feature"] == "1") then
+									statusStr="enable-disable-on"
+									statusVar = "1"
+									else
+									statusStr="enable-disable-off"
+									statusVar = "0"
+									end
+
+									if (cgi['openVpnSettings.mode'] ~= nil and cgi['openVpnSettings.mode'] == "3" and cgi['button.upload.openVpnSettings'] ~= nil and cgi['button.upload.openVpnSettings'] ~= '' and uploadStatus == 'Yes') then
+									statusStr="enable-disable-on"
+									statusVar = "1"
+									configRow["mode"]= "3"
+									configRow["port"] = cgi["openVpnSettings.port"]
+									end
+									?>
+									<a class="$| statusStr |$" alt="" id="tf1_openVpn"></a>
+									<input type="hidden" name="openVpnSettings.feature"	value="$| statusVar |$" >
+								</div>
+								<div class="break" id="break_openVpn_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_vpnModeServer_div">
+									<label>$| LANG_LOCALE['11720'] |$</label>
+									<p>
+										<input type="radio" name="openVpnSettings.mode" $| web.radioSelected(configRow["mode"]== "1") |$ value="1" onClick="showHideMsgInfo();vpnModeChange('tf1_vpnModeServer');" id="tf1_vpnModeServer" >
+										$| LANG_LOCALE['12820'] |$
+									</p>
+									<p>
+										<input type="radio" name="openVpnSettings.mode" $| web.radioSelected(configRow["mode"]== "2") |$ value="2" onClick="showHideMsgInfo();vpnModeChange('tf1_vpnModeClient');" id="tf1_vpnModeClient">
+										$| LANG_LOCALE['13448'] |$
+									</p>
+									<p>
+										<input type="radio" name="openVpnSettings.mode" $| web.radioSelected(configRow["mode"]== "3") |$ value="3" onClick="showHideMsgInfo();vpnModeChange('tf1_vpnModeAccess');" id="tf1_vpnModeAccess">
+										$| LANG_LOCALE['10043'] |$
+									</p>
+								</div>
+								<div class="break" id="break_vpnModeServer_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_selRemoteIpType_div">
+									<label>$| LANG_LOCALE['12828'] |$</label>
+									<select size="1" name="openVpnSettings.RemoteIpType" id="tf1_selRemoteIpType">
+										<option $| web.dropdownSelected(configRow["RemoteIpType"] == "0") |$ value="0">$| LANG_LOCALE['11387'] |$</option>
+										<option $| web.dropdownSelected(configRow["RemoteIpType"] == "1") |$ value="1">$| LANG_LOCALE['14125'] |$</option>
+									</select>
+								</div>
+								<div class="break" id="break_selRemoteIpType_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_vpnServerIP_div">
+									<label>&nbsp;</label>
+									<input name="openVpnSettings.serverIp" type="text" maxlength="127" id="tf1_vpnServerIP" value="$| configRow["serverIp"] or '' |$" onKeyDown="if (event.keyCode == 9) { return remoteIpTypeCheck() }">
+								</div>
+								<div class="break" id="break_vpnServerIP_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_selFailoverIpType_div">
+									<label>$| LANG_LOCALE['50024'] |$</label>
+									<select size="1" name="openVpnSettings.failoverserverIpType" id="tf1_selFailoverIpType">
+										<option $| web.dropdownSelected(configRow["failoverRemoteIpType"] == "0") |$ value="0">$| LANG_LOCALE['11387'] |$</option>
+										<option $| web.dropdownSelected(configRow["failoverRemoteIpType"] == "1") |$ value="1">$| LANG_LOCALE['14125'] |$</option>
+									</select>
+								</div>
+								<div class="break" id="break_selFailoverIpType_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_failoverServerIP_div">
+									<label>&nbsp;</label>
+									<input name="openVpnSettings.failoverserverIp" type="text" maxlength="127" id="tf1_failoverServerIP" value="$| configRow["failoverserverIp"] or '' |$" onkeydown="if (event.keyCode == 9) {  return failoverIpTypeCheck() }"><dl>$| LANG_LOCALE['11861'] |$</dl>
+								</div>
+								<div class="break" id="break_failoverServerIp_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_vpnNetwork_div">
+									<label>$| LANG_LOCALE['13295'] |$</label>
+									<input name="openVpnSettings.network" type="text" maxlength="15" id="tf1_vpnNetwork" value="$| configRow["network"] or '128.10.0.0' |$" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'SN', false, true, LANG_LOCALE['11281']+'. ', LANG_LOCALE['11031'], true); }">
+								</div>
+								<div class="break" id="break_vpnNetwork_div">
+									&nbsp;
+								</div>
+                                <div class="configRow" id="tf1_vpnNetmask_div">
+									<label>$| LANG_LOCALE['13294'] |$</label>
+									<input type="text" name="openVpnSettings.networkMask" maxlength="15" id="tf1_vpnNetmask" value="$| configRow["networkMask"] or '255.255.0.0' |$" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return validNetMask (this.id) }" size="20">
+								</div>
+								<div class="break" id="break_vpnNetmask_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_duplicateCN_div">
+									<label>$| LANG_LOCALE['30587'] |$</label>
+									<?lua
+									if (configRow["duplicateCN"] == "1") then
+									statusStr="enable-disable-on"
+									statusVar = "1"
+									else
+									statusStr="enable-disable-off"
+									statusVar = "0"
+									end
+									?>
+									<a class="$| statusStr |$" alt="" id="tf1_duplicateCN"></a>
+									<input type="hidden" name="openVpnSettings.duplicateCN" value="$| statusVar |$" >
+								</div>
+								<div class="break" id="break_duplicateCN_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_vpnPort_div">
+									<label>$| LANG_LOCALE['12467'] |$</label>
+									<input class="one" type="text" name="openVpnSettings.port" value="$| configRow["port"] or '1194' |$" maxlength="5" id="tf1_vpnPort" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1024, 65535, true, LANG_LOCALE['11315']+'. ', '');}">
+									<dl>
+										[$| LANG_LOCALE['10683'] |$: 1194, $| LANG_LOCALE['12627'] |$: 1024 - 65535]
+									</dl>
+								</div>
+								<div class="break" id="break_vpnPort_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_vpnTunnelTcp_div">
+									<label>$| LANG_LOCALE['13163'] |$</label>
+									<p>
+										<input type="radio"	name="openVpnSettings.tunnelProtocol" value="TCP" id="tf1_vpnTunnelTcp" $| web.radioSelected(configRow["tunnelProtocol"]== "TCP") |$ > $| LANG_LOCALE['13047'] |$
+									</p>
+									<p>
+										<input type="radio"	name="openVpnSettings.tunnelProtocol" value="UDP" id="tf1_vpnTunnelUdp" $|web.radioSelected(configRow["tunnelProtocol"]== "UDP") |$> $| LANG_LOCALE['13175'] |$
+									</p>
+								</div>
+								<div class="break" id="break_vpnTunnelTcp_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_selEncrType_div">
+									<label>$| LANG_LOCALE['10917'] |$</label>
+									<select size="1" name="openVpnSettings.encryptionAlgorithm"	class="txt1" id="tf1_selEncrType">
+										<option $| web.dropdownSelected(configRow["encryptionAlgorithm"] == "AES-128" ) |$ value="AES-128">$| LANG_LOCALE['14319'] |$</option>
+										<option $| web.dropdownSelected(configRow["encryptionAlgorithm"] == "BF-CBC" ) |$ value="BF-CBC">$| LANG_LOCALE['13637'] |$</option>
+										<option $| web.dropdownSelected(configRow["encryptionAlgorithm"] == "AES-192" ) |$ value="AES-192">$| LANG_LOCALE['14318'] |$</option>
+										<option $| web.dropdownSelected(configRow["encryptionAlgorithm"] == "AES-256" ) |$ value="AES-256">$| LANG_LOCALE['14317'] |$</option>
+									</select>
+								</div>
+								<div class="break" id="break_selEncrType_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_selHashType_div">
+									<label>$| LANG_LOCALE['11102'] |$</label>
+									<select size="1" name="openVpnSettings.hashAlgorithm" id="tf1_selHashType">
+										<option $| web.dropdownSelected(configRow["hashAlgorithm"] == "SHA1" ) |$ value="SHA1">$| LANG_LOCALE['14106'] |$</option>
+										<option $| web.dropdownSelected(configRow["hashAlgorithm"] == "SHA256" ) |$ value="SHA256" >$| LANG_LOCALE['30226'] |$</option>
+										<option $| web.dropdownSelected(configRow["hashAlgorithm"] == "SHA512" ) |$ value="SHA512">$| LANG_LOCALE['30227'] |$</option>
+									</select>
+								</div>
+								<div class="break" id="break_selHashType_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_vpnTunnelTypeFull_div">
+									<label>$| LANG_LOCALE['13165'] |$</label>
+									<p>
+										<input type="radio" name="openVpnSettings.tunnelType" $| web.radioSelected(configRow["tunnelType"]== "1") |$ value="1" onClick="vpnTunnelType('tf1_vpnTunnelTypeFull');" id="tf1_vpnTunnelTypeFull" > $| LANG_LOCALE['11052'] |$
+									</p>
+									<p>
+										<input type="radio"	name="openVpnSettings.tunnelType"  $| web.radioSelected(configRow["tunnelType"]== "2") |$ value="2" onClick="vpnTunnelType('tf1_vpnTunnelTypeSplit');" id="tf1_vpnTunnelTypeSplit">	$| LANG_LOCALE['12915'] |$
+									</p>
+								</div>
+								<div class="break" id="break_vpnTunnelTypeFull_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_clientToClient_div">
+									<label>$| LANG_LOCALE['10531'] |$</label>
+									<?lua
+									if (configRow["clientToClient"] == "1") then
+									statusStr="enable-disable-on"
+									statusVar = "1"
+									else
+									statusStr="enable-disable-off"
+									statusVar = "0"
+									end
+									?>
+									<a class="$| statusStr |$" alt="" id="tf1_clientToClient" ></a>
+									<input type="hidden" name="openVpnSettings.clientToClient" value="$| statusVar |$">
+								</div>
+								<div class="break" id="break_clientToClient_div"> &nbsp; </div>
+								<?lua if (UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+								<div id="tf1_privateTunnelBlock_div">
+									<h2>$| LANG_LOCALE['50025'] |$</h2>
+									<div class="configRow">
+										<label>$| LANG_LOCALE['50026'] |$</label>
+										<?lua
+										if (configRow["ptEnable"] == "1") then
+										statusStr="enable-disable-on"
+										statusVar = "1"
+										else
+										statusStr="enable-disable-off"
+										statusVar = "0"
+										end
+										?>
+										<a class="$| statusStr |$" alt="" id="tf1_privateTunnel" ></a>
+										<input type="hidden" name="openVpnSettings.ptEnable" value="$| statusVar |$">
+									</div>
+									<div class="break" id="break_privateTunnel_div">&nbsp;</div>
+									<div class="configRow" id="tf1_emailAddress_div">
+										<label>$| LANG_LOCALE['10866'] |$</label>
+										<input type="text" maxlength="64" id="tf1_emailAddress" name= "openVpnSettings.ptUserName" value="$| configRow["ptUserName"] or '' |$">
+									</div>
+									<div class="break" id="break_emailAddress_div">&nbsp;</div>
+									<div class="configRow" id="tf1_privatePassword_div">
+										<label>$| LANG_LOCALE['11899'] |$</label>
+										<input type="password" id="tf1_privatePassword" maxlength="64" onkeypress ="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }" name="openVpnSettings.ptPassword" value="$| configRow["ptPassword"] or '' |$">
+									</div>
+									<div class="break" id="break_privatePassword_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_vpnCluster_div">
+										<label>$| LANG_LOCALE['50027'] |$</label>
+										<select size="1" name="openVpnSettings.ptClusterId" id="tf1_vpnCluster">
+											<option $| web.dropdownSelected(configRow["ptClusterId"] == "San Jose, CA" ) |$ value="San Jose, CA">$| LANG_LOCALE['50028'] |$</option>
+											<option $| web.dropdownSelected(configRow["ptClusterId"] == "Chicago, IL" ) |$ value="Chicago, IL" >$| LANG_LOCALE['50029'] |$</option>
+											<option $| web.dropdownSelected(configRow["ptClusterId"] == "London" ) |$ value="London" >$| LANG_LOCALE['50030'] |$</option>
+											<option $| web.dropdownSelected(configRow["ptClusterId"] == "Zurich" ) |$ value="Zurich" >$| LANG_LOCALE['50031'] |$</option>
+											<option $| web.dropdownSelected(configRow["ptClusterId"] == "Montreal, QC" ) |$ value="Montreal, QC">$| LANG_LOCALE['50032'] |$</option>
+											<option $| web.dropdownSelected(configRow["ptClusterId"] == "Amsterdam" ) |$ value="Amsterdam">$| LANG_LOCALE['50033'] |$</option>
+										</select>
+									</div>
+									<div class="break" id="break_vpnCluster_div">
+										&nbsp;
+									</div>
+								</div>
+								<div class="break" id="break_privateTunnelBlock_div">&nbsp;</div>
+								<?lua end ?>
+								<div id="tf1_uploadCertificateBlock_div">
+									<h2>$| LANG_LOCALE['13195'] |$</h2>
+									<div class="configRow">
+										<label>$| LANG_LOCALE['13200'] |$</label>
+										<p>
+											$| uploadStatus |$
+											<input type="hidden" value="$| uploadStatus or '' |$" id="tf1_uploadStatus" name="openVpnSettings.uploadStatus" />
+										</p>
+									</div>
+									<div class="break">&nbsp;</div>
+									<div class="configRow">
+										<label>$| LANG_LOCALE['11002'] |$</label>
+										<input type="file" size="25" name="txtUploadFile" id="tf1_txtUploadFile">
+									</div>
+									<div class="break">&nbsp;</div>
+									<div class="submitRow">
+										<input type="submit" id="btUploadCfg" value="$| LANG_LOCALE['13194'] |$" title="$| LANG_LOCALE['13194'] |$" class="btnSubmit" name="button.upload.openVpnSettings" onclick="setHiddenChks('tf1_frmOpenVpnSettings');" >
+									</div>
+									<div class="break">&nbsp;</div>
+								</div>
+								<!-- Section Begion User Based Auth -->
+								<div class="configRow" id="tf1_userBasedAuth_div">
+									<label>$| LANG_LOCALE['50195'] |$</label>
+									<?lua
+									if (configRow["userBasedAuth"] == "1") then
+									    statusStr="enable-disable-enb"
+									    statusVar = "1"
+									else
+									    statusStr="enable-disable-dis"
+									    statusVar = "0"
+									end
+									?>
+									<a class="$| statusStr |$" alt="" id="tf1_userBasedAuth" ></a>
+									<input type="hidden" name="openVpnSettings.userBasedAuth" value="$| statusVar |$">
+								</div>
+								<div class="break" id="break_userBasedAuth_div"> &nbsp; </div>
+								<div class="configRow" id="tf1_userName_div">
+									<label>$| LANG_LOCALE['13242'] |$</label>
+									<input type="text" name="openVpnSettings.userName" value="$| configRow["userName"] or '' |$" id="tf1_userName" maxlength="24" onkeypress="return alphaNumericCheck (event, '')">
+								</div>
+								<div class="break" id="break_userName_div">&nbsp;</div>
+								<div class="configRow" id="tf1_password_div">
+									<label>$| LANG_LOCALE['11899'] |$</label>
+									<input type="password" name="openVpnSettings.password" value="$| configRow["password"] or '' |$" id="tf1_password" maxlength="128">
+								</div>
+								<div class="break" id="break_password_div">&nbsp;</div>
+								<div class="configRow" id="tf1_protalAuthenticationType_div">
+									<label>$| LANG_LOCALE['50196'] |$</label>
+									<select id="tf1_protalAuthenticationType" name="openVpnSettings.authenticationType" onchange="authServerChangeMode('tf1_protalAuthenticationType')">
+										<option value="1" $| web.dropdownSelected(configRow["authenticationType"] == "1") |$ >$| LANG_LOCALE['14077'] |$</option>
+										<option value="2" $| web.dropdownSelected(configRow["authenticationType"] == "2") |$ >$| LANG_LOCALE['12623'] |$</option>
+										<option value="3" $| web.dropdownSelected(configRow["authenticationType"] == "3") |$ >$| LANG_LOCALE['11560'] |$</option>
+										<option value="4" $| web.dropdownSelected(configRow["authenticationType"] == "4") |$ >$| LANG_LOCALE['12462'] |$</option>
+										<option value="5" $| web.dropdownSelected(configRow["authenticationType"] == "5") |$ >$| LANG_LOCALE['30469'] |$</option>
+										<option value="6" $| web.dropdownSelected(configRow["authenticationType"] == "6") |$ >$| LANG_LOCALE['11802'] |$</option>
+									</select>
+								</div>
+								<div class="break" id="break_protalAuthenticationType_div">
+									&nbsp;
+								</div>
+								<div class="configRow" id="tf1_radiusAuthType_div">
+									<label>$| LANG_LOCALE['50197'] |$</label>
+									<select id="tf1_radiusAuthType" name="openVpnSettings.authenticationSubType" >
+										<option value="1"  $| web.dropdownSelected(configRow["authenticationSubType"] == "1") |$  >$| LANG_LOCALE['11898'] |$</option>
+										<option value="2" $| web.dropdownSelected(configRow["authenticationSubType"] ==  "2") |$ >$| LANG_LOCALE['10490'] |$</option>
+										<option value="3" $| web.dropdownSelected(configRow["authenticationSubType"] ==  "3") |$ >$| LANG_LOCALE['14076'] |$</option>
+										<option value="4" $| web.dropdownSelected(configRow["authenticationSubType"] ==  "4") |$  >$| LANG_LOCALE['14075'] |$</option>
+									</select>
+								</div>
+								<div class="break" id="break_radiusAuthType_div">
+									&nbsp;
+								</div>
+								<!-- section end User Based Auth -->
+								<div class="configRow" id="tf1_certVerfication_div">
+									<label>$| LANG_LOCALE['50198'] |$</label>
+									<?lua
+									if (configRow["certVer"] == "1") then
+									statusStr="enable-disable-on"
+									statusVar = "1"
+									else
+									statusStr="enable-disable-off"
+									statusVar = "0"
+									end
+									?>
+									<a class="$| statusStr |$" alt="" id="tf1_certVerfication" ></a>
+									<input type="hidden" name="openVpnSettings.certVerfication" value="$| statusVar |$">
+								</div>
+								<div class="break" id="break_certVerfication_div">&nbsp;</div>
+								<div class="configRow" id="tf1_serverClientCerts_div">
+									<label id="dynamicLblName">$| LANG_LOCALE['50199'] |$</label>
+									<select id="tf1_serverClientCerts" name="openVpnSettings.serverClientCerts">
+						<?lua
+                                    		for k, v in pairs(certsTable) do
+                                       		local outputTable = {}
+                                        	outputTable = certsTable[k]
+                                        	local rowId = outputTable["_ROWID_"]
+ 						?>
+ 						<option $| web.dropdownSelected(configRow["serverClientCerts"] == outputTable["name"]) |$ value="$| outputTable["name"] |$">$| outputTable["name"] |$ </option>  
+						<?lua end ?>
+								</select>
+								</div>
+								<div class="break" id="break_serverClientCerts_div"> &nbsp; </div>
+								<div class="configRow" id="tf1_tlsAuthentication_div">
+									<label>$| LANG_LOCALE['50200'] |$</label>
+									<?lua
+									if (configRow["tlsEnabled"] == "1") then
+									    statusStr="enable-disable-enb"
+									    statusVar = "1"
+									?>
+									<a class="$| statusStr |$" alt="" id="tf1_tlsAuthentication"  ></a>
+									<input type="hidden" name="openVpnSettings.tlsEnabled" value="$| statusVar |$">
+									<?lua else
+									    if (tlsStat ~= "1") then
+									?>
+									<p class="grayCol">$| LANG_LOCALE['50201'] |$
+										<input type="hidden" name="openVpnSettings.tlsEnabled" value="0">
+									</p>
+									<?lua else
+									    statusStr="enable-disable-dis"
+									    statusVar = "0"
+									?>
+									<a class="$| statusStr |$" alt="" id="tf1_tlsAuthentication"  ></a>
+									<input type="hidden" name="openVpnSettings.tlsEnabled" value="$| statusVar |$"><?lua end end?>
+								</div>
+								<div class="break" id="break_tlsAuthentication_div">&nbsp;</div>
+								<div class="configRow" id="tf1_tlsCertsSelection_div">
+									<label>$| LANG_LOCALE['50168'] |$</label>
+									<select id="tf1_tlsCertsSelection" name="openVpnSettings.tlsCertsSelection">
+									<?lua
+                                    						for k, v in pairs(tlsTable) do
+					                                       		local outputTable = {}
+					                                        	outputTable = tlsTable[k]
+                                        						local rowId = outputTable["_ROWID_"]
+			 						?>
+ 									<option $| web.dropdownSelected(configRow["tlsCertsName"] == outputTable["name"]) |$ value="$| outputTable["name"] |$">$| outputTable["name"] |$ </option>  
+									<?lua end ?>
+									</select>
+								</div>
+								<div class="break" id="break_tlsCertsSelection_div"> &nbsp; </div>
+                                <div class="configRow" id="tf1_crlAuthentication_div">
+                                    <label>$| LANG_LOCALE['50202'] |$</label>
+                                    <?lua
+                                    if (configRow["crlEnabled"] == "0") then
+										statusStr="enable-disable-block"
+                                        statusVar = "0"
+
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_crlAuthentication"></a>
+                                    <input type="hidden" name="openVpnSettings.crlEnabled" value="$| statusVar |$">
+                                    <?lua
+                                    else
+                                        if (crlStat ~= "0") then 
+                                    ?>
+                                    <p class="grayCol">$| LANG_LOCALE['50203'] |$
+                                        <input type="hidden" name="openVpnSettings.crlEnabled" value="1">
+                                    </p>
+                                    <?lua
+                                        else
+                                        statusStr="enable-disable-allow"
+                                        statusVar = "1"
+                                    ?>
+                                     <a class="$| statusStr |$" alt="" id="tf1_crlAuthentication"></a>
+                                     <input type="hidden" name="openVpnSettings.crlEnabled" value="$| statusVar |$">
+                                     <?lua end
+                                     end
+                                     ?>
+                                 </div>
+                                 <div class="break" id="break_crlAuthentication_div"> &nbsp; </div>
+                                 <div class="configRow" id="tf1_crlCertsSelection_div">
+                                     <label>$| LANG_LOCALE['30232'] |$</label>
+                                     <select id="tf1_crlCertsSelection" name="openVpnSettings.crlCertsSelection">
+                                         	<?lua
+                                    		for k, v in pairs(crlTable) do
+					        	local outputTable = {}
+					                outputTable = crlTable[k]
+                                        		local rowId = outputTable["_ROWID_"]
+			 				?>
+ 							<option $| web.dropdownSelected(configRow["crlCertsName"] == outputTable["name"]) |$ value="$| outputTable["name"] |$">$| outputTable["name"] |$ </option>  
+							<?lua end ?>
+                                     </select>
+                                 </div>
+                                 <div class="break" id="break_crlCertsSelection_div"> &nbsp; </div>
+                                 <div class="submitRow">
+									<input type="hidden" name="tf1_ServerCertificateStatus" id="tf1_ServerCertificateReqStatus" value="$| statVal1  or '' |$">
+									<input type="hidden" name="tf1_ClientCertificateReqStatus" id="tf1_ClientCertificateReqStatus" value="$| statVal2  or '' |$">
+									<input type="hidden" id="tf1_uploadCacheck" value="$| UploadCaOnly or '' |$">
+									<input id="tf1_btAccessServer" name="button.config.openVpnSettings" type="submit"
+									onClick="return pageValidate('tf1_frmOpenVpnSettings')"
+									class="btnSubmit btnSubmitHideShow" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+
+									<input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); openVpenOnreset('tf1_frmOpenVpnSettings');">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<?lua web.includeMenu("footer.html")?>
+			</td>
+		</tr>
+	</table>
+	<input type="hidden" id="hddh" value="$| dhexists or '' |$" />
+	<input type="hidden" id="hddhDb" value="$| dhDbexists or '' |$" />
+	<input type="hidden" id="hdCaPrim" value="$| ca_prim or '' |$" />
+	<input type="hidden" id="hdCrtPrim" value="$| crt_prim or '' |$" />
+	<input type="hidden" id="hdKeyPrim" value="$| key_prim or '' |$" />
+	<input type="hidden" id="hdCaSec" value="$| ca_sec or '' |$" />
+	<input type="hidden" id="hdCrtSec" value="$| crt_sec or '' |$" />
+	<input type="hidden" id="hdKeySec" value="$| key_sec or '' |$" />
+	<input type="hidden" id="hdUnitName" value="$| UNIT_NAME or '' |$" />
+	<input type="hidden" id="hdTlsStat" value="$| tlsStat or '' |$" />
+	<input type="hidden" id="hdCrlStat" value="$| crlStat or '' |$" />
+	<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+	<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+	<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+	<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+	<script type="text/javascript" language="javascript" src="js/openVpnSettings.js"></script>
+	<script type="text/javascript" charset="utf-8">
+
+	function showHideMsgInfo () {
+
+		if ( $("#tf1_certificateStatus").length > 0 ) {
+
+			var openVPNMode = radioCheckedValueGet('tf1_vpnModeServer');
+
+			if (openVPNMode) {
+
+				switch (parseInt(openVPNMode, 10)) {
+					case 1: /* Server */
+
+					case 2: /*Client */
+					$("#tf1_certificateStatus").show();
+					break;
+					case 3: /*Access server client */
+					$("#tf1_certificateStatus").hide();
+					break;
+				}
+			}
+		}
+	}
+	</script>
+</body>
+</html>
+<?lua end ?>

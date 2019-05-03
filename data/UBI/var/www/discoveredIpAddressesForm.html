@@ -1,0 +1,30 @@
+<?lua
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_discoveredIpAddressesDailogContent">
+    <div class="topBg">
+        <h1>Discovered IP Addresses Poll Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>Start IP Address </label>
+            <input type="text" name="discoveredIpAddresses.startIpAddress" maxlength="15" id="tf1_startIpAddress" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>End IP Address </label>
+            <input type="text" name="discoveredIpAddresses.endIpAddress" maxlength="15" id="tf1_endIpAddress" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, 'Invalid IP address.', 'for octet ', true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" name="button.add.discoveredIpAddresses" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return pageValidate()">
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->

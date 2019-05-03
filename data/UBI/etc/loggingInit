@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# loggingInit - initialization script for logging
+#
+# Copyright (c) 2007, TeamF1, Inc.
+# Copyright (c) 2015, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India) 
+#
+# modification history
+# --------------------
+# 01b,30jul15,abd  creating a new database for logging.
+# 01a,01jun07,rks  written
+
+SYSTEM_DB_PATH="/tmp/system.db"
+LOGGING_DB_PATH="/data/tmp/logging.db"
+SQLITE3_BIN_PATH="/pfrm2.0/bin/sqlite3"
+
+if [ "$INCLUDE_LOGGING" = "y" ]; then
+    $LOGGING_INSTALL_PATH/bin/loggingd  $DB_FILENAME &
+
+    # here we create our own logging data base.
+    if [ -f $LOGGING_DB_PATH ]; then
+        echo "Logging database already exists."
+    else
+        $SQLITE3_BIN_PATH $LOGGING_DB_PATH "CREATE TABLE eventLogging
+        (
+        component  text NOT NULL, 
+        facilityId integer NOT NULL, 
+        logLevel integer NOT NULL, 
+        textMessage  text NOT NULL, 
+        binMessage blob,
+        logTimeStamp text  NULL, 
+        category text  NULL, 
+        FOREIGN KEY (component,facilityId) REFERENCES compFacilityMap(component,facilityId));"
+    fi
+fi

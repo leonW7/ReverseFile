@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <COMMAND name="show security advanced_network" help="show advanced firewall attack checks"/>
+    <COMMAND name="show security advanced_network attack_checks"
+            help="Display Security Checks configuration">
+	    <ACTION>lua securityChecksInfoGet()</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show security advanced_network ips"
+            help="Display ips configuration">
+	    <ACTION>lua ipsInfoGet()</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

@@ -1,0 +1,362 @@
+<?lua
+require "teamf1lualib/openVpnAuthentication_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "vpn"
+	PAGE_HELP_SECTION = "openVpnAuthentication"
+
+local openvpnAuth = require("com.teamf1.bl.vpn.openvpnAuth")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local fileName = cgilua.cookies.get("TeamF1Login")
+local inputTable = web.cgiToLuaTable(cgi)
+if (ButtonType and ButtonType == "config") then
+     local returnCode, cookie = openvpnAuth.openvpnAuthConfigSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "uploadca") then
+    local returnCode, cookie = 
+            openvpnAuth.uploadSectionSet("ca", fileName)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+            web.goToPage(NextPage, true, true) 
+elseif (ButtonType and ButtonType == "uploadser") then
+    local returnCode, cookie = 
+        openvpnAuth.uploadSectionSet("crt", fileName)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+        web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "uploadserkey") then
+    local returnCode, cookie = 
+    openvpnAuth.uploadSectionSet("key", fileName)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "uploaddhkey") then
+    local returnCode, cookie = 
+        openvpnAuth.uploadSectionSet("dh", fileName)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+        web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "uploadcrl") then
+    local returnCode, cookie =
+    openvpnAuth.uploadSectionSet("crl", fileName)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+        web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "uploadtls") then
+    local returnCode, cookie = 
+    openvpnAuth.uploadSectionSet("ta", fileName)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+        web.goToPage(NextPage, true, true)
+else
+    local caCertSt = errorMap.errorStringGet (11781)
+    local servSt = errorMap.errorStringGet (11781)
+    local servKeySt = errorMap.errorStringGet (11781)
+    local dhSt = errorMap.errorStringGet (11781)
+    local tlsSt = errorMap.errorStringGet (11781)
+    local crlSt = errorMap.errorStringGet (11781)
+
+    local UploadCaOnly = openvpnAuth.openvpnAuthConfigGet()
+    if(openvpnAuth.uploadSectionGet("ca")) then
+        caCertSt = errorMap.errorStringGet (30442)
+    end
+    if(openvpnAuth.uploadSectionGet("crt")) then
+        servSt = errorMap.errorStringGet (30442)
+    end
+    if(openvpnAuth.uploadSectionGet("key")) then
+        servKeySt = errorMap.errorStringGet (30442)
+    end
+    if(openvpnAuth.uploadSectionGet("dh")) then
+        dhSt = errorMap.errorStringGet (30442)
+    end
+    if(openvpnAuth.uploadSectionGet("ta")) then
+        tlsSt = errorMap.errorStringGet (30442)
+    end
+    if(openvpnAuth.uploadSectionGet("crl")) then
+        crlSt = errorMap.errorStringGet (30442)
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE = "11823,13150,10469,10417,13194,13632,13633,12823,11494,10419,13634,10729,13635,13104,13636,30470,30232,30233,50023,50038"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu4");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                         $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11823'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmuploadCA" id="tf1_frmuploadCA" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" value="openVpnAuthentication.html">   
+                            <div class="configRow" id="tf1_UploadCaCertificateOnly_div">      
+                                    <label>$| LANG_LOCALE['50023'] |$</label>
+                                    <?lua
+                                    if (UploadCaOnly == "1") then
+                                        statusStr="enable-disable-on"
+                                        statusVar = "1"
+                                    else
+                                        statusStr="enable-disable-off"
+                                        statusVar = "0"
+                                    end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_UploadCaCertificateOnly" ></a>
+                                    <input type="hidden" name="openVpnAuthentication.UploadCaOnly" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_UploadCaCertificateOnly_div"> &nbsp; </div>
+                                <div class="submitRow">
+                                    <input id="tf1_btAccessServer" name="button.config.openVpnAuthentication" type="submit" onClick="setHiddenChks('tf1_frmuploadCA');" class="btnSubmit btnSubmitHideShow" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); openVpenAuthenticationOnreset('tf1_frmuploadCA');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                             </form>
+                            <form name="tf1_frmOpenVpnAuthentication"
+                                id="tf1_frmOpenVpnAuthentication" action="platform.cgi" enctype="multipart/form-data" method="post">
+                                <input type="hidden" name="thispage" value="openVpnAuthentication.html">
+                                <h2>$| LANG_LOCALE['13150'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10469'] |$</label>
+                                    <p>
+                                        $| caCertSt or ''|$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10417'] |$</label>
+                                    <input type="file" id="tf1_UploadFile" name="file.upload1" size="25">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['13194'] |$" value="$| LANG_LOCALE['13194'] |$" id="btuploadcaCfg" name="button.uploadca.openVpnAuthentication">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        <div id="tf1_certificateBlock_div">
+                            <form name="tf1_frmOpenVpnAuthentication"
+                                id="tf1_frmOpenVpnAuthentication" action="platform.cgi" enctype="multipart/form-data" method="post">
+                                <input type="hidden" name="thispage" value="openVpnAuthentication.html">
+                                <h2>$| LANG_LOCALE['30470'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10469'] |$</label>
+                                    <p>
+                                        $| servSt or ''|$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10417'] |$</label>
+                                    <input type="file" id="tf1_UploadFile2" name="file.upload2" size="25">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['13194'] |$" value="$| LANG_LOCALE['13194'] |$" id="btuploadserCfg" name="button.uploadser.openVpnAuthentication">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                         </form>
+                          <form name="tf1_frmOpenVpnAuthentication"
+                              id="tf1_frmOpenVpnAuthentication" action="platform.cgi" enctype="multipart/form-data" method="post">
+                          <input type="hidden" name="thispage" value="openVpnAuthentication.html">
+                                <h2>$| LANG_LOCALE['12823'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['11494'] |$</label>
+                                    <p>
+                                        $| servKeySt or ''|$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10419'] |$</label>
+                                    <input type="file" id="tf1_UploadFile3" name="file.upload3" size="25">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['13194'] |$" value="$| LANG_LOCALE['13194'] |$" id="btuploadkeyCfg" name="button.uploadserkey.openVpnAuthentication">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                            <form name="tf1_frmOpenVpnAuthentication"
+                              id="tf1_frmOpenVpnAuthentication" action="platform.cgi" enctype="multipart/form-data" method="post">
+                          <input type="hidden" name="thispage" value="openVpnAuthentication.html">
+                                <h2>$| LANG_LOCALE['10729'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['11494'] |$</label>
+                                    <p>
+                                        $| dhSt or ''|$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10419'] |$</label>
+                                    <input type="file" id="tf1_UploadFile4" name="file.upload4" size="25">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['13194'] |$" value="$| LANG_LOCALE['13194'] |$" id="btuploaddhCfg" name="button.uploaddhkey.openVpnAuthentication">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                              </form>
+                              <form name="tf1_frmOpenVpnAuthentication"
+                              id="tf1_frmOpenVpnAuthentication" action="platform.cgi" enctype="multipart/form-data" method="post">
+                          <input type="hidden" name="thispage" value="openVpnAuthentication.html">
+                                <h2>$| LANG_LOCALE['13104'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['11494'] |$</label>
+                                    <p>
+                                        $| tlsSt or ''|$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10419'] |$</label>
+                                    <input type="file" id="tf1_UploadFile5" name="file.upload5" size="25">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['13194'] |$" value="$| LANG_LOCALE['13194'] |$" id="btuploadtlsCfg" name="button.uploadtls.openVpnAuthentication" >
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                            <form name="tf1_frmOpenVpnAuthentication" id="tf1_frmOpenVpnAuthentication" action="platform.cgi" enctype="multipart/form-data" method="post">
+                            <input type="hidden" name="thispage" value="openVpnAuthentication.html">
+                                <h2>$| LANG_LOCALE['30232'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10469'] |$</label>
+                                    <p>
+                                        $| crlSt or ''|$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10417'] |$</label>
+                                    <input type="file" id="tf1_UploadFile6" name="file.upload6" size="40">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['13194'] |$" value="$| LANG_LOCALE['13194'] |$" id="btuploadcrlCfg" name="button.uploadcrl.openVpnAuthentication" >
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                            </div>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/openVpnAuthentication.js"></script>
+    </body>
+</html>
+<?lua end ?>

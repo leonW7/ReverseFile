@@ -1,0 +1,230 @@
+<?lua 
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bandwidthProfiles_bl"
+require "teamf1lualib/trafficSelector_bl"
+require "teamf1lualib/wan_configurablePort"
+
+PAGE_HELP = "network"
+PAGE_HELP_SECTION = "bandwidthManagement"
+local wan_configurablePort = require ("com.teamf1.core.wan.configurableport")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+-- bandwidthProfiles business Logic
+local BWP_bl = require("com.teamf1.bl.network.bandwidthProfiles")
+-- traffic Selector business Logic
+local TS_bl = require("com.teamf1.bl.network.trafficSelector")
+
+local returnCode, cookie, configurablePort
+returnCode, serviceTable = TS_bl.servicesGetAll()
+
+local errorFlag
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag = BWP_bl.bandwidthManagementCreate (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+    statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+    statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end 
+    
+    web.goToPage(NextPage, true, true)
+    
+else
+
+    returnCode, cookie, configurablePort = wan_configurablePort.configPortUsageGet ()
+    local Status  = db.getAttribute ("BandWidthProfileStatus","_ROWID_", "1", "Status") or '';
+    local bandwidthStatusMgmtTab = {}
+    errorFlag,bandwidthStatusMgmtTab = BWP_bl.bandwidthMgmteGet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+    LANG_LOCALE = "10358,13133,30148,30149,50149,10356,50206,12831,13306,30015,30017,50207,50208,13657,12627,12758,10449,11975,50209"
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+<link rel="stylesheet" type="text/css" href="css/menu.css" />
+<link rel="stylesheet" type="text/css" href="css/table.css" />
+<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+<?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body onload="onloadCall()">    
+    <!-- Section for Pop up dialog starts -->
+    <div id="tf1_overlay" class="configDialogMask"></div>                
+    <form action="platform.cgi" method="post" name="tf1_frmBandwidthConfig" id="tf1_frmBandwidthConfig">
+        <input type="hidden" name="thispage" id="thispage" value="bandwidthProfiles.html">
+        <div id="tf1_dialog" class="configDialog"></div>
+    </form>
+    <!-- Section for Pop up dialog ends -->
+
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+        </tr>
+        <tr>
+            <td valign="top" align="center">
+                <div class="midWidth">
+                <script language="JavaScript">
+                    mmSel("mainMenu3");
+                </script>
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+                        <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+                        </div>
+                    <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+                        <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                        </div>
+                    <?lua  end?>
+                        <div align="left">
+                            <nav class="nav-bg">
+                                <ul class="menu">
+                                    <li>
+                                        <a href="?page=bandwidthProfiles.html">$| LANG_LOCALE['10358'] |$</a>
+                                    </li>
+                                    <li>
+                                        <a href="?page=trafficSelectors.html">$| LANG_LOCALE['13133'] |$</a>
+                                    </li>
+                                    <?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                    <li>
+                                       <a
+                                           href="?page=bridgeBandwidthProfiles.html">$| LANG_LOCALE['30148'] |$</a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="?page=bridgeTrafficSelectors.html">$| LANG_LOCALE['30149'] |$</a>
+                                    </li>
+                                    <?lua end ?>
+				    <li>
+                                	    <a href="?page=sessionLimit.html">$| LANG_LOCALE['50149'] |$</a>
+                                    </li>
+                                    <li class="current">
+                                        <a
+                                            href="?page=bandwidthManagement.html">$| LANG_LOCALE['10356'] |$</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="FL2">
+                            <p class="hint">
+                                $| helpHintText |$ 
+                            </p>
+                        </div>
+                        <h1>$| LANG_LOCALE['10356'] |$</h1>
+                            <div class="midArea">
+                                <div align="left">
+                                    <form name="tf1_frmBandwidthMgmt" id="tf1_frmBandwidthMgmt" action="platform.cgi" method="post">
+                                    <input type="hidden" name="thispage" id="thispage" value="bandwidthManagement.html">
+                                        <div class="configRow">
+                                            <label>$| LANG_LOCALE['50206'] |$</label>
+                                            <?lua 
+                                                if (bandwidthStatusMgmtTab["BandwidthManagement.BandwidthManagement"] == "1") then
+                                                    statusStr="enable-disable-on"
+                                                    statusVar = "1"
+                                                else
+                                                    statusStr="enable-disable-off"
+                                                    statusVar = "0"
+                                                end
+                                            ?>
+                                            <a class="$| statusStr |$" alt="" id="tf1_enablebandwidthMgmt" ></a>
+                                            <input type="hidden" name="BandwidthManagement.BandwidthManagement" value="$| statusVar |$"> 
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+                                        <div class="configRow" id="tf1_service_div">
+                                            <label >$| LANG_LOCALE['12831'] |$</label>
+                                            <select id="tf1_service" name ="BandwidthManagement.Servicetype">
+                                                <?lua
+                                                    local i = 0
+                                                    for k,v in pairs(serviceTable) do
+                                                     i = i + 1
+                                                    local row = serviceTable[i]
+                                                    if (row["Services.Protocol"] ~= "58") then
+                                                 ?>
+                                                <option $| web.dropdownSelected(bandwidthStatusMgmtTab["BandwidthManagement.Servicetype"] == row["Services.ServiceName"]) |$ value="$| row["Services.ServiceName"] |$">$| row["Services.ServiceName"] |$</option>
+                                            <?lua
+                                                    end
+                                                end
+                                            ?>
+                                            </select>
+                                        </div>
+                                        <div class="break" id="break_service_div">&nbsp;</div>
+                                        <div class="configRow" id="tf1_wanInterface_div">
+                                            <label>$| LANG_LOCALE['13306'] |$</label>
+                                            <select id="tf1_wanInterface" name ="BandwidthManagement.WANInterface">
+                                                <option $| web.dropdownSelected(bandwidthStatusMgmtTab["BandwidthManagement.WANInterface"] == "WAN1") |$ value="WAN1">$| LANG_LOCALE['30015'] |$</option>
+                                                <?lua 
+                                                if (configurablePort == "WAN2") then
+                                                ?>
+                                                <option $| web.dropdownSelected(bandwidthStatusMgmtTab["BandwidthManagement.WANInterface"] == "WAN2") |$ value="WAN2">$| LANG_LOCALE['30017'] |$</option>
+                                            <?lua
+                                            end
+                                            ?>
+                                            </select>
+                                        </div>
+                                        <div class="break" id="break_wanInterface_div">&nbsp;</div>
+                                        <div class="configRow" id="tf1_bandwidthRate_div">
+                                            <label>$| LANG_LOCALE['50207'] |$</label>
+                                            <?lua if(UNIT_NAME == "DSR-1000AC" or UNIT_NAME == "DSR-1000") then ?>
+                                            <input type="text" name="BandwidthManagement.BandwidthRate" value="$| bandwidthStatusMgmtTab["BandwidthManagement.BandwidthRate"] or '' |$" id="tf1_bandwidthRate" class="one" maxlength="3" onkeypress="return numericValueCheck(event)" onkeydown="if (event.keyCode == 9){ return numericValueRangeCheck (this, '', '', 1, 249, true, LANG_LOCALE['50208']+'.', LANG_LOCALE['13657']) }">           
+                                            <dl>
+                                                [$| LANG_LOCALE['12627'] |$: 1 -249] $| LANG_LOCALE['13657'] |$
+                                            </dl>
+                                            <?lua elseif(UNIT_NAME == "DSR-500AC" or UNIT_NAME == "DSR-500") then ?>
+                                            <input type="text" name="BandwidthManagement.BandwidthRate" value="$| bandwidthStatusMgmtTab["BandwidthManagement.BandwidthRate"] or '' |$" id="tf1_bandwidthRate" class="one" maxlength="3" onkeypress="return numericValueCheck(event)" onkeydown="if (event.keyCode == 9){ return numericValueRangeCheck (this, '', '', 1, 199, true, LANG_LOCALE['50208']+'.', LANG_LOCALE['13657']) }">           
+                                            <dl>
+                                                [$| LANG_LOCALE['12627'] |$: 1 - 199] $| LANG_LOCALE['13657'] |$
+                                            </dl>
+                                            <?lua else ?>
+                                            <input type="text" name="BandwidthManagement.BandwidthRate" value="$| bandwidthStatusMgmtTab["BandwidthManagement.BandwidthRate"] or '' |$" id="tf1_bandwidthRate" class="one" maxlength="2" onkeypress="return numericValueCheck(event)" onkeydown="if (event.keyCode == 9){ return numericValueRangeCheck (this, '', '', 1, 99, true, LANG_LOCALE['50208']+'.', LANG_LOCALE['13657']) }">           
+                                            <dl>
+                                                [$| LANG_LOCALE['12627'] |$: 1 - 99] $| LANG_LOCALE['13657'] |$
+                                            </dl>
+                                            <?lua end ?>
+                                        </div>
+                                        <div class="break" id="break_bandwidthRate_div">
+                                        &nbsp; </div>
+					<div class="submitRow">					
+                                            <input type="submit" name="button.config.bandwidthManagement.bandwidthManagement" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" onclick="return bandwidthPageValidate('tf1_frmBandwidthMgmt');">
+                                            <input type="reset" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" onclick="this.form.reset(); bandwidthMgtOnReset('tf1_frmBandwidthMgmt');">
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+                                    </form>
+                                </div> <!-- close align = left -->
+
+                            </div> <!-- close midArea class tag -->
+                </div> <!-- close midWidth class tag -->
+            </td>
+        </tr>
+        <tr>
+            <td><?lua web.includeMenu("footer.html")?></td>
+        </tr>
+    </table>
+<input type="hidden" id="tf1_bandwidthProfileStatus" value="$| Status or '' |$">
+<input type="hidden" id="hdUnitName" value="$| UNIT_NAME |$">
+<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+<script type="text/ecmascript" language="javascript" src="js/bandwidthManagement.js"></script>
+</body>
+
+</html>
+<?lua end?>

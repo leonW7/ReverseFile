@@ -1,0 +1,60 @@
+#!/bin/sh
+
+# teredoRestart - script to restart the Teredo IPv6 Client
+#
+# Copyright (c) 2008-2014, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01a,16oct2014,nir  written 
+#
+
+if [ $# -ne 3 ]
+then
+    echo "Usage - $0 <teredo config file> <pid file> <action>"
+    exit 1
+fi
+
+RMMOD="/sbin/rmmod"
+IP6_NAT_CHAIN="/pfrm2.0/bin/ip6tables -t nat"
+NF_NAT_MODULE="nf_nat_ipv6"
+IP6_NAT_MODULE="ip6table_nat"
+
+if [ "$3" = "start" ]
+then
+    # Kill the existing client
+    killall -9 miredo
+    rm /etc/miredo/teredoStatus
+    sleep 3
+    
+    # Start the teredo client
+    /pfrm2.0/bin/miredo -c $1 -p $2
+
+elif [ "$3" = "nimfStart" ]
+then
+    # Kill the existing client
+    killall -9 miredo
+    rm /etc/miredo/teredoStatus
+    sleep 3    
+    # Start the teredo client
+    /pfrm2.0/bin/miredo -c $1 -p $2
+
+elif [ "$3" = "nimfStop" ]
+then
+    # Kill the existing client
+    killall -9 miredo
+    rm /etc/miredo/teredoStatus
+    $IP6_NAT_CHAIN -F
+    $RMMOD $IP6_NAT_MODULE $NF_NAT_MODULE
+    sleep 3
+    
+else
+    # Kill the teredo client
+    killall -9 miredo
+    rm /etc/miredo/teredoStatus
+    rm -rf $1
+    $IP6_NAT_CHAIN -F
+    $RMMOD $IP6_NAT_MODULE $NF_NAT_MODULE
+    sleep 3
+fi

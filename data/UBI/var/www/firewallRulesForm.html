@@ -1,0 +1,393 @@
+<?lua
+
+require "teamf1lualib/firewallRules_bl"
+
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie 
+    local firewallRuleInfo = {}
+    local a, vlanIdNameInfo = getAllVLanInfo ()
+    if (ButtonType and ButtonType == "edit") then
+        returnCode, cookie, firewallRuleInfo, vlanIdNameInfo =  firewallRuleGet (inputCookie)
+        if (firewallRuleInfo["firewallRules.sNATInterface"]==nil) then
+	        firewallRuleInfo["firewallRules.sNATInterface"]="1"
+	    end
+    else
+	    firewallRuleInfo["firewallRules.sourceAddressType"] = "1"
+        firewallRuleInfo["firewallRules.destinationAddressType"] = "1"
+	    firewallRuleInfo["firewallRules.logStatus"]= "1"
+	    firewallRuleInfo["firewallRules.destinationPublicInterface"] ="1"
+	    firewallRuleInfo["firewallRules.sNATInterface"]="1"
+	    firewallRuleInfo["firewallRules.sNATAddressType"]="1"
+	    firewallRuleInfo["firewallRules.toZoneType"] = "INSECURE"
+	end
+	local errorCode, ipAlias = ipAliasGetAll ()
+
+    local wan1DisplayName = "WAN1"
+    local localizeWan1 = "data-localize='30015'"
+    local wan2DisplayName = "WAN2"
+    local localizeWan2 = "data-localize='30017'"
+	local wanDisplayName = "WAN"
+		
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_firewallRulesDailogContent">
+    <div class="topBg">
+        <h1 data-localize="11435">IPv4 Firewall Rules Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow" id="tf1_fromZone_div">
+            <label data-localize="11046">From Zone </label>
+            <select size="1" name="firewallRules.fromZoneType" value="$| firewallRuleInfo["firewallRules.fromZoneType"] or '' |$" id="tf1_fromZone" onchange="updateToZones();">
+            <option data-localize="14193" value="SECURE" $| web.dropdownSelected(firewallRuleInfo["firewallRules.fromZoneType"] == "SECURE") |$ >SECURE (LAN)</option>
+            <option data-localize="14194" value="SECURE_VLAN" $| web.dropdownSelected(firewallRuleInfo["firewallRules.fromZoneType"]  == "SECURE_VLAN") |$ >SECURE (VLAN)</option>
+			<?lua if(UNIT_NAME == 'DSR-1000' or UNIT_NAME == 'DSR-1000N' or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+				<option data-localize="30317" value="INSECURE" $| web.dropdownSelected(firewallRuleInfo["firewallRules.fromZoneType"]  == "INSECURE") |$ value="INSECURE" >INSECURE (WAN1/WAN2/WAN3 (Mobile Internet))</option>
+			<?lua else ?>
+            	<option data-localize="30318" value="INSECURE" $| web.dropdownSelected(firewallRuleInfo["firewallRules.fromZoneType"]  == "INSECURE") |$ >INSECURE (WAN)</option>
+            <?lua end ?>
+            <option data-localize="10777" value="PUBLIC" $| web.dropdownSelected(firewallRuleInfo["firewallRules.fromZoneType"]  == "PUBLIC") |$ >DMZ</option>
+            </select>
+		</div>
+        <div class="break" id="break1_div">
+&nbsp; </div>
+		<!--Begin: From Zone: Available Vlans -->
+        <div class="configRow" id="tf1_fromVlan_div">
+            <label data-localize="10345">Available VLANs </label>
+            <select name="firewallRules.fromZoneVlanId" id="tf1_fromVlan" onchange="fwRuleVlanSelect ()">
+            <?lua 
+            for u,v in pairs(vlanIdNameInfo) do?>
+            <option $| web.dropdownSelected(firewallRuleInfo["firewallRules.fromZoneVlanId"]== v["vlanId"]) |$ value="$| v["vlanId"] |$">$| v["vlanName"] |$</option>
+            <?lua end?>
+            </select> </div>
+        <div class="break" id="break2_div">
+&nbsp; </div>
+		<!--END: From Zone: Available Vlans -->
+        <div class="configRow" id="tf1_toZone_div">
+            <label data-localize="13107">To Zone </label>
+            <select size="1" name="firewallRules.toZoneType" value="$| firewallRuleInfo["firewallRules.toZoneType"] or '' |$" id="tf1_toZone" onchange="fwRuleTypeCheck ()">
+            <option data-localize="30318" value="INSECURE" $| web.dropdownSelected(firewallRuleInfo["firewallRules.toZoneType"] == "INSECURE") |$ >INSECURE (WAN)</option>
+            <option data-localize="14193" value="SECURE" $| web.dropdownSelected(firewallRuleInfo["firewallRules.toZoneType"] == "SECURE") |$ >SECURE (LAN)</option>
+            <option data-localize="14194" value="SECURE_VLAN" $| web.dropdownSelected(firewallRuleInfo["firewallRules.toZoneType"] == "SECURE_VLAN") |$ >SECURE (VLAN)</option>
+            <option data-localize="10777" value="PUBLIC" $| web.dropdownSelected(firewallRuleInfo["firewallRules.toZoneType"] == "PUBLIC") |$ >DMZ</option>
+            </select></div>
+        <div class="break" id="break3_div">
+&nbsp; </div>
+		<!--Begin: To Zone: Available Vlans -->
+        <div class="configRow" id="tf1_toVlan_div">
+            <label data-localize="10345">Available VLANs </label>
+            <select name="firewallRules.toZoneVlanId" id="tf1_toVlan">
+            <?lua 
+            for u,v in pairs(vlanIdNameInfo) do ?>
+            <option $| web.dropdownSelected(firewallRuleInfo["firewallRules.toZoneVlanId"]== v["vlanId"]) |$ value="$| v["vlanId"] |$">$| v["vlanName"] |$</option>
+            <?lua end?>
+            </select> </div>
+        <div class="break" id="break4_div">
+&nbsp; </div>
+		<!--END: To Zone: Available Vlans -->
+        <div class="configRow" id="tf1_selSvrName_div">
+            <label data-localize="12831">Service </label><select size="1" name="firewallRules.serviceName" id="tf1_selSvrName" onchange="checkService ();">
+            <?lua 
+
+		local errorCode, allServiceName = serviceNameGetAll ()
+		for u,v in pairs(allServiceName) do
+			local len = #v["ServiceName"]
+			if (v["Protocol"] ~= "58") then
+            	local fwServiceName = v["ServiceName"]
+	    		local fwServiceNameTitle = ""
+		    	if(len >32) then
+			    	fwServiceNameTitle = v["ServiceName"]
+				   	fwServiceName = string.sub(fwServiceName,1,32) .. "..."
+    			end
+	    ?>
+            <option title="$| fwServiceNameTitle |$" value="$|  v["ServiceName"] |$"  $| web.dropdownSelected(firewallRuleInfo["firewallRules.serviceName"] == v["ServiceName"] ) |$ >$|  fwServiceName |$</option>
+	    <?lua end end ?>
+            </select>
+            <select size="1" id="tf1_hidselSvrName" onchange="checkService ();" style="display:none">
+            <?lua 
+
+        for u,v in pairs(allServiceName) do
+            local len = #v["ServiceName"]
+            if (v["Protocol"] ~= "58") then
+                local fwServiceName = v["ServiceName"]
+                local fwProtocol = v["Protocol"]
+                local fwServiceNameTitle = ""
+                if(len >32) then
+                    fwServiceNameTitle = v["ServiceName"]
+                    fwServiceName = string.sub(fwServiceName,1,32) .. "..."
+                end
+        ?>
+            <option title="$| fwServiceNameTitle |$" value="$|  v["Protocol"] |$"  $| web.dropdownSelected(firewallRuleInfo["firewallRules.serviceName"] == v["ServiceName"] ) |$ >$|  fwServiceName |$</option>
+        <?lua end end ?>
+            </select>
+
+        </div>
+            <div class="break" id="break5_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_selFwAction_div">
+            <label data-localize="10056">Action </label>
+            <select size="1" name="firewallRules.action" id="tf1_selFwAction" onchange="fwActionCheck ()">
+            <option data-localize="14192" value="1" $| web.dropdownSelected(firewallRuleInfo["firewallRules.action"] == "1") |$ >Always Block</option> <!-- DROP -->
+            <option data-localize="14200" value="2" $| web.dropdownSelected(firewallRuleInfo["firewallRules.action"] == "2") |$ >Always Allow</option> <!-- ACCEPT -->
+            <option data-localize="30434" value="3" $| web.dropdownSelected(firewallRuleInfo["firewallRules.action"] == "3") |$ >Block by schedule</option> <!-- DROP_BY_SCHED_MATCH -->
+            <option data-localize="30435" value="4" $| web.dropdownSelected(firewallRuleInfo["firewallRules.action"] == "4") |$ >Allow by schedule</option> <!-- ACCEPT_BY_SCHED_MATCH -->
+            </select> </div>
+        <div class="break" id="break6_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_selSchedule_div">
+            <label data-localize="12804">Select Schedule </label>
+            <?lua 
+            	local errorCode, scheduleAllInfo = getAllScheduleInfo () 
+            	if (#scheduleAllInfo ~= 0) then
+			?>
+            <select size="1" name="firewallRules.scheduleName" value="$| firewallRuleInfo["firewallRules.scheduleName"] or '' |$" id="tf1_selSchedule">
+            <?lua 
+            	for u,v in pairs(scheduleAllInfo) do
+            ?>
+            <option value="$|v["ScheduleName"]|$" $| web.dropdownSelected(firewallRuleInfo["firewallRules.scheduleName"] == v["ScheduleName"]) |$ >$| v["ScheduleName"] |$</option>
+            <?lua end?>
+            </select> 
+            <?lua else?>
+            <select  DISABLED ></select>
+            <input type="hidden" name="firewallRules.scheduleName" id="tf1_selSchedule" >
+
+            <?lua end?>
+            </div>
+        <div class="break" id="break7_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_addFwSrcUser_div">
+            <label data-localize="12900">Source Hosts </label>
+            <p>
+            <input type="radio" value="1" id="tf1_addFwSrcUser1"  name="firewallRules.sourceAddressType" $| web.radioSelected(firewallRuleInfo["firewallRules.sourceAddressType"] == "1") |$ onclick="dropFieldSelectSrc ('tf1_addFwSrcUser1')"> 
+            <span data-localize="10226">Any</span> </p>
+            <p>
+            <input type="radio" value="2"  id="tf1_addFwSrcUser2" name="firewallRules.sourceAddressType" $| web.radioSelected(firewallRuleInfo["firewallRules.sourceAddressType"] == "2") |$ onclick="dropFieldSelectSrc ('tf1_addFwSrcUser2')"> 
+            <span data-localize="13712">Single Address</span> </p>
+            <p>
+            <input type="radio" value="3" id="tf1_addFwSrcUser3" name="firewallRules.sourceAddressType" $| web.radioSelected(firewallRuleInfo["firewallRules.sourceAddressType"] == "3") |$ onclick="dropFieldSelectSrc ('tf1_addFwSrcUser3')"> 
+            <span data-localize="13713">Address Range</span> </p>
+        </div>
+        <div class="break" id="break8_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwSrcUserStart_div">
+            <label data-localize="11043">From </label>
+            <input type="text" name="firewallRules.sourceAddressStart" value="$| firewallRuleInfo["firewallRules.sourceAddressStart"] or ''|$" id="tf1_txtFwSrcUserStart" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break" id="break9_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwSrcUserFinish_div">
+            <label data-localize="13105">To </label>
+            <input type="text" name="firewallRules.sourceAddressEnd" value="$| firewallRuleInfo["firewallRules.sourceAddressEnd"] or ''|$" maxlength="15" id="tf1_txtFwSrcUserFinish" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break" id="break10_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_addFwDestUser_div">
+            <label data-localize="10711">Destination Hosts </label>
+            <p>
+            <input type="radio" value="1" id="tf1_addFwDestUser1" name="firewallRules.destinationAddressType" $| web.radioSelected(firewallRuleInfo["firewallRules.destinationAddressType"] == "1") |$ onclick="dropFieldSelectDest ('tf1_addFwDestUser1')"> 
+            <span data-localize="10226">Any</span> </p>
+            <p>
+            <input type="radio" value="2" id="tf1_addFwDestUser2"  name="firewallRules.destinationAddressType" $| web.radioSelected(firewallRuleInfo["firewallRules.destinationAddressType"] == "2") |$ onclick="dropFieldSelectDest ('tf1_addFwDestUser2')"> 
+            <span data-localize="13712">Single Address</span>  </p>
+            <p>
+            <input type="radio" value="3" id="tf1_addFwDestUser3" name="firewallRules.destinationAddressType" $| web.radioSelected(firewallRuleInfo["firewallRules.destinationAddressType"] == "3") |$ onclick="dropFieldSelectDest ('tf1_addFwDestUser3')"> 
+            <span data-localize="13713">Address Range</span> </p>
+        </div>
+        <div class="break" id="break11_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwDestUserStart_div">
+            <label data-localize="11043">From </label>
+            <input type="text" name="firewallRules.destinationAddressStart" value="$| firewallRuleInfo["firewallRules.destinationAddressStart"] or ''|$" id="tf1_txtFwDestUserStart" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break" id="break12_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtFwDestUserFinish_div">
+            <label data-localize="13105">To </label>
+            <input type="text" name="firewallRules.destinationAddressEnd" value="$| firewallRuleInfo["firewallRules.destinationAddressEnd"] or ''|$" maxlength="15" id="tf1_txtFwDestUserFinish" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+        </div>
+        <div class="break" id="break13_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_log_div">
+            <label data-localize="11612">Log </label>
+            <p><input type="radio" value="1"  name="firewallRules.logStatus" $| web.radioSelected(firewallRuleInfo["firewallRules.logStatus"] == "1") |$ > <span data-localize="11768">Never</span> </p>
+            <p><input type="radio" value="2" name="firewallRules.logStatus" $| web.radioSelected(firewallRuleInfo["firewallRules.logStatus"] == "2") |$ > <span data-localize="10223">Always</span> </p>
+        </div>
+        <div class="break" id="break14_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_selQos_div">
+            <label data-localize="12579">QoS Priority </label><select size="1" name="firewallRules.typeOfService" value="$| firewallRuleInfo["firewallRules.typeOfService"] or ''|$" id="tf1_selQos">
+            <option data-localize="14189" value="0" $| web.dropdownSelected(firewallRuleInfo["firewallRules.typeOfService"] == "0") |$ >Normal-Service</option>
+            <option data-localize="14188" value="2" $| web.dropdownSelected(firewallRuleInfo["firewallRules.typeOfService"] == "2") |$ >Minimize-Cost</option>
+            <option data-localize="14187" value="4" $| web.dropdownSelected(firewallRuleInfo["firewallRules.typeOfService"] == "4") |$ >Maximize-Reliability</option>
+            <option data-localize="14186" value="8" $| web.dropdownSelected(firewallRuleInfo["firewallRules.typeOfService"] == "8") |$ >Maximize-Throughput</option>
+            <option data-localize="14185" value="16" $| web.dropdownSelected(firewallRuleInfo["firewallRules.typeOfService"] == "16") |$ >Minimize-Delay</option>
+            </select> </div>
+        <div class="break" id="break15_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_sourceNATSettings_div">
+            <h2 data-localize="14184">Source NAT Settings</h2>
+            <div class="configRow" id="tf1_selNATIP_div">
+                <label data-localize="14178">External IP Address </label>
+                <p>
+                <input type="radio" value="1"  name="firewallRules.sNATAddressType" $| web.radioSelected(firewallRuleInfo["firewallRules.sNATAddressType"] == "1") |$ onclick="dropFieldSelectNAT('tf1_selNATIP1')" id="tf1_selNATIP1"> 
+                <span data-localize="30319">WAN Interface Address</span> </p>
+                <?lua if (ipAlias ~= nil and ipAlias ~= "" and #ipAlias > 0) then ?>
+                <p>
+                <input type="radio" value="3" name="firewallRules.sNATAddressType" $| web.radioSelected(firewallRuleInfo["firewallRules.sNATAddressType"] == "3") |$ onclick="dropFieldSelectNAT('tf1_selNATIP3')" id="tf1_selNATIP3"> 
+                <span data-localize="11398">IP Aliasing</span> </p>
+                <?lua end ?>
+            </div>
+            <div class="break" id="break16_div">
+&nbsp; </div>
+<?lua if (ipAlias ~= nil and ipAlias ~= "" and #ipAlias > 0) then ?>
+            <div class="configRow" id="tf1_selSnat_div">
+                <label data-localize="11397">IP Alias List</label>
+					<select size="1" name="firewallRules.sNATInterface" id="tf1_selSnat">
+					<?lua 
+							for u,v in pairs (ipAlias) do
+					?>
+						<option $| web.dropdownSelected(firewallRuleInfo["firewallRules.sNATInterface"] == v["ipAliasing"]) |$ value = "$| v["ipAliasing"] |$"> $| v["ipAliasing"]  |$</option>
+					<?lua end 
+					?>
+					</select>
+        </div>
+        <div class="break" id="break18_div">
+&nbsp; </div>
+<?lua end ?>
+</div>
+        <div class="configRow" id="tf1_destinationNATSettings_div">
+            <h2 data-localize="14181">Destination NAT Settings</h2>
+            <div class="configRow" id="tf1_txtFwLanServer_div">
+                <label data-localize="11193">Internal IP Address </label>
+                <input type="text" name="firewallRules.dnatAddress" value="$| firewallRuleInfo["firewallRules.dnatAddress"] or '' |$" id="tf1_txtFwLanServer" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'NSN', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+            </div>
+            <div class="break" id="break19_div">
+&nbsp; </div>
+            <div class="configRow" id="tf1_chkTranslatePortNum_div">
+                <label data-localize="14180">Enable Port Forwarding </label>
+					<?lua if (firewallRuleInfo["firewallRules.DNATPortEnable"]== "1") then
+                                               statusStr="enable-disable-on"
+                                               statusVar = "1"
+                                              else
+                                               statusStr="enable-disable-off"
+                                               statusVar = "0"
+                                              end
+                                        ?>
+                <a class="$| statusStr |$" alt="" id="tf1_chkTranslatePortNum"></a>
+                <input type="hidden" value="$| statusVar |$" name="firewallRules.DNATPortEnable">
+            </div>
+            <div class="break" id="break20_div">
+&nbsp; </div>
+            <div class="configRow" id="tf1_txtTranslatePortNum_div">
+                <label data-localize="14179">Translate Port Number </label>
+                <input type="text" id="tf1_txtTranslatePortNum" value="$| firewallRuleInfo["firewallRules.DNATPort"] or '' |$" maxlength="5" name="firewallRules.DNATPort" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, LANG_LOCALE['11316'], '');}">
+            </div>
+            <div class="break" id="break21_div">
+&nbsp; </div>
+            <div class="configRow" id="tf1_selPublicDstIpAddr_div">
+                <label data-localize="14178">External IP Address </label>
+				<?lua
+                local wan1DispName = "Dedicated WAN"
+                local localizeWan1 = "data-localize='30014'"
+				local wan2DispName = "Configurable WAN"
+                local localizeWan2 = "data-localize='30154'"
+						?>
+				<select size="1" name="firewallRules.destinationPublicInterface" id="tf1_selPublicDstIpAddr" onchange="fwCheckRoutingMode ();">
+					<option $| localizeWan1 |$ $| web.dropdownSelected(firewallRuleInfo["firewallRules.destinationPublicInterface"] == "1") |$ value="1">$| wan1DispName |$</option>
+					<?lua
+						local optionalWan = configPortGet()
+						if (optionalWan == "WAN2") then
+					?>
+					<option $| localizeWan2 |$ $| web.dropdownSelected(firewallRuleInfo["firewallRules.destinationPublicInterface"] == "2") |$ value="2">$| wan2DispName |$</option>
+					<?lua 
+						end
+						if(UNIT_NAME == 'DSR-1000' or UNIT_NAME == 'DSR-1000N' or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+					?>
+					<option data-localize="13327" $| web.dropdownSelected(firewallRuleInfo["firewallRules.destinationPublicInterface"] == "3") |$ value="3">WAN3 (Mobile Internet)</option>
+					<?lua end
+						if (ipAlias ~= nil) then
+							local ifName = ""
+							for u,v in pairs (ipAlias) do
+							local ipAliasList = util.split(v["ipAliasing"], " - ")
+							if (ipAliasList[1] == "WAN1") then
+                                ifName = "Dedicated WAN"
+							elseif (ipAliasList[1] == "WAN2") then
+							    ifName = "Configurable WAN"
+							end
+					?>
+					<option $| web.dropdownSelected(firewallRuleInfo["firewallRules.destinationPublicInterface"] == v["ipAliasing"]) |$ value="$| v["ipAliasing"] |$">$| ifName |$ - $| ipAliasList[2] |$</option>
+					<?lua end 
+						end
+					?>
+				</select>
+            </div>
+        </div>
+        <div class="break" id="break22_div">
+&nbsp; </div>
+    </div>    
+    <input type="hidden" value="$| firewallRuleInfo["firewallRules.sNATInterface"] |$" id="hdselSnat">
+    <input type="hidden" value="$| firewallRuleInfo["firewallRules.toZonetype_Name"] or '' |$" id="hdToZoneName">
+    <input type="hidden" value="$| firewallRuleInfo["firewallRules.toZoneType"] or '' |$" id="hdToZoneType">
+    <?lua
+    if (ipAlias ~= nil and ipAlias ~= "" and #ipAlias > 0) then
+        local idx = 0
+	for k,v in pairs(ipAlias) do		    
+	    idx = idx + 1
+	    local ipAliasId = "hdIpAliasAddr" .. idx		        
+    ?>
+    <input type="hidden" id="$| ipAliasId |$" value="$| v["ipAliasing"] or '' |$">		
+    <?lua
+        end
+    ?>
+    <input type="hidden" id="hdNum" value="$| idx |$">		
+    <?lua end ?>
+    <div class="dialogSubmitRow">
+                <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+	                <?lua if(cgi["configRowId"] == "-1") then?>
+        <input data-localize="12758" type="submit" name="button.add.firewallRules" onclick="return firewallRulesValidate('tf1_frmFirewallRules')" class="btnSubmit" title="Save" value="Save" id="btSave">
+        <?lua else?>
+	<input type="hidden" name="firewallRules.ruleStatus" value="$| firewallRuleInfo["firewallRules.ruleStatus"] or '' |$">
+
+        <input data-localize="12758" type="submit" name="button.edit.firewallRules" onclick="return firewallRulesValidate('tf1_frmFirewallRules')" class="btnSubmit" title="Save" value="Save" id="btSave">
+        <?lua end?>
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_firewallRulesDailogMoveContent">
+    <div class="topBg">
+        <h1 data-localize="14177">IPv4 Firewall Rules Move</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+    </div>
+<?lua 
+    local firewallRulesInfo, errorFlag
+     errorFlag, firewallRulesInfo = firewallRuleGetAll ()
+?>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="14176">Select Position</label>
+            <select size="1" name="firewallRules.toMovePriority">
+                        <?lua
+				local currentPriorityId =  cgi["configRowId"]
+                                local i = 0
+                                for k, v in pairs (firewallRulesInfo) do
+                                     i=i+1
+                                local row = firewallRulesInfo[i]
+                        ?>
+            <option value="$| row[Ipv4firewallRulesTable.."."..attribute.priorityId] |$"  >$| row[Ipv4firewallRulesTable.."."..attribute.priorityId] |$</option>
+            		<?lua end?>
+	    </select> </div>
+     <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+	<input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+        <input data-localize="12758" type="submit" class="btnSubmit" name="button.move.firewallRules" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+

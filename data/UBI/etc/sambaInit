@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+# sambaInit - initialization script for samba component
+#
+# copywrite (c) 2008 - 2010, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01c,19mar10,pnm  remove lines to create dummy users and groups
+# 01b,07apr09,pnm  Added users
+# 01a,12sep08,pnm  written.
+
+if [ "$INCLUDE_SAMBA" = "y" ]; then
+
+    # Make the var directory and private directory
+    echo -n "Creating directory /tmp/var..."
+    mkdir /tmp/var
+    echo "Done"
+    
+    # Make the var directory and private directory
+    echo -n "Creating directory /tmp/private..."
+    mkdir /tmp/private
+    echo "Done"
+
+    echo -n "Creating misc directories for AD and NT Domain authentication ..\n"
+    mkdir /tmp/lib
+    mkdir /usr/local/samba
+    mkdir /usr/local/samba/lib/
+    mkdir /usr/local/samba/var
+    mkdir /usr/local/samba/var/locks/
+    mkdir /usr/local/samba/private 
+fi
+

@@ -1,0 +1,445 @@
+<?lua 
+require "teamf1lualib/bl_wlanAssociatedClients"
+require "teamf1lualib/bl_dettectedClients"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local clientDetails = require("com.teamf1.bl.wlan.vaps")
+local guiDetectedClients = require("com.teamf1.bl.wlan.detectedclients")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local configRowId
+if(ButtonType and ButtonType =="details") then
+    configRowId = cgi["MAC"]
+    local returnCode, clientDetailsTbl = clientDetails.wlanAssociatedClientsDetails(configRowId)
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_vapsDetailsDailogContent">
+    <div class="topBg">
+        <h1>Associated Clients Detailed Status</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>MAC Address </label>
+            <p> $| configRowId |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>SSID</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsSSID |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>BSSID</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsBSSID |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>AP MAC Address </label>
+            <p> $| clientDetailsTbl.wlanclientdetailsAPMACADDRESS |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Status</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsSTATUS |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Channel</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsCHANNEL |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>User Name</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsUSERNAME |$ &nbsp; </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Inactive Period</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsINACTIVEPERIOD |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Age</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsAGE |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Dot11n Capable</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsDOT11CAPABLE |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>NetBIOS Name</label>
+            <p>$| clientDetailsTbl.wlanclientdetailsNETBIOSNAME |$&nbsp; </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Associating Controller</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsASSOCIATINGCONTROLLER |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Controller MAC Address</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsCONTROLLERMACADDRESS |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Controller IP Address</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsCONTROLLERIPADDRESS |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Location</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsLOCATION |$ &nbsp; </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Radio</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsRADIO |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>VLAN</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsVLAN |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Transmit Data Rate</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsTXDATARATE |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Network Time</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsNETWORKTIME |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Detected IP Address</label>
+            <p> $| clientDetailsTbl.wlanclientdetailsDETECTEDIPADDRESS |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->
+<!-- Section for Pop up dialog starts -->
+<?lua
+elseif(ButtonType and ButtonType == "distributed") then
+   configRowId = cgi["MAC"]
+    local returnCode, distributedTunnelingTbl = clientDetails.wlanAssocClientsDistributedTunnelingDetails(configRowId)
+?>
+<div id="tf1_vapsDistributeDailogContent">
+    <div class="topBg">
+        <h1>Associated Clients Distributed Tunneling Status</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>Client MAC Address</label>
+            <p> $| configRowId |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <?lua
+         if (distributedTunnelingTbl.status  == 0) then
+             distributedTunnelingTbl.status = "Disable"
+             distributedTunnelingTbl.homeAPMAC = "00:00:00:00:00:00"
+             distributedTunnelingTbl.clientRoamStatus = "Roaming"
+             distributedTunnelingTbl.associatedAPMAC = "00:00:00:00:00:00"
+         else
+             distributedTunnelingTbl.status = "Enable"
+             if (distributedTunnelingTbl.clientRoamStatus == 1) then
+                 distributedTunnelingTbl.clientRoamStatus = "Home"
+             else
+                 distributedTunnelingTbl.clientRoamStatus = "Roaming"
+             end
+         end
+         
+        ?>
+        <div class="configRow">
+            <label>Distributed Tunneling Status</label>
+            <p> $| distributedTunnelingTbl.status or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Home AP MAC Address</label>
+            <p> $| distributedTunnelingTbl.homeAPMAC or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Client Roam Status</label>
+            <p> $| distributedTunnelingTbl.clientRoamStatus or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Associated AP MAC Address</label>
+            <p> $| distributedTunnelingTbl.associatedAPMAC or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->
+<!-- Section for Pop up dialog starts -->
+<?lua
+elseif (ButtonType and ButtonType == "neighbourap") then
+    require "teamf1lualib/bl_clientNeighborsAps"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+
+    local guiClientsAP   = require ("com.teamf1.bl.wlan.clientaps")
+    local errorMap    = require ("com.teamf1.core.errorMap")
+    local returnCodes = require ("com.teamf1.core.returnCodes")
+
+    local errorCode, clientApsInfo 
+    errorCode, clientApsInfo = guiClientsAP.clientsApGet (cgi) 
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+?>
+<div id="tf1_vapsNeighbourAPDailogContent">
+    <div class="topBg">
+        <h1>Associated Clients Neighbor AP Status</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="CLR">
+            <div class="demo_jui">
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData2">
+                    <thead>
+                        <tr>
+                            <th>AP MAC Address </th>
+                            <th>Location</th>
+                            <th>Radio </th>
+                            <th>Discovery Reason </th>
+                        </tr>
+                    </thead>
+                    <?lua
+                        if (clientApsInfo ~= returnCodes.NIL) then
+                            for k, v in pairs (clientApsInfo) do
+                                local row = clientApsInfo[k]
+                                ?>
+                                    <tr class="gradeB">
+                                        <td>$| row.macAddress or '' |$</td>
+                                        <td>$| row.location or '' |$</td>
+                                        <td>$| row.radioIndex .. " - " .. row.radioMode or '' |$</td>
+                                        <td>$| row.discoveryReason or '' |$</td>
+                                    </tr>
+                                 <?lua
+                            end
+                        end
+                    ?>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->
+
+<!-- Section for Pop up client Statistics dialog starts -->
+<?lua
+elseif (ButtonType and ButtonType == "statistic") then
+    local errorCode, clientApstats
+    errorCode, clientApstats = guiDetectedClients.wlanClientsStats (cgi["MAC"]) 
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+
+?>
+<div id="tf1_clientStatisticsDailogContent">
+    <div class="topBg">
+        <h1>Associated Clients Statistics</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>MAC Address</label>
+            <p>$| cgi.MAC or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Packets Received</label>
+            <p>	$| clientApstats.PKTSRCVD or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Bytes Received</label>
+            <p>$| clientApstats.BYTESRCVD or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Packets Transmitted</label>
+            <p>$| clientApstats.PKTSSENT or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Bytes Transmitted</label>
+            <p>$| clientApstats.BYTESSENT or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Packets Receive Dropped</label>
+            <p>$| clientApstats.PKTSRCVDDROP or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Bytes Receive Dropped</label>
+            <p>$| clientApstats.BYTESRCVDDROP or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Packets Transmit Dropped</label>
+            <p>$| clientApstats.PKTSSENTDROP or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Bytes Transmit Dropped</label>
+            <p>$| clientApstats.BYTESSENTDROP or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Fragments Received</label>
+            <p>$| clientApstats.FRAGSRCVD or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Fragments Transmitted</label>
+            <p>$| clientApstats.FRAGSSENT or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Transmit Retries</label>
+            <p>$| clientApstats.TRANSMITRETRIES or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Transmit Retries Failed</label>
+            <p>$| clientApstats.TRANSMITRETRIESFAILED or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>TS Violate Packets Received</label>
+            <p>$| clientApstats.TSVIOLATEPKTSRCVD or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>TS Violate packets<br>Transmitted</label>
+            <p>$| clientApstats.TSVIOLATEPKTSSENT or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+        <div class="configRow">
+            <label>Duplicates Received</label>
+            <p>$| clientApstats.DUPLICATESRECVD or '' |$</p>
+        </div>
+        <div class="break">&nbsp; </div>
+    </div>
+</div>
+<!-- Section for Pop up client Statistics dialog ends -->
+ <!-- Section for Roma History starts -->
+<?lua
+elseif(ButtonType and ButtonType == "roam")then
+    local returnCode
+    local roamDetails = {}
+    returnCode, roamDetails = guiDetectedClients.wlanRoamDetails (cgi["VAPID"])
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end        
+
+?>
+
+ <div id="tf1_roamHistoryDailogContent">
+                <div class="topBg">
+                    <h1>List of Associated Clients Roam History</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea dialogMidAreaGray">
+                     <div class="midArea">
+                        <div align="left">
+                            <form name action="cgi-action.html">
+                                <div class="configRow">
+                                    <label>MAC Address</label>
+                                    <p>$| cgi["VAPID"] or '' |$ </p>
+                                    
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData3">
+                                            <thead>
+                                                <tr>
+                                                    <th>AP MAC<br />Address</th>
+                                                    <th>Radio<br />&nbsp;</th>
+                                                    <th>VAP MAC<br />Address</th>
+                                                    <th>SSID<br />&nbsp;</th>
+                                                    <th>Status<br />&nbsp;</th>
+                                                    <th>Time<br />Since Event </th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            if (roamDetails ~= nil) then
+                                            for k, v in pairs (roamDetails) do
+                                            local row = roamDetails[k]
+                                            ?>
+                                            <tr class="gradeB">
+                                                <td>$| row.apMacAddress or '' |$</td>
+                                                <td>$| row.radio or '' |$</td>
+                                                <td>$| row.vapMacAddress or '' |$</td>
+                                                <td>$| row.SSID or '' |$</td>
+                                                <td>$| row.status or '' |$</td>
+                                                <td>$| row.timeEvent or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                            end
+                                            end
+                                            ?>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div> 
+                </div>
+                 
+            </div>
+<!-- Section for Roma History ends -->           
+<?lua end ?>

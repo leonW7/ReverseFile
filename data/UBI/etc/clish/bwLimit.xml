@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="net-bandwidth-profile-config" prompt="net-config[bandwidth-profile]> "> 
+    <COMMAND name="save" help="Save bandwidth profile configuration changes.">
+	<ACTION>lua clishCfgObjExec("bwProfile")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save bandwidth Profile configuration changes and exit current mode."
+	     view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("bwProfile")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back bandwidth Profile configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="name" help="Unique Profile Name.">
+	<PARAM name="ProfileName" 
+        help="Unique Profile Name."
+	ptype="STRING_ALPHA_NUM"/>
+	<ACTION>lua clishCfgObjAdd ("bwProfile", "BandWidthProfile.ProfileName","${ProfileName}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="policytype" help="Policy Type, either Inbound or Outbound.">
+	<PARAM name="Policy" 
+        help="Policy Type."
+	ptype="BANDWIDTH_POLICY_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("bwProfile", "BandWidthProfile.Policy","${Policy}")
+    </ACTION> 
+   </COMMAND>
+    <COMMAND name="Profiletype" help="Profile Type, either Priority or Rate.">
+	<PARAM name="ProfileType" 
+        help="Profile Type."
+	ptype="BANDWIDTH_PROFILE_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("bwProfile", "BandWidthProfile.ProfileType","${ProfileType}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="priority" help="Priority.">
+	<PARAM name="Priority" 
+        help="Priority."
+	ptype="BANDWIDTH_PRIORITY_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("bwProfile", "BandWidthProfile.Priority","${Priority}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="minimum_rate" help="Minimum Bandwidth provided by user.">
+	<PARAM name="MinimumRate" 
+        help="Minimum Bandwidth provided by user."
+	ptype="MIN_BW_RATE"/>
+	<ACTION>lua clishCfgObjAdd ("bwProfile", "BandWidthProfile.MinimumRate","${MinimumRate}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="maximum_rate" help="Maximum Bandwidth provided by user.">
+	<PARAM name="MaximumRate" 
+        help="Maximum Bandwidth provided by user."
+	ptype="MAX_BW_RATE"/>
+	<ACTION>lua clishCfgObjAdd ("bwProfile", "BandWidthProfile.MaximumRate","${MaximumRate}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="Interface" help="Enter WAN interface(WAN1/WAN2) for Outbund Policy and LAN/VLAN
+           (Use show net bandwidth profile interface_list command to see list)interface for Inbound Bandwidth Profile">
+	<PARAM name="WANID" 
+        help="Enter WAN interface(WAN1/WAN2) for Outbund Policy and LAN/VLAN (Use show net bandwidth profile interface_list command to see list) interface for Inbound Bandwidth Profile"
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("bwProfile", "BandWidthProfile.WANID","${WANID}")
+	</ACTION>
+    </COMMAND>
+
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-TrafficSelector-config" prompt="net-config[traffic-selector]> "> 
+    <COMMAND name="save" help="Save Traffic Selector configuration changes.">
+	<ACTION>lua clishCfgObjExec("trafficSelector")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Traffic Selector configuration changes and exit current mode."
+	     view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("trafficSelector")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Traffic Selector configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="profile_name" help="Profile Name.">
+	<PARAM name="ProfileName" 
+        help="Profile Name."
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.ProfileName","${ProfileName}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="service_name" help="See available services list by show command">
+	<PARAM name="ServiceName" 
+        help="Service Name."
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.ServiceName","${ServiceName}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="match_type" help="IP /MAC Address">
+	<PARAM name="MatchType" 
+        help="IP / MAC Address"
+	ptype="MATCH_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.MatchType","${MatchType}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="ip_address" help="IP Address.">
+	<PARAM name="IPAddress" 
+        help="IP Address."
+	ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.IPAddress","${IPAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="subnet_mask" help="Subnet Mask.">
+	<PARAM name="Subnetmask" 
+        help="Subnet Mask."
+	ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.SubnetMask","${Subnetmask}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="BSSID" help="Enter BSSID or vapname (Use show net bandwidth traffic_selector BSSID for Available BSSID).">
+	<PARAM name="BSSID" 
+        help="Enter BSSID or vapname (Use show net bandwidth traffic_selector BSSID's for Available BSSID)."
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.VapName","${BSSID}")
+	</ACTION>
+    </COMMAND>	
+    <COMMAND name="mac_address" help="MAC Address">
+	<PARAM name="MACAddress" 
+        help="MAC Address"
+	ptype="MAC_ADDR_T"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.MACAddress","${MACAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="port_name" help="Port Name">
+	<PARAM name="portName" 
+        help="Port Name"
+	ptype="PORT_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.PortName","${portName}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_id" help="Vlan ID">
+	<PARAM name="vlanId" 
+        help="Vlan ID"
+	ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.VlanId","${vlanId}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="access_point" help="Virtual Access Point Name" check_supported="Y">
+	<PARAM name="access_point" 
+        help="VAP Name"
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("trafficSelector", "TrafficSelector.VapName","${access_point}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-SessionLimitingMsg-config" prompt="net-config[session-limitingmsg]> "> 
+    <COMMAND name="save" help="Save Warning Meassage modify changes.">
+	<ACTION>lua clishCfgObjExec("warningMessage")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Warning Meassage modify changes and exit current mode."
+	     view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("warningMessage")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Warning Meassage modify changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND> 
+<COMMAND name="warning_message"
+             help="Specify the warning message">
+             <PARAM name="warning_message"
+                    help="Specify the warning message"
+                    ptype="STRING_ACCEPT_SPACE"/>
+             <ACTION>lua clishCfgObjAdd ("warningMessage", "warningMessage.warningMessage", "${warning_message}")
+             </ACTION>
+    </COMMAND>   
+</VIEW>
+<!--=======================================================-->
+
+<VIEW name="net-SessionLimiting-config" prompt="net-SessionLimiting-config-profile]> "> 
+    <COMMAND name="save" help="Save Session Limiting configuration changes.">
+	     <ACTION>lua clishCfgObjExec("sessionLimit")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Session Limiting configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("sessionLimit")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back Session Limiting ACL configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+<COMMAND name="profile_name"
+             help="Session Limiting profile name">
+             <PARAM name="ProfileName"
+                    help="Session Limiting profile name"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("sessionLimit", "sessionLimit.ProfileName", "${ProfileName}")              
+             </ACTION>
+    </COMMAND>     
+    <COMMAND name="source_type"
+             help="Type of the Session Limiting">
+             <PARAM name="SourceType"
+                    help="Select Session Limiting type Single Address/Address Range/Interface"
+                    ptype="SESSION_LIMITING_SOURCE_TYPE"/>
+             <ACTION>lua clishCfgObjAdd ("sessionLimit", "sessionLimit.SourceType", "${SourceType}")              
+             </ACTION>
+         </COMMAND>
+    <COMMAND name="ip_or_start_address"
+             help="IP of the Source user">
+             <PARAM name="StartIPAddress"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("sessionLimit", "sessionLimit.StartIPAddress", "${StartIPAddress}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="end_address"
+             help="IP of the Source user">
+             <PARAM name="EndIPAddress"
+                    help="IP of the Source User"
+                    ptype="IP_ADDR"/>
+             <ACTION>lua clishCfgObjAdd ("sessionLimit", "sessionLimit.EndIPAddress", "${EndIPAddress}")              
+             </ACTION>
+    </COMMAND>
+<COMMAND name="interface_name"
+             help="show net vlan configuration for available lan interfaces">
+             <PARAM name="Interface"
+                    help="show net vlan configuration for available lan interfaces"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("sessionLimit", "sessionLimit.Interface", "${Interface}")              
+             </ACTION>
+         </COMMAND> 
+  <COMMAND name="Maximum_sessions"
+             help="Enter maximum sessions to be allowed on profile configured">
+             <PARAM name="MaximumSessions"
+                    help="Enter maximum sessions to be allowed on profile configured"
+                    ptype="MAXIMUM_SESSION"/>
+             <ACTION>lua clishCfgObjAdd ("sessionLimit", "sessionLimit.MaximumSessions", "${MaximumSessions}")              
+             </ACTION>
+         </COMMAND> 
+   <COMMAND name="schedule"
+             help="Enable/Disable schedule">
+             <PARAM name="EnableSchedules"
+                    help="schedule"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("sessionLimit", "sessionLimit.EnableSchedules", "${EnableSchedules}")              
+             </ACTION>
+         </COMMAND> 
+   <COMMAND name="schedule_name"
+             help="show security schedules setup for available schedule profiles">
+             <PARAM name="ScheduleProfile"
+                    help="show security schedules setup for available schedule profiles"
+                    ptype="STRING"/>
+             <ACTION>lua clishCfgObjAdd ("sessionLimit", "sessionLimit.ScheduleProfile", "${ScheduleProfile}")              
+             </ACTION>
+    </COMMAND> 
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth" help="."/> 
+    <COMMAND name="net bandwidth profile" 
+             help="It gives options to add/edit/delete a bandwidth profile."/>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth profile enable" 
+             help="It allows to enable/disable bandwidth profiles.">
+             <PARAM name="enable"
+                 help="Status of Bandwidth Profile functionality"
+                 ptype="CHOICE_INT"/>
+            <ACTION>lua clishCfgObjNew ("bwProfileStatus", 
+                                       bwProfileStatInit, 
+                                       bwProfileStatSave,
+                                       bwProfileStatInputVal,
+                                       "${enable}")
+            clishCfgObjExec ("bwProfileStatus")
+	    </ACTION>
+     </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth profile add" 
+             help="It allows to add a bandwidth profile."
+             view="net-bandwidth-profile-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("bwProfile", bwProfileCfgInit, 
+                                        bwProfileCfgSave, 
+                                        bwProfileCfgInputVal)
+            </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth profile edit" 
+             help="It allows to edit a bandwidth profile."
+             view="net-bandwidth-profile-config" viewid="">
+             <PARAM name="row_id" 
+	       help="Row Id Of the profile to be edited"
+	       ptype="UINT"/>
+             <ACTION>lua clishCfgObjNew ("bwProfile", bwProfileCfgInit, 
+                                        bwProfileCfgSave, 
+                                        bwProfileCfgInputVal,
+                                        "${row_id}")
+            </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth profile delete" 
+             help="It allows to delete a bandwidth profile.">
+             <PARAM name="row_id" 
+	       help="Row Id Of the profile to be deleted"
+	       ptype="UINT"/>
+             <ACTION>lua bwProfileCfgDel("${row_id}")
+            </ACTION>
+        </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth session_limiting"
+        help="It gives options to add/edit/delete a session limiting profile to allows user to limit number of sessions through the device per an IP/range of IP's/interface."/>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth session_limiting modify_warningMessage" 
+             help="It allows to edit Default warning Message."
+             view="net-SessionLimitingMsg-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("warningMessage", warningMessageCfgInit, 
+                                        warningMessageCfgSave, 
+                                        warningMessageCfgInputVal)
+            </ACTION>
+    </COMMAND>    
+<!--=======================================================-->
+    <COMMAND name="net bandwidth session_limiting Profile_add" 
+             help="Session Limiting profile configuration mode."
+             view="net-SessionLimiting-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("sessionLimit", sessionLimitCfgInit, 
+                                        sessionLimitCfgSave, 
+                                        sessionLimitCfgInputVal)
+            </ACTION>
+        </COMMAND>    
+    <COMMAND name="net bandwidth session_limiting Profile_edit" 
+             help="Session Limiting profile configuration mode."
+             view="net-SessionLimiting-config" viewid="">
+             <PARAM name="row_id" 
+  	        help=" Row Id Of the domain to be edited"
+	        ptype="UINT"/>
+            <ACTION>lua clishCfgObjNew ("sessionLimit", sessionLimitCfgInit, 
+                                        sessionLimitCfgSave, 
+                                        sessionLimitCfgInputVal, "${row_id}")
+            </ACTION>
+        </COMMAND>   
+
+
+
+    <COMMAND name="net bandwidth session_limiting Profile_delete" 
+        help="Session Limiting profile delete mode.">
+             <PARAM name="row_id" 
+	       help="Row Id Of the domain to be deleted"
+	       ptype="UINT"/>
+             <ACTION>lua clishCmdExec (sessionLimitCfgDel, "${row_id}")
+            </ACTION>
+        </COMMAND>   
+
+    <COMMAND name="net bandwidth session_limiting Profiles_deleteAll" 
+        help="Delete all the Session Limiting profiles.">
+             <ACTION>lua clishCmdExec (sessionLimitCfgDelall)
+            </ACTION>
+        </COMMAND>       
+<!--=======================================================-->
+    <COMMAND name="net bandwidth traffic_selector"
+             help="It gives options to add/edit/delete a traffic selector for a bandwidth profile."/>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth traffic_selector add" 
+             help="It allows to add a traffic selector for a bandwidth profile."
+             view="net-TrafficSelector-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("trafficSelector", trafficSelectorCfgInit, 
+                                        trafficSelectorCfgSave, 
+                                        trafficSelectorCfgInputVal)
+            </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth traffic_selector edit" 
+             help="It allows to edit a traffic selector for a bandwidth profile."
+             view="net-TrafficSelector-config" viewid="">
+            <PARAM name="row_id" 
+	       help="Row Id Of the traffic selector to be edited"
+	       ptype="UINT"/>
+             <ACTION>lua clishCfgObjNew ("trafficSelector", trafficSelectorCfgInit, 
+                                        trafficSelectorCfgSave, 
+                                        trafficSelectorCfgInputVal,
+                                        "${row_id}")
+            </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="net bandwidth traffic_selector delete" 
+             help="It allows to delete a traffic selector for a bandwidth profile.">
+             <PARAM name="row_id" 
+	       help="Row Id Of the traffic selector to be deleted"
+	       ptype="UINT"/>
+             <ACTION>lua trafficSelectorCfgDel ("${row_id}")
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+ <VIEW name="net_bandwidth_management-config" prompt="net-config[bandwidth-management]> "> 
+    <COMMAND name="save" help="Save bandwidth management configuration changes.">
+	<ACTION>lua clishCfgObjExec("bandwidthmanagement")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save bandwidth management configuration changes and exit current mode."
+	     view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("bandwidthmanagement")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back bandwidth management configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+<!-- =======================================================--> 
+    <COMMAND name="bw_management_enable"
+              help="enable/disable bandwidthManagement">
+      <PARAM name="bw_management_enable" 
+             help="enable/disable bandwidth management"
+             ptype="CHOICE_INT"/>
+          <ACTION>lua clishCfgObjAdd("bandwidthmanagement", "bandwidthmanagement.action","${bw_management_enable}")
+	</ACTION>
+    </COMMAND>
+ <!--======================================================= --> 
+   <COMMAND name="service" help="See available services list by show command">
+	<PARAM name="ServiceName" 
+        help="Service Name."
+	ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("bandwidthmanagement", "bandwidthmanagement.service","${ServiceName}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="wan_interface" help="wan interface Name">
+	<PARAM name="wanInterface" 
+        help="wan interface"
+	ptype="WAN_INTERFACE_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("bandwidthmanagement", "bandwidthmanagement.waninterface","${wanInterface}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="bandwidth_rate" help="Bandwidth rate provided by user.">
+	<PARAM name="BandwidthRate" 
+        help="Bandwidth rate provided by user."
+	ptype="BW_RATE"/>
+	<ACTION>lua clishCfgObjAdd ("bandwidthmanagement", "bandwidthmanagement.bandwidthrate","${BandwidthRate}")
+	</ACTION>
+    </COMMAND>
+
+ ======================================================= -->
+</VIEW>
+    
+<!-- ======================================================= -->
+
+<COMMAND name="net bandwidth management" help="It gives options to edit a bandwidthManagement for a bandwidth profile"/>
+
+<!--=======================================================-->
+
+    <COMMAND name="net bandwidth management config"
+             help="bandwidthManagement configuration mode"
+             view="net_bandwidth_management-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("bandwidthmanagement", 
+                                       bandwidthmanagementCfgInit, 
+                                       bandwidthmanagementCfgSave,
+                                       bandwidthmanagementCfgInputVal)
+	    </ACTION>
+    </COMMAND>
+<!-- ======================================================= -->
+
+<COMMAND name="show net bandwidth Management" help="Display bandwidth Management commands"/>
+
+======================================================= 
+ <COMMAND name="show net bandwidth management config"
+             help="Display bandwidth Management configuration">
+             <ACTION>lua clishCmdExec (bandwidthManagementConfigGet)
+             </ACTION>
+    </COMMAND>
+
+<!-- =======================================================-->
+<COMMAND name="show net bandwidth" help="."/>
+<COMMAND name="show net bandwidth profile" help="."/>
+<COMMAND name="show net bandwidth profile setup"
+	     help="Show list of Available Bandwidth Profile(s).">
+	<DETAIL>
+This command shows the list of Available Bandwidth Profile(s).
+&lt;Name&gt;: profile name 	
+&lt;Bandwidth&gt;: Range/Priority
+       </DETAIL>
+       <ACTION>lua clishCmdExec (bwProfileGet)</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="show net bandwidth traffic_selector" help="."/>
+<COMMAND name="show net bandwidth traffic_selector setup"
+	     help="Show list of Available Traffic Selector(s).">
+	<DETAIL>
+This command shows the list of Available Traffic Selector(s).
+&lt;Traffic Selector Details&gt;: Traffic Selector Details 	
+&lt;Traffic Selector&gt;: Traffic Selector
+&lt;Bandwidth Profile Name&gt;: Bandwidth profile name
+       </DETAIL>
+       <ACTION>lua clishCmdExec (trafficSelectorGet)</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="show net bandwidth traffic_selector BSSID"
+	     help="Show list of Available BSSID(s).">
+	       <ACTION>lua clishCmdExec (BssidListGet)</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show net bandwidth profile interface_list"
+             help="Display list of interface for Inbound Bandwidth Profile.It includes Available VLANs">
+             <ACTION>lua clishCmdExec (bwLanInterfaceGet)
+                 </ACTION>
+             </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show net bandwidth session_limiting" help="."/>
+    <COMMAND name="show net bandwidth session_limiting Warning_message"
+             help="It Display the Warning message">
+             <ACTION>lua clishCmdExec (warningMessageGet)
+                 </ACTION>
+    </COMMAND>
+    <COMMAND name="show net bandwidth session_limiting sessionLimitProfileStat"
+             help="It Display the session Limiting Profile Stats">
+             <ACTION>lua clishCmdExec (sessionLimitProfileStat)
+                 </ACTION>
+    </COMMAND>
+    <COMMAND name="show net bandwidth session_limiting sessionLimitProfilelist"
+             help="It Display the session Limiting Profile list">
+             <ACTION>lua clishCmdExec (sessionLimitProfileslist)
+                 </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+   <COMMAND name="show net bandwidth traffic_selector services"
+             help="Display list of available services">
+             <ACTION>lua clishCmdExec (ServiceListGet )
+                 </ACTION>
+    </COMMAND>
+</CLISH_MODULE>
+

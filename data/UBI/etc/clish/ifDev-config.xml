@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<!--=======================================================-->
+<VIEW name="net-lan-ipv4-config" prompt="net-config[lan-ipv4]> "> 
+    <COMMAND name="save" help="Save LAN configuration changes.">
+	     <ACTION>lua clishCfgObjExec("lan")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save LAN configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("lan")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back LAN configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="static" help="Configure LAN Settings."/>
+    <COMMAND name="static address" help="Set system LAN IP address.">
+	<PARAM name="ipAddress" 
+	       help="LAN IP address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "ifStatic.StaticIp", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="static subnet_mask" help="Set system LAN subnet mask.">
+	<PARAM name="ipAddress" 
+	       help="Subnet mask."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "ifStatic.NetMask", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp" help="Configure DHCP Settings."/>
+    <COMMAND name="dhcp mode" help="Set dhcp mode.">
+	<PARAM name="ipAddress" 
+	       help="DHCP Mode."
+	       ptype="DHCPV4_MODE"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.dhcpEnabled", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp start_address" help="Set dhcp servers start address.">
+	<PARAM name="ipAddress" 
+	       help="Start Address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.startAddress", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp end_address" help="Set dhcp servers end address.">
+	<PARAM name="ipAddress" 
+	       help="End Address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.endAddress", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp default_gw" help="Set dhcp default gateway.">
+	<PARAM name="defaultgw" 
+	       help="Default Gateway."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.defaultGw", 
+		    "${defaultgw}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp primary_dns" help="Set primary dns server.">
+	<PARAM name="ipAddress" 
+	       help="Primary DNS Server."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.primaryDnsServer", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp secondary_dns" help="Set secondary dns server.">
+	<PARAM name="ipAddress" 
+	       help="Secondary DNS Server."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.secondaryDnsServer", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp wins_server" help="Set Wins Server address.">
+	<PARAM name="ipAddress" 
+	       help="WINS Server."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.winsServer", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp lease_time" help="Set system Lease Time.">
+	<PARAM name="ipAddress" 
+	       help="Lease Time."
+	       ptype="LEASE_TIME"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.leaseTime", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+
+    <COMMAND name="dhcp domain_name" help="Set dhcp domain name.">
+	<PARAM name="domain_name" 
+	       help="domain name for dhcp"
+	       ptype="DHCP_DOMAIN"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.domainName", 
+		    "${domain_name}")
+	</ACTION>
+    </COMMAND>
+
+    <COMMAND name="dhcp relay_gateway" help="Set dhcp relays gateway address.">
+	<PARAM name="ipAddress" 
+	       help="Relay Gateway."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DhcpRelay.RelayGateway", 
+		    "${ipAddress}")
+	</ACTION>
+</COMMAND>
+
+    <COMMAND name="dns" help="Configure DNS Settings."/>
+    <COMMAND name="dns host_name" help="Configure DNS Settings."/>
+    <COMMAND name="dns host_name mapping" help="Configure DNS Host NameMapping."/>
+    <COMMAND name="dns host_name mapping 1" help="Configure DNS Host NameMapping for ist row."/>
+    <COMMAND name="dns host_name mapping 2" help="Configure DNS Host NameMapping for 2nd Row."/>
+    <COMMAND name="dns host_name mapping 3" help="Configure DNS Host NameMapping for 3rd row."/>
+    <COMMAND name="dns host_name mapping 4" help="Configure DNS Host NameMapping for 4th row."/>
+    <COMMAND name="dns host_name mapping 5" help="Configure DNS Host NameMapping for 5th row."/>
+    <COMMAND name="dns host_name mapping 6" help="Configure DNS Host NameMapping for 6th row."/>
+    <COMMAND name="dns host_name mapping 7" help="Configure DNS Host NameMapping for 7th row."/>
+    <COMMAND name="dns host_name mapping 8" help="Configure DNS Host NameMapping for 8th row."/>
+
+
+
+    <COMMAND name="dns host_name mapping 1 host_name" help="Set Host Name.">
+	<PARAM name="host_name1" 
+	       help="Set host name"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.HostName1", 
+		    "${host_name1}")
+	</ACTION>
+</COMMAND>
+
+ <COMMAND name="dns host_name mapping 1 ipaddress" help="Set Host Name.">
+	<PARAM name="ip_address1" 
+	       help="Set host name"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.IpAddress1", 
+		    "${ip_address1}")
+	</ACTION>
+    </COMMAND>
+
+     <COMMAND name="dns host_name mapping 2 host_name" help="Set Host Name.">
+	<PARAM name="host_name2" 
+	       help="Set host name"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.HostName2", 
+		    "${host_name2}")
+	</ACTION>
+</COMMAND>
+
+ <COMMAND name="dns host_name mapping 2 ipaddress" help="Set Host Name.">
+	<PARAM name="ip_address2" 
+	       help="Set host name"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.IpAddress2", 
+		    "${ip_address2}")
+	</ACTION>
+    </COMMAND>
+ <COMMAND name="dns host_name mapping 3 host_name" help="Set Host Name.">
+	<PARAM name="host_name3" 
+	       help="Set host name"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.HostName3", 
+		    "${host_name3}")
+	</ACTION>
+</COMMAND>
+
+ <COMMAND name="dns host_name mapping 3 ipaddress" help="Set Host Name.">
+	<PARAM name="ip_address3" 
+	       help="Set host name"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.IpAddress3", 
+		    "${ip_address3}")
+	</ACTION>
+</COMMAND>
+
+
+<COMMAND name="dns host_name mapping 4 host_name" help="Set Host Name.">
+	<PARAM name="host_name4" 
+	       help="Set host name"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.HostName4", 
+		    "${host_name4}")
+	</ACTION>
+</COMMAND>
+
+ <COMMAND name="dns host_name mapping 4 ipaddress" help="Set Host Name.">
+	<PARAM name="ip_address4" 
+	       help="Set host name"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.IpAddress4", 
+		    "${ip_address4}")
+	</ACTION>
+    </COMMAND>
+
+ <COMMAND name="dns host_name mapping 5 host_name" help="Set Host Name.">
+	<PARAM name="host_name5" 
+	       help="Set host name"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.HostName5", 
+		    "${host_name5}")
+	</ACTION>
+</COMMAND>
+
+ <COMMAND name="dns host_name mapping 5 ipaddress" help="Set Host Name.">
+	<PARAM name="ip_address5" 
+	       help="Set host name"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.IpAddress5", 
+		    "${ip_address5}")
+	</ACTION>
+    </COMMAND>
+ <COMMAND name="dns host_name mapping 6 host_name" help="Set Host Name.">
+	<PARAM name="host_name6" 
+	       help="Set host name"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.HostName6", 
+		    "${host_name6}")
+	</ACTION>
+</COMMAND>
+
+ <COMMAND name="dns host_name mapping 6 ipaddress" help="Set Host Name.">
+	<PARAM name="ip_address6" 
+	       help="Set host name"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.IpAddress6", 
+		    "${ip_address6}")
+	</ACTION>
+    </COMMAND>
+ <COMMAND name="dns host_name mapping 7 host_name" help="Set Host Name.">
+	<PARAM name="host_name7" 
+	       help="Set host name"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.HostName7", 
+		    "${host_name7}")
+	</ACTION>
+</COMMAND>
+
+ <COMMAND name="dns host_name mapping 7 ipaddress" help="Set Host Name.">
+	<PARAM name="ip_address7" 
+	       help="Set host name"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.IpAddress7", 
+		    "${ip_address7}")
+	</ACTION>
+    </COMMAND>
+ <COMMAND name="dns host_name mapping 8 host_name" help="Set Host Name.">
+	<PARAM name="host_name8" 
+	       help="Set host name"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.HostName8", 
+		    "${host_name8}")
+	</ACTION>
+</COMMAND>
+
+ <COMMAND name="dns host_name mapping 8 ipaddress" help="Set Host Name.">
+	<PARAM name="ip_address8" 
+	       help="Set host name"
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "DnsStaticHostsMapping.IpAddress8", 
+		    "${ip_address8}")
+	</ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="proxy" help="Configure the LAN Proxies"/>
+    <COMMAND name="proxy dns_enable" help="Enable/Disable dns proxy">
+	<PARAM name="ipAddress" 
+	       help="Enable/Disable DNS Proxy."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("lan", "dhcp.enableDnsProxy", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-lan-ipv6-config" prompt="net-config[lan-ipv6]> "> 
+    <COMMAND name="save" help="Save LAN configuration changes.">
+	     <ACTION>lua clishCfgObjExec("lanv6")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save LAN configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("lanv6")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back LAN configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="static" help="Set system LAN Settings."/>
+    <COMMAND name="static address" help="Set system LAN IP address.">
+	<PARAM name="ip_address" 
+	       help="LAN IP address."
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "ifStatic.StaticIp", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="static prefix_value" help="Prefix length">
+	<PARAM name="prefix_length" 
+	       help="Prefix Length"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "ifStatic.PrefixLength", 
+		    "${prefix_length}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp" help="Set system LAN Settings."/>
+    <COMMAND name="dhcp server_enable" help="Set dhcpv6 server status">
+	<PARAM name="ip_address" 
+	       help="Prefix Length"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "dhcpv6s.isEnabled", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp mode" help="DHCPv6 Mode">
+	<PARAM name="ip_address" 
+	       help="DHCPv6 Mode"
+	       ptype="DHCPV6_MODE"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "dhcpv6s.statelessMode", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp domain_name" help="dhcp server domain name">
+	<PARAM name="ip_address" 
+	       help="dhcpv6 domain server name"
+	       ptype="DHCP_DOMAIN"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "dhcpv6s.domainName", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp server_preference" help="server preference number">
+	<PARAM name="ip_address" 
+	       help="dhcp server preference number"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "dhcpv6s.serverPreference", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp dns_type" help="dns server type">
+	<PARAM name="ip_address" 
+	       help="DNS Server Type 1(useDnsProxy) 2(useDnsFromISP) 3(useBelow)"
+	       ptype="DHCPV6S_DNS_T"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "dhcpv6s.useDNSServersFrom", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp primary_dns" help="primary dns server ">
+	<PARAM name="ip_address" 
+	       help="Primary dns server "
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "dhcpv6s.primaryDNSServer", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp secondary_dns" help="Secondary dns server">
+	<PARAM name="ip_address" 
+	       help="Secondary dns server"
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "dhcpv6s.secondaryDNSServer", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp rebind_time" help="Rebind time">
+	<PARAM name="ip_address" 
+	       help="rebind time"
+	       ptype="DHCPV6S_REBIND_TIME"/>
+	<ACTION>lua clishCfgObjAdd ("lanv6", "dhcpv6s.leaseTime", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-lan-ipv6-pool-config" prompt="net-config[lan-ipv6-pool]> "> 
+    <COMMAND name="save" help="Save LAN configuration changes.">
+	     <ACTION>lua clishCfgObjExec("lan6")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save LAN configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("lan6")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back LAN configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_id" help="Set Interface.">
+	<PARAM name="vlan_id" 
+        help="Give id of the vlan to be created/edited,use 'show net vlan configuration' for available vlan list."
+	       ptype="VLANID_RANGE"/>
+	<ACTION>lua clishCfgObjAdd ("lan6", "dhcpv6sLANAddrPool.vlanId", 
+		    "${vlan_id}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="end_address" help="Set dhcpv6 end IP address.">
+	<PARAM name="ipAddress" 
+	       help="DHCPv6 End IP address."
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("lan6", "dhcpv6sLANAddrPool.endAddress", 
+		    "${ipAddress}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="prefix_value" help="Prefix length">
+	<PARAM name="prefix_length" 
+	       help="Prefix Length"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("lan6", "dhcpv6sLANAddrPool.prefixLength", 
+		    "${prefix_length}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-lan-ipv6-prefix-config" prompt="net-config[lan-ipv6-prefix]> "> 
+    <COMMAND name="save" help="Save Prefix for Prefix delegation changes.">
+	     <ACTION>lua clishCfgObjExec("Prefix6")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save Prefix for Prefix delegation changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("Prefix6")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back LAN configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_id" help="Set Interface.">
+	<PARAM name="vlan_id" 
+        help="Give id of the vlan to be created/edited,use 'show net vlan configuration' for available vlan list."
+	       ptype="VLANID_RANGE"/>
+	<ACTION>lua clishCfgObjAdd ("Prefix6", "dhcpv6sLANPrefixPool.vlanId", 
+		    "${vlan_id}")
+	</ACTION>
+    </COMMAND>   
+    <COMMAND name="prefix_value" help="Prefix length">
+	<PARAM name="prefix_length" 
+	       help="Prefix Length"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("Prefix6", "dhcpv6sLANPrefixPool.delegationPrefixLen", 
+		    "${prefix_length}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net lan" help="LAN setup."/>
+<!--=======================================================-->
+    <COMMAND name="net lan ipv4" help="."/>
+    <COMMAND name="net lan ipv4 configure"
+             help="IPv4 LAN configuration mode."
+             view="net-lan-ipv4-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("lan", lanCfgInit, lanCfgSave, 
+				       lanCfgInputVal)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net lan ipv6" help="."/>
+    <COMMAND name="net lan ipv6 configure"
+             help="IPv6 LAN configuration mode."
+             view="net-lan-ipv6-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("lanv6", lanIPv6CfgInit, lanIPv6CfgSave, 
+				       lanIPv6CfgInputVal)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net lan ipv6 pool" help="."/>
+    <COMMAND name="net lan ipv6 pool configure"
+             help="IPv6 LAN configuration add/edit mode."
+             view="net-lan-ipv6-pool-config" viewid="">
+            <PARAM name="ipv6PoolStartAddr" 
+                   help="Start Address" 
+                   ptype="IPV6_ADDR"/>
+            <ACTION>lua clishCfgObjNew ("lan6", lanIPv6PoolInit, 
+                                        lanIPv6PoolSave, 
+				        lanIPv6CfgPoolInputVal,
+                                        "${ipv6PoolStartAddr}")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net lan ipv6 pool delete"
+             help="IPv6 LAN configuration delete.">
+            <PARAM name="ipv6PoolStartAddr" 
+                   help="Start Address" 
+                   ptype="IPV6_ADDR"/>
+            <ACTION>lua lanIPv6PoolDel("${ipv6PoolStartAddr}")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net lan ipv6 prefix_Delegation" help="."/>
+    <COMMAND name="net lan ipv6 prefix_Delegation configure"
+             help="IPv6 Prefix for Prefix delegation add/edit mode."
+             view="net-lan-ipv6-prefix-config" viewid="">
+            <PARAM name="prefix" 
+                   help="Prefix address" 
+                   ptype="IPV6_ADDR"/>
+            <ACTION>lua clishCfgObjNew ("Prefix6", PrefixIPv6Init, 
+                                        PrefixIPv6Save, 
+				        PrefixIPv6InputVal,
+                                        "${prefix}")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net lan ipv6 prefix_Delegation delete"
+             help="IPv6 Prefix for Prefix delegation delete.">
+            <PARAM name="prefix" 
+                   help="Prefix address" 
+                   ptype="IPV6_ADDR"/>
+            <ACTION>lua  PrefixIPv6Del("${prefix}")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+</CLISH_MODULE>

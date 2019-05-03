@@ -1,0 +1,541 @@
+<?lua
+
+require "teamf1lualib/firewallRules_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/ipv4Option2settings_bl"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "firewallRules"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local wan_ModeStatus = require("com.teamf1.bl.wan.ipv4_option1")
+local errorFlag
+
+if (ButtonType and ButtonType == "delete") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["firewallRules.checkbox"]) == "string") then
+                inputTable["firewallRules.cookie"] = cgi["firewallRules.checkbox"]
+                errorFlag = firewallRuleDelete (inputTable)
+        elseif (type(cgi["firewallRules.checkbox"]) == "table") then
+                errorFlag = firewallRuleDeleteAll ()
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "add") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        errorFlag, cookie = firewallRuleCreate (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "edit") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        inputTable["firewallRules.cookie"] = cgi["configRowId"]
+        errorFlag, cookie = firewallRuleSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "disable") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["firewallRules.checkbox"]) == "string") then
+                inputTable["firewallRules.cookie"] = cgi["firewallRules.checkbox"]
+                errorFlag = firewallRuleDisable (inputTable)
+        elseif (type(cgi["firewallRules.checkbox"]) == "table") then
+                errorFlag = firewallRuleDisableAll ()
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "enable") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["firewallRules.checkbox"]) == "string") then
+                inputTable["firewallRules.cookie"] = cgi["firewallRules.checkbox"]
+                errorFlag = firewallRuleEnable (inputTable)
+        elseif (type(cgi["firewallRules.checkbox"]) == "table") then
+                errorFlag = firewallRuleEnableAll ()
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag, cookie = firewallRulesDefaultPolicySet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "move") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["firewallRules.cookie"] = cgi["configRowId"]
+    errorFlag, cookie = firewallRulesMove (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+    web.goToPage(NextPage, true, true)
+
+
+else
+    local firewallRulesInfo, defaultStatus, priorityStr
+     errorFlag, firewallRulesInfo, priorityStr = firewallRuleGetAll ()
+     errorFlag, defaultStatus = firewallRulesDefaultPolicyGet ()
+	local a, vlanIdNameInfo = getAllVLanInfo ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+    -- Firewall rules are not applicable for transparent mode
+    local modeStatus
+    local transparentMode
+    modeStatus = wan_ModeStatus.routingModeStatusCheck ()
+
+    if (tonumber(modeStatus) == 5) then
+        transparentMode = "1"
+        statusInfoMessage = errorMap.errorStringGet (returnCodes.FW_NOTAPLICABLE_TRANSPARENT)
+    end
+
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE =
+"11727,10875,10749,10695,10862,12795,30315,11452,30316,11009,10689,11435,11046,14193,14194,30317,30318,10777,10345,13107,14192,10056,14200,30434,30471,30486,30435,12804,12900,10226,13712,13713,11043,13105,10711,11612,11768,10223,12579,14189,14188,14187,14186,14185,14184,30319,13712,14182,11397,13327,14181,11193,14180,14179,11316,14178,30436,13327,12758,14176,14177,10214,10389,11436,13004,12758,10449,11043,14196,13105,12831,13453,14197,13454,11593,12820,11196,11612,12745,10132,11948,12382,12384,12250,12253,12288,12409,11316,11281,11031,11045,13524,10751,11398,30154,30014,30015,30017"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmFirewallRules" id="tf1_frmFirewallRules">        
+            <input type="hidden" name="thispage" id="thispage" value="firewallRules.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+		<?lua if (transparentMode ~= "1") then ?>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit move');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$
+                </li>               
+                <li id="move">
+                    $| LANG_LOCALE['11727'] |$
+                </li>
+                <li id="enable">
+                    $| LANG_LOCALE['10875'] |$
+                </li>
+                <li id="disable">
+                    $| LANG_LOCALE['10749'] |$
+                </li>
+               <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+		<?lua end ?>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+					<?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                            if (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    	<p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua else ?>
+                    <div class="msgInfo">
+                    	<p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua end?>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    	<p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    	<p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+            <div align="left">
+                 <nav class="nav-bg">
+                      <ul class="menu">
+                          <li class="current">
+                              <a href="?page=firewallRules.html">$| LANG_LOCALE['30315'] |$</a>
+                          </li>
+                          <li>
+                              <a href="?page=firewallRulesIpv6.html">$| LANG_LOCALE['11452'] |$</a>
+                          </li>
+                          <?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                          <li>
+                              <a href="?page=bridgeFirewallRules.html">$| LANG_LOCALE['30316'] |$</a>
+                          </li>
+                          <?lua end ?>
+                      </ul>
+                 </nav>
+            </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11009'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form action="platform.cgi" method="post" name="tf1_frmFirewallRules2" id="tf1_frmFirewallRules2">        
+            <input type="hidden" name="thispage" id="thispage" value="firewallRules.html">
+                                <h2>$| LANG_LOCALE['10689'] |$</h2>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10223'] |$ </label>
+                                    <p>
+                                        <input type="radio" value="1" $| web.radioSelected(defaultStatus == "1") |$ name="fwDefaultOutBoundPolicy.DefaultPolicyStatus" >
+                                       $| LANG_LOCALE['10214'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" value="2" $| web.radioSelected(defaultStatus == "2") |$ name="fwDefaultOutBoundPolicy.DefaultPolicyStatus" >
+                                        $| LANG_LOCALE['10389'] |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.firewallRules" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                            <h1>$| LANG_LOCALE['11436'] |$</h1>
+                            <div class="CLR">
+                                <div class="demo_jui" id="tf1_firewallRules">
+                                    <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                        <thead>
+                                            <tr>
+                                                <th> $| LANG_LOCALE['13004'] |$
+                                                <br>
+                                                &nbsp; </th>
+                                                <th> $| LANG_LOCALE['11043'] |$
+                                                <br>
+                                                $| LANG_LOCALE['14196'] |$ </th>
+                                                <th> $| LANG_LOCALE['13105'] |$ 
+                                                <br>
+                                                $| LANG_LOCALE['14196'] |$ </th>
+                                                <th> $| LANG_LOCALE['12831'] |$
+                                                <br>
+                                                &nbsp; </th>
+                                                <th> $| LANG_LOCALE['10389'] |$ / 
+                                                <br>
+                                               $| LANG_LOCALE['10214'] |$ </th>
+                                                <th> $| LANG_LOCALE['13453'] |$
+                                                <br>
+                                                $| LANG_LOCALE['14197'] |$ </th>
+                                                <th> $| LANG_LOCALE['13454'] |$
+                                                <br>
+                                                $| LANG_LOCALE['14197'] |$ </th>
+                                                <th> $| LANG_LOCALE['11593'] |$
+                                                <br>
+                                                $| LANG_LOCALE['12820'] |$ </th>
+                                                <th> $| LANG_LOCALE['11196'] |$
+                                                <br>
+                                                $| LANG_LOCALE['13454'] |$ </th>
+                                                <th> $| LANG_LOCALE['11612'] |$
+                                                <br>
+                                                &nbsp; </th>
+						                        <th> $| LANG_LOCALE['12745'] |$
+                                                <br>
+                                                &nbsp; </th>
+                                            </tr>
+                                        </thead>
+                                             <?lua 
+						                    local j=1 
+						                    local statusStr 
+						                    local logStatus
+						                    local action 
+						   prioritySequence = util.split(priorityStr,",")
+					     for key,pid in pairs(prioritySequence) do
+                                                    local i = 0
+                                             for k, v in pairs (firewallRulesInfo) do
+                                                    i=i+1
+                                                    local row = firewallRulesInfo[i]
+if (row[Ipv4firewallRulesTable.."."..attribute.status] == "1") then
+    statusStr = LANG_LOCALE['13524']
+else
+    statusStr = LANG_LOCALE['10751']
+end
+
+if (row[Ipv4firewallRulesTable.."."..attribute.logStatus] == "1") then
+    logStatus = LANG_LOCALE['11768']
+else
+    logStatus = LANG_LOCALE['10223']
+end
+
+if (row[Ipv4firewallRulesTable.."."..attribute.action] == "DROP") then
+    action = LANG_LOCALE['30471']
+elseif (row[Ipv4firewallRulesTable.."."..attribute.action] == "ACCEPT") then
+    action = LANG_LOCALE['30486']
+elseif (row[Ipv4firewallRulesTable.."."..attribute.action] == "ACCEPT_BY_SCHED_MATCH") then
+    action = LANG_LOCALE['30435']
+elseif (row[Ipv4firewallRulesTable.."."..attribute.action] == "DROP_BY_SCHED_MATCH") then
+    action = LANG_LOCALE['30434']
+end
+
+if (row[Ipv4firewallRulesTable.."."..attribute.sourceAddressType] == "0") then
+    row[Ipv4firewallRulesTable.."."..attribute.sourceAddressType] = LANG_LOCALE['10226']
+end
+
+if (row[Ipv4firewallRulesTable.."."..attribute.destinationAddressType] == "0") then
+    row[Ipv4firewallRulesTable.."."..attribute.destinationAddressType] = LANG_LOCALE['10226']
+end
+					            if (row[Ipv4firewallRulesTable.."."..attribute.fromZoneType] ~= "WAN") then
+	row[Ipv4firewallRulesTable.."."..attribute.dnatAddress] = ''
+	row[Ipv4firewallRulesTable.."."..attribute.destinationPublicInterface]=''
+elseif (row[Ipv4firewallRulesTable.."."..attribute.fromZoneType] == "WAN") then
+	row[Ipv4firewallRulesTable.."."..attribute.destinationAddressType] = ''
+end
+						if (row[Ipv4firewallRulesTable.."."..attribute.priorityId] == pid) then
+                                            ?>
+                                        <tr class="gradeA" id="firewallRules$| row[Ipv4firewallRulesTable.."."..attribute.priorityId]|$" status="$| row[Ipv4firewallRulesTable.."."..attribute.status] or '' |$">
+                                            <td>$| statusStr or '' |$</td>
+                                            <td>$| row[Ipv4firewallRulesTable.."."..attribute.fromZoneType] or '' |$</td>
+                                            <td>$| row[Ipv4firewallRulesTable.."."..attribute.toZoneType] or '' |$</td>
+                                            <td>$| row[Ipv4firewallRulesTable.."."..attribute.serviceName] or '' |$</td>
+                                            <td>$| action or '' |$</td>
+                                            <td>$| row[Ipv4firewallRulesTable.."."..attribute.sourceAddressType] or '' |$</td>
+                                            <td>$| row[Ipv4firewallRulesTable.."."..attribute.destinationAddressType] or '' |$</td>
+                                            <td>$| row[Ipv4firewallRulesTable.."."..attribute.dnatAddress] or '' |$</td>
+                                            <td>$| row[Ipv4firewallRulesTable.."."..attribute.destinationPublicInterface] or '' |$</td>
+                                            <td>$| logStatus or '' |$</td>
+											<td>$| j  or '' |$</td>
+                                        </tr>
+                                                <?lua 
+						                        j=j+1
+                                                    end 
+						                            end
+						                            end 
+                                                ?>
+                                    </table>
+                                </div>
+                            </div>
+                            <?lua
+                            if (transparentMode ~= "1") then ?>
+                            <div class="buttonsRow" id="tf1_btnShowModal">
+                                <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10132'] |$" value="$| LANG_LOCALE['10132'] |$" id="btSave" onclick="openForm('button.add.firewallRules.firewallRules',-1,'tf1_dialog','firewallRules','firewallRulesForm.html', 'tf1_firewallRulesDailogContent','onloadFirewallRulesFn');">
+                            </div>
+                            <?lua end ?>
+                            <div class="break">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <?lua
+	    local classicalRouting
+            local routingConfig = natModeGetRows ()
+                if (routingConfig["NatTable.RoutedInterfaces"] ~= nil and routingConfig["NatTable.RoutedInterfaces"] ~= "") then
+                    local interfaceArr = util.split (routingConfig["NatTable.RoutedInterfaces"], ",")
+                    if (#interfaceArr == 2) then
+                       	classicalRouting = "0"
+                    elseif (#interfaceArr == 1) then
+                       	if(interfaceArr[1] == "WAN1") then
+                      	    classicalRouting = "1"
+                        else
+                            classicalRouting = "2"
+                        end
+                    end
+                else
+                    classicalRouting = "3"
+		end
+        ?>
+        <input type="hidden" id="hdClassicalRouting" value="$| classicalRouting or '' |$">
+        <input type="hidden" id="hdRoutingMode" value="$| routingConfig["NatTable.Enable"] or '' |$">
+    	<?lua
+        local vlanList = '';
+        for k,v in pairs (vlanIdNameInfo) do
+            vlanList = vlanList .. v["vlanName"] .. " ";
+        end
+         ?>
+         <input type="hidden" id="hdVlanList" value="$| vlanList or '' |$">
+		<input type="hidden" id="hdUnitName" value="$| UNIT_NAME |$">
+		<input type="hidden" id="hdProductId" value="$| PRODUCT_ID |$">
+		<input type="hidden" id="hdRuleType" value="0">
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/firewallRules.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+
+            $(document).ready(function() {
+                
+                $('#tf1_firewallRules .gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'editMenu' : function(t, e, rowId) {
+                            openForm('button.edit.firewallRules.firewallRules',rowId,'tf1_dialog','firewallRules','firewallRulesForm.html', 'tf1_firewallRulesDailogContent','onloadFirewallRulesFn');
+                        },
+                        'moveMenu' : function(t, e, rowId) {
+                            openForm('button.move.firewallRules.firewallRules',rowId,'tf1_dialog','firewallRules','firewallRulesForm.html', 'tf1_firewallRulesDailogMoveContent','');
+                        },
+                        'deleteMenu' : function(t, e, rowId) {
+                            deleteRows('button.delete.firewallRules.firewallRules', 'tf1_frmFirewallRules', rowId, 'optionSelectAll', 'tf1_dialog', 'firewallRules', 'firewallRules');
+                        },
+                        'disableMenu' : function(t, e, rowId) {
+                            changeRowStauts('disable', 'tf1_frmFirewallRules', rowId, 'tf1_dialog', 'firewallRules', 'firewallRules', 'firewallRules.firewallRules', 'optionSelectAll');
+                        },
+                        'enableMenu' : function(t, e, rowId) {
+                            changeRowStauts('enable', 'tf1_frmFirewallRules', rowId, 'tf1_dialog', 'firewallRules', 'firewallRules', 'firewallRules.firewallRules', 'optionSelectAll');
+                        }
+                    },
+                    onShowMenu: function(e,menu,rowId) {
+			if ($("#"+rowId).attr("status") == "1"){
+				$('#enableMenu', menu).remove();
+			} else {
+				$('#disableMenu', menu).remove();
+			}
+			return menu;
+		}
+                });
+
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 5 },
+                        { type: 'ip-address', targets: 6 }
+                    ]
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+            });
+
+<?lua
+local errorCode, natStatus = routingModeGet ()
+ if(natStatus == "0") then?>
+/****
+ * This function calls when user selects an option from select box
+ * OnChange event
+ * @method FromZoneTypeChange
+ * @param selName - Select box Name
+ */
+function FromZoneTypeChange(selName) {
+	var selValue = comboSelectedValueGet(selName);
+	if (!selValue)
+		return;
+	switch (selValue) {
+		case 'SECURE':
+			/* SECURE (LAN) */
+			fieldStateChangeWr('tf1_availableFromVLAN tf1_internalIpAddress tf1_enablePortForwarding tf1_txtTranslatePortNum', 'tf1_destExternalIpAddress_div', 'tf1_qosPriority', 'tf1_destinationHost_div');
+			vidualDisplay('tf1_availableFromVLAN tf1_internalIpAddress tf1_enablePortForwarding tf1_txtTranslatePortNum tf1_destExternalIpAddress tf1_sourceNATSettings tf1_destinationNATSettings', 'hide');
+			vidualDisplay('break1 break7', 'hide');
+            vidualDisplay('tf1_destinationHost', 'configRow');
+            vidualDisplay('tf1_qosPriority', 'configRow');
+            vidualDisplay('break15', 'break');
+			break;
+		case 'SECURE_VLAN':
+			/* SECURE (VLAN) */
+			fieldStateChangeWr('tf1_qosPriority tf1_internalIpAddress tf1_txtTranslatePortNum', 'tf1_destinationNATSettings', 'tf1_availableFromVLAN', '');
+			vidualDisplay('tf1_qosPriority tf1_destinationNATSettings tf1_internalIpAddress tf1_txtTranslatePortNum', 'hide');
+
+			vidualDisplay('tf1_availableFromVLAN', 'configRow');
+			vidualDisplay('break1', 'break');
+			break;
+		case 'INSECURE':
+			/* INSECURE (WAN) */
+			fieldStateChangeWr('tf1_internalIpAddress tf1_destinationHostFrom tf1_destinationHostTo tf1_availableFromVLAN tf1_qosPriority tf1_enablePortForwarding tf1_txtTranslatePortNum', 'tf1_destinationNATSettings_div tf1_internalIpAddress_div tf1_destExternalIpAddress_div', '', 'tf1_destinationHost_div');
+			vidualDisplay('tf1_availableFromVLAN tf1_qosPriority tf1_destinationHost tf1_destinationHostFrom tf1_destinationHostTo  tf1_enablePortForwarding tf1_txtTranslatePortNum tf1_destinationNATSettings', 'hide');
+
+			vidualDisplay('tf1_destinationHost tf1_internalIpAddress tf1_destExternalIpAddress', 'configRow');
+			vidualDisplay('break1 break11 break12 break15 break16 break17 break19 break20', 'hide');
+			break;
+		case 'PUBLIC':
+			/* DMZ */
+			fieldStateChangeWr('tf1_availableFromVLAN tf1_qosPriority tf1_internalIpAddress tf1_enablePortForwarding tf1_txtTranslatePortNum', 'tf1_destExternalIpAddress_div', '', 'tf1_destinationHost_div');
+			vidualDisplay('tf1_availableFromVLAN tf1_qosPriority tf1_internalIpAddress tf1_enablePortForwarding tf1_txtTranslatePortNum tf1_destinationNATSettings', 'hide');
+			vidualDisplay('tf1_destinationHost', 'configRow');
+			break;
+	}
+   firewallActionCheck('tf1_action');
+}
+
+function dropFieldSelectServiceName(selName){
+
+}
+<?lua end?>
+        </script>
+    </body>
+</html>
+<?lua end ?>

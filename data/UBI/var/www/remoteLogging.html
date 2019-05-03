@@ -1,0 +1,344 @@
+<?lua
+require "teamf1lualib/remoteLogs_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "maintenance"
+    if (HIGH_SEC == "HIGH") then
+	    PAGE_HELP_SECTION = "remoteLoging"
+    else
+	    PAGE_HELP_SECTION = "remoteLoging_RU"
+    end
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local log = require("com.teamf1.bl.admin.smtp")
+
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["remoteLogging.cookie"] = "1"
+    errorFlag, cookie = log.remoteLoggingSet (inputTable)
+    if (errorFlag == 0) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    elseif (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    returnCode, cookie, logName, emailLog, emailServer, smtpPort, fromAddress,
+    toAddress, toAddress2, toAddress3, authentication, userName, passWord,
+    respondIdentd, unitValue, dayOfWeek, time, tlsSupport = log.remoteLoggingGet ()
+
+if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end 
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+LANG_LOCALE =
+"13359,10658,11125,11768,13183,10870,13022,11725,13156,13358,13085,11042,12757,10669,12356,12006,11353,10868,11258,10867,11257,11256,12260,12363,12373,12380,12379,12389,12381,12815,11861,10331,10613,11945,11789,13239,11899,20036,12664,12665,10869,12877,10871,11353,12699,13086,14369,14370,10865,13032,12627,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/dateTimePicker.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+               <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage or '' |$</p>
+                </div>
+                <?lua end ?>
+               <div align="left">
+                   <nav class="nav-bg">
+                   <ul class="menu">
+                       <li class="current">
+                           <a href="?page=remoteLogging.html">$| LANG_LOCALE['10865'] |$</a>
+                       </li>
+                       <li>
+                           <a href="?page=sysLogServer.html">$| LANG_LOCALE['13032'] |$</a>
+                       </li>
+                   </ul>
+                   </nav>
+               </div>                                          
+                    <div class="FL2">
+                        <p class="hint">
+                             $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['14370'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmRemoteLogging" id="tf1_frmRemoteLogging" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="remoteLogging.html">
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12664'] |$ </label>
+                                    <input type="text" id="tf1_txtLogId" name="remoteLogging.logId" value = "$| logName or ''|$" onkeypress='return !isProblemChar (event, "\"", LANG_LOCALE['12664']);' maxlength="64" >
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_emailLog_div">
+                                    <label> $| LANG_LOCALE['10869'] |$ </label>
+                                       <?lua
+                                
+                                        if (emailLog == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" id="tf1_emailLog"></a>
+                                        <input type="hidden" value="$| statusVar |$" name="remoteLogging.emailLog">
+                                </div>
+                                <div class="break" id="break1_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtEmailServerAddr4_div">
+                                    <label> $| LANG_LOCALE['10871'] |$ </label>
+                                    <input type="text"
+                                    id="tf1_txtEmailServerAddr4" maxlength="48" name = "remoteLogging.emailServer" value = "$| emailServer or '' |$">
+                                </div>
+                                <div class="break" id="break2_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtPort_div">
+                                    <label> $| LANG_LOCALE['12877'] |$ </label>
+                                    <input type="text" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11353'], '');}" id="tf1_txtPort" class="one" name= "remoteLogging.smtpPort" value = "$| smtpPort or ''|$">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 1 - 65535]
+                                    </dl>
+                                </div>
+                                <div class="break" id="break3_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtEmailReturnAddr_div">
+                                    <label> $| LANG_LOCALE['12699'] |$ </label>
+                                    <input type="text" maxlength="64" id="tf1_txtEmailReturnAddr" name= "remoteLogging.fromAddress" value ="$| fromAddress or ''|$">
+                                </div>
+                                <div class="break" id="break4_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtEmailSendAddr1_div">
+                                    <label> $| LANG_LOCALE['12815'] |$ (1) </label>
+                                    <input type="text" maxlength="64" id="tf1_txtEmailSendAddr1" name="remoteLogging.toAddress" value ="$| toAddress or ''|$">
+                                </div>
+                                <div class="break" id="break5_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtEmailSendAddr2_div">
+                                    <label> $| LANG_LOCALE['12815'] |$ (2) </label>
+                                    <input type="text" maxlength="64" id="tf1_txtEmailSendAddr2" name= "remoteLogging.toAddress2" value = "$| toAddress2 or '' |$"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break" id="break6_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtEmailSendAddr3_div">
+                                    <label> $| LANG_LOCALE['12815'] |$ (3) </label>
+                                    <input type="text" maxlength="64" id="tf1_txtEmailSendAddr3" name="remoteLogging.toAddress3" value="$| toAddress3  or '' |$"><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break" id="break7_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_aughSMTP_div">
+                                    <label> $| LANG_LOCALE['10331'] |$ </label>
+                                    <p>
+                                        <input type="radio" value="1" checked name="remoteLogging.auth" $| web.radioSelected(authentication == "-1") |$ id="tf1_aughSMTP" onClick="authenticationSMTPTypeChange('tf1_aughSMTP')" 
+                                      >
+                                       $| LANG_LOCALE['11789'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" value="2" name="remoteLogging.auth" $| web.radioSelected(authentication == "0") |$ onClick="authenticationSMTPTypeChange('tf1_aughSMTP')" onClick="authenticationSMTPTypeChange('tf1_aughSMTP')"
+                                        >
+                                       $| LANG_LOCALE['11945'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" value="3" name="remoteLogging.auth" $| web.radioSelected(authentication == "1") |$ onClick="authenticationSMTPTypeChange('tf1_aughSMTP')" onClick="authenticationSMTPTypeChange('tf1_aughSMTP')"
+                                       >
+                                        $| LANG_LOCALE['10613'] |$
+                                    </p>
+                                </div>
+                                <div class="break" id="break8_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtSmtpLoginUserName_div">
+                                    <label> $| LANG_LOCALE['13239'] |$ </label>
+                                    <input type="text" id="tf1_txtSmtpLoginUserName" maxlength="64" onkeypress ="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }" name="remoteLogging.userName" value="$| userName or '' |$">
+                                </div>
+                                <div class="break" id="break9_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_txtSmtpLoginPwd_div">
+                                    <label> $| LANG_LOCALE['11899'] |$ </label>
+                                    <input type="password" id="tf1_txtSmtpLoginPwd" maxlength="64" onkeypress ="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }" name="remoteLogging.password" value = "$| passWord  or '' |$">
+                                </div>
+                                <div class="break" id="break10_div">
+                                    &nbsp;
+                                </div>
+                               <?lua if(HIGH_SEC == "HIGH") then ?>
+ 				<div class="configRow" id="tf1_tlsSupport_div">
+                                    <label>$| LANG_LOCALE['14369'] |$</label>
+                                       <?lua
+                                
+                                        if (tlsSupport == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" id="tf1_tlsSupport"></a>
+                                        <input type="hidden" value="$| statusVar |$" name="remoteLogging.tlsSupport">
+                                </div>
+                                <div class="break" id="breakTlsSupport_div">
+                                    &nbsp;
+                                </div>
+				<?lua end ?>
+                                <div class="configRow" id="tf1_respondIdentdSMTP_div">
+                                    <label> $| LANG_LOCALE['20036'] |$ </label>
+                                  <?lua
+                                        if (respondIdentd == "1") then
+                                            statusStr = "enable-disable-on"
+                                            statusVar = "1"
+                                            CheckedVar = "checked"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar="0"
+                                            checkedVar = ""
+                                        end
+                                        ?>
+                                        <a class="$| statusStr |$" alt="" id="tf1_respondIdentdSMTP"></a>
+                                        <input type="hidden" value="$| statusVar |$" name="remoteLogging.respondIdentd">
+                                </div>
+                                <div class="break" id="break11_div">
+                                    &nbsp;
+                                </div>
+                                <div id="emailLogBySchedule_div">
+                                    <h2>$| LANG_LOCALE['10870'] |$</h2>
+                                    <div class="configRow" id="tf1_scheduleUnit_div">
+                                        <label> $| LANG_LOCALE['13183'] |$ </label>
+                                        <p>
+                                            <input type="radio" value="1" checked name="remoteLogging.unit" $| web.radioSelected (unitValue == "0") |$ id="tf1_scheduleUnit1" onClick="emailSecheduleLogCheck('tf1_scheduleUnit1')" >
+                                            $| LANG_LOCALE['11768'] |$
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="2" name="remoteLogging.unit" $| web.radioSelected (unitValue == "1") |$ id="tf1_scheduleUnit2" onClick="emailSecheduleLogCheck('tf1_scheduleUnit2')">
+                                           $| LANG_LOCALE['11125'] |$
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="3" name="remoteLogging.unit" $| web.radioSelected (unitValue == "2") |$ id="tf1_scheduleUnit3" onClick="emailSecheduleLogCheck('tf1_scheduleUnit3')">
+                                            $| LANG_LOCALE['10658'] |$
+                                        </p>
+                                        <p>
+                                            <input type="radio" value="4" name="remoteLogging.unit" $| web.radioSelected (unitValue == "3") |$ id="tf1_scheduleUnit4" onClick="emailSecheduleLogCheck('tf1_scheduleUnit4')">
+                                            $| LANG_LOCALE['13359'] |$
+                                        </p>
+                                    </div>
+                                    <div class="break" id="break12_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_emailLogByScheduleDay_div">
+                                        <label> $| LANG_LOCALE['10669'] |$ </label>
+                                        <select size="1" id="tf1_emailLogByScheduleDay" name="remoteLogging.day" >
+                                            <option $| web.dropdownSelected(dayOfWeek == "7") |$ value="7">$| LANG_LOCALE['13022'] |$</option>
+                                            <option $| web.dropdownSelected(dayOfWeek == "1") |$ value="1">$| LANG_LOCALE['11725'] |$</option>
+                                            <option $| web.dropdownSelected(dayOfWeek == "2") |$ value="2">$| LANG_LOCALE['13156'] |$</option>
+                                            <option $| web.dropdownSelected(dayOfWeek == "3") |$ value="3">$| LANG_LOCALE['13358'] |$</option>
+                                            <option $| web.dropdownSelected(dayOfWeek == "4") |$ value="4">$| LANG_LOCALE['13085'] |$</option>
+                                            <option $| web.dropdownSelected(dayOfWeek == "5") |$ value="5">$| LANG_LOCALE['11042'] |$</option>
+                                            <option $| web.dropdownSelected(dayOfWeek == "6") |$ value="6">$| LANG_LOCALE['12757'] |$</option>
+                                        </select>
+                                    </div>
+                                    <div class="break" id="break13_div">
+                                        &nbsp;
+                                    </div>                                    
+                                    <div class="configRow" id="tf1_dateTimePickerStartValue_div">
+			                            <label>$| LANG_LOCALE['13086'] |$ </label>
+			                            <input type="text"
+                                        name="remoteLogging.time" value="$|time
+                                        or ''|$" id="tf1_dateTimePickerStartValue" class="one">
+			                        </div>
+			                        <div class="break">&nbsp;</div>
+			                        
+			                        <div class="configRow" id="tf1_dateTimePickerStart_div">
+			                            <label>&nbsp; </label>
+			                            <input type="hidden" id="tf1_dateTimePickerStart" onChange="onchangeValueStart()" readonly>
+			                            <div id="tf1_dateTimePickerStart"></div>
+			                        </div>
+			                        <div class="break" id="break12_div">
+			                            &nbsp;
+			                        </div>
+
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" onClick="setHiddenChks('tf1_frmRemoteLogging'); return remoteLogingFormValidate()" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" name="button.config.remoteLogging">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onClick="this.form.reset(); resetImgOnOff('tf1_frmRemoteLogging'); return remoreLoginOnreset();">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/remoteLogging.js"></script>
+        <script type="text/javascript" language="javascript" src="js/dateTimePicker.js"></script>
+    </body>
+</html>
+<?lua end ?>
+

@@ -1,0 +1,228 @@
+<?lua
+require "teamf1lualib/trafficSelector_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+-- traffic Selector business Logic
+local TS_bl = require("com.teamf1.bl.network.trafficSelector")
+local returnCode, statusMessage
+returnCode, BWP_Status = TS_bl.bwProfileStatusInfoGet()
+if (returnCode == returnCodes.SUCCESS) then
+    statusSuccessMessage = errorMap.errorStringGet (returnCode)
+end
+returnCode, BandWidthProfileTable = TS_bl.bandwidthProfilesGetAll()
+if (returnCode == returnCodes.SUCCESS) then
+    statusSuccessMessage = errorMap.errorStringGet (returnCode)
+end
+returnCode, serviceTable = TS_bl.servicesGetAll()
+if (returnCode == returnCodes.SUCCESS) then
+    statusSuccessMessage = errorMap.errorStringGet (returnCode)
+end
+returnCode, portMgmtTable = TS_bl.portMgmtGetAll()
+if (returnCode == returnCodes.SUCCESS) then
+    statusSuccessMessage = errorMap.errorStringGet (returnCode)
+end
+returnCode, dot11IfaceTable = TS_bl.dot11InterfaceUnusedRowsInfoGet()
+if (returnCode == returnCodes.SUCCESS) then
+    statusSuccessMessage = errorMap.errorStringGet (returnCode)
+end
+returnCode, vlanTable = TS_bl.vlanInfoGet()
+if (returnCode == returnCodes.SUCCESS) then
+    statusSuccessMessage = errorMap.errorStringGet (returnCode)
+end
+returnCode, configuredPort = TS_bl.configPortInfoGet()
+if (returnCode == returnCodes.SUCCESS) then
+   statusSuccessMessage = errorMap.errorStringGet (returnCode)
+end
+
+if(ButtonType == "add" or ButtonType == "edit") then
+-- irrespective of button 
+   if (ButtonType and ButtonType == "edit") then
+       configRowId = cgi["configRowId"]
+       errorFlag, TS_Table = TS_bl.trafficSelectorGet (configRowId) 
+       if (returnCode == returnCodes.SUCCESS) then
+           statusSuccessMessage = errorMap.errorStringGet (returnCode)
+       else 
+           statusErrorMessage = errorMap.errorStringGet (returnCode)
+       end
+   else
+       configRowId = "-1"
+       errorFlag, TS_Table = TS_bl.trafficSelectorGet (configRowId) 
+   end
+   cgilua.header ("Content-Type","text/html; charset=UTF-8")    
+end
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<div id="tf1_trafficSelectorsDailogContent">
+    <div class="topBg">
+        <h1 data-localize="30156">Traffic Selector Configuration</h1>
+        <close>
+            <a href="#" id="btnClose" title="Close">X</a>
+        </close>
+    </div>
+    <div class="dialogMidArea">
+        <div align="left">
+            <div class="configRow" id="tf1_profiles_div">
+                <label data-localize="10342">Available Profiles</label>
+                <select size="1" name="TrafficSelector.ProfileName" id="tf1_profiles" onchange="checkProfileType ();">
+                <?lua
+                    local i = 0
+                    for k,v in pairs(BandWidthProfileTable) do
+                        i = i + 1
+                        local row = BandWidthProfileTable[i]
+                        if (row["BandWidthProfile.ProfileName"] ~= "bandwidth_limit") then
+                ?>
+                    <option bound="$| row["BandWidthProfile.Policy"] or '' |$" value="$| row["BandWidthProfile.ProfileName"] |$" $| web.dropdownSelected(TS_Table["TrafficSelector.ProfileName"] == row["BandWidthProfile.ProfileName"]) |$>$| row["BandWidthProfile.ProfileName"] |$</option>
+                <?lua
+                        end
+                    end
+                ?>
+                </select>
+            </div>
+            <div class="break" id="break_profiles_div">&nbsp;</div>
+            <div class="configRow" id="tf1_service_div">
+                <label data-localize="12831">Service</label>
+		        <select size="1" name="TrafficSelector.ServiceName" id="tf1_service">
+                <?lua
+                    local i = 0
+                    for k,v in pairs(serviceTable) do
+                        i = i + 1
+                        local row = serviceTable[i]
+                            if (row["Services.Protocol"] ~= "58") then
+                ?>
+                    <option $| web.dropdownSelected(TS_Table["TrafficSelector.ServiceName"] == row["Services.ServiceName"]) |$ value="$| row["Services.ServiceName"] |$">$| row["Services.ServiceName"] |$</option>
+                <?lua
+                            end
+                    end
+                ?>
+                </select>
+            </div>
+            <div class="break" id="break_service_div">&nbsp;</div>
+	    <!-- For match type outbound -->
+            <div class="configRow" id="tf1_trafficSelectorOut_div">
+                <label data-localize="13130">Traffic Selector Match Type</label>
+		<select size="1" name="TrafficSelector.MatchType" id="tf1_trafficSelectorOut" onChange="optionCheck('tf1_trafficSelectorOut')">
+                    <option data-localize="11384" $| web.dropdownSelected(TS_Table["TrafficSelector.MatchType"] == "1") |$ value="1">IP</option>
+                    <option data-localize="11636" $| web.dropdownSelected(TS_Table["TrafficSelector.MatchType"] == "2") |$ value="2">MAC Address</option>
+                    <option data-localize="12474" $| web.dropdownSelected(TS_Table["TrafficSelector.MatchType"] == "3") |$ value="3">Port Name</option>
+                    <option data-localize="13272" $| web.dropdownSelected(TS_Table["TrafficSelector.MatchType"] == "4") |$ value="4">VLAN</option>
+                    <?lua if(UNIT_NAME == "DSR-1000N" or  UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID ==
+                    "DSR-500AC_Ax") then ?>
+                    <option data-localize="10427" $| web.dropdownSelected(TS_Table["TrafficSelector.MatchType"]  == "6") |$ value="6">BSSID</option>
+                    <?lua
+                          end
+                    ?>
+                </select>
+            </div>
+            <div class="break" id="break_trafficSelectorOut_div">&nbsp;</div>
+	    <!-- For match type outbound end-->
+            <!-- For match type inbound -->
+            <div class="configRow" id="tf1_trafficSelectorIn_div">
+                <label data-localize="13130">Traffic Selector Match Type</label>
+		<select size="1" name="TrafficSelector.MatchType" id="tf1_trafficSelectorIn" onChange="optionCheck('tf1_trafficSelectorIn')">
+                    <option data-localize="11384" $| web.dropdownSelected(TS_Table["TrafficSelector.MatchType"] == "1") |$ value="1">IP</option>
+                </select>
+            </div>
+	    <!-- For match type inbound end -->
+            <div class="break" id="break_trafficSelectorIn_div">&nbsp;</div>	
+            <div class="configRow" id="tf1_ipAddress_div">
+                <label data-localize="11387">IP Address</label>
+                <input type="text" name="TrafficSelector.IPAddress" id="tf1_ipAddress" maxlength="15" value="$| TS_Table["TrafficSelector.IPAddress"] or '' |$" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) {return ipv4AddrValidate (this, 'IP',false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+            </div>
+            <div class="break" id="break_ipAddress_div">&nbsp;</div>	
+            <div class="configRow" id="tf1_subnetMask_div">
+                <label data-localize="13017">Subnet Mask</label>
+                <input type="text" name="TrafficSelector.SubnetMask" value="$| TS_Table["TrafficSelector.SubnetMask"] or '' |$" id="tf1_subnetMask" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { if (this.value != '0') {return validNetMask (this.id) }}">
+            </div>
+            <div class="break" id="break_subnetMask_div">&nbsp;</div>
+            <div class="configRow" id="tf1_txtMacAddr_div">
+                <label data-localize="11636">MAC Address</label>
+                <input type="text" name="TrafficSelector.MACAddress" value="$| TS_Table["TrafficSelector.MACAddress"] or '' |$" id="tf1_txtMacAddr" maxlength="17" onKeyPress="return numericValueCheck (event, 'ABCDEFabcdef:')" onKeyDown="return macAddrVerify (event, this, true, '', '')">
+            </div>
+            <div class="break" id="break_txtMacAddr_div">&nbsp;</div>
+	<!-- Outbound Port-->
+	    <div class="configRow" id="tf1_portNumberOut_div">
+	    	<label data-localize="12474">Port Name</label>
+		    <select size="1" id="tf1_portNumberOut" name="TrafficSelector.PortName">
+			<?lua
+			    local i = 0
+			    for k,v in pairs(portMgmtTable) do
+			        i = i + 1
+				local row = portMgmtTable[i]
+				if (row["PortMgmt.PortName"] == "DedicatedWAN" or (row["PortMgmt.PortName"] == "OptionalPort" and (configuredPort == "" or (configuredPort ~= "LAN" and configuredPort ~= "BRIDGE")))) then
+				else
+				    local StIdx,EndIdx = string.find(row["PortMgmt.PortName"],"Port")
+				    local portName = row["PortMgmt.PortName"] or ''
+				    if (StIdx ~= nil) then
+					 if (StIdx == 0 or StIdx == 1) then
+					     portName = string.gsub(portName, "Port", "Port ")
+					 else
+					     portName = string.gsub(portName, "Port", " Port")
+					 end
+				    else
+				   	 portName = string.gsub(portName, "WAN", " WAN")
+				    end
+			?>
+			<option $| web.dropdownSelected(TS_Table["TrafficSelector.PortName"] == row["PortMgmt.PortName"]) |$ value="$| row["PortMgmt.PortName"] |$">$| portName |$</option>
+			<?lua
+			        end
+			    end
+			?>
+		    </select>					
+	    </div>
+	    <div class="break" id="break_portNumberOut_div">&nbsp;</div>
+	<!-- Outbound Port End-->
+	<!-- Inbound Port-->
+	    <div class="configRow" id="tf1_portNumberIn_div">
+	    	<label data-localize="12474">Port Name</label>
+		    <select size="1" id="tf1_portNumberIn" name="TrafficSelector.PortName">
+			<option data-localize="30157" $| web.dropdownSelected(TS_Table["TrafficSelector.PortName"] == "WAN1") |$ value="WAN1">Dedicated Port</option>
+			<option data-localize="30158" $| web.dropdownSelected(TS_Table["TrafficSelector.PortName"]== "WAN2") |$ value="WAN2">Optional Port</option>
+		    </select>
+	    </div>
+	    <div class="break" id="break_portNumberIn_div">&nbsp;</div>
+	<!-- Inbound Port End-->
+	<?lua if(UNIT_NAME == "DSR-1000N" or  UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then ?>
+        <!-- BSSID -->
+	    <div class="configRow" id="tf1_bssid_div">
+	        <label data-localize="10427">BSSID</label>
+	        <select size="1" name="TrafficSelector.VapName" id="tf1_bssid">
+                <?lua
+                    if (#dot11IfaceTable > 0) then
+                        for k,v in pairs (dot11IfaceTable) do
+                ?>
+                <option $| web.dropdownSelected(v["dot11Interface.vapName"] == TS_Table["TrafficSelector.VapName"]) |$ value="$| v["dot11Interface.vapName"] or '' |$">$| v["dot11Interface.vapName"] or '' |$</option>
+                <?lua
+                        end
+                    end
+                ?>
+	        </select>					
+	    </div>
+	    <div class="break" id="break_bssid_div">&nbsp;</div>
+	<?lua end ?>
+	    <div class="configRow" id="tf1_vlanId_div">
+		<label data-localize="13272">VLAN</label>
+		<select size="1" name="TrafficSelector.VlanId" id="tf1_vlanId">
+		    <?lua
+			i = 0
+			for k,v in pairs(vlanTable) do
+			    i = i + 1
+			    local row = vlanTable[i]
+			    if (row["vlan.portName"] == "dummy") then
+		    ?>
+		    <option $| web.dropdownSelected(TS_Table["TrafficSelector.VlanId"] == row["vlan.vlanId"]) |$ value="$| row["vlan.vlanId"] |$">$| row["vlan.vlanName"] |$</option>
+		    <?lua
+		            end
+			end
+		    ?>	
+		</select>					
+	    </div>
+	    <div class="break" id="break_vlanId_div">&nbsp;</div>				
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+	<input data-localize="12758" type="submit" onclick="return trafficSelectorValidation()" class="btnSubmit" title="Save" value="Save" id="btSave" name="button.config.trafficSelectors.trafficSelectors.$| configRowId |$">
+    </div>
+</div>

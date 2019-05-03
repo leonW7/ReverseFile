@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="igmp-configuration" prompt="[igmp-settings]> "> 
+    <COMMAND name="save" help="Save igmp settings">
+	     <ACTION>lua clishCfgObjExec("Igmp")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save igmp settings and exit current mode" 
+	     view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("Igmp")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back igmp settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+   	<COMMAND name="Enable"
+             help="Specify the igmp proxy should enable or disable">
+             <PARAM name="enable"
+                    help="Specify the igmp proxy should enable or disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Igmp", "Igmp.IgmpEnable", "${enable}")</ACTION>
+    </COMMAND>
+    <COMMAND name="UpStreamInterface_WAN1" help="This command is used to select WAN
+        upstream interface for WAN1">
+        <PARAM name="interface_WAN1"
+            help=""
+            ptype="UPSTREAM_INTERFACE_WAN"/>
+        <ACTION>lua clishCfgObjAdd ("Igmp", "Igmp.upstreamInterfaceWAN1", "${interface_WAN1}")</ACTION>
+   </COMMAND>
+   <COMMAND name="UpStreamInterface_WAN2" help="This command is used to select WAN
+        upstream interface for WAN2" check_supported="Y">
+        <PARAM name="interface_WAN2"
+            help=""
+            ptype="UPSTREAM_INTERFACE_WAN"/>
+        <ACTION>lua clishCfgObjAdd ("Igmp", "Igmp.upstreamInterfaceWAN2", "${interface_WAN2}")</ACTION>
+</COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="igmp-snooping-configuration" prompt="[igmp-snooping-settings]> "> 
+    <COMMAND name="save" help="Save igmp snooping settings">
+	     <ACTION>lua clishCfgObjExec("Igmp")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save igmp snooping settings and exit current mode" 
+	     view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("Igmp")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back igmp snooping settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+   	<COMMAND name="Enable"
+             help="Specify the igmp snooping should enable or disable">
+             <PARAM name="enable"
+                    help="Specify the igmp snooping should enable or disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("Igmp", "igmpSnooping.Status", "${enable}")</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="igmp-portmap-configuration" prompt="[igmp-portmap-settings]> "> 
+    <COMMAND name="save" help="Save igmp portmap settings">
+	     <ACTION>lua clishCfgObjExec("Igmp")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save igmp portmap settings and exit current mode" 
+	     view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("Igmp")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back igmp portmap settings changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+   	<COMMAND name="portmembership"
+             help="Specify the igmp port membership to the selected vlan">
+             <PARAM name="portmap"
+                    help="Specify the igmp port membership to the selected vlan"
+                    ptype="IGMP_PORT_MEMSHIP"/>
+             <ACTION>lua clishCfgObjAdd ("Igmp", "igmpSnooping.membership", "${portmap}")</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+ <COMMAND name="net igmp" 
+	help="igmp configuration commands"/>
+<!--=======================================================-->
+<COMMAND name="net igmp configure"
+    help="Specify igmp proxy should be enable or disable"
+    view="igmp-configuration" viewid="">
+    <ACTION>lua clishCfgObjNew ("Igmp",IgmpCfgInit,IgmpCfgSave,IgmpCfgInputVal)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="net igmp snooping" check_supported="Y"
+    help="igmp snooping configuration commands"/>
+<!--=======================================================-->
+<COMMAND name="net igmp snooping configure"
+    help="Specify igmp snooping should be enable or disable"
+    view="igmp-snooping-configuration" viewid="">
+    <ACTION>lua clishCfgObjNew ("Igmp",IgmpSnoopingCfgInit,IgmpSnoopingCfgSave,IgmpSnoopingCfgInputVal)</ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="net igmp portmap" check_supported="Y"
+    help="igmp snooping portmap configuration commands"/>
+<!--=======================================================-->
+<COMMAND name="net igmp portmap configure"
+    help="Specify igmp port map configuration"
+    view="igmp-portmap-configuration" viewid="">
+    <PARAM name="vlanId"
+                 help="Enter unique vlan id to map igmp portmembership"
+                 ptype="VLAN_ID"/>
+            <ACTION>lua clishCfgObjNew ("Igmp", 
+                                       IgmpPortmapCfgInit, 
+                                       IgmpPortmapCfgSave,
+                                       IgmpPortmapCfgInputVal,
+                                       "${vlanId}")
+	        </ACTION>
+</COMMAND>
+<!--=======================================================-->
+   <COMMAND name="show net igmp"
+       help="Display igmp configuration">
+       <ACTION>lua IgmpCfgShow("2")</ACTION>
+       </COMMAND>
+
+<!--=======================================================-->
+<COMMAND name="show net igmp snooping" check_supported="Y"
+       help="Display igmp snooping configuration">
+       <ACTION>lua IgmpSnoopingCfgShow()</ACTION>
+   </COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

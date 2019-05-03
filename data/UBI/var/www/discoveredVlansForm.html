@@ -1,0 +1,27 @@
+<?lua
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_discoveredVlansDailogContent">
+    <div class="topBg">
+        <h1>Discovered VLANs Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>VLAN </label>
+            <input type="text" class="one" name="discoveredVlans.vlanId" id="tf1_VLAN" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck(this, '', '', 1, 4093, true, 'Invalid VLAN. ','','');}">
+            <dl>
+                [Range: 1 - 4093]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" name="button.add.discoveredVlans" id="btSave" value="Save" title="Save" class="btnSubmit" onclick="return pageValidate()">
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->

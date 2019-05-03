@@ -1,0 +1,12 @@
+#noauth
+#+ipv6
+#ipv6cp-accept-local 1
+#noip
+user teamf1
+password teamf1
+noccp
+usepeerdns
+ipparam "l2tp"
+lcp-echo-interval 60
+lcp-echo-failure 4
+default route

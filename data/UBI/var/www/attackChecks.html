@@ -1,0 +1,305 @@
+<?lua
+local ROW_ID = "1"
+require "teamf1lualib/attackChecks_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "attackChecks"
+
+local attackChecks = require("com.teamf1.bl.firewall.attackChecks")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["attackChecks.cookie"] = ROW_ID
+    local returnCode, cookie = attackChecks.attackChecksSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local returnCode, cookie, stealthModeStatus, blockTcpFloodStatus
+    local blockUdpFloodStatus, udpConnectionLimitValue, pingOnLanStatus
+    local blockICMPNotification, blockFragPkts, blockMulticastPkts
+    local blockSpoofPktStatus, synFloodDetectRate, echoStormFloodRate
+    local icmpFloodRate, statusMessage
+    returnCode, cookie, stealthModeStatus, blockTcpFloodStatus, 
+    blockUdpFloodStatus, udpConnectionLimitValue, pingOnLanStatus, 
+    blockICMPNotification, blockFragPkts, blockMulticastPkts, 
+    blockSpoofPktStatus, synFloodDetectRate, echoStormFloodRate, 
+    icmpFloodRate, tcpFilterCheckStatus = attackChecks.attackChecksSectionGet()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE =
+"10305,13312,13007,10396,11539,10397,11371,11139,10392,10391,10394,10395,10811,13029,11367,11692,10861,30325,11942,11135,11272,11136,11371,11367,11255,11272,12404,12259,12282,13475,12627,12758,10449,50000,50001"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['10305'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmAttackChecks"
+                                id="tf1_frmAttackChecks" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="attackChecks.html">
+                            <input type="hidden" name="attackChecks.pingOnLanStatus" value="$| pingOnLanStatus or '0' |$">
+                                <h2>$| LANG_LOCALE['13312'] |$</h2>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13007'] |$ </label>
+                            <?lua                  
+                                 if (stealthModeStatus == "1") then
+                                    statusStr="enable-disable-on"
+                                    statusVar = "1"
+                                 else
+                                    statusStr="enable-disable-off"
+                                    statusVar = "0"
+                                   end
+                           ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="attackChecks.stealthModeStatus">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10396'] |$ </label>
+                            <?lua 
+                                                 
+                                 if (blockTcpFloodStatus == "1") then
+                                    statusStr="enable-disable-on"
+                                    statusVar = "1"
+                                 else
+                                    statusStr="enable-disable-off"
+                                    statusVar = "0"
+                                   end
+                           ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="attackChecks.blockTcpFloodStatus">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2> $| LANG_LOCALE['50000'] |$ </h2>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['50001'] |$ </label>
+                                 <?lua
+                                      if (tcpFilterCheckStatus == "1") then
+                                          statusStr = "enable-disable-on"
+                                          statusVar = "1"
+                                      else
+                                          statusStr = "enable-disable-off"
+                                          statusVar = "0"
+                                      end
+                                 ?>
+                                 <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="attackChecks.tcpFilterStatus">
+                                 </div>
+                                 <div class="break">
+                                       &nbsp;
+                                 </div>
+                                <h2>$| LANG_LOCALE['11539'] |$</h2>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10397'] |$ </label>
+                            <?lua 
+                                                 
+                                 if (blockUdpFloodStatus == "1") then
+                                    statusStr="enable-disable-on"
+                                    statusVar = "1"
+                                 else
+                                    statusStr="enable-disable-off"
+                                    statusVar = "0"
+                                   end
+                           ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_txtUdpFlood"></a>
+                                        <input type="hidden" value="$| statusVar |$" name="attackChecks.blockUdpFloodStatus">
+                                </div>
+                                <div class="configRow" id="tf1_txtUdpConnectionLimit_div">
+                                    <input class="one" type="text" name
+                                    ="attackChecks.udpConnectionLimitValue"
+                                    value = "$| udpConnectionLimitValue |$" id="tf1_txtUdpConnectionLimit" maxlength="3" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 25, 500, true, LANG_LOCALE['11371']+':', '');}">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 25 - 500] 
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['11139'] |$</h2>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10392'] |$ </label>
+                            <?lua 
+                                                 
+                                 if (blockICMPNotification == "1") then
+                                    statusStr="enable-disable-on"
+                                    statusVar = "1"
+                                 else
+                                    statusStr="enable-disable-off"
+                                    statusVar = "0"
+                                   end
+                           ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="attackChecks.blockICMPNotification">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10391'] |$ </label>
+                            <?lua 
+                                                 
+                                 if (blockFragPkts == "1") then
+                                    statusStr="enable-disable-on"
+                                    statusVar = "1"
+                                 else
+                                    statusStr="enable-disable-off"
+                                    statusVar = "0"
+                                   end
+                           ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="attackChecks.blockFragPkts">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10394'] |$ </label>
+                            <?lua 
+                                                 
+                                 if (blockMulticastPkts == "1") then
+                                    statusStr="enable-disable-on"
+                                    statusVar = "1"
+                                 else
+                                    statusStr="enable-disable-off"
+                                    statusVar = "0"
+                                   end
+                           ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="attackChecks.blockMulticastPkts">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10395'] |$ </label>
+                            <?lua 
+                                                 
+                                 if (blockSpoofPktStatus == "1") then
+                                    statusStr="enable-disable-on"
+                                    statusVar = "1"
+                                 else
+                                    statusStr="enable-disable-off"
+                                    statusVar = "0"
+                                   end
+                           ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                        <input type="hidden" value="$| statusVar |$" name="attackChecks.blockSpoofPktStatus">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['10811'] |$</h2>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13029'] |$ </label>
+                                    <input class="one" type="text"
+                                    name="attackChecks.synFloodDetectRate"
+                                    value="$|synFloodDetectRate|$" id="tf1_txtSynFloodRate" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10000, true, LANG_LOCALE['11367']+':', '');}">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 1 - 10000] $| LANG_LOCALE['11692'] |$
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10861'] |$ </label>
+                                    <input class="one" type="text" id="tf1_txtEchoStorm" 
+                                    name="attackChecks.echoStormFloodRate" value="$|echoStormFloodRate|$" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10000, true, LANG_LOCALE['30325']+':', '');}">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 1 - 10000] $| LANG_LOCALE['11942'] |$
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11135'] |$ </label>
+                                    <input class="one" type="text" 
+                                    name="attackChecks.icmpFloodRate" value="$|icmpFloodRate|$" id="tf1_txticmpFlood" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10000, true, LANG_LOCALE['11272']+':', '');}">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 1 - 10000] $| LANG_LOCALE['11136'] |$
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit"
+                                    title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" name= "button.config.attackChecks" onclick="return getAttacksValidate('tf1_frmAttackChecks');">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmAttackChecks'); attackChecksOnReset();">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td><?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/attackChecks.js"></script>
+    </body>
+</html>
+<?lua end ?>

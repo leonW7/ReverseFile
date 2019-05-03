@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="vpn-policy-config" prompt="vpn-config[policy]> "> 
+    <COMMAND name="save" help="Save vpn policy configuration changes.">
+        <ACTION>lua clishCfgObjExec("vpn")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back vpn policy configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+             help="Save vpn policy configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("vpn")</ACTION>
+    </COMMAND>
+        <COMMAND name="general_policy_type" 
+             help="Setting policy manual or auto">
+     <PARAM name="policy_type" 
+            help="Setting policy manual or auto"
+            ptype="VPN_POLICY_TYPE"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.PolicyType","${policy_type}")
+         </ACTION>
+     </COMMAND>
+    <COMMAND name="general_ike_version" 
+             help="Setting version ikev1 or ikev2">
+    <PARAM name="ike_ver" 
+           help="Setting version ikev1 or ikev2"
+           ptype="IKE_VERSION"/>
+        <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.IKEVersion","${ike_ver}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="general_ip_protocol_version" 
+             help="Setting protocol version ipv4 or ipv6">
+    <PARAM name="ike_proto_version" 
+           help="Setting protocol version ipv4 or ipv6"
+           ptype="VPN_PROTOCOL_VERSION"/>
+        <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.AddressFamily","${ike_proto_version}")
+        </ACTION>
+    </COMMAND>
+  <!--COMMAND name="general_ipsec_mode" 
+             help="Setting ipsec mode for the vpn policy">
+     <PARAM name="ipsec_mode" 
+            help="Setting ipsec mode for the vpn policy"
+            ptype="VPN_IPSECMODE"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.TunnelOrTransport","${ipsec_mode}")
+         </ACTION>
+    </COMMAND-->
+    <COMMAND name="general_select_local_gateway" 
+             help="Setting local gateway for the vpn policy">
+     <PARAM name="select_local_gateway" 
+            help="Setting local gateway for the vpn policy"
+            ptype="VPN_GW"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.LocalGateway","${select_local_gateway}")
+         </ACTION>
+    </COMMAND>
+  <COMMAND name="general_remote_end_point_type"
+             help="Set mode to IP address or Internet Name/FQDN of the remote gateway or client PC">
+     <PARAM name="remote_end_point_type" 
+            help="Set mode to IP address or Internet Name/FQDN of the remote gateway or client PC"
+            ptype="VPN_REMOTE_ENDPOINT_TYPE"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RemoteEndPointType","${remote_end_point_type}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="general_remote_end_point" help="The IP address or Internet Name/FQDN of the remote gateway or client PC."/>
+    <COMMAND name="general_remote_end_point ip_address" help="The IP address  of the remote gateway or client PC.">
+     <PARAM name="remote_end_point" 
+            help="The IP address  of the remote gateway or client PC" 
+            ptype="ADDR"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RemoteEndPoint","${remote_end_point}")
+         </ACTION>
+    </COMMAND>
+   <COMMAND name="general_remote_end_point fqdn" help="The IP address or Internet Name/FQDN of the remote gateway or client PC.">
+     <PARAM name="remote_end_point" 
+            help="The Internet Name/FQDN of the remote gateway or client PC" 
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RemoteEndPoint","${remote_end_point}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_enable_mode_config"
+             help="enable/disable mode config">
+    <PARAM name="enable_mode_config" 
+           help="enable or disable mode config" 
+           ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.modeConfigStatus","${enable_mode_config}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="general_enable_netbios"
+             help="enable/disable this to allow NetBIOS broadcasts to travel over the VPN tunnel.">
+     <PARAM name="enable_netbios" 
+            help="enable or disable this to allow NetBIOS broadcasts to travel over the VPN tunnel." 
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.Netbios","${enable_netbios}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_enable_rollover"
+             help="enable/disable rollover">
+    <PARAM name="enable_rollover" 
+           help="enable or disable rollover" 
+           ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.Rollover","${enable_rollover}")
+         </ACTION>
+     </COMMAND>
+     <COMMAND name="general_protocol"
+              help="Setting protocol esp or ah">
+     <PARAM name="protocol" 
+            help="Setting protocol esp or ah" 
+            ptype="VPN_PROTOCOL"/>
+        <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.IpsecProtocol","${protocol}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="general_enable_dhcp"
+             help="enable/disable dhcp.">
+     <PARAM name="enable_dhcp" 
+            help="enable or disable dhcp."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.EnableDhcpOverIPSec","${enable_dhcp}")
+         </ACTION>
+    </COMMAND>
+   <COMMAND name="general_redundant_vpn_gateway"
+             help="enable/disable Redundant vpn gateway">
+     <PARAM name="enable_rvg" 
+            help="enable or disable redundant vpn gateway. If we enable this option we need to give backup policy name also. to get backup policies list run show vpn ipsec policy backup_policies"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RVGStatus","${enable_rvg}")
+         </ACTION>
+    </COMMAND>
+   <COMMAND name="general_backup_policy_name"
+             help="backup policy name">
+     <PARAM name="backup_policyname" 
+            help="backup policyname should be one of the policies names from the output of show vpn ipsec policy backup_policies"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.BackupPolicyName","${backup_policyname}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_failback_time"
+             help="Failback time to switch from back-up to primary">
+    <PARAM name="failback_time" 
+           help="Failback time to switch from back-up to primary" 
+           ptype="UINT"/>
+        <ACTION>lua
+            clishCfgObjAdd("vpn","IpsecVPNPolicy.FailbackTime","${failback_time}")
+         </ACTION>
+    </COMMAND>
+
+  <COMMAND name="general_local_network_type" 
+             help="Select the IP addresses on the local side that will be part of the tunnel. This can be either a single IP address, several IP addresses in a range, an entire subnet, or any IP address that wants to connect">
+     <PARAM name="local_network_type" 
+            help="Select the IP addresses on the local side that will be part of the tunnel. This can be either a single IP address, several IP addresses in a range, an entire subnet, or any IP address that wants to connect" 
+            ptype="VPN_NTWK_TYPE"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.LocalNetworkType","${local_network_type}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_local_start_address" 
+             help="IP address from where the range needs to begin">
+     <PARAM name="local_start_address" 
+            help="IP address from where the range needs to begin" 
+            ptype="ADDR"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.LocalStartAddress","${local_start_address}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_local_end_address" 
+             help="IP address where the range needs to end">
+     <PARAM name="local_end_address" 
+            help="IP address where the range needs to end" 
+            ptype="ADDR"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.LocalEndAddress","${local_end_address}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_local_subnet_mask" 
+             help="Subnet mask of the subnet used">
+     <PARAM name="local_subnet_mask" 
+            help="Subnet mask of the subnet used" 
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.LocalSubnetMask","${local_subnet_mask}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_local_prefix_length" 
+             help="Prefix length of the ipv6 subnet used">
+    <PARAM name="local_prefix_length" 
+            help="Prefix length of the ipv6 subnet used" 
+            ptype="IPV6_PREFIX_LENGTH"/>
+         <ACTION>lua clishCfgObjAdd("vpn",
+             "IpsecVPNPolicy.LocalPrefixLength","${local_prefix_length}") </ACTION>
+    </COMMAND>
+  <COMMAND name="general_remote_network_type"  
+             help="Select the IP addresses on the remote side that will be part of the tunnel. This can be either a single IP address, several IP addresses in a range, an entire subnet, or any IP address that wants to connect">
+     <PARAM name="remote_network_type" 
+            help="Select the IP addresses on the remote side that will be part of the tunnel. This can be either a single IP address, several IP addresses in a range, an entire subnet, or any IP address that wants to connect" 
+            ptype="VPN_NTWK_TYPE"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RemoteNetworkType","${remote_network_type}") </ACTION>
+    </COMMAND>
+    <COMMAND name="general_remote_start_address" 
+             help="IP address from where the range needs to begin">
+     <PARAM name="remote_start_address" 
+            help="IP address from where the range needs to begin" 
+            ptype="ADDR"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RemoteStartAddress","${remote_start_address}") </ACTION>
+    </COMMAND>
+    <COMMAND name="general_remote_end_address" 
+             help="IP address where the range needs to end">
+     <PARAM name="remote_end_address" 
+            help="IP address where the range needs to end" 
+            ptype="ADDR"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RemoteEndAddress","${remote_end_address}") </ACTION>
+    </COMMAND>
+
+    <COMMAND name="general_remote_subnet_mask" 
+             help="Subnet mask of the subnet used">
+     <PARAM name="remote_subnet_mask" 
+            help="Subnet mask of the subnet used" 
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RemoteSubnetMask","${remote_subnet_mask}") </ACTION>
+    </COMMAND>
+    <COMMAND name="general_remote_prefix_length" 
+             help="Prefix length of the ipv6 subnet used">
+    <PARAM name="remote_prefix_length" 
+            help="Prefix length of the ipv6 subnet used" 
+            ptype="IPV6_PREFIX_LENGTH"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.RemotePrefixLength","${remote_prefix_length}") </ACTION>
+    </COMMAND>
+    <COMMAND name="general_enable_keepalive"
+             help="enable/disable keepalive">
+    <PARAM name="enable_keepalive" 
+           help="enable or disable keepalive" 
+           ptype="CHOICE_INT"/>
+        <ACTION>lua
+            clishCfgObjAdd("vpn","IpsecVPNPolicy.EnableKeepAlive","${enable_keepalive}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_keepalive_sourceip"
+             help="keepalive sourceip">
+    <PARAM name="keepalive_source" 
+           help="keepalive sourceip" 
+           ptype="ADDR"/>
+        <ACTION>lua
+            clishCfgObjAdd("vpn","IpsecVPNPolicy.KeepAliveSourceAddress","${keepalive_source}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_keepalive_destinationip"
+             help="keepalive destinationip">
+    <PARAM name="keepalive_destination" 
+           help="keepalive destinationip" 
+           ptype="ADDR"/>
+        <ACTION>lua
+            clishCfgObjAdd("vpn","IpsecVPNPolicy.RemotePingIPAddress","${keepalive_destination}")
+         </ACTION>
+    </COMMAND>
+         
+    <COMMAND name="general_keepalive_detection_period"
+             help="keepalive detection period">
+    <PARAM name="keepalive_detection_period" 
+           help="keepalive detection period" 
+           ptype="VPN_KEEPALIVE_PERIOD"/>
+        <ACTION>lua
+            clishCfgObjAdd("vpn","IpsecVPNPolicy.KeepAlivePeriod","${keepalive_detection_period}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_keepalive_failure_count"
+             help="keepalive failure count">
+    <PARAM name="keepalive_failure_count" 
+           help="keepalive failure count" 
+           ptype="VPN_KEEPALIVE_FAILURE_COUNT"/>
+        <ACTION>lua
+            clishCfgObjAdd("vpn","IpsecVPNPolicy.KeepAliveFailureCount","${keepalive_failure_count}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="general_l2tp_mode" 
+             help="Setting l2tp mode as None(0) or Client(1) or Gateway(2)">
+    <PARAM name="l2tp_mode" 
+           help="Setting l2tp mode as None(0) or Client(1) or Gateway(2)"
+           ptype="L2TP_MODE"/>
+        <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.L2tpIpsecPolicy","${l2tp_mode}")
+        </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="manual_spi_in" 
+             help="Takes a hexadecimal value between 3 and 8 characters.">
+     <PARAM name="spi_in" 
+            help="Takes a hexadecimal value between 3 and 8 characters." 
+            ptype="HEX"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SPIIn","${spi_in}") </ACTION>
+    </COMMAND>
+    <COMMAND name="manual_spi_out" 
+             help="Takes a hexadecimal value between 3 and 8 characters.">
+     <PARAM name="spi_out" 
+            help="Takes a hexadecimal value between 3 and 8 characters." 
+            ptype="HEX"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SPIOut","${spi_out}") </ACTION>
+    </COMMAND>
+    <COMMAND name="manual_encryption_algorithm" 
+             help="The algorithm used to encrypt the data">
+     <PARAM name="encryption_algorithm" 
+            help="The algorithm used to encrypt the data" 
+            ptype="MULTI_VPN_ENCRYPTION_ALG"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.EncryptionAlgorithm","${encryption_algorithm}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="manual_key_length" 
+             help="The key length for the algorithm.">
+     <PARAM name="key_length" 
+            help="The key length for the algorithm."
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.KeyLength","${key_length}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="manual_encryption_key_in" 
+             help="Encryption key of the inbound policy. The length of the key depends on the algorithm chosen">
+     <PARAM name="encryption_key_in" 
+            help="Encryption key of the inbound policy. The length of the key depends on the algorithm chosen" 
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.EncryptionKeyIn","${encryption_key_in}") </ACTION>
+    </COMMAND>
+    <COMMAND name="manual_encryption_key_out" 
+             help="Encryption key of the outbound policy. The length of the key depends on the algorithm chosen.">
+     <PARAM name="encryption_key_out" 
+            help="Encryption key of the outbound policy. The length of the key depends on the algorithm chosen." 
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.EncryptionKeyOut","${encryption_key_out}") </ACTION>
+    </COMMAND>
+    <COMMAND name="manual_authentication_algorithm" 
+             help="Algorithm used to verify the integrity of the data.">
+     <PARAM name="authentication_algorithm" 
+            help="Algorithm used to verify the integrity of the data." 
+            ptype="MULTI_VPN_AUTHENTICATION_ALG"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.AuthAlgorithm","${authentication_algorithm}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="manual_authentication_key_in" 
+             help="This is the integrity key (for ESP with Integrity-mode) for the inbound policy and depends on the algorithm chosen">
+     <PARAM name="authentication_key_in" 
+            help="This is the integrity key (for ESP with Integrity-mode) for the inbound policy and depends on the algorithm chosen" 
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.AuthKeyIn","${authentication_key_in}") </ACTION>
+    </COMMAND>
+    <COMMAND name="manual_authentication_key_out" 
+             help="This is the integrity key (for ESP with Integrity-mode) for the outbound policy and depends on the algorithm chosen">
+     <PARAM name="authentication_key_out" 
+            help="This is the integrity key (for ESP with Integrity-mode) for the outbound policy and depends on the algorithm chosen" 
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.AuthKeyOut","${authentication_key_out}") </ACTION>
+    </COMMAND>
+        <COMMAND name="auto_phase1_exchange_mode" help="Setting IKE exchange Mode">
+         <PARAM name="exchange_mode"
+            help="Setting IKE exchange Mode."
+            ptype="EXCG_MODE"/>
+		<ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.ExchangeMode","${exchange_mode}")
+             </ACTION>
+     </COMMAND>
+    <COMMAND name="auto_phase1_enable_nat_traversal" help="Enabling/Disabling Nat traversal">
+     <PARAM name="enable_nat_traversal" 
+	    help="Enabling/Disabling Nat traversal"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.NatTraversal","${enable_nat_traversal}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_nat_keepalive_frequecy" help="Setting IKE nat alive frequency">
+     <PARAM name="nat_keepalive_frequecy" 
+	    help="Setting IKE nat alive frequency"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.NatKeepAliveTime","${nat_keepalive_frequecy}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_local_identtype" help="Setting IKE local identifier type">
+     <PARAM name="local_identifier_type" 
+	    help="Setting IKE local identifier type"
+            ptype="IKE_IDT_TYPE1"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.LocalIdentifierType","${local_identifier_type}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_direction_type" help="Setting IKE direction type">
+     <PARAM name="direction_type" 
+	    help="Setting IKE direction type"
+            ptype="DIR_TYPE"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.Direction","${direction_type}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_local_identifier" help="Setting IKE local identifier">
+     <PARAM name="local_identifier" 
+	    help="Setting IKE local identifier"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.LocalIdentifier","${local_identifier}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_remote_identtype" help="Setting IKE remote identifier">
+     <PARAM name="remote_identifier_type" 
+	    help="Setting IKE remote identifier"
+            ptype="IKE_IDT_TYPE2"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.RemoteIdentifierType","${remote_identifier_type}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_remote_identifier" help="Setting IKE remote identifier">
+     <PARAM name="remote_identifier" 
+	    help="Setting IKE remote identifier"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.RemoteIdentifier","${remote_identifier}")
+         </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="auto_phase1_encryption_algorithm" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase1_encryption_algorithm DES" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase1_encryption_algorithm DES enable_DES" help="Enable DES encryption algorithm">
+    <PARAM name="des" help="select DES encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.DES","${des}")
+         </ACTION>
+     </COMMAND>
+
+    <COMMAND name="auto_phase1_encryption_algorithm 3DES" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase1_encryption_algorithm 3DES enable_3DES" help="Enable 3DES encryption algorithm">
+    <PARAM name="3des" help="select 3DES encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.3DES","${3des}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_encryption_algorithm AES-128" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase1_encryption_algorithm AES-128 enable_AES-128" help="Enable AES-128 encryption algorithm">
+    <PARAM name="aes-128" help="select AES-128 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.AES-128","${aes-128}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_encryption_algorithm AES-192" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase1_encryption_algorithm AES-192 enable_AES-192" help="Enable AES-192 encryption algorithm">
+    <PARAM name="aes-192" help="select AES-192 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.AES-192","${aes-192}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_encryption_algorithm AES-256" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase1_encryption_algorithm AES-256 enable_AES-256" help="Enable AES-256 encryption algorithm">
+    <PARAM name="aes-256" help="select AES-256 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.AES-256","${aes-256}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_encryption_algorithm BLOWFISH" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase1_encryption_algorithm BLOWFISH enable_BLOWFISH" help="Enable BLOWFISH encryption algorithm">
+    <PARAM name="blowfish" help="select BLOWFISH encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.BLOWFISH","${blowfish}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_encryption_algorithm BLOWFISH keylength" help="Enter BLOWFISH keylength">
+    <PARAM name="blowfishkeylen" help="select BLOWFISH encryption algorithm" ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.BLOWFISHKEYLEN","${blowfishkeylen}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_encryption_algorithm CAST128" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase1_encryption_algorithm CAST128 enable_CAST128" help="Enable CAST128 encryption algorithm">
+    <PARAM name="cast128" help="select CAST128 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.CAST128","${cast128}")
+         </ACTION>
+     </COMMAND>
+     <COMMAND name="auto_phase1_encryption_algorithm CAST128 keylength" help="Enter CAST128 keylength">
+    <PARAM name="cast128keylen" help="select CAST128 encryption algorithm" ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecIKEPolicy.CAST128KEYLEN","${cast128keylen}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_auth_algorithm" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase1_auth_algorithm MD5" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase1_auth_algorithm MD5 enable_MD5" help="Enable MD5 authentication algorithm">
+     <PARAM name="md5"  help="Enable MD5 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.MD5","${md5}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_auth_algorithm SHA1" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase1_auth_algorithm SHA1 enable_SHA1" help="Enable SHA1 authentication algorithm">
+     <PARAM name="sha1"  help="Enable SHA1 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.SHA1","${sha1}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_auth_algorithm SHA2-256" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase1_auth_algorithm SHA2-256 enable_SHA2-256" help="Enable SHA2-256 authentication algorithm">
+     <PARAM name="sha2-256"  help="Enable SHA2-256 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.SHA2-256","${sha2-256}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_auth_algorithm SHA2-384" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase1_auth_algorithm SHA2-384 enable_SHA2-384" help="Enable SHA2-384 authentication algorithm">
+     <PARAM name="sha2-384"  help="Enable SHA2-384 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.SHA2-384","${sha2-384}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase1_auth_algorithm SHA2-512" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase1_auth_algorithm SHA2-512 enable_SHA2-512" help="Enable SHA2-512 authentication algorithm">
+     <PARAM name="sha2-512"  help="Enable SHA2-512 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.SHA2-512","${sha2-512}")
+         </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="auto_phase1_auth_method" help="Setting IKE authentication algorithm method">
+     <PARAM name="authentication_method" 
+	    help="Setting IKE authentication algorithm method"
+            ptype="IKE_AUTH_METH"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.AuthType","${authentication_method}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_dh_group" help="Setting IKE Diffie-Hellman (DH) Group">
+     <PARAM name="dh_group" 
+	    help="Setting IKE Diffie-Hellman (DH) Group"
+            ptype="IKE_DH_GRP"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.DHGroup","${dh_group}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_sa_lifetime" help="Setting IKE SA lifetime in seconds">
+     <PARAM name="sa_lifetime" 
+	    help="Setting IKE SA lifetime in seconds"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.SALifeTime","${sa_lifetime}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_pre_shared_key" help="Setting IKE pre shared key">
+     <PARAM name="pre_shared_key" 
+	    help="Setting IKE pre shared key, Please keep value within double quotes to include (?) question marks."
+            ptype="STRING_PSK"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.Presharedkey","${pre_shared_key}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_enable_dead_peer_detection" help="Enabling/Disabling dead peer detection">
+     <PARAM name="enable_dead_peer_detection" 
+	    help="Enabling/Disabling dead peer detection"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.DPD","${enable_dead_peer_detection}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_detection_period" help="Setting dead peer detection time period">
+     <PARAM name="detection_period" 
+	    help="Setting dead peer detection time period"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.DPDDetectionPeriod","${detection_period}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_reconnect_failure_count" help="Setting dead peer detection failure count">
+     <PARAM name="reconnect_failure_count" 
+	    help="Setting dead peer detection failure count"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.DPDFailureCount","${reconnect_failure_count}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_extended_authentication" help="setting extended authentication method">
+     <PARAM name="extended_authentication" 
+	  help="setting extended authentication method"
+          ptype="IKE_EXTENDED_AUTH_METH"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.XAUTHType","${extended_authentication}")
+         </ACTION>
+     </COMMAND>
+    <COMMAND name="auto_phase1_authentication_type" help="setting extended authentication type">
+     <PARAM name="extended_authentication" 
+	  help="setting extended authentication type"
+          ptype="IKE_EXTENDED_AUTH_TYPE"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.XAUTHType1","${extended_authentication}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_xauth_username" help="Username for extended authentication">
+     <PARAM name="xauth_username" 
+	  help="Username for extended authentication"
+          ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.UserName","${xauth_username}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase1_xauth_password" help="Password for extended authentication">
+     <PARAM name="xauth_password" 
+	    help="Password for extended authentication"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecIKEPolicy.Password","${xauth_password}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="auto_phase2_sa_lifetime" help="vpn auto policy phase2 configure"/>
+    <COMMAND name="auto_phase2_sa_lifetime seconds" help="Setting IKE SA lifetime in seconds">
+     <PARAM name="sa_lifetime" 
+	    help="Setting IKE SA lifetime in seconds"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SALifeTime","${sa_lifetime}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase2_sa_lifetime bytes" help="Setting IKE SA lifetime in bytes">
+     <PARAM name="sa_lifetime" 
+	    help="Setting IKE SA lifetime in bytes"
+            ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SALifeTime","${sa_lifetime}")
+         </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="auto_phase2_encryption_algorithm" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm DES" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm DES enable_DES" help="Enable DES encryption algorithm">
+    <PARAM name="des" help="select DES encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.DES","${des}")
+         </ACTION>
+     </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm 3DES" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm 3DES enable_3DES" help="Enable 3DES encryption algorithm">
+    <PARAM name="3des" help="select 3DES encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.3DES","${3des}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm AES-128" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm AES-128 enable_AES-128" help="Enable AES-128 encryption algorithm">
+    <PARAM name="aes-128" help="select AES-128 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.AES-128","${aes-128}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm AES-192" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm AES-192 enable_AES-192" help="Enable AES-192 encryption algorithm">
+    <PARAM name="aes-192" help="select AES-192 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.AES-192","${aes-192}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm AES-256" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm AES-256 enable_AES-256" help="Enable AES-256 encryption algorithm">
+    <PARAM name="aes-256" help="select AES-256 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.AES-256","${aes-256}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm TWOFISH-128" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm TWOFISH-128 enable_TWOFISH-128" help="Enable TWOFISH-128 encryption algorithm">
+    <PARAM name="twofish-128" help="select TWOFISH-128 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.TWOFISH-128","${twofish-128}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm TWOFISH-192" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm TWOFISH-192 enable_TWOFISH-192" help="Enable TWOFISH-192 encryption algorithm">
+    <PARAM name="twofish-192" help="select TWOFISH-192 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.TWOFISH-192","${twofish-192}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm TWOFISH-256" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm TWOFISH-256 enable_TWOFISH-256" help="Enable TWOFISH-256 encryption algorithm">
+    <PARAM name="twofish-256" help="select TWOFISH-256 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.TWOFISH-256","${twofish-256}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm BLOWFISH" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm BLOWFISH enable_BLOWFISH" help="Enable BLOWFISH encryption algorithm">
+    <PARAM name="blowfish" help="select BLOWFISH encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.BLOWFISH","${blowfish}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase2_encryption_algorithm BLOWFISH keylength" help="Enter BLOWFISH keylength">
+    <PARAM name="blowfishkeylen" help="select BLOWFISH encryption algorithm" ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.BLOWFISHKEYLEN","${blowfishkeylen}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_encryption_algorithm CAST128" help="Setting IKE encryption algorithm" />
+    <COMMAND name="auto_phase2_encryption_algorithm CAST128 enable_CAST128" help="Enable CAST128 encryption algorithm">
+    <PARAM name="cast128" help="select CAST128 encryption algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.CAST128","${cast128}")
+         </ACTION>
+     </COMMAND>
+     <COMMAND name="auto_phase2_encryption_algorithm CAST128 keylength" help="Enter CAST128 keylength">
+    <PARAM name="cast128keylen" help="select CAST128 encryption algorithm" ptype="UINT"/>
+         <ACTION>lua clishCfgObjAdd("vpn","IpsecVPNPolicy.CAST128KEYLEN","${cast128keylen}")
+         </ACTION>
+    </COMMAND>
+
+
+    <COMMAND name="auto_phase2_auth_algorithm" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase2_auth_algorithm MD5" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase2_auth_algorithm MD5 enable_MD5" help="Enable MD5 authentication algorithm">
+     <PARAM name="md5"  help="Enable MD5 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.MD5","${md5}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase2_auth_algorithm SHA1" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase2_auth_algorithm SHA1 enable_SHA1" help="Enable SHA1 authentication algorithm">
+     <PARAM name="sha1"  help="Enable SHA1 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SHA1","${sha1}")
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="auto_phase2_auth_algorithm SHA2-256" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase2_auth_algorithm SHA2-256 enable_SHA2-256" help="Enable SHA2-256 authentication algorithm">
+     <PARAM name="sha2-256"  help="Enable SHA2-256 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SHA2-256","${sha2-256}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_auth_algorithm SHA2-384" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase2_auth_algorithm SHA2-384 enable_SHA2-384" help="Enable SHA2-384 authentication algorithm">
+     <PARAM name="sha2-384"  help="Enable SHA2-384 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SHA2-384","${sha2-384}")
+         </ACTION>
+    </COMMAND>
+    
+    <COMMAND name="auto_phase2_auth_algorithm SHA2-224" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase2_auth_algorithm SHA2-224 enable_SHA2-224" help="Enable SHA2-224 authentication algorithm">
+     <PARAM name="sha2-224"  help="Enable SHA2-224 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SHA2-224","${sha2-224}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="auto_phase2_auth_algorithm SHA2-512" help="Setting IKE authentication algorithm" />
+    <COMMAND name="auto_phase2_auth_algorithm SHA2-512 enable_SHA2-512" help="Enable SHA2-512 authentication algorithm">
+     <PARAM name="sha2-512"  help="Enable SHA2-512 authentication algorithm" ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.SHA2-512","${sha2-512}")
+         </ACTION>
+    </COMMAND>
+
+
+   <COMMAND name="auto_phase2_enable_pfskeygroup" help="Enable/DIsable PFS key group">
+     <PARAM name="enable_pfskeygroup" 
+	    help="Enable/DIsable PFS key group"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.PFSKeyGroup","${enable_pfskeygroup}")
+         </ACTION>
+    </COMMAND>
+   <COMMAND name="auto_phase2_dh_group" help="Setting IKE Diffie-Hellman (DH) Group">
+     <PARAM name="dh_group" 
+	    help="Setting IKE Diffie-Hellman (DH) Group"
+            ptype="IKE_DH_GRP"/>
+         <ACTION>lua clishCfgObjAdd("vpn", "IpsecVPNPolicy.PFSKeyGroup1","${dh_group}")
+         </ACTION>
+    </COMMAND>
+</VIEW>
+<VIEW name="vpn-policy-dhcp-config" prompt="vpn-config[dhcp]> "> 
+    <COMMAND name="save" help="Save vpn ipsec dhcp configuration changes.">
+        <ACTION>lua clishCfgObjExec("dhcp")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back vpn ipsec dhcp configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+             help="Save vpn ipsec dhcp configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("dhcp")</ACTION>
+    </COMMAND>
+        <COMMAND name="start_address" 
+             help="Setting ipsec dhcp start address">
+     <PARAM name="dhcp_startaddress" 
+            help="Setting ipsec dhcp start address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("dhcp", "IPsecDhcpClientIPRange.StartIPAddress","${dhcp_startaddress}")
+         </ACTION>
+    </COMMAND>
+        <COMMAND name="end_address" 
+             help="Setting ipsec dhcp end address">
+     <PARAM name="dhcp_endaddress" 
+            help="Setting ipsec dhcp end address"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("dhcp", "IPsecDhcpClientIPRange.EndIPAddress","${dhcp_endaddress}")
+         </ACTION>
+    </COMMAND>
+        <COMMAND name="subnet_mask" 
+             help="Setting ipsec dhcp subnet mask">
+     <PARAM name="dhcp_mask" 
+            help="Setting ipsec dhcp subnet mask"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("dhcp", "IPsecDhcpClientIPRange.SubnetMask","${dhcp_mask}")
+         </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<COMMAND name="vpn ipsec" help="vpn policy mode."/>
+<COMMAND name="vpn ipsec policy" help="vpn policy mode."/>
+    <COMMAND name="vpn ipsec policy configure"
+             help="vpn policy configuration mode"
+             view="vpn-policy-config" viewid="">
+             <PARAM name="name"
+                 help="Enter unique name assigned to the policy"
+                 ptype="STRING_ALPHA_NUM_32"/>
+            <ACTION>lua clishCfgObjNew ("vpn", 
+                                       ipsecVpnPolicyCfgInit, 
+                                       ipsecVpnPolicyCfgSave,
+                                       ipsecVpnPolicyCfgInputVal,
+                                       "${name}")
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="vpn ipsec dhcp" help="vpn ipsec over dhcp mode."/>
+    <COMMAND name="vpn ipsec dhcp configure"
+             help="vpn dhc/ over ipsecpolicy configuration mode"
+             view="vpn-policy-dhcp-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("dhcp", 
+                                       ipsecVpnDhcpCfgInit, 
+                                       ipsecVpnDhcpCfgSave,
+                                       ipsecVpnDhcpCfgInputVal)
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="vpn ipsec policy enable"
+             help="enable a vpn policy">
+             <PARAM name="name"
+                 help="Enter name of the policy"
+                 ptype="STRING_ALPHA_NUM_32"/>
+            <ACTION>lua clishCmdExec(ipsecVpnPolicyEnable,"${name}")
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="vpn ipsec policy disable"
+             help="disable a vpn policy">
+             <PARAM name="name"
+                 help="Enter name of the policy"
+                 ptype="STRING_ALPHA_NUM_32"/>
+            <ACTION>lua clishCmdExec(ipsecVpnPolicyDisable,"${name}")
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="vpn ipsec policy delete"
+             help="delete a vpn policy">
+             <PARAM name="name"
+                 help="Enter name of the policy"
+                 ptype="STRING_ALPHA_NUM_32"/>
+            <ACTION>lua clishCmdExec(ipsecVpnPolicyDelete,"${name}")
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="vpn ipsec policy connect"
+             help="connect a vpn tunnel">
+             <PARAM name="name"
+                 help="Enter name of the policy to connect"
+                 ptype="STRING_ALPHA_NUM_32"/>
+            <ACTION>lua clishCmdExec(ipsecVpnPolicyConnect,"${name}")
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="vpn ipsec policy drop"
+             help="drop a vpn tunnel">
+             <PARAM name="name"
+                 help="Enter name of the policy to drop"
+                 ptype="STRING_ALPHA_NUM_32"/>
+            <ACTION>lua clishCmdExec(ipsecVpnPolicyDrop,"${name}")
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show vpn ipsec" help="show vpn policy"/>
+    <COMMAND name="show vpn ipsec policy" help="show vpn policy"/>
+    <COMMAND name="show vpn ipsec policy setup" help="show vpn policy">
+            <ACTION>lua clishCmdExec(ipsecVpnPolicyGet)
+	    </ACTION>
+    </COMMAND>
+    <COMMAND name="show vpn ipsec policy status" help="show vpn status">
+            <ACTION>lua clishCmdExec(ipsecVpnPolicyStatusGet)
+	    </ACTION>
+    </COMMAND>
+    <COMMAND name="show vpn ipsec policy backup_policies" help="to get all list of backup policies">
+            <ACTION>lua clishCmdExec(ipsecBackupPoliciesGet)
+	    </ACTION>
+    </COMMAND>
+
+<!--=======================================================--> 
+  <COMMAND name="show vpn ipsec dhcp" help="show vpn ipsec dhcp setup"/>
+    <COMMAND name="show vpn ipsec dhcp setup" help="show vpn ipsec dhcp setup">
+            <ACTION>lua clishCmdExec(ipsecVpnDhcpGet)
+	    </ACTION>
+    </C

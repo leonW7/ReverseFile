@@ -1,0 +1,303 @@
+<?lua
+require "teamf1lualib/bl_wdsAPGroupsStatus"
+require "teamf1lualib/util"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "status"
+	PAGE_HELP_SECTION = "wdsGroupApStatus"
+
+
+
+local guiWdsAPGroupStatus = require("com.teamf1.bl.wlan.wdsgroupapstatus")
+local errorMap            = require ("com.teamf1.core.errorMap")
+local returnCodes         = require ("com.teamf1.core.returnCodes")
+
+local groupId = 1
+local wdsApGroups = {}
+if (ButtonType and ButtonType == "groupId") then
+    groupId = tonumber(cgi.groupId)
+
+elseif (ButtonType and ButtonType == "config") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local page = "wdsAPGroupsStatus"
+    local removePrefix = page .. "."
+    configRow = util.removePrefix (configRow, removePrefix)
+    errorCode = guiWdsAPGroupStatus.wdsGroupPasswordSet (configRow)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+    groupId = tonumber(configRow.groupId)
+
+end
+
+local wdsAPGroupStatusInfo, errorCode
+errorCode, wdsAPGroupStatusInfo = guiWdsAPGroupStatus.wdsAPGroupStatusGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end 
+if (#wdsAPGroupStatusInfo ~= 0) then
+    wdsApGroups = wdsAPGroupStatusInfo[groupId]
+end
+
+if(true) then
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu1");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes 
+                    -->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=wdsGroupsStatus.html">WDS Groups Status</a>
+								</li>
+								<li class="current">
+									<a href="?page=wdsAPGroupsStatus.html">WDS Group AP Status</a>
+								</li>
+								<li><a href="?page=wdsApStatus.html">WDS AP Status</a></li>
+								<li>
+									<a href="?page=wdsGroupsLinkStatus.html">WDS Link Status</a>
+								</li>
+								<li>
+									<a href="?page=wdsGroupsLinkStatistics.html">WDS Link Statistics</a>
+								</li>
+								 
+							</ul>
+						</nav>
+					</div>
+
+					<div class="FL2">
+						<p class="hint">
+							$| helpHintText |$
+						</p>
+					</div>
+                    <h1>WDS AP Status</h1>
+                   
+                    <div class="midArea">
+                         <?lua if (#wdsAPGroupStatusInfo ~= 0) then 
+                        ?>
+                        <div align="left">
+                            <form name="tf1_frmWdsAPGroupsChange"
+                                id="tf1_frmWdsAPGroupsChange"
+                                action="platform.cgi" method="post"><input type="hidden" name="thispage" id="thispage" value="wdsAPGroupsStatus.html"> 
+                                <input type="hidden"
+                                name="button.groupId.wdsAPGroupsStatus"
+                                id="tf1_btGroupId" value="button"> 
+                                <input type="hidden"
+                                name="groupId"
+                                id="tf1_groupHidId" value=""> 
+                            </form>
+							<form name="tf1_frmWdsAPGroupsStatus"
+                                id="tf1_frmWdsAPGroupsStatus"
+                                action="platform.cgi" method="post"><input type="hidden" name="thispage" id="thispage" value="wdsAPGroupsStatus.html">
+								<div class="configRow">
+									<label>ID</label>
+									<select name="wdsAPGroupsStatus.groupId" id="tf1_groupId"
+                                        class="two"
+                                        onchange="document.getElementById('tf1_groupHidId').value=this.options[this.selectedIndex].value;document.tf1_frmWdsAPGroupsChange.submit();">
+                                        <?lua 
+                                        for k, v in pairs (wdsAPGroupStatusInfo) do
+                                            local row = wdsAPGroupStatusInfo[k]
+                                        ?>
+										<option $|
+                                        web.dropdownSelected(row.wdsgroupapstatusGROUPID == groupId) |$ value="$| row.wdsgroupapstatusGROUPID |$">$| row.wdsgroupapstatusGROUPID
+                                        or '' |$</option>
+                                        <?lua end ?>
+									</select>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Configured AP Count</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusCONFIGUREDAPCOUNT or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Connected AP Count</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusCONNECTEDAPCOUNT or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Source AP Count</label>
+									<p>
+    									$| wdsApGroups.wdsgroupapstatusSOURCEAPCOUNT or '' |$	
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Destination AP Count</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusDESTINATIONAPCOUNT or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Source Bridge AP MAC</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusSOURCEAPBRIDGEAPMAC or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Source Device Type</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusROOTDEVICETYPE or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Config WDS Link Count</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusCONFIGUREDWDSLINKCOUNT or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Detect WDS Link Count</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusDETECTEDWDSLINKCOUNT or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Blocked WDS Link Count</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusBLOCKEDWDSLINKCOUNT or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>WDS Group Password Change Status</label>
+									<p>
+										$| wdsApGroups.wdsgroupapstatusWDSPASSWORDPROPOGATION
+                                        or '' |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow">
+									<label>Edit Password</label>
+									<a class="enable-disable-off" alt="" id="tf1_enableDisablePassword"></a>	
+									<input type="hidden" value="0">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+
+								<div class="configRow" id="tf1_groupPassword_div">
+									<label>New WDS Group Password</label>
+									<input  type="password" value="$|
+                                    wdsApGroups.wdsgroupapstatusWDSPASSWORD or
+                                    '' |$" id="tf1_groupPassword"
+                                    name="wdsAPGroupsStatus.password" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_groupPassword', 8, 63, 'Invalid Password: Please enter WDS Group Password length between 8 - 63 characters');}">
+								</div>
+								<div class="break" id="break_groupPassword_div">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+
+									<input type="submit" name="button.config.wdsAPGroupsStatus" onclick="return wdsGroupStatusValidate('tf1_frmWdsAPGroupsStatus')" class="btnSubmit" title="Save" value="Save" id="btSave">
+									<input type="reset" class="btnReset" title="Cancel" value="Cancel" id="btSave" onclick="this.form.reset(); return wdsAPGroupsStatusOnreset('tf1_frmWdsAPGroupsStatus');">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+                        </div>
+                         <?lua else  ?>
+                <div class="configRow">
+                    NO WDS GROUP EXISTS   
+                     </div>
+                      <?lua end ?>
+					</div>
+                </div>
+               
+        </td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>		
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/wdsAPGroupStatus.js"></script>
+	</body>
+</html>
+<?lua end ?>

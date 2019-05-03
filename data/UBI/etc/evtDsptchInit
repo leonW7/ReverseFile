@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# evtDsptchInit - initialization script for evtDsptch
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_EVTDSPTCH" = "y" ]; then
+
+$EVTDSPTCH_INSTALL_PATH/bin/evtDsptchd  $DB_FILENAME &
+
+fi

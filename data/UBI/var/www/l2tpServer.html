@@ -1,0 +1,350 @@
+<?lua
+require "teamf1lualib/l2tpServer_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/l2tpd_returnCodes"
+require "teamf1lualib/ipv6_mode"
+require "teamf1lualib/bl_ipAliasing"
+require "teamf1lualib/lanSettings_bl"
+
+	PAGE_HELP = "vpn"
+	PAGE_HELP_SECTION = "l2tpServer"
+
+local vpn_l2tpServer  = require("com.teamf1.bl.vpn.l2tp_server")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local ipv6Mode = require("com.teamf1.core.ipv6.mode")
+local alias = require("com.teamf1.bl.wan.ipAliasing")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local rowId = "1"
+    inputTable["l2tpServer.cookie"] = rowId
+
+    local returnCode, cookie = vpn_l2tpServer.l2tpServerSectionSet (inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end    
+    web.goToPage(NextPage, true, true)
+	
+
+else
+    local returnCode, cookie, feature, routingMode, startIPAddress,
+        endIPAddress,  papEnable, chapEnable, 
+        msChapEnable, msChapv2Enable, secretKeyEnable, secret, 
+        userTimeOut, wanRoutingMode, prefix, prefixLength, authenticationType = 
+                                               vpn_l2tpServer.l2tpServerSectionGet ()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    returnCode, cookie, ipMode = ipv6Mode.ipv6ModeGet ()
+    if (feature == "2" and ipMode ~= "3") then
+        feature = "1"
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE = "12830,10892,30212,30213,10749,11507,11749,10503,12628,12977,10929,11462,11463,11286,10314,13449,14077,30214,30215,30216,30217,30218,30219,10329,11898,10490,11731,11732,10916,12790,13240,11142,11274,12732,12127,12007,12111,12022,12975,10935,13485,12976,30222,11508,12627,12758,10449,30461,30462,10777,50049,50071,50072"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu4");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$ </p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                         $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11508'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmL2tpServer" id="tf1_frmL2tpServer" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="l2tpServer.html">
+                                <h2>$| LANG_LOCALE['12830'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10892'] |$</label>
+                                        <select name="l2tpServer.feature" id="tf1_l2tpServerMode" onchange="changeL2TPServerMode('tf1_l2tpServerMode');">
+					    <option $| web.dropdownSelected(feature == "1" ) |$ value="1">$| LANG_LOCALE['30212'] |$</option>
+                                            <?lua if(ipMode == "3") then?>
+					    <option $| web.dropdownSelected(feature == "2" ) |$ value="2">$| LANG_LOCALE['30213'] |$</option>
+                                            <?lua end?>
+					    <option $| web.dropdownSelected(feature == "3" ) |$ value="3">$| LANG_LOCALE['10749'] |$</option>
+					</select>
+				</div>
+                                <div class="break" id="break_l2tpServerMode_div">
+                                    &nbsp;
+                                </div>
+                                <?lua 
+                                if (wanRoutingMode ~= "0") then
+                                ?>
+                                <div class="configRow" id="tf1_routingMode_div">
+                                    <label>$| LANG_LOCALE['11507'] |$</label>
+                                    <p>
+                                        <input type="radio" id="tf1_routingMode" value="Nat" $| web.radioSelected(routingMode == "Nat") |$ name="l2tpServer.routingMode">
+                                        $| LANG_LOCALE['11749'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" id="tf1_routingMode" value="Classical" $| web.radioSelected(routingMode == "Classical") |$ name="l2tpServer.routingMode">
+                                        $| LANG_LOCALE['10503'] |$
+                                    </p>
+                                </div>
+                                <div class="break" id="break_routingMode_div">
+                                    &nbsp;
+                                </div>
+                                <?lua end ?>
+                                
+                                <div id="tf1_rangeIpAddressIPv4Block_div">
+                                    <h2>$| LANG_LOCALE['12628'] |$</h2>
+                                    <div class="configRow" id="tf1_startIpAddr_div">
+                                        <label>$| LANG_LOCALE['12977'] |$</label>
+                                        <input type="text" name="l2tpServer.startIPAddress"id="tf1_startIpAddr" value="$| startIPAddress or '' |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                    </div>
+                                    <div class="break" id="break_startIpAddr_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_endIpAddr_div">
+                                        <label>$| LANG_LOCALE['10929'] |$</label>
+                                        <input type="text" name="l2tpServer.endIPAddress" id="tf1_endIpAddr" value="$| endIPAddress or '' |$" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+                                    </div>
+                                    <div class="break" id="break_endIpAddr_div">
+                                        &nbsp;
+                                    </div>
+                                </div>
+				<!-- IPv6 Prefix Section starts -->
+				<div id="tf1_rangeIpAddressIPv6Block_div">
+				    <h2>$| LANG_LOCALE['11462'] |$</h2>
+				    <div class="configRow" id="tf1_ipv6Addr_div">
+				        <label>$| LANG_LOCALE['11462'] |$</label>
+				        <input type="text" name="l2tpServer.ipv6Prefix" value="$| prefix or '' |$" id="tf1_ipv6Addr" maxlength="40" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:.')" onkeydown="if (event.keyCode == 9) { return ipv6AddrValidate (this, false, true, ''); }">
+				    </div>
+				    <div class="break" id="break_ipv6Addr_div">
+&nbsp;</div>			    <div class="configRow" id="tf1_ipv6Length_div">
+				        <label>$| LANG_LOCALE['11463'] |$</label>
+				        <input type="text" name="l2tpServer.ipv6PrefixLength" class="one" maxlength="3" id="tf1_ipv6Length" value="$| prefixLength or '' |$" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 128, true, LANG_LOCALE['11286'], ''); }">
+					<dl>
+						[$| LANG_LOCALE['12627'] |$: 0 - 128]
+					</dl>
+				    </div>
+				    <div class="break" id="break_ipv6Length_div">&nbsp;</div>
+				</div>
+				<!-- IPv6 Prefix Section ends -->
+				<!-- Authentication Section Starts -->
+				<div id="tf1_authTypeDBBlock_div">
+				    <h2>$| LANG_LOCALE['10314'] |$</h2>
+				    <div class="configRow" id="tf1_authType_div">
+					<label>$| LANG_LOCALE['13449'] |$</label>
+					    <select name="l2tpServer.authenticationType" id="tf1_authType" onchange="changeAuthSupported ();">
+					        <option $| web.dropdownSelected(authenticationType == "0" ) |$ value="0">$| LANG_LOCALE['14077'] |$</option>
+						<option $| web.dropdownSelected(authenticationType == "1" ) |$ value="1">$| LANG_LOCALE['30214'] |$</option>
+						<option $| web.dropdownSelected(authenticationType == "2" ) |$ value="2">$| LANG_LOCALE['30215'] |$</option>
+						<option $| web.dropdownSelected(authenticationType == "3" ) |$ value="3">$| LANG_LOCALE['30216'] |$</option>
+						<option $| web.dropdownSelected(authenticationType == "4" ) |$ value="4">$| LANG_LOCALE['30217'] |$</option>
+						<option $| web.dropdownSelected(authenticationType == "5" ) |$ value="5">$| LANG_LOCALE['30218'] |$</option>
+						<option $| web.dropdownSelected(authenticationType == "6" ) |$ value="6">$| LANG_LOCALE['30219'] |$</option>
+					    </select>
+				    </div>
+				    <div class="break" id="break_authType_div">&nbsp;</div>
+				</div>
+				<!-- Authentication Section ends -->
+                                <div id="tf1_authentication_div">
+                                    <h2>$| LANG_LOCALE['10329'] |$</h2>
+                                    <div class="configRow" id="tf1_pap_div">
+                                        <label>$| LANG_LOCALE['11898'] |$</label>
+                                        <?lua 
+                                                 
+                                        if (papEnable == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar = "0"
+                                        end
+                                        ?>
+
+                                            <a class="$| statusStr |$" id="tf1_pap" alt=""></a>
+                                            <input type="hidden" name="l2tpServer.papEnable" value="$| statusVar |$">
+                                    </div>
+                                    <div class="break" id="break_pap_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_chap_div">
+                                        <label>$| LANG_LOCALE['10490'] |$</label>
+                                        <?lua 
+                                                 
+                                        if (chapEnable == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar = "0"
+                                        end
+                                        ?>
+
+                                            <a class="$| statusStr |$" id="tf1_chap" alt=""></a>
+                                            <input type="hidden" name="l2tpServer.chapEnable" value="$| statusVar |$">
+                                    </div>
+                                    <div class="break" id="break_chap_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_msChap_div">
+                                        <label>$| LANG_LOCALE['11731'] |$</label>
+                                        <?lua 
+                                                 
+                                        if (msChapEnable == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar = "0"
+                                        end
+                                        ?>
+
+                                            <a class="$| statusStr |$" id="tf1_msChap" alt=""></a>
+                                            <input type="hidden" name="l2tpServer.msChapEnable" value="$| statusVar |$">
+                                    </div>
+                                    <div class="break" id="break_msChap_div">
+                                        &nbsp;
+                                    </div>
+                                    <div class="configRow" id="tf1_msChapv2_div">
+                                        <label>$| LANG_LOCALE['11732'] |$</label>
+                                        <?lua 
+                                                 
+                                        if (msChapv2Enable == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar = "0"
+                                        end
+                                        ?>
+
+                                            <a class="$| statusStr |$" id="tf1_msChapv2" alt=""></a>
+                                            <input type="hidden" name="l2tpServer.msChapv2Enable" value="$| statusVar |$">
+                                    </div>
+                                    <div class="break" id="break_msChapv2_div">
+                                        &nbsp;
+                                    </div>
+                                    <h2>$| LANG_LOCALE['10916'] |$</h2>
+                                    <div class="configRow" id="tf1_authSecKey_div">
+                                        <label>$| LANG_LOCALE['12790'] |$</label>
+                                        <?lua 
+                                                 
+                                        if (secretKeyEnable== "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar = "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar = "0"
+                                        end
+                                        ?>
+
+                                            <a class="$| statusStr |$" id="tf1_authSecKey" alt=""></a>
+                                            <input type="hidden" name="l2tpServer.secretKeyEnable" value="$| statusVar |$">
+                                    </div>
+                                    <div class="configRow" id="tf1_authSecKeyValue_div">
+                                        <input type="password" name="l2tpServer.secret" id="tf1_authSecKeyValue" value="$| secret or '' |$" maxlength="64">
+                                    </div>
+                                    <div class="break" id="break_authSecKey_div">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                                <div id="tf1_userTimeout_div">
+                                    <h2>$| LANG_LOCALE['13240'] |$</h2>
+                                    <div class="configRow" id="tf1_timeOut_div">
+                                        <label>$| LANG_LOCALE['11142'] |$</label>
+                                        <input class="one" name="l2tpServer.userTimeOut" type="text" value="$| userTimeOut or '' |$" maxlength="4" id="tf1_timeOut" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) { return numericValueRangeCheck (this, '', '', 300, 1800, true, LANG_LOCALE['11274']+': ', LANG_LOCALE['12732']); }">
+                                        <dl>
+                                            [$| LANG_LOCALE['12627'] |$: 300 - 1800] $| LANG_LOCALE['12732'] |$
+                                        </dl>
+                                    </div>
+                                    <div class="break" id="break_timeOut_div">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.l2tpServer" onclick="return l2tpServerValidate('tf1_frmL2tpServer')" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="button" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); l2tpServerOnReset('tf1_frmL2tpServer');">                                    
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                            <input type="hidden" id="hdSnetMask" value="255.255.255.0">
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td><?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <?lua
+        -- Get DMZ IP address and using in JS validation.
+        local dmzIp = db.getAttribute("ifStatic","LogicalIfName","DMZ","StaticIp") or ''
+		local dmzSnet = db.getAttribute("ifStatic","LogicalIfName","DMZ","NetMask") or ''
+        ?>
+        <input type="hidden" id="dmzIp" value="$| dmzIp or '' |$" >
+        <input type="hidden" id="dmzSnet" value="$| dmzSnet or '' |$" >
+
+        <?lua
+        -- Get SSL-VPN client range check and using in JS validtions.
+            if (HIGH_SEC == "HIGH") then
+	        local returnCode, cookie, sslVpnStAddr = sslVpnBeginClient ()
+	        local returnCode, cookie, sslVpnEndAddr = sslVpnEndClient () 
+	    ?>
+        <input type="hidden" value="$| sslVpnStAddr |$" id="hdSslVpnStAddr">
+        <input type="hidden" value="$| sslVpnEndAddr |$" id="hdSslVpnEndAddr">
+        <?lua end
+        -- Get dhcp range over IPSec address and using in JS validations.
+	        local returnCode, cookie, startIpAddress, endIpAddress, subnetmask = alias.dhcpserverRangeGet ()
+	    ?>
+        <input type="hidden" value="$| startIpAddress |$" id="hdstartIpAddress">
+        <input type="hidden" value="$| endIpAddress |$" id="hdendIpAddress">
+        <input type="hidden" value="$| subnetmask |$" id="hdsubnetmask">
+        <input type="hidden" value="$| UNIT_NAME |$" id="hdUnitName">
+
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="JavaScript" src="js/ipv6AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/l2tpServer.js"></script>
+    </body>
+</html>
+<?lua end ?>

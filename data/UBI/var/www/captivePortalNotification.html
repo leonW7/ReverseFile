@@ -1,0 +1,909 @@
+<?lua require "teamf1lualib/captivePortal"
+if (cgi["getReturnCodeStatus"] ~= nil) then
+
+    local isenabled,profileId,vlanId, clientType = captivePortal.isEnabled ()
+    local returnCode, userDetails = captivePortal.userDetails (cgi["payTxnId"], cgi["counter"])
+    if (userDetails == nil) then
+       userDetails = {}
+    end
+    configRow = db.getRow("CaptivePortalPageDetails", "profileId", profileId)
+     cgilua.header ("Content-Type","text/html; charset=UTF-8") 
+    if ( returnCode ~= 0 and cgi["counter"] ~= "2" ) then
+    ?>
+    $| returnCode |$
+   
+    <?lua 
+   
+    else  ?>
+
+     <tr>
+                    <td width="100%" valign="top">
+                        <?lua if (returnCode ~= 0) then ?>
+                        <h1>$| configRow["CaptivePortalPageDetails.gwSessionTitle3"] or '' |$</h1>
+                        <?lua else ?>
+                        <h1>$| configRow["CaptivePortalPageDetails.gwSessionTitle2"] or '' |$</h1>
+                        <?lua end?>
+
+                       <div class="midArea" style="min-height:65px">
+                        <div class="configLogin">             
+					<table cellspacing="0" cellpadding="0" width="100%">
+											
+                        <tr>
+                            <td>
+
+                              <table border="0" cellpadding="0" cellspacing="0"
+                                  style="display:none" id="tf1_ajaxHidden" >
+            <tr>
+                <td valign="top" align="center">
+                    <div class="midWidth2" id="tf1_headerErrorAjax">
+                        <?lua if (returnCode ~= 0) then ?>
+                        <div class= msgError>
+		                  	<p> $| configRow["CaptivePortalPageDetails.gwFailureMessage"] or '' |$</p>
+                        </div>
+                        <?lua else ?>
+                        <div class= msgInfo>
+		                  	<p> $| configRow["CaptivePortalPageDetails.gwSuccessMessage"] or '' |$</p>
+                        </div>
+                        <?lua end?>
+						
+						<div class="breakCP">
+                      	&nbsp;
+                    </div>
+                   
+        </td></tr></table>
+                         <?lua if (returnCode == 0 ) then ?>
+                                <div class="configRow">
+                                   <label>User Account </label>
+                                   <p> $|userDetails.userId or ''|$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                             
+                             <div class="configRow">
+                                   <label>Password </label>
+                                   <p>$|userDetails.password or ''|$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                 <div class="configRow">
+                                   <label>Price </label>
+                                   <p>$|userDetails.price or ' '|$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                 <div class="configRow">
+                                   <label>Package </label>
+                                   <p>$| userDetails.package or ''|$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                 <!--<div class="configRow">
+                                   <label>ESSID </label>
+                                   <p>TeamF1_guest</p>
+                                </div>
+                                <div class="break">&nbsp; </div>-->
+                                 <div class="configRow">
+                                   <label>Valid to use until </label>
+                                   <p>$| userDetails.validToUse or '' |$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                  <div class="configRow">
+                                   <label style="color:#FF0000">Before Closing this window Please write down your User Account and Password</label>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                              <?lua elseif (returnCode == 2) then ?>
+
+                             error2Redirect
+
+                              <?lua elseif (returnCode == 3) then ?>
+
+                              error3Redirect
+
+                              <?lua else ?>
+
+                              error4Redirect
+
+                            <?lua end ?> 
+                                
+                                
+                                </td></tr>
+                                 <tr>
+                            <td>
+				             <div class="submitRow2">											 
+							<input type="submit" id="LoginNow" title="Login Now"
+                            name="button.loginNow.captivePortal"
+                            value="Login Now" class="btnSubmit"
+                            onclick="document.getElementById('thispage').value='captivePortalNotification.html'">
+										</div>
+							 
+                                
+                                </td>
+                            </tr>
+                            <?lua end 
+
+ else 
+
+if (ButtonType == "loginNow") then
+     web.goToPage(NextPage, true, true)
+
+else
+    local isenabled,profileId,vlanId, clientType = captivePortal.isEnabled ()
+    local returnCode, userDetails = captivePortal.userDetails (cgi["payTxnId"], 0)
+    if (userDetails == nil) then
+       userDetails = {}
+    end
+    
+    previewFlag="0"
+    configRow = db.getRow("CaptivePortalPageDetails", "profileId", profileId)
+        
+    local cpAdFont = ""
+    local cpAdFontSize = ""
+    local cpAdFontColor = ""
+    local cpFooterFontColor = ""
+    local cpHeadBgColor = ""
+    local cpHeaderFontColor = ""
+    local cpHeaderFontSize = ""
+    local cpHeaderFont = ""
+    local cpBgColor = ""
+    local cpLoginBoxTitle = "" 
+    local adStyle = "background-color:#dfdfdf; font-family: Arial,sans-serif; text-align:center; color:#ff0000; font-size:16px; padding: 15px;"
+    local footerStyle = "font-family: Arial,sans-serif; text-align:center; color:#ffffff; font-size:12px; padding: 15px 0;"
+
+    cpLoginBoxTitle = configRow["CaptivePortalPageDetails.LoginBoxTitle"] or 'CAPTIVE PORTAL LOGIN'
+
+    if (configRow["CaptivePortalPageDetails.AdEnable"] == "1") then
+    
+	    -- To get Font-family
+	    if (configRow["CaptivePortalPageDetails.AdFont"] == "1") then
+	    	cpAdFont = "Tahoma"
+	    elseif (configRow["CaptivePortalPageDetails.AdFont"] == "2") then
+	    	cpAdFont = "Times New Roman"
+	    elseif (configRow["CaptivePortalPageDetails.AdFont"] == "3") then
+	    	cpAdFont = "Verdana"
+	    elseif (configRow["CaptivePortalPageDetails.AdFont"] == "4") then
+	    	cpAdFont = "Arial"
+	    end
+	    
+	    -- To get Font Size
+	    if (configRow["CaptivePortalPageDetails.AdFontSize"] == "1") then
+	    	cpAdFontSize = "10px"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontSize"] == "2") then
+	    	cpAdFontSize = "12px"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontSize"] == "3") then
+	    	cpAdFontSize = "16px"
+	    end
+	    
+	    -- To get Font Color
+	    if (configRow["CaptivePortalPageDetails.AdFontColor"] == "1") then
+	    	cpAdFontColor = "ff0000"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontColor"] == "2") then
+	    	cpAdFontColor = "000000"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontColor"] == "3") then
+	    	cpAdFontColor = "00ff00"
+	    elseif (configRow["CaptivePortalPageDetails.AdFontColor"] == "4") then
+	    	cpAdFontColor = "0000ff"
+	    end
+	    
+	    adStyle = "background-color:#dfdfdf; font-family:" .. cpAdFont .. "; text-align:center; color:#" .. cpAdFontColor .. "; font-size:" .. cpAdFontSize .."; padding: 15px;"
+	   
+	end
+    
+    -- To get Font-family
+    if (configRow["CaptivePortalPageDetails.headerFont"] == "1") then
+    	cpHeaderFont = "Tahoma"
+    elseif (configRow["CaptivePortalPageDetails.headerFont"] == "2") then
+    	cpHeaderFont = "Times New Roman"
+    elseif (configRow["CaptivePortalPageDetails.headerFont"] == "3") then
+    	cpHeaderFont = "Verdana"
+    elseif (configRow["CaptivePortalPageDetails.headerFont"] == "4") then
+    	cpHeaderFont = "Arial"
+    end
+      
+    -- To get Font Size
+    if (configRow["CaptivePortalPageDetails.headerFontSize"] == "1") then
+    	cpHeaderFontSize = "10px"
+    elseif (configRow["CaptivePortalPageDetails.headerFontSize"] == "2") then
+    	cpHeaderFontSize = "12px"
+    elseif (configRow["CaptivePortalPageDetails.headerFontSize"] == "3") then
+    	cpHeaderFontSize = "16px"
+    end
+    
+    -- To get Font Color
+    if (configRow["CaptivePortalPageDetails.headerFontColor"] == "1") then
+    	cpHeaderFontColor = "ff0000"
+    elseif (configRow["CaptivePortalPageDetails.headerFontColor"] == "2") then
+    	cpHeaderFontColor = "000000"
+    elseif (configRow["CaptivePortalPageDetails.headerFontColor"] == "3") then
+    	cpHeaderFontColor = "00ff00"
+    elseif (configRow["CaptivePortalPageDetails.headerFontColor"] == "4") then
+    	cpHeaderFontColor = "0000ff"
+    end
+     
+    -- To get Font Color
+    if (configRow["CaptivePortalPageDetails.headerBackColor"] == "1" ) then
+    	cpHeadBgColor = "ffffff"
+    elseif (configRow["CaptivePortalPageDetails.headerBackColor"] == "2") then
+    	cpHeadBgColor = "ff0000"
+    elseif (configRow["CaptivePortalPageDetails.headerBackColor"] == "3") then
+    	cpHeadBgColor = "00ff00"
+    elseif (configRow["CaptivePortalPageDetails.headerBackColor"] == "4") then
+    	cpHeadBgColor = "0000ff"
+    elseif (configRow["CaptivePortalPageDetails.headerBackColor"] == "5") then
+    	cpHeadBgColor = configRow["CaptivePortalPageDetails.headerCustomColor"]
+    end
+    
+    -- To get Font Color
+    if (configRow["CaptivePortalPageDetails.BackGroundColor"] == "1" ) then
+    	cpBgColor = "ffffff"
+    elseif (configRow["CaptivePortalPageDetails.BackGroundColor"] == "2") then
+    	cpBgColor = "ff0000"
+    elseif (configRow["CaptivePortalPageDetails.BackGroundColor"] == "3") then
+    	cpBgColor = "00ff00"
+    elseif (configRow["CaptivePortalPageDetails.BackGroundColor"] == "4") then
+    	cpBgColor = "0000ff"
+    elseif (configRow["CaptivePortalPageDetails.BackGroundColor"] == "5") then
+    	cpBgColor = configRow["CaptivePortalPageDetails.CustomColor"]
+    end
+    
+    if (configRow["CaptivePortalPageDetails.FooterEnable"] == "1") then
+	    -- To get Font Color
+	    if (configRow["CaptivePortalPageDetails.FooterFontColor"] == "1" ) then
+	    	cpFooterFontColor = "ffffff"
+	    elseif (configRow["CaptivePortalPageDetails.FooterFontColor"] == "2") then
+	    	cpFooterFontColor = "ff0000"
+	    elseif (configRow["CaptivePortalPageDetails.FooterFontColor"] == "3") then
+	    	cpFooterFontColor = "00ff00"
+	    elseif (configRow["CaptivePortalPageDetails.FooterFontColor"] == "4") then
+	    	cpFooterFontColor = "0000ff"
+	    elseif (configRow["CaptivePortalPageDetails.FooterFontColor"] == "5") then
+	    	cpFooterFontColor = "000000"
+	    end
+	    
+	    footerStyle = "font-family: Arial,sans-serif; text-align:center; color:#" .. cpFooterFontColor .. "; font-size:12px; padding: 15px 0;"
+	end
+
+    local bodyStyle = ""
+    if (configRow["CaptivePortalPageDetails.pageBackgroundStyleSelector"] == "1" ) then
+       local backgroundimageId = configRow["CaptivePortalPageDetails.pageBackgroundImgConfigRow"] or ''
+       local backgroundImageName = ''
+       if (backgroundimageId == '' or backgroundimageId == nil) then --TODO:we can remove this check once we support background images
+           backgroundimageId = '1'
+       end
+
+       if (backgroundimageId ~= '') then
+           backgroundImageName = db.getAttribute("pageBackgroundImage", "pageBackgroundImage._ROWID_", backgroundimageId, "imageName")
+       end
+       bodyStyle = "background-color: #" .. cpBgColor ..";" .."background-image:url('images/capPort/" .. backgroundImageName .. "?page=captivePortal.html')" .. ";"
+     else
+	 bodyStyle = "background-color: #" .. cpBgColor ..";"
+     end	
+
+	local headerStyle = ""
+	
+	if (configRow["CaptivePortalPageDetails.headerBackground"] == "1" ) then
+        local imageId = configRow["CaptivePortalPageDetails.headerImage"] or ''
+        local imageName = ''
+        if (imageId == '' or imageId == nil) then  --TODO:we can remove this check once we support background images
+            imageId = '1'
+        end
+        if (imageId ~= '') then
+            imageName = db.getAttribute("ImageDetails", "ImageDetails._ROWID_", imageId, "name")
+        end
+
+        if (imageId == "1") then
+            logoEnable = "1"
+        else
+            logoEnable = "0" 
+        end
+
+		headerStyle = "border-bottom: 1px solid #333333;height:92px;background:#ffffff url('images/capPort/" .. imageName .. "?page=captivePortal.html') repeat scroll 0 0; font-family: " .. cpHeaderFont .. "; text-align:center; color:#" .. cpHeaderFontColor .. "; font-size:" .. cpHeaderFontSize .. "; padding-top: 15px;"
+   else
+        logoEnable = "0"
+		headerStyle = "background-color: #" .. cpHeadBgColor .."; border-bottom: 1px solid #333333; height: 92px; font-family: " .. cpHeaderFont .. "; text-align:center; color:#" .. cpHeaderFontColor .. "; font-size:" .. cpHeaderFontSize .. "; padding-top: 15px;"
+	end
+	
+	local welcomeMessage = configRow["CaptivePortalPageDetails.welcomeMessage"] or ''
+        
+    
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--meta http-equiv="Content-Language" content="en-us"-->
+        <title>$| configRow["CaptivePortalPageDetails.title"] or 'CAPTIVE PORTAL' |$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+<style type="text/css">
+* { margin:0; padding:0; }
+/* body { background-color: #757575; } */
+.cpbg0 { background-color:#ffffff; }
+.cpbg1 { background-color:#757575; }
+.cpbg2 { background-color:#434343; }
+.cpbg3 { background-color:#006699; }
+.cpbg4 { background-color:#dfdfdf; }
+.cpbr1 { border:1px solid #006699; }
+.cph1 { text-align:left; color:#ffffff; font-size:12px; font-weight:bold; padding:5px; text-transform:uppercase; font-family: Arial,sans-serif; }
+.cplbl1 { text-align:left; color:#000000; font-size:12px; font-weight:bold; padding:6px 6px 6px 18px; width:45%; font-family: Arial,sans-serif; }
+.cplbl10 { text-align:center; color:#000000; font-size:12px; font-weight:bold; padding:6px 6px 6px 18px; font-family: Arial,sans-serif; }
+.cplbl2 { text-align:left; padding:3px; width:55%; }
+.cplbl2 a { text-align:left; padding:3px; width:55%; font-size:12px; font-family: Arial,sans-serif;  text-decoration:none; }
+.cplbl2 a:hover { text-decoration: underline; }
+.cplbl20 { text-align:center; padding:3px; }
+.cplbl3 { text-align:right; color:#000000; font-size:12px; font-weight:bold; padding:6px 6px 6px 18px; width:50%; font-family: Arial,sans-serif; }
+.cplbl30 { text-align:center; color:#000000; font-size:12px; font-weight:bold; padding:6px 6px 6px 18px; font-family: Arial,sans-serif; }
+.cplbl4 { text-align:left; padding:3px; width:50%; }
+.cplbl40 { text-align:center; padding:3px; }
+.cptxt1 { font-size:11px; margin:3px; font-family: Arial,sans-serif; }
+.cptxt1Dis { background: #dfdfdf; font-size:11px; margin:3px; font-family: Arial,sans-serif; }
+.submit { cursor:pointer; font-size:11px; letter-spacing:1pt; line-height:16px; width:75px; font-family: Arial,sans-serif; }
+.submit2 { cursor:pointer; font-size:11px; letter-spacing:1pt; line-height:16px; width:125px; font-family: Arial,sans-serif; }
+.cpW840 { border: 1px solid #FFFFFF; width: 840px; }
+.cpLogo { background: url("images/logo.gif?page=captivePortal.html") repeat scroll 0 0 #006699; border-bottom: 1px solid #333333; height: 92px; font-family: Arial,sans-serif; text-align:center; color:#ffffff; font-size:24px; padding-top: 15px; }
+.cpAd { background-color:#dfdfdf; font-family: Arial,sans-serif; text-align:center; color:#ff0000; font-size:16px; padding: 15px; }
+.cpFooter { font-family: Arial,sans-serif; text-align:center; color:#ffffff; font-size:12px; padding: 15px 0; }
+.show {  }
+.hide { display:none; }
+
+h1 { color: #006699; float: left; font-size: 16px; font-weight: normal; letter-spacing: 1px; padding: 0 0 5px; text-align: left; width: 75%; }
+
+.midWidth { min-width: 980px; width: 980px; } /* With width property you can change middle area width to full screen! */
+.midWidth2 { min-width: 600px; width: 600px; }
+div.msgError, div.msgInfo, div.msgSuccess { color: #FFFFFF; font-size: 16px; letter-spacing: 1px; padding: 12px; width: 455px;
+	-moz-border-radius: 6px 6px 6px 6px;
+	-webkit-border-radius: 6px 6px 6px 6px;
+	border-radius: 6px 6px 6px 6px;
+}
+div.msgError {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#ff9999',EndColorStr='#ff0202');
+	background:#ff9999;
+	background:-ms-linear-gradient(top,#ff9999,#ff0202);
+	background:-webkit-gradient(linear,left top,left bottom,from(#ff9999),to(#ff0202));
+	background:-moz-linear-gradient(top,#ff9999,#ff0202);
+	background:-o-linear-gradient(top,#ff9999,#ff0202);
+}
+div.msgInfo {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#0096af',EndColorStr='#045d93');
+	background:#0096af;
+	background:-ms-linear-gradient(top,#0096af,#045d93);
+	background:-webkit-gradient(linear,left top,left bottom,from(#0096af),to(#045d93));
+	background:-moz-linear-gradient(top,#0096af,#045d93);
+	background:-o-linear-gradient(top,#0096af,#045d93);
+}
+div.msgSuccess {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#32af00',EndColorStr='#95f931');
+	background:#32af00;
+	background:-ms-linear-gradient(top,#32af00,#95f931);
+	background:-webkit-gradient(linear,left top,left bottom,from(#32af00),to(#95f931));
+	background:-moz-linear-gradient(top,#32af00,#95f931);
+	background:-o-linear-gradient(top,#32af00,#95f931);
+}
+
+div.msgError > p, div.msgInfo > p, div.msgSuccess > p {
+ background: url("images/play.gif?page=captivePortal.html") no-repeat scroll 0 1px transparent;
+ line-height: 18px;
+ padding-left: 10px;
+ text-align: center;
+}
+
+.midArea {
+ background: none repeat scroll 0 0 #FFFFFF;
+ border-radius: 8px 8px 8px 8px;
+	-moz-box-shadow: 0 0 6px #999999;
+	-webkit-box-shadow: 0 0 6px #999999;
+	box-shadow: 0 0 6px #999999;
+ clear: both;
+ min-height: 250px;
+ margin: 0 0 25px 0;
+ padding: 15px;
+ width: auto;
+}
+
+.configLogin{
+	margin: 20px;
+}
+
+.configRow {
+	padding: 0 5px;
+}
+.configRow > label, .configRow > p {
+ color: #333333;
+ float: left;
+ font-size: 12px;
+ letter-spacing: 0.1em;
+ line-height: 22px;
+ min-width: 30%;
+ padding: 0 10px;
+ text-align: left;
+}
+
+.configRow > label.three{
+width:25%;
+min-width:10%;
+}
+
+.configRow > p.three{
+width:15%;
+min-width:10%;
+}
+
+.configRow > label.half {
+ min-width: 50%;
+}
+
+.configRow > p {
+ color: #006699;
+ letter-spacing: 1px;
+ min-width: 0;
+}
+.midMsg { font-size: 14px; margin: 20px 20px; color: #006699; text-align: center; }
+
+.configRow > input, select, textarea {
+ border: 1px solid #999999;
+ color: #006699;
+ float: left;
+ font-size: 11px;
+ height: 16px;
+ letter-spacing: 1px;
+ margin: 0 10px;
+ padding: 2px 4px;
+ width: 178px;
+}
+
+.configRow > input.one {
+    width: 66px;
+}
+
+.submitRow2 {
+	padding-left: 35%;
+}
+
+
+td > select {
+	height: 23px;
+}
+
+
+
+.configRow > p > input[type="checkbox"], .configRow > p > input[type="radio"] {
+/*	border: medium none; */
+}
+
+
+.configRow > textarea {
+ border: thin solid #999999;
+ height: 200px;
+	width: 400px;
+}
+
+
+.break {
+ clear: both;
+ line-height: 8px;
+}
+
+.breakCP {
+ clear: both;
+ line-height: 3px;
+}
+.btnSubmit, .btnReset {
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#64b1d9',EndColorStr='#1876a6');
+	background:#1876a6;
+	background:-ms-linear-gradient(top,#64b1d9,#1876a6);
+	background:-webkit-gradient(linear,left top,left bottom,from(#64b1d9),to(#1876a6));
+	background:-moz-linear-gradient(top,#64b1d9,#1876a6);
+	background:-o-linear-gradient(top,#64b1d9,#1876a6);
+	color: #FCFCFC;
+	border: 1px solid #ffffff;
+	border-radius: 2px 2px 2px 2px; 
+	box-shadow: 0 1px 2px #666666;
+	-moz-box-shadow: 0 1px 2px #666666;
+	-webkit-box-shadow: 0 1px 2px #666666;	
+	cursor: pointer; 
+	font-size: 14px;
+	float: left;
+	letter-spacing: 1px;
+	line-height: 18px;
+	margin: 5px 10px 5px 5px;
+	min-width: 104px;
+	padding: 4px 12px;
+	text-align: center;
+}
+
+.footer {
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#919191',EndColorStr='#2F2F2F');
+    
+	background:#919191;
+	background:-ms-linear-gradient(top,#919191,#2F2F2F);
+	background:-webkit-gradient(linear,left top,left bottom,from(#919191),to(#2F2F2F));
+	background:-moz-linear-gradient(top,#919191,#2F2F2F);
+	background:-o-linear-gradient(top,#919191,#2F2F2F);
+    color: #FFFFFF; font-size: 10px; letter-spacing: 1px; line-height: 20px;
+    text-align: center; margin: 0;
+    padding: 15px 0;
+
+}
+.logo { background: url("images/logo.png?page=captivePortal.html") no-repeat scroll 10px 16px
+transparent; color: #86C2FD; font-size: 14px; letter-spacing: 1px; padding: 54px
+10px 10px; text-align: center; margin-top: -2%;}
+
+</style>
+
+<script type="text/javascript" language="javascript"  src="js/captivePortal.js?page=captivePortal.html"></script>
+<?lua web.includeMenu("metaInclude.html")?>
+			        </head>
+
+      
+<body style="$| bodyStyle |$" onLoad="loginInit ();">
+
+    <div style="$| headerStyle |$">&nbsp;$| configRow["CaptivePortalPageDetails.headerCaption"] or '' |$
+        <?lua if (logoEnable == "1") then?>     
+        <div class="logo"> </div>
+        <?lua end?>
+</div>
+
+<div align="center">
+	<div class="cpW840 cpbg0">
+              
+		<div align="center">
+		<form method="post" action="platform.cgi?page=captivePortalNotification.html" id="tf1_captivePortalFrm">
+        <input type="hidden" id='thispage' name="thispage" value="captivePortal.html">
+		<?lua 
+			if (configRow["CaptivePortalPageDetails.AdEnable"] == "0") then
+            ?>
+            <table border="0" cellpadding="0" cellspacing="0"  id="tf1_ajax" >
+            <tr>
+                <td valign="top" align="center">
+                    <div class="midWidth2">
+                        <?lua if (returnCode == 0 ) then ?>
+                        <div class= msgInfo>
+		                  	<p> $| configRow["CaptivePortalPageDetails.gwSuccessMessage"] or '' |$</p>
+                        </div>
+                        <?lua end?>
+						
+						<div class="breakCP">
+                      	&nbsp;
+                    </div>
+                   
+        </td></tr></table>
+
+        <?lua if (returnCode == 4) then ?>
+            <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+             <!--  Purchase Block Waiting Message Starts -->
+			<table border="0" cellpadding="20" cellspacing="20" width="80%"
+                id="trLoginTbl" class="hide"  >
+                <tr>
+                    <td width="100%" valign="top">
+
+                       <div class="midArea" style="min-height:65px">
+                        <div class="configLogin">             
+					<table cellspacing="0" cellpadding="0" width="100%">
+                     <tr>
+                         <td id="tf1_loadingAnimate">
+                            Please wait your transaction is under verification process
+                            </td>
+						</tr>
+                         
+										</table>
+                                </div>
+					</div>
+					</td>
+				</tr>
+                
+                
+            </table>
+
+
+            <script>
+
+                var t;
+
+                var counter = 1;
+
+                i = 0;
+                var loadingTimer;
+
+
+                $(document).ready(function() {
+                    loadingTimer = setInterval(function() {
+                    i = ++i % 4;
+                    $("#tf1_loadingAnimate").html("Please wait your transaction is under verification process"+Array(i+1).join("."));}, 500);
+                
+                    setTimeout('checkTransaction()',8000);
+                
+                });
+
+                function checkTransaction() {
+                        
+                    $.ajax({
+                            url:'?page=captivePortalNotification.html&getReturnCodeStatus=yes&payTxnId=$|cgi["payTxnId"]|$&counter='+counter,
+                            success: successHandler,
+                            dataType: 'html'
+                    });
+
+                }
+
+                function successHandler(data) {
+                        
+                    var strData = $.trim(data.toString());
+
+                    var strDataHTML = strData;
+
+                    if (strData.length > 1)
+                    {
+                        if (strData.search("error2Redirect") != -1) {
+                            strData = 1;
+                        }
+                        else if (strData.search("error3Redirect") != -1) {
+
+                            strData = 2;
+                        }
+                        else if (strData.search("error4Redirect") != -1) {
+
+                            strData = 3;
+                        }
+                        else {
+                         strData = 0;
+                        }
+                    }
+
+                    switch (parseInt(strData,10))
+                    {
+                        case 0 :  
+
+                            clearInterval(loadingTimer);                         
+                            $("#trLoginTbl").html(strDataHTML);
+                            $("#tf1_ajax").html($("#tf1_ajaxHidden").html());
+                           
+                        break;
+                        case 1 :
+                            clearInterval(loadingTimer);       
+                            //$("#trLoginTbl").html(strDataHTML);
+                            //$("#tf1_ajax").html($("#tf1_ajaxHidden").html());
+                            window.location = "?page=captivePortal.html&paymentNotificationError=1";
+
+                        break;
+                        case 2 :
+
+                            clearInterval(loadingTimer);                                        
+                            //$("#trLoginTbl").html(strDataHTML);
+                            //$("#tf1_ajax").html($("#tf1_ajaxHidden").html());
+                            window.location =  "?page=captivePortal.html&paymentNotificationError=2";
+
+                        break;
+                        case 3 :
+                           
+                            clearInterval(loadingTimer);            
+                            //$("#trLoginTbl").html(strDataHTML);
+                            //$("#tf1_ajax").html($("#tf1_ajaxHidden").html());
+                            window.location =  "?page=captivePortal.html&paymentNotificationError=3";
+
+                        break;
+                        case 4 :
+                        
+                           counter = counter + 1; 
+
+                            if (strData.length > 5 ||  counter > 2 ) 
+                            {
+                                
+                                clearInterval(loadingTimer);            
+                                //$("#trLoginTbl").html(strData);
+                                //$("#tf1_ajax").html($("#tf1_ajaxHidden").html());
+                                window.location = "?page=captivePortal.html&paymentNotificationError=4";
+                                }  else {
+
+                                    setTimeout('checkTransaction()',5000);
+                                }                           
+               
+                        break;
+                    } /* End Switch */
+
+ 
+
+                 }
+
+            </script>
+            <!-- Purchase Block Waiting Message Ends -->
+
+            <?lua elseif (returnCode ~= 0 and returnCode ~= 4) then ?>
+
+            <table border="0" cellpadding="0" cellspacing="0"  id="tf1_ajax" >
+            <tr>
+                <td valign="top" align="center">
+                    <div class="midWidth2">
+                        <div class= msgError>
+		                  	<p> $| configRow["CaptivePortalPageDetails.gwFailureMessage"] or '' |$</p>
+                        </div>
+						<div class="breakCP">
+                      	&nbsp;
+                    </div>
+                   
+        </td></tr></table>
+            <table border="0" cellpadding="20" cellspacing="20" width="80%"
+                id="trLoginTbl" class="hide"  >
+                <tr>
+                    <td width="100%" valign="top">
+                       <h1>$| configRow["CaptivePortalPageDetails.gwSessionTitle3"] or '' |$</h1>
+                       <div class="midArea" style="min-height:65px">
+                        <div class="configLogin">             
+					<table cellspacing="0" cellpadding="0" width="100%">
+                     <tr>
+                         <td id="tf1_loadingAnimate">
+
+                             <?lua if (returnCode == 2 ) then 
+                             ?>
+                             <script >
+                                 window.location = "?page=captivePortal.html&paymentNotificationError=2";
+                              </script>
+                              Invalid Transaction, Transaction verification
+                              Failed.
+
+                              <?lua elseif (returnCode == 3) then ?>
+                              <script >
+                                 window.location = "?page=captivePortal.html&paymentNotificationError=3";
+                              </script>
+
+                               Sorry, Some internal error occured Please contact
+                               with Admin.
+
+                               <?lua else ?>
+                               <script >
+                                 window.location = "?page=captivePortal.html&paymentNotificationError=1";
+                              </script>
+
+                               You have Landup on Wrong Page.
+
+                            <?lua end ?>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+				             <div class="submitRow2">											 
+							<input type="submit" id="LoginNow" title="Login Now"
+                            name="button.loginNow.captivePortal"
+                            value="Go back" class="btnSubmit"
+                            onclick="document.getElementById('thispage').value='captivePortalNotification.html'">
+										</div>
+							 
+                                
+                                </td>
+						</tr>
+                         
+										</table>
+                                </div>
+					</div>
+					</td>
+				</tr>
+                
+                
+            </table>
+
+        <?lua else ?>
+
+			 <!-- Purchase Block -->
+			<table border="0" cellpadding="20" cellspacing="20" width="80%"
+                id="trLoginTbl" class="hide" >
+                <tr>
+                    <td width="100%" valign="top">
+                        <?lua if (returnCode ~= 0) then ?>
+                        <h1>$| configRow["CaptivePortalPageDetails.gwSessionTitle3"] or '' |$</h1>
+                        <?lua else ?>
+                        <h1>$| configRow["CaptivePortalPageDetails.gwSessionTitle2"] or '' |$</h1>
+                        <?lua end?>
+
+                       <div class="midArea" style="min-height:155px">
+                        <div class="configLogin">             
+					<table cellspacing="0" cellpadding="0" width="100%">
+											
+                        <tr>
+                            <td>
+                             <div class="configRow">
+                                   <label>User Account </label>
+                                   <p> $|userDetails.userId or ''|$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                             
+                             <div class="configRow">
+                                   <label>Password </label>
+                                   <p>$|userDetails.password or ''|$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                 <div class="configRow">
+                                   <label>Price </label>
+                                   <p>$|userDetails.price or ''|$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                 <div class="configRow">
+                                   <label>Package </label>
+                                   <p>$|userDetails.package or ''|$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                 <!--<div class="configRow">
+                                   <label>ESSID </label>
+                                   <p>TeamF1_guest</p>
+                                </div>
+                                <div class="break">&nbsp; </div>-->
+                                 <div class="configRow">
+                                   <label>Valid to use until </label>
+                                   <p>$| userDetails.validToUse or '' |$</p>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                  <div class="configRow">
+                                   <label style="color:#FF0000">Before Closing this window Please write down your User Account and Password</label>
+                                </div>
+                                <div class="break">&nbsp; </div>
+                                
+                                
+                                </td></tr>
+                                 <tr>
+                            <td>
+				             <div class="submitRow2">											 
+							<input type="submit" id="LoginNow" title="Login Now"
+                            name="button.loginNow.captivePortal"
+                            value="Login Now" class="btnSubmit"
+                            onclick="document.getElementById('thispage').value='captivePortalNotification.html'">
+										</div>
+							 
+                                
+                                </td>
+						</tr>
+                         
+										</table>
+                                </div>
+					</div>
+					</td>
+				</tr>
+                
+                
+                <!-- Purchase Block Ends -->
+                
+                
+                
+            </table>
+ 
+
+            <?lua end ?>
+				
+			 
+											<?lua
+				end
+			?>
+			<input type="hidden" name="Login.userAgent" id="hdUserAgent">
+	        <?lua
+	            if(spUrlStr == "2") then
+	        ?>
+            <input type="hidden" name="CaptivePortalSession.UserName" value="$| loginInfo["CaptivePortalSession.UserName"] or '' |$">
+            <input type="hidden" name="CaptivePortalSession.Password" value="$| loginInfo["CaptivePortalSession.Password"] or '' |$">
+        	<?lua end ?>
+			<input type="hidden" name="temp.username" id="hdUsrName" value="$| usrName or '' |$">
+			<input type="hidden" name="temp.idletimeout" id="hdIdleTimeOut" value="$| idletimeout or '' |$">
+			<input type="hidden" name="temp.password" id="hdPassword" value="$| password or ''|$">
+			<input type="hidden" name="temp.alertType" id="hdAlertType" value="$| alertType or '' |$">	
+			<input type="hidden" name="temp.maxValue" id="hdMaxValue" value="$| maxValue or '' |$">
+			<input type="hidden" name="temp.alertValue" id="hdAlertValue" value="$| alertValue or '' |$">
+			<input type="hidden" name="temp.accessType" id="hdAccessType" value="$| accessType or '' |$">
+			</form>
+			<input type="hidden" id="hdSreenVal" value="$| spUrlStr |$">
+			<!-- js hidden fields -->
+        </div>
+           </div>
+   
+</div> 
+
+<?lua
+	if (configRow["CaptivePortalPageDetails.FooterEnable"] == "0") then
+?>
+	<div class="footer">$| COPYRIGHTS |$</div>
+<?lua
+	else
+?>
+	<div class="footer" style="$|footerStyle|$">$| configRow["CaptivePortalPageDetails.FooterContent"] or '' |$</div>
+<?lua	
+	end
+?>
+</body>
+
+</html>
+<?lua 
+end
+end?>
+

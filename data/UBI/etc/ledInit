@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# ledInit - initialization script
+#
+# Copyright (c) 2014, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,12Jun14, sr written
+
+
+if [ "$INCLUDE_LED" = "y" ]; then
+    MODULES_DIR=$GRE_INSTALL_PATH/lib/modules/
+    if [ $PRODUCT_ID == "DSR-1000AC_Ax" ] || [ $MODEL_ID == "DSR-500AC_Ax" ] || 
+        [ $PRODUCT_ID == "DSR-1000_Bx" ] || [ $PRODUCT_ID == "DSR-500_Bx" ] ; then
+       insmod $MODULES_DIR/led.$MOD_SUFFIX
+    fi
+fi
+

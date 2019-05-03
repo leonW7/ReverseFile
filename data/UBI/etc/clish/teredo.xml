@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="net-teredo-tunnel-config" prompt="net-config[teredo-tunnel]> "> 
+    <COMMAND name="save" help="Save teredo Tunnel configuration changes.">
+	     <ACTION>lua clishCfgObjExec("teredoTunnel")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save teredo Tunnel configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("teredoTunnel")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back teredoTunnel configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="teredo_tunneling_enable"
+             help="enable/disable teredo tunneling which will allow traffic from a LAN IPv6 network to be tunneled through a WAN IPv4 network to reach an IPV6 network.">
+             <PARAM name="status"
+                    help="enable/disable teredo tunneling which will allow traffic from a LAN IPv6 network to be tunneled through a WAN IPv4 network to reach an IPV6 network"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("teredoTunnel", "teredoTunnel.tunnelStatus", "${status}")              
+         </ACTION>
+    </COMMAND>
+    <COMMAND name="primary_teredo_server"
+             help="primary teredo server.">
+     <PARAM name="primary_teredoServer" 
+            help="Primary Teredo Server"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("teredoTunnel", "teredoTunnel.serverName","${primary_teredoServer}")
+         </ACTION>
+    </COMMAND>
+
+    <COMMAND name="secondary_teredo_server"
+             help="secondary teredo server.">
+     <PARAM name="secondary_teredoServer" 
+            help="Secondary Teredo Server."
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("teredoTunnel", "teredoTunnel.secodndaryServerName","${secondary_teredoServer}")
+         </ACTION>
+     </COMMAND>         
+</VIEW>
+<!--=======================================================-->
+<!--=======================================================-->
+    <COMMAND name="net ipv6_tunnel teredo" help="teredo tunnel configuration setup."/>
+    <!--=======================================================-->
+    <COMMAND name="net ipv6_tunnel teredo configure"
+             help="teredo Tunnel configuration mode."
+             view="net-teredo-tunnel-config" viewid="">
+                   <ACTION>lua clishCfgObjNew ("teredoTunnel", 
+                              teredoTunnelCfgInit, teredoTunnelCfgSave, 
+				       teredoTunnelCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+</CLISH_MODULE>

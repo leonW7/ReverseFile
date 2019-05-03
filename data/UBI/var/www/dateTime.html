@@ -1,0 +1,352 @@
+<?lua
+require "teamf1lualib/dateTime_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/system_time"
+local manual_time = require ("com.teamf1.core.system.time")
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "dateTime"
+
+local dateAndTime = require ("com.teamf1.bl.system.time")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local ROWID      = "1"
+    inputTable["dateTime.cookie"] = ROWID
+    local returnCode, cookie = 
+            dateAndTime.dateTimeSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+     web.goToPage(NextPage, true, true)
+else
+    local returnCode, cookie, currentTime, timezone, dayligtSavings, useNtp, 
+    reSyncInterval, useDefaultNtpServers, primaryNtpServer, backupNtpServer = 
+    dateAndTime.dateTimeSectionGet ()
+    local errorStr, valid 
+    errorStr, valid , currentTime = manual_time.currentTimeGet ()
+    if (errorStr ~= returnCodes.SUCCESS) then
+        return returnCodes.INVALID_ARGUMENT
+    end
+
+    if (currentTime == nil) then
+        returnCode = returnCodes.FAILURE
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+ 
+LANG_LOCALE =
+"10666,10627,13099,10758,10671,11806,11805,10683,10648,11718,12627,12539,12783,13097,14053,30326,14052,12093,12109,11983,30327,11372,11283,11281,11031,12003,13061,11282,10855,13719,13720,13721,13722,13723,13724,13725,13726,13727,13728,13729,13730,13731,13732,13733,13734,13735,13736,13737,13738,13739,13740,13741,13742,13743,13744,13745,13746,13747,13748,13749,13750,13751,13752,13753,13754,13755,13756,13757,13758,13759,13760,13761,13762,13763,13764,13765,13766,13767,13768,13769,13770,13771,13772,13773,13774,13775,13776,13777,13778,13779,13780,13781,13782,13783,13784,13785,13786,13787,13788,13789,13790,13791,13792,13793,13794,13795,13796,13797,13798,13799,13800,13801,13802,13803,13804,13805,13806,13807,13808,13809,13810,13811"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/dateTimePicker.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center"><?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['10666'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmDateTime" id="tf1_frmDateTime"
+                                action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="dateTime.html">
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10627'] |$ </label>
+                                    <p> 
+                                        $| currentTime |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13099'] |$ </label>
+                                    <select name="dateTime.timezone" class="txt1" id="tf1_selTimezone">
+                                        <option $| web.dropdownSelected(timezone == "0") |$ value="0">$| LANG_LOCALE['13719'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "1") |$ value="1">$| LANG_LOCALE['13720'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "2") |$ value="2">$| LANG_LOCALE['13721'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "3") |$ value="3">$| LANG_LOCALE['13722'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "4") |$ value="4">$| LANG_LOCALE['13723'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "5") |$ value="5">$| LANG_LOCALE['13724'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "6") |$ value="6">$| LANG_LOCALE['13725'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "7") |$ value="7">$| LANG_LOCALE['13726'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "8") |$ value="8">$| LANG_LOCALE['13727'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "9") |$ value="9">$| LANG_LOCALE['13728'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "10") |$  value="10">$| LANG_LOCALE['13729'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "11") |$  value="11">$| LANG_LOCALE['13730'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "12") |$  value="12">$| LANG_LOCALE['13731'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "13") |$  value="13">$| LANG_LOCALE['13732'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "14") |$  value="14">$| LANG_LOCALE['13733'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "15") |$  value="15">$| LANG_LOCALE['13734'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "16") |$  value="16">$| LANG_LOCALE['13735'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "17") |$  value="17">$| LANG_LOCALE['13736'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "18") |$  value="18">$| LANG_LOCALE['13737'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "19") |$  value="19">$| LANG_LOCALE['13738'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "20") |$  value="20">$| LANG_LOCALE['13739'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "21") |$  value="21">$| LANG_LOCALE['13740'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "22") |$  value="22">$| LANG_LOCALE['13741'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "23") |$  value="23">$| LANG_LOCALE['13742'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "24") |$  value="24">$| LANG_LOCALE['13743'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "25") |$  value="25">$| LANG_LOCALE['13744'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "26") |$  value="26">$| LANG_LOCALE['13745'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "27") |$  value="27">$| LANG_LOCALE['13746'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "28") |$  value="28">$| LANG_LOCALE['13747'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "29") |$  value="29">$| LANG_LOCALE['13748'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "30") |$  value="30">$| LANG_LOCALE['13749'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "31") |$  value="31">$| LANG_LOCALE['13750'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "32") |$  value="32">$| LANG_LOCALE['13751'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "33") |$  value="33">$| LANG_LOCALE['13752'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "34") |$  value="34">$| LANG_LOCALE['13753'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "35") |$  value="35">$| LANG_LOCALE['13754'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "36") |$  value="36">$| LANG_LOCALE['13755'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "37") |$  value="37">$| LANG_LOCALE['13756'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "38") |$  value="38">$| LANG_LOCALE['13757'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "39") |$  value="39">$| LANG_LOCALE['13758'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "40") |$  value="40">$| LANG_LOCALE['13759'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "41") |$  value="41">$| LANG_LOCALE['13760'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "42") |$  value="42">$| LANG_LOCALE['13761'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "43") |$  value="43">$| LANG_LOCALE['13762'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "44") |$  value="44">$| LANG_LOCALE['13763'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "45") |$  value="45">$| LANG_LOCALE['13764'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "46") |$  value="46">$| LANG_LOCALE['13765'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "47") |$  value="47">$| LANG_LOCALE['13766'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "48") |$  value="48">$| LANG_LOCALE['13767'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "49") |$  value="49">$| LANG_LOCALE['13768'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "50") |$  value="50">$| LANG_LOCALE['13769'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "51") |$  value="51">$| LANG_LOCALE['13770'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "52") |$  value="52">$| LANG_LOCALE['13771'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "53") |$  value="53">$| LANG_LOCALE['13772'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "54") |$  value="54">$| LANG_LOCALE['13773'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "55") |$  value="55">$| LANG_LOCALE['13774'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "56") |$  value="56">$| LANG_LOCALE['13775'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "57") |$  value="57">$| LANG_LOCALE['13776'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "58") |$  value="58">$| LANG_LOCALE['13777'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "59") |$  value="59">$| LANG_LOCALE['13778'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "60") |$  value="60">$| LANG_LOCALE['13779'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "61") |$  value="61">$| LANG_LOCALE['13780'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "62") |$  value="62">$| LANG_LOCALE['13781'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "63") |$  value="63">$| LANG_LOCALE['13782'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "64") |$  value="64">$| LANG_LOCALE['13783'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "65") |$  value="65">$| LANG_LOCALE['13784'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "66") |$  value="66">$| LANG_LOCALE['13785'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "67") |$  value="67">$| LANG_LOCALE['13786'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "68") |$  value="68">$| LANG_LOCALE['13787'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "69") |$  value="69">$| LANG_LOCALE['13788'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "70") |$  value="70">$| LANG_LOCALE['13789'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "71") |$  value="71">$| LANG_LOCALE['13790'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "72") |$  value="72">$| LANG_LOCALE['13791'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "73") |$  value="73">$| LANG_LOCALE['13792'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "74") |$  value="74">$| LANG_LOCALE['13793'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "75") |$  value="75">$| LANG_LOCALE['13794'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "76") |$  value="76">$| LANG_LOCALE['13795'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "77") |$  value="77">$| LANG_LOCALE['13796'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "78") |$  value="78">$| LANG_LOCALE['13797'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "79") |$  value="79">$| LANG_LOCALE['13798'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "80") |$  value="80">$| LANG_LOCALE['13799'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "81") |$  value="81">$| LANG_LOCALE['13800'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "82") |$  value="82">$| LANG_LOCALE['13801'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "83") |$  value="83">$| LANG_LOCALE['13802'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "84") |$  value="84">$| LANG_LOCALE['13803'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "85") |$  value="85">$| LANG_LOCALE['13804'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "86") |$  value="86">$| LANG_LOCALE['13805'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "87") |$  value="87">$| LANG_LOCALE['13806'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "88") |$  value="88">$| LANG_LOCALE['13807'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "89") |$  value="89">$| LANG_LOCALE['13809'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "90") |$  value="90">$| LANG_LOCALE['13810'] |$</option>
+                                        <option $| web.dropdownSelected(timezone == "91") |$  value="91">$| LANG_LOCALE['13811'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10671'] |$ </label>
+                                    <?lua              
+                                    if(dayligtSavings == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                    else
+                                        statusStr ="enable-disable-off"
+                                        statusVar = "0"
+                                    end
+                                    ?>
+                                        <a class="$| statusStr |$" alt=""
+                                            id="tf1_chkAutoDaylight" ></a>
+                                        <input type="hidden" value="$| statusVar |$" name="dateTime.autoDaylight">
+
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['11806'] |$ </label>
+                                   
+                                    <?lua              
+                                    if(useNtp == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                    else
+                                        statusStr ="enable-disable-off"
+                                        statusVar = "0"
+                                    end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_ntpServers"> </a>
+                                        <input type="hidden" value="$| statusVar |$" name="dateTime.enabled">
+
+                                   
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_radNtp_div">
+                                    <label> $| LANG_LOCALE['11805'] |$ </label>
+                                    <p>
+                                        <input type="radio" name="dateTime.useDefServers" $| web.radioSelected(useDefaultNtpServers == "1") |$ value="1" onClick="NtpSvrTypeCheck('tf1_radNtp1')" id="tf1_radNtp1">
+                                        $| LANG_LOCALE['10683'] |$
+                                    </p>
+                                    <p>
+                                        <input type="radio" name="dateTime.useDefServers" $| web.radioSelected(useDefaultNtpServers == "2") |$ value="2" onClick="NtpSvrTypeCheck('tf1_radNtp2')" id="tf1_radNtp2">
+                                        $| LANG_LOCALE['10648'] |$
+                                    </p>
+                                </div>
+                                <div class="break" id="break1_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_customNtp1_div">
+                                    <label> $| LANG_LOCALE['12539'] |$ </label>
+                                    <input type="text" value="$|
+                                    primaryNtpServer or '0.us.pool.ntp.org'|$" name="dateTime.server1" id="tf1_customNtp1" size="30" class="txt1" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate (this.id) || validateFQDN(this.id)); }">
+                                </div>
+                                <div class="break" id="break_customNtp1_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_customNtp2_div">
+                                    <label> $| LANG_LOCALE['12783'] |$ </label>
+                                    <input type="text" value="$|backupNtpServer
+                                    or  '1.us.pool.ntp.org' |$" name="dateTime.server2" id="tf1_customNtp2" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate (this.id) || validateFQDN(this.id)); }">
+                                </div>
+                                <div class="break" id="break_customNtp2_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_ReSync_div">
+                                    <label> $| LANG_LOCALE['13097'] |$ </label>
+                                    <input class="one" type="text" value="$| reSyncInterval or ''|$" maxlength="4" name="dateTime.reSyncNtpVal" id="tf1_ReSync" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 5, 1440, true, LANG_LOCALE['14052']+': ', '');}">
+                                    <dl>
+                                        [$| LANG_LOCALE['10683'] |$: 120,  $| LANG_LOCALE['12627'] |$: 5 - 1440] $| LANG_LOCALE['11718'] |$ 
+                                    </dl>
+                                </div>
+                                <div class="break" id="break_ReSync_div">
+                                    &nbsp;
+			    </div>
+			    <div id="tf1_setDateTimeBlock_div">
+                                <div class="configRow" id="tf1_setDateTimeValue_div">
+							        <label>$| LANG_LOCALE['14053'] |$</label>
+							 <input type="text" id="tf1_setDateTimeValue" name="dateTime.currentTime" readonly><dl>$| LANG_LOCALE['30326'] |$</dl>
+							    </div>
+							    <div class="break" >
+							        &nbsp;
+							    </div>
+							    <div class="configRow" >
+							        <label>&nbsp; </label>
+							        <input type="hidden" id="tf1_setDateTime"  onChange="onchangeValue()" readonly>
+							        <div id="tf1_setDateTime"></div>
+							    </div>
+							    <div class="break">
+							        &nbsp;
+								</div>   
+
+				</div>	
+                                <div class="submitRow">
+                                    <input type="submit"
+                                    name="button.config.dateTime" class="btnSubmit" onClick="return dateTimeValidate('tf1_frmDateTime')" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); dateTimeOnReset('tf1_frmDateTime');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td><?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script language="JavaScript" src="js/mgmt.js" type="text/javascript"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script language="JavaScript" src="js/ipv4AddrValidations.js" type="text/javascript"></script>
+        <script language="JavaScript" src="js/textValidations.js" type="text/javascript"></script>
+        <script language="JavaScript" src="js/dateTime.js" type="text/javascript"></script>
+        <script language="JavaScript" src="js/dateTimePicker.js" type="text/javascript"></script>
+        <script type="text/javascript">
+		$(function () {
+			var curr = new Date().getFullYear();
+			var opt = {}			
+			opt.datetime = {preset: 'datetime',minDate: new Date(2000,3,10,9,22),maxDate: new Date(2035,11,31,23,59),stepMinute: 1};
+			$('#tf1_setDateTime').val($('#tf1_setDateTimeValue').val());
+			$('#tf1_setDateTime').scroller('destroy').scroller(
+				$.extend(
+					opt["datetime"], { 					
+						mode: "scroller", 
+						display: "inline" 
+					}
+				)			
+			);			
+		});
+		function onchangeValue(){
+			$('#tf1_setDateTimeValue').val($('#tf1_setDateTime').val());
+		}		
+	</script>
+    </body>
+</html>
+<?lua end ?>

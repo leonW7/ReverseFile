@@ -1,0 +1,2372 @@
+:|noHelpSet|:
+No Help Set configured or not available.
+:|noHelpSetEnd|:
+
+:|dashboard|:
+<b>Dashboard</b><br>
+<br>
+<b>CPU Utilization</b>
+This section displays the router's processor statistics.<br>
+<br>
+<b>Active Info:</b> percent of the CPU utilization being consumed currently by all user space processes, such as SSL VPN or management operations.<br>
+<br>
+<b>Memory Utilization</b>
+This section displays memory status of system.<br>
+<br>
+<b>Total Memory :</b> Indicates total available volatile physical memory.<br>
+<br>
+<b>Used Memory:</b> Indicates memory used by all processes in system.<br>
+<br>
+<b>Free Memory:</b> Indicates available free memory in system.<br>
+<br>
+<b>Cached Memory:</b> Indicates cached memory in system.<br>
+<br>
+<b>Buffer Memory:</b> Indicates buffered memory in system<br>
+<br>
+<b>Bandwidth Usage:</b> Indicates total bandwidth used by the system.<br>
+<br>
+<b>WLAN Statistics:</b>WLAN Packets Transmitted Total packets transmitted across all APs managed by the controller.<br>
+<br>
+<b>VPN's</b> Indicates current number of concurrent and active IPsec and SSL VPN sessions.<br>
+<br>
+<b>Discovered APs:</b> Indicates total no of ap's discovered by controller which are managed or unknown or rouge etc.<br>
+<br>
+<b>WAN Ports:</b> Indicates bandwidth utilisation by option ports.<br>
+<br>
+<b>Traffic Overview:</b> Indicates traffic generated using these protocals http,Email,Ipsec,https.<br>
+<br>
+<b>Interface:(LAN/WAN1/DMZ/WAN2)</b><br>
+The interface statistics displays the data transfer statistics for the WAN1, WAN2, LAN, and WLAN ports.<br>
+<br>
+<b>Incoming Packets:</b> The number of IP packets entering the port.<br>
+<br>
+<b>Outgoing Packets:</b> The number of packets leaving the port.<br>
+<br>
+<b>Dropped In Packets:</b> packets dropped on the inbound path of the interface.<br>
+<br>
+<b>Dropped Out Packets:</b> packets dropped on the outbound path of the interface.<br>
+<br>
+<b>Interface (VLAN)</b><br>
+The interface statistics displays the data transfer statistics for the WAN1, WAN2, LAN, and WLAN ports.<br>
+<b>Incoming Packets:</b> The number of IP packets coming in by the port.<br>
+<br>
+<b>Outgoing Packets:</b> The number of packets going out of the port.<br>
+<br>
+<b>Dropped In Packets:</b> packets dropped on the inbound path of the interface.<br>
+<br>
+<b>Dropped Out Packets:</b> packets dropped on the outbound path of the interface.<br>
+<br>
+<b>WLAN Statistics :</b>
+ indicates WLAN Packets Transmitted Total packets transmitted across all APs managed by the controller.<br>
+<br>
+<b>WLAN Packets Received:</b> Total packets received across all APs managed by the controller.<br>
+<br>
+<b>WLAN Packets Transmit Dropped :</b> Total packets transmitted across all APs managed by the controller that were dropped.
+   WLAN Packets Receive Dropped Total packets received across all APs managed by the controller that were dropped.<br>
+<br>
+<b>WLAN Bytes Transmitted: </b> Total bytes transmitted across all APs managed by the controller.<br>
+<br>
+<b>WLAN Bytes Received:</b>Total bytes received across all APs managed by the controller.<br>
+<br>
+<b>WLAN Bytes Transmit Dropped: </b> Total bytes transmitted across all APs managed by the controller that were dropped.<br>
+<br>
+<b>WLAN Bytes Receive Dropped:</b> Total bytes received across all APs managed by the controller that were dropped.<br>
+<br>
+<b>ICMP Received:</b> total number of ICMP packets received on the interface.<br>
+</br>
+<b>Active VPN Tunnels:</b> current number of concurrent and active IPsec and SSL VPN sessions.<br>
+<br>
+<b>Active VLANs:</b>current number of enabled and active VLAN interfaces.<br>
+<br>
+<b>Active Interfaces:</b> number of enabled interfaces.<br>
+<br>
+:|dashboardEnd|:
+
+:|device|:
+                <p><b>Device Info </b><br><br>
+                <b>General</b><br><br>
+				<b>System Name:</b> Displays router&#39;s unit name<br>
+				<br>
+				<b>Firmware Version:</b> The software version is the version of 
+				the firmware that the router is currently using. <br>
+                <br>
+                <b>Hardware Version:</b> The hardware version of router.<br><br> 
+				<b>Serial Number:</b> The hardware number of the router.<br>
+				<br>
+                </p>
+:|deviceEnd|:
+
+:|allLogs|:
+                <p><b>Current Logs </b><br><br>
+				The Display Logs window allows you to view configured log messages 
+				from the router as they appear. Each log appears with a timestamp 
+				as determined by the router&#39;s configured time. If remote logging 
+				such as a Syslog server or e&#45;mail logging is configured, the same 
+				logs are sent to the remote interface while being displayed here.<br>
+&nbsp;<br>
+                Click <b>Refersh </b> (Right side on the page) for referesh logs or 
+                reload page again.<br><br>
+				Click <b>Clear All</b>  to remove all entries in the Display 
+				Logs screen. <br>
+				<br>
+				Click <b>Send Logs</b>  to send all logs in the Display Logs 
+				screen to preconfigured e&#45;mail recipients.</p>
+:|allLogsEnd|:
+
+:|wlanLogs|:
+                <p><b>Current WLAN Logs</b><br><br>
+				The Display Logs window allows you to view configured log messages 
+				from the router on WLAN interface as they appear. Each log appears with a timestamp 
+				as determined by the router&#39;s configured time. the same 
+				logs are sent to the WLAN interface while being displayed here.<br>
+&nbsp;<br>
+                Click <b>Refersh </b> (Right side on the page) for referesh logs or 
+                reload page again.<br><br>
+				Click <b>Clear All</b>  to remove all entries in the Display 
+				Logs screen. <br>
+				<br>
+                </p>
+:|wlanLogsEnd|:
+
+:|firewallLogs|:
+                <p><b>Current Firewall Logs</b><br><br>
+				</b>The Display Logs window allows you to view configured Firewall
+                 log messages from the router as they appear. Each log appears 
+				with a timestamp as determined by the router&#39;s configured time. 
+				If remote logging such as a Syslog server or e&#45;mail logging is configured, 
+				the same logs are sent to the remote interface while being displayed 
+				here. <br><br>
+                Click <b>Refersh </b> (Right side on the page) for referesh logs or 
+                reload page again.<br><br>
+				Click <b>Clear All</b>  to remove all entries in the Display 
+				Logs screen. <br>
+				<br>
+                </p>
+:|firewallLogsEnd|:
+
+:|ipsecVpnLogs|:
+                <p><b>Current IPSec VPN Logs :<br>
+				</b>The Display Logs window allows you to view configured IPsec 
+				VPN log messages from the router as they appear. Each log appears 
+				with a timestamp as determined by the router&#39;s configured time. 
+				If remote logging such as a Syslog server or e&#45;mail logging is configured, 
+				the same logs are sent to the remote interface while being displayed 
+				here. <br>
+				<br>
+                Click <b>Refersh </b> (Right side on the page) for referesh logs or 
+                reload page again.<br><br>
+				Click <b>Clear All</b>  to remove all entries in the Display 
+				Logs screen. <br>
+                 </p>
+:|ipsecVpnLogsEnd|:
+
+:|sslVpnLogs|:
+                <p><b>Current SSL VPN Logs :<br>
+				</b>The Display Logs window allows you to view configured  
+				SSLVPN log messages from the router as they appear. Each log appears 
+				with a timestamp as determined by the router&#39;s configured time. 
+				If remote logging such as a Syslog server or e&#45;mail logging is configured, 
+				the same logs are sent to the remote interface while being displayed 
+				here. <br>
+				<br>
+                Click <b>Refersh </b> (Right side on the page) for referesh logs or 
+                reload page again.<br><br>
+				Click <b>Clear All</b> to remove all entries in the Display 
+				Logs screen. <br></p>
+:|sslVpnLogsEnd|:
+
+:|logsWcf|:
+                <p><b>Current WCF Logs :<br>
+				</b>The Display Logs window allows you to view configured WCF
+                 log messages from the router as they appear. Each log appears 
+				with a timestamp as determined by the router&#39;s configured time. 
+				If remote logging such as a Syslog server or e&#45;mail logging is configured, 
+				the same logs are sent to the remote interface while being displayed 
+				here. <br>
+				<br>
+                Click <b>Refersh </b> (Right side on the page) for referesh logs or 
+                reload page again.<br><br>
+				Click <b>Clear All</b> to remove all entries in the Display 
+				Logs screen. <br></p>
+:|logsWcfEnd|:
+
+:|captivePortalLogs|:
+                <p><b>Current CAPTIVE PORTAL Logs :<br>
+				</b>The Display Logs window allows you to view configured  
+				CAPTIVE PORTAL log messages from the router as they appear. Each log appears 
+				with a timestamp as determined by the router&#39;s configured time. 
+				If remote logging such as a Syslog server or e&#45;mail logging is configured, 
+				the same logs are sent to the remote interface while being displayed 
+				here. <br>
+				<br>
+                Click <b>Refersh </b> (Right side on the page) for referesh logs or 
+                reload page again.<br><br>
+				Click <b>Clear All</b> to remove all entries in the Display 
+				Logs screen. <br></p>
+:|captivePortalLogsEnd|:
+
+
+:|usbStatus|:
+                <p><b>USB(s) Status</b><br><br>
+
+                <b>Description</b><br>
+                <b>Status  :</b> Displays the device status connected/disconnected.<br>
+                <b>Vendor  :</b> Displays the vendor name of the USB 
+				device connected to the router. <br>
+				<b>Model  :</b> Displays the model name of the USB 
+				device connected to the router. <br>
+                <b>Type  :</b> The router supports interfacing with 
+                a USB disk drive (memory stick) device or a Mobile Internet USB modem (adapter)
+                or a USB printer.<br>
+                <b>Mount Status  :</b> Displays the mount status of the USB
+                device connected to the router. <br>
+                <br>
+                <b>USB Port :</b>Display information about device connected to USB 
+                        Port  <br><br></p>
+:|usbStatusEnd|:
+
+:|lanLeasedClients|:
+                <p><b>LAN Leased Clients List:</b> <br>
+                <br>
+                <b>Host Name :</b> Host Name of connected client.<br><br>
+				<b>IP Addresses:</b> The LAN IP address of a host that matches the 
+				reserved IP list. <br>
+				<br>
+				<b>MAC Addresses:</b> The MAC address of a LAN host that has a configured 
+				IP address reservation.</p>
+:|lanLeasedClientsEnd|:
+
+:|ipv6LeasedClients|:
+                <p><b>IPv6 Leased Clients List:<br>
+				</b><br>
+                <br>
+                <b>Host Name :</b> Host Name of connected client.<br><br>
+				<b>IP Addresses:</b> The LAN IPv6 IP address that should be reserved 
+				by the DHCP IPv6 server.<br>
+				<br>
+				<b>MAC Addresses:</b> The MAC address that will be assigned the 
+				reserved IP address when it is on the DHCP IPv6 server.
+				</p>
+:|ipv6LeasedClientsEnd|:
+
+:|dmzLeasedClients|:
+                <p><b>DMZ Leased Clients List:<br>
+				</b><br>
+                <br>
+                <b>Host Name :</b> Host Name of connected client.<br><br>
+				<b>IP Addresses:</b> The DMZ IP address that should be reserved 
+				by the DHCP server.<br>
+				<br>
+				<b>MAC Addresses:</b> The MAC address that will be assigned the 
+				reserved IP address when it is on the DMZ.
+				</p>
+:|dmzLeasedClientsEnd|:
+
+:|captivePortalSessions|:
+                <p><b>Captive Portal Sessions List:<br><br>
+				User Name:</b> The UserName of the RunTimeAuthentication user.<br>
+				<br>
+				<b>IP Address:</b> The IP address of the user logged in.<br>
+                <br>
+                <br> Action can be taken by right click on Captive Portal Sessions List<br>
+                <b>Block : </b> for block User Name and IP Address<br>
+				<b>Disconnect:</b> Will remove the current sessions of the
+                selected users.</p>
+:|captivePortalSessionsEnd|:
+
+:|activeSessions|:
+                <p><b>Active Sessions:<br>
+				Source :</b> The LAN or DMZ IP address is the local traffic session 
+				identifier.<br>
+				<br>
+				<b>Destination :</b> The remote WAN IP is used to identify the session 
+				as well.<br>
+				<br>
+				<b>Protocol:</b> UDP, TCP, or ICMP traffic.<br>
+				<br>
+				<b>State:</b> Indicates whether traffic is currently being sent 
+				across this session.<br>
+				<br></p>
+:|activeSessionsEnd|:
+
+:|activeIPsecSAs|:
+				<p><b>Active VPN:<br>
+				Active IPsec SAs List</b><br>
+				<br>
+				This list displays the status of IPsec connections. You can change 
+				the status of a connection to either establish or disconnect the 
+				configured SA(s) (Security Association). <br>
+				<br>
+				<b>Policy Name:</b> The name of the IKE or VPN policy associated 
+				with this SA. <br>
+				<br>
+				<b>Endpoint:</b> Displays the IP address of the remote VPN gateway 
+				or client. <br>
+				<br>
+				<b>Tx (KB):</b> The data transmitted (in KB) over this SA. <br>
+				<b><br>
+				Tx (Packets):</b> The number of IP packets transmitted over this 
+				SA. <br>
+				<br>
+				<b>Configuration State:</b> Displays the current status of the SA for IKE policies. 
+				The status can be either Not Connected or IPsec SA Established.
+				<br><br>
+                Action can be taken...
+                <br>
+                <b>Drop:</b> for Drop Active VPN tunnle<br><br>
+                <b>Connect:</b> for Connect Active VPN tunnel<br><br></p>
+:|activeIPsecSAsEnd|:
+
+:|activeSslVpnConnections|:
+				<p><b>Active SSL VPN Connections</b><br>
+				<br>
+				This list displays the status of SSL VPN connections. <br>
+				<br>
+				<b>User Name:</b> The username of the SSL VPN user <br>
+				<br>
+				<b>IP Address:</b> The user&#39;s IP address (i.e the IP address of 
+				the SSL client)<br>
+				<br>
+				<b>Local PPP Interface:</b> The gateway of this router that is used 
+				for the SSL connection (WAN1 or WAN2)<br>
+                <?lua end?>  
+				<br>
+				<b>Peer PPP Interface:</b> the SSL VPN user&#39;s gateway IP address<br>
+				Connect Status: Indicates whether the SSL VPN connection is active 
+				(connected) or inactive (disconnected)<br>				
+				<br>
+				<b>Connection Status:</b> Will show the current status of the tunnel<br>
+				<br><br>
+                Action can be taken...
+                <br>
+                <b>Disconnect:</b> for Disconnect Active SSL VPN tunnel<br></p>
+:|activeSslVpnConnectionsEnd|:
+
+:|activePptpVpnConnections|:
+                <p><b>Active PPTP VPN Connections</b><br>
+				<br>
+				This list displays the status of PPTP VPN Client connection. From here 
+				you can either connect or disconnect the PPTP VPN Tunnel <br>
+				<br>
+				<b>Connection Status:</b> Will show the current status of the tunnel<br>
+				<br>
+                Action can be taken...
+                <br>
+                <b>Drop:</b> for Drop Active PPTP VPN tunnel<br><br>
+                <b>Connect:</b> for Connect Active PPTP VPN tunnel<br></p>
+:|activePptpVpnConnectionsEnd|:
+
+:|activeOpenVpnConnections|:
+Active OpenVPN Connections Help Starts.
+:|activeOpenVpnConnectionsEnd|:
+
+:|activeL2tpVpnConnections|:
+                <p><b>Active L2TP VPN Connections</b><br>
+				<br>
+				This list displays the status of L2TP VPN Client connection. From here 
+				you can either connect or disconnect the L2TP VPN Tunnel <br>
+				<br>
+				<b>Connection Status:</b> Will show the current status of the tunnel<br>
+				<br>
+                Action can be taken...
+                <br>
+                <b>Drop:</b> for Drop Active L2TP VPN tunnel<br><br>
+                <b>Connect:</b> for Connect Active L2TP VPN tunnel<br></p>
+:|activeL2tpVpnConnectionsEnd|:
+
+:|greTunnelStatus|:
+				<p><b>Active GRE Tunnels</b><br>
+				<br>
+				This list displays the status of GRE Tunnels. <br>
+				<br>
+				<b>Tunnel Name :</b> The GRE Tunnel name <br>
+				<br>
+				<b>Local IP :</b> Local GRE interface IP address<br>
+				<br>
+				<b>Remote IP :</b> Remote GRE interface IP address<br>
+				<br>
+				<b>Status :</b> Will show the current status of the tunnel
+                                (Connected or Disconnected)
+				<br>				
+				<br></p>
+:|greTunnelStatusEnd|:
+
+:|interfaces|:
+                <p><b> Interfaces</b><br><br>
+                <b>Interaface Info:</b>
+                <b>Interface LAN/ WAN1/ WAN2/DMZ</b><br>
+				The interface statistics displays the data transfer statistics for 
+				the WAN1, WAN2, LAN ports. The following 
+				data is displayed: <br>
+				<br>
+				Incoming Packets: The number of IP packets entering the port.
+				<br>
+				<br>
+				Outgoing Packets: The number of packets leaving the port.<br>
+				<br>
+				Dropped In Packets: packets dropped on the inbound path of the interface.<br>
+				<br>
+				Dropped Out Packets: packets dropped on the outbound path of the 
+				interface.<br>
+				<br>
+                <br><br>
+                <b>VLAN Statistics </b><br><br>
+                <b>Port:</b> on which port VLAN is accociated.<br>
+				<br>
+				<b>Incoming Packets:</b> The number of IP packets entering the port.
+				<br>
+				<br>
+				<b>Outgoing Packets:</b> The number of packets leaving the port.<br>
+				<br>
+				<b>Dropped In Packets:</b> packets dropped on the inbound path of the interface.<br>
+				<br>
+				<b>Dropped Out Packets:</b> packets dropped on the outbound path of the 
+				interface.<br>
+                <br><br><br>
+                <b>WLAN Statistics</b><br><br>
+                <b>Data Information</b><br>
+                <b>Transmitted :</b>
+                Total packets transmitted across all APs managed by the
+                controller.<br>
+
+                <b>Received:</b>
+                Total packets received across all APs managed by the controller.<br>
+
+                <b>Transmit Dropped :</b>
+                Total packets transmitted across all APs managed by the controller
+                that were dropped.<br> 
+
+                <b>Receive Dropped :</b>
+                Total packets received across all APs managed by the controller that
+                were dropped.<br>
+                <br>
+                <b>Packets :</b> "Transmit/Receive/Transmit Drop/Receive Drop"  number of packets<br><br>
+                <b>Bytes :</b> "Transmit/Receive/Transmit Drop/Receive Drop"  number of Bytes<br><br>
+                <br><br><br>
+                <b>Active Info</b><br><br>
+                <b>Description</b><br>
+				<b>ICMP</b><b> Received:</b> total number of ICMP packets received 
+				on the interface.<br>
+	
+				<b>Active VPN Tunnels:</b> current number of concurrent and active 
+				IPsec and SSL VPN sessions.<br>
+			
+				<b>Active VLANs:</b> current number of enabled and active VLAN interfaces.<br>
+			
+                <b>Active Interfaces:</b> number of enabled interfaces.<br><br>
+                <b>Count</b> Count for number of packets.<br></p>
+:|interfacesEnd|:
+
+:|lanClients|:
+                <p><b>LAN Clients</b><br><br>
+                <b>LAN Clients List</b><br><br>
+		<b>Name:</b> The LAN host name if available through NetBIOS.<br>
+		<br>
+		<b>IP Address:</b> The LAN device's IP address. <br>
+                <br>
+                <b>MAC Address:</b> The MAC address of the connected LAN client.<br><br>
+                <br> 
+                </p>
+:|lanClientsEnd|:
+
+:|controllerStatus|:
+<p><b>Controller Status </b><br>
+<b>WLAN controller Operational Status :</b>This status field
+            displays the operational status of the WLAN controller. The WLAN
+            controller may be configured as enabled, but is operationally
+            disabled due to configuration dependencies. If the operational
+            status is disabled, the reason will be displayed in the following
+            status field.<br>
+            The WLAN controller is composed of multiple components, and each
+            component in the system must acknowledge an enable or disable of the
+            WLAN controller. During a transition the operational status might temporarily show a pending status.<br>
+			<br>
+			<b>WLAN controller Disable Reason :</b> If the status is disabled, this field appears and one of the following reasons is listed.<br>
+			<b>None:</b> The cause for the disabled status is unknown.<br>	
+			<b>Administrator disabled:</b> The Enable WLAN controller option on the global configuration page has been cleared.<br>	
+			<b>No IP Address:</b> The WLAN interface does not have an IP address.<br>	
+			<b>No SSL Files:</b> The Unified Wireless controller communicates
+            with the APs it manages by using Secure Sockets Layer (SSL)
+            connections. The first time you power on the Unified Wireless
+            controller, it automatically generates a server certificate that
+            will be used to set up the SSL connections. The SSL certificate and
+            key generation can take up to an hour to complete.<br>
+			If routing is enabled on the controller, the operational status might be disabled due to one of the following reasons:<br>	
+			<b>No Loopback Interface:</b> The controller does not have a loopback interface.<br>	
+			<b>Global Routing Disabled:</b> Even if the routing mode is enabled
+            on the WLAN controller interface, it must also be enabled globally
+            for the operational status to be enabled.<br>
+			<br>	
+			<b>IP Address :</b>IP address of the controller.<br>
+			<br>
+			<b>Peer Controllers :</b> Number of peer WLAN Controllers detected on the network.<br>
+			<br>
+			<b>Cluster Controller :</b> Indicates whether this controller is the
+            Cluster Controller for the cluster.<br>
+            Among a group of peer Controllers, one of the Controllers is
+            automatically elected or configured to be the Cluster Controller.
+            The Cluster Controller gathers status and statistics about all APs
+            and clients in the peer group.<br>
+            Note: Only the Cluster Controller controller can display managed
+            APs, clients, statistics, and RF Scan databases for the whole
+            cluster. The Controllers that are not Cluster Controllers can
+            display information only about locally attached devices.<br>
+			<br>
+			<b>Cluster Controller IP Address :</b>The IP address of the peer controller that is the Cluster Controller.<br>
+			<br></p>
+
+:|controllerStatusEnd|:
+
+:|controllerAssociatedClients|:
+<p><b>Controller Associated Clients List</b><br>
+            <b>Controller IP Address :</b> Shows the IP address of the Controller that manages the AP to which the client is associated.<br>
+			<br>
+			<b>Client MAC Address :</b> Shows the MAC address of the associated client.<br>
+			<br></p>
+
+:|controllerAssociatedClientsEnd|:
+
+:|distributedTunnel|:
+<p><b>Distributed Tunnel </b><br>
+                <b>Tunnel Packets Transmitted:</b>Total number of packets 
+                sent by all APs via distributed tunnels. <br>
+                <br>
+                <b>Tunnel Roamed Clients:</b>Total number of clients that
+                successfully roamed away from Home AP using distributed tunneling. <br>
+                <br>
+                <b>Tunnel Clients:</b>Total number of clients that are 
+                associated with an AP that are using distributed tunneling. <br>
+                <br>
+                <b>Tunnel Client Denials:</b>Total number of clients for
+                which the system was unable to set up a distributed tunnel when client
+                roamed.<br><br>
+                Click <b>Clear Statistics </b>to clear current
+                data.<br><br></p>
+
+:|distributedTunnelEnd|:
+
+:|peerControllerReceiveStatus|:
+            <p><b>Configuration Receive Status</b><br>
+            <b>Configuration Receive Status: </b> Shows whether configuration
+            received from peer controller or not in cluster setup.<br><br>
+            <b>Last Configuration Received</b><br>
+			<b>Configuration Controller IP Address :</b> Shows the IP Address of the Controller that sent the configuration information.<br>
+			<br>
+			<b>Configuration :</b> Identifies which parts of the configuration
+            the Controller received from the peer Controller. The possible
+            configuration elements can be one or more of the following:<br>
+            1&#45;Global<br>	
+            2&#45;Discovery<br>
+            3&#45;Channel/Power<br>
+            4&#45;AP Database<br>	
+            5&#45;AP Profiles<br>	
+            6&#45;Known Client<br>
+            7&#45;Captive Portal<br>
+            8&#45;RADIUS Client<!--br>
+            9&#45;QoS ACL<br>	
+            10&#45;QoS DiffServ<br--><br>
+            If the Controller has not received any configuration for another
+            Controller, the value is None.<br><br>
+			<b>Timestamp :</b> Shows when the configuration was applied to the
+            Controller. The time is displayed as UTC time and therefore only
+            useful if the administrator has configured each peer Controller to
+            use NTP.<br>
+			<br>
+            <b>Refresh :</b>Updates the page with the latest information.</p>
+
+:|peerControllerReceiveStatusEnd|:
+
+:|peerControllerConfigurationStatus|:
+            <p><b>Peer Controller Configuration Status </b> It also identifies 
+            the IP address of each peer Controller that received the configuration 
+            information.<br>
+            <br>
+			<b>Peer IP Address :</b> Shows the IP address of each peer wireless
+            Controller in the cluster that received configuration
+            information.<br>
+			<br>
+			<b>Configuration Controller IP Address :</b> Shows the IP Address of the Controller that sent the configuration information.<br>
+			<br>
+			<b>Configuration :</b> Identifies which parts of the configuration
+            the Controller received from the peer Controller. The possible
+            configuration elements can be one or more of the following:<br><br>
+            <b>1&#45;</b>Global<br>	
+            <b>2&#45;</b>Discovery<br>
+            <b>3&#45;</b>Channel/Power<br>
+            <b>4&#45;</b>AP Database<br>	
+            <b>5&#45;</b>AP Profiles<br>	
+            <b>6&#45;</b>Known Client<br>
+            <b>7&#45;</b>Captive Portal<br>
+            <b>8&#45;</b>RADIUS Client<br><br>
+            If the Controller has not received any configuration for another
+            Controller, the value is None.<br><br>
+			<b>Timestamp :</b> Shows when the configuration was applied to the
+            Controller. The time is displayed as UTC time and therefore only
+            useful if the administrator has configured each peer Controller to
+            use NTP.<br>
+			<br>
+            Click On <b>Refresh :</b> To Update the page with the latest information.</p>
+:|peerControllerConfigurationStatusEnd|:
+
+:|globalStatus|:
+            <p><b>Global Status</b> <br><br>
+			<b>APs Global Status</b> <br>
+			<b>Total Access Points :</b>Total number of Managed APs in the
+            database. This value is always equal to the sum of Managed Access
+            Points, Connection Failed Access Points, and Discovered Access
+            Points.<br>
+			<br>
+			<b>Managed Access Points :</b> Number of APs in the managed AP
+            database that are authenticated, configured, and have an active
+            connection with the FASTPATH Unified Wireless controller.<br>
+			<br>
+			<b>Standalone Access Points :</b> Number of trusted APs in
+            Standalone mode. APs in Standalone mode are not managed by a
+            controller.<br>
+			<br>
+			<b>Rogue Access Points :</b> Number of Rogue APs currently detected
+            on the WLAN. When an AP performs an RF scan, it might detect access
+            points that have not been validated. It reports these APs as
+            rogues.<br>
+			<br>
+			<b>Discovered Access Points :</b>APs that have a connection with the
+            controller, but haven't been completely configured. This value
+            includes all managed APs with a Discovered or Authenticated
+            status.<br>
+			<br>
+			<b>Connection Failed Access Points :</b>Number of APs that were
+            previously authenticated and managed, but currently don't have
+            connection with the FASTPATH Unified Wireless controller.<br>
+			<br>
+			<b>Authentication Failed Access Points :</b> Number of APs that
+            failed to establish communication with the FASTPATH Unified Wireless
+            controller.<br>
+			<br>
+			<b>Unknown Access Points :</b> Number of Unknown APs currently
+            detected on the WLAN. If an AP configured to be managed by the
+            FASTPATH Unified Wireless controller is detected through an RF scan
+            at any time that it is not actively managed it is classified as an
+            Unknown AP.<br>
+			<br>
+			<b>Rogue AP Mitigation Limit :</b>Maximum number of APs for which the system can send de&#45;authentication frames.<br>
+			<br>
+			<b>Rogue AP Mitigation Count :</b>Number of APs to which the
+            wireless system is currently sending de&#45;authentication messages to
+            mitigate against rogue APs. A value of 0 indicates that mitigation
+            is not in progress.<br>
+			<br>
+			<b>Maximum Managed APs in Peer Group :</b> Maximum number of access points that can be managed by the cluster.<br>
+			<br>
+			<b>WLAN Utilization :</b> Total network utilization across all APs managed by this controller. This is based on global statistics. <br>
+			<br></p>
+:|globalStatusEnd|:
+
+:|allAps|:
+                <p><b>Access Point Summary</b>
+                <br>
+                <br>   
+            <b>MAC Address :</b> Shows the MAC address of the access point.<br>
+			<br>
+			<b>IP Address :</b> The network address of the access point.<br>
+			<br>
+			<b>Age :</b> Shows how much time has passed since the AP was last detected and the information was last updated.<br>
+			<br>
+            <b>Status :</b> Shows the access point status:<br>
+            <br>    
+			<b>1) Managed :</b>The AP profile configuration has been applied to the
+            AP and it's operating in managed mode.<br>
+            No Database Entry—The AP has attempted to become managed by the
+            controller, but the MAC address of the AP does not appear in the
+            local or RADIUS Valid AP database.<br>
+            <br>
+            <b>2) Authenticated :</b>The AP has been authenticated by the
+            controller and is in the process of becoming managed.<br>
+            <br>
+            <b>3) Local Authentication : </b>The authentication password configured
+            in the AP did not match the password configured in the local
+            database.<br>
+            <br>
+            <b>4) Not Managed : </b>The AP is in the Valid AP database, but the AP
+            Mode in the local database is not set to Managed.<br>
+            <br>
+            <b>5) RADIUS Authentication : </b> The password configured in the
+            RADIUS client for the RADIUS server was rejected by the server.<br>
+            <br>
+            <b>6) RADIUS Challenged :</b> The RADIUS server is configured to use
+            the Challenge&#45;Response authentication mode, which is incompatible
+            with the AP.<br>
+            <br>
+            <b>7) RADIUS Unreachable : </b>The RADIUS server that the AP is
+            configured to use is unreachable.<br>	
+            <br>
+            <b>8) Invalid RADIUS Response : </b>The AP received a response packet
+            from the RADIUS server that was not recognized or invalid.<br>
+            <br>
+            <b>9) Invalid Profile ID : </b>The profile ID specified in the RADIUS
+            database may not exist on the controller. This can also happen with
+            the local database when the configuration has been received from a
+            peer controller.<br>
+            <br>
+            <b>10) Profile Mismatch Hardware Type : </b>The AP hardware type
+            specified in the AP Profile is not compatible with the actual AP
+            hardware.<br>
+            <br>
+            <b>11) Connection Failed : </b>The AP was previously authenticated and
+            managed, but currently does not have connection with the wireless
+            controller. A connection failed entry will remain in the managed AP
+            database unless you remove it. Note that a managed AP will
+            temporarily show a failed status during a reset.<br>
+            <br>
+            <b>12) Rogue : </b>The AP is detected in the network and is classified
+            as a threat by one of the threat detection algorithms.<br>
+            <br>
+            <b>13) Unknown : </b>The AP is detected in the network but it is not
+            classified as a threat by the threat detection algorithms.<br>
+            <br>
+			<b>Radio :</b> Shows the wireless radio mode the AP is using.<br>
+			<br>
+			<b>Channel :</b> Shows the operating channel for the radio.<br>
+			<br>
+:|allApsEnd|:
+
+:|managed|:
+<p><b>Managed APs List</b><br>
+            <br>
+            <b>Model Name:</b>Hardware part number for the AP, which is learned from the AP during discovery.<br><br>
+            <b>Firmware Version:</b>Indicates the version of software on the
+            AP, this is learned from the AP during discovery.<br>
+            <br>
+			<b>MAC Address:</b> The Ethernet address of the Unified Wireless
+            Controller&#45;managed AP. If the MAC address of the AP is followed by
+            an asterisk (*), it is managed by a peer controller.<br>
+			<br>
+			<b>IP Address : </b>The network IP address of the managed AP.<br>
+			<br>
+            <b>Location :</b> The descriptive location configured for the managed
+            AP.<br><br>
+			<b>Status : </b>The current managed state of the AP. The possible
+            values are:<br>
+            Discovered : The AP is discovered and by the controller, but is not yet authenticated.<br>	
+            Authenticated : The AP has been validated and authenticated (if authentication is enabled), but it is not configured.<br>
+            Managed : The AP profile configuration has been applied to the AP and it's operating in managed mode.<br>	
+            Failed : The Unified Wireless Controller lost contact with
+            the AP, a failed entry will remain in the managed AP database unless
+            you remove it. Note that a managed AP will temporarily show a failed
+            status during a reset.<br>
+            <br>
+            Note: When management connectivity is lost for a managed
+            AP, then both radios of the AP are turned down. All the clients
+            associated with the AP get disassociated. The radios become
+            operational if and when that AP is managed again by a
+            controller.<br>
+			<br>
+            <b>Configuration Status :</b>Indicates whether the AP is configured
+            successfully with the assigned profile.<br><br>
+            <b>View Radio Details : </b> <br>You can view detailed information
+            about each radio on the APs that the Unified Wireless Controller
+            manages on the Radio Detail page for the managed access point radio
+            status. Use the options above the table to select the AP and radio
+            with the settings to view. The AP is identified by its MAC address
+            and location. The radio is identified by its number and configured
+            mode. If the radio is disabled, the radio mode will be displayed as Off.<br>
+            <br>
+            These are the available <b>right click </b>options available for this
+            page.<br><br>
+            <b>AP Details :</b><br>Show all the details related to selected
+            AP.<br>
+            <br>
+            <b>Neighbor APs : </b><br>
+            Use the button above to select the AP with the Neighbor AP
+            information to view. The AP is identified by its MAC address and
+            location. If the radio is
+            disabled, the radio mode will be displayed as Off.<br>
+            <br>
+            <b>Neighbor Clients : </b> <br>
+			APs can store information for up to 512 wireless clients. If the
+            information exceeds the capacity, the oldest data in the neighbor
+            client list is overwritten.<br>
+            <br>
+            <b>VAP Details : </b> <br>
+            Use the above button to select the AP with the VAP information to
+            view. The AP is identified by its MAC address and location. If the
+            AP has two radios, select a radio to view details about VAPs on that
+            radio. The radio is identified by its number and configured mode. If the radio is disabled, the radio mode will be displayed as Off.<br>
+            <br>
+            <b>Distributed Tunnel:</b>Through this button distributed tunneling status of selected Managed
+            Access Point can be seen.<br><br>
+            <b>Select All:</b> Selects all rows for particular operation.It is
+            used for deleteing all failed configuration status AP with delete
+            button.<br><br>
+            <b> Delete:</b>Clears the selected entry from the current list. Only APs with a Configuration Status of Failed can be removed from the list.<br>
+            <br>
+            <b>Reset AP : </b>Reset the managed AP.<br>
+            <br>
+            <b>Disassociate Clients : </b>Disassociate Clients with selected AP.<br>
+            <br>
+            <b>AP Statistics: </b>Shows the number and type of packets transmitted
+            and received on a specific AP.<br><br>
+            <b>Radio Statistics: </b>Shows per&#45;radio information about the number and
+            type of packets transmitted and received for a specific AP.<br><br>
+            <b>View VAP Statistics: </b>Shows per&#45;VAP information about the number
+            of packets transmitted and received and the number of wireless
+            client failures for a specific AP.<br><br>
+            <b>Refresh:</b>Updates the page with the latest information.<br>
+            <br>
+
+            On clicking <b>AP Details </b>we will get following details.<br>
+            <b>MAC Address :</b> The Ethernet address of the Unified Wireless
+            Controller&#45;managed AP. If the MAC address of the AP is followed by
+            an asterisk (*), it is managed by a peer controller.<br>
+            <br>
+            <b>IP Address :</b> The IP address of the managed AP.<br>
+            <br>
+			<b>Managing Controller :</b> Indicates whether the AP is managed by the local controller or a peer controller.<br>
+			<br>
+            <b>IP Subnet Mask :</b> The subnet mask of the managed AP<br>
+			<br>
+			<b>Controller MAC Address :</b> Identifies the MAC address of the controller that is managing the AP.<br>
+			<br>
+            <b>Status :</b> The current managed state of the AP.The possible values are:<br>
+            1&#45;Discovered: The AP is discovered and by the controller, but is not
+            yet authenticated.<br>
+            2&#45;Authenticated: The AP has been validated and authenticated (if
+            authentication is enabled), but it is not configured.<br>
+            3&#45;Managed: The AP profile configuration has been applied to the AP
+            and it's operating in managed mode.<br>
+            4&#45;Connection Failed: The Unified Wireless Controller lost contact with
+            the AP, a failed entry will remain in the managed AP database unless
+            you remove it. Note that a managed AP will temporarily show a failed
+            status during a reset.<br>
+            Note: When management connectivity is lost for a managed AP, then
+            both radios of the AP are turned down. All the clients associated
+            with the AP get disassociated. The radios become operational if and
+            when that AP is managed again by a controller.<br>
+            <br>
+			<b>Controller IP Address :</b>Identifies the IP address of the controller that is managing the AP.<br>
+            <br>
+            <b>Software Version :</b>Indicates the version of software on the
+            AP, this is learned from the AP during discovery.<br>
+            <br>
+            <b>Profile :</b> The AP profile configuration currently applied to
+            the managed AP, the profile is assigned to the AP in the valid AP
+            database.<br>
+            Note: Once an AP is discovered and managed by the Unified Wireless
+            Controller, if the profile is changed in the valid AP database
+            (either locally or on the RADIUS server) the AP must be reset to
+            configure with the new profile.<br>
+			<br>
+            <b>Code Download Status :</b>Indicates the current status of a code
+            download request for this AP. The possible values include the
+            following:<br>
+            1&#45;Not Started: No download has begun.<br>
+            2&#45;Requested: A download is planned for this AP, but the AP is not in
+            the current download group, so it has not been told to start the
+            download yet.<br>
+            3&#45;Code&#45;Transfer&#45;In&#45;Progress: The AP has been told to download the
+            code.<br>
+            4&#45;Failure: The AP reported a failing code download.<br>
+            5&#45;Aborted: The download was aborted before the AP loaded code from
+            the TFTP server.<br>
+            6&#45;Waiting&#45;For&#45;APs&#45;To&#45;Download: A download finished on this AP, and
+            it is waiting for other APs to finish download. Reset command is not
+            sent to the AP in this state.<br>
+            7&#45;NVRAM&#45;Update&#45;In&#45;Progress: Download completed successfully. The
+            reset command sent to the AP.<br>
+            8&#45;Timed&#45;Out: The AP did not reconnect to the Unified Wireless
+            Controller.
+            in the fixed time interval.<br>
+            <br>
+            <b>Discovery Reason :</b> This status value indicates how the
+            managed AP was discovered, the status is one of the following
+            values:<br>
+			1&#45;IP Poll Received: The AP was discovered via an IP poll from
+            the Unified Wireless Controller, its IP address is configured in the
+            IP polling list.<br>
+			2&#45;Peer Redirect: The AP was discovered through a peer
+            controller redirect, the AP tried to associate with another peer
+            controller and learned the current Unified Wireless Controller IP
+            address from the peer (peer learned Unified Wireless Controller IP
+            address in RADIUS server response when validating the AP).<br>
+			3&#45;Controller IP Configured: The managed AP is configured with the Unified Wireless Controller IP address.<br>
+			4&#45;Controller IP DHCP: The managed AP learned the current DWL&#45;8600AP IP address through DHCP option 43.<br>
+			5&#45;L2 Poll Received: The AP was discovered through the D&#45;Link Wireless Device Discovery.<br> 
+            <br>
+            <b>Configuration Status :</b>Indicates whether the AP is configured
+            successfully with the assigned profile. The status is one of the
+            following:<br>
+            1&#45;Not Configured: The profile has not been sent to the AP yet, the
+            AP may be discovered but not yet authenticated.<br>
+            2&#45;In Progress: The controller is currently sending the AP profile
+            configuration packet to the AP.<br>
+            3&#45;Success: The entire profile has been sent to the AP and there were
+            no configuration errors.<br>
+            4&#45;Partial Success: The entire profile has been sent to the AP and
+            there were configuration errors, but the AP is operational.<br>
+            5&#45;Failure: The profile has been sent to the AP and there were
+            configuration errors, the AP is not operational.<br>
+            <br>
+            <b>Protocol Version :</b> Indicates the protocol version supported
+            by the software on the AP, which is learned from the AP during
+            discovery.<br>
+            <br>
+			<b>Vendor ID :</b> Vendor of the AP software, this is learned from the AP during discovery.<br>
+			<br>
+            <b>Authenticated Clients :</b> Total number of clients currently
+            associated to the AP that have been authenticated. This is the sum
+            of all authenticated clients for all the VAPs enabled on the AP.<br>
+			<br>
+            <b>Part Number :</b> Hardware part number for the AP, which is learned from the AP during discovery.<br>
+			<br>
+            <b>System Up Time :</b> Time in seconds since last power&#45;on reset of the managed AP.<br>
+			<br>
+            <b>Age :</b>Time since last communication between the Unified Wireless Controller and the AP.<br>
+            <br>
+            <b>Serial Number :</b> System serial number of AP.<br>
+            <br>
+            <b>Hardware Type :</b> Hardware platform for the AP, which is learned from the AP during discovery.<br>
+			<br>
+            On Clicking <b>Radio Details </b> we will get following
+            information.<br><br>
+            <b>Supported Channels :</b> The list of eligible channels the AP
+            reported to the Controller for channel assignment. The list is based
+            on country code, hardware capabilities, and any configured channel
+            limitations.<br>
+			<br>
+			<b>Channel  :</b> If radio is operational, the current operating channel for the radio.<br>
+			<br>
+			<b>Channel Bandwidth :</b> Indicates whether the channel bandwidth is 20 MHz or 40 MHz.<br>
+			<br>
+			<b>Fixed Channel Indicator :</b> This flag indicates if a fixed
+            channel is configured and assigned to the radio, a fixed channel can
+            be configured in the valid AP database (locally or on a RADIUS
+            server).<br>
+			<br>
+			<b>Manual Channel Adjustment Status :</b> Indicates the current
+            state of a manual request to change the channel on this radio. The
+            valid values are:<br>
+			<b>Not Started:</b> No request has been made to change the channel.<br>	
+			<b>Requested: </b> A channel change has been requested by the user but has not been processed by the Controller.<br>
+			<b>In Progress:</b> The Controller is processing a channel change request for this radio.<br>
+			<b>Success: </b> A channel change request is complete.<br>	
+			<b>Failure:</b> A channel change request failed.<br>
+			<br>
+			<b>WLAN Utilization :</b> Total network utilization for the physical radio. This value is based on radio statistics.<br>
+			<br>
+			<b>Authenticated Clients :</b> Total count of clients authenticated
+            with the AP on the physical radio. This is a sum of all the clients
+            authenticated with the AP for each VAP enabled on the radio.</b>
+			<br>
+			<b>Transmit Power :</b> If radio is operational, the current transmit power for the radio.<br>
+			<br>
+			<b>Fixed Power Indicator :</b> This flag indicates if a fixed power
+            setting is configured and assigned to the radio, a fixed transmit
+            power can be configured in the valid AP database (locally or on a
+            RADIUS server).<br>
+			<br>
+			<b>Manual Power Adjustment Status :</b> Indicates the current state of a manual request to change .<br>
+			<b>Total Neighbors :</b>Total number of neighbors (both APs and clients) that can be seen by this radio in its RF area.<br>
+			<br>
+			<b>Supported Channel :</b> Lists the radio channel used for transmitting and receiving wireless traffic.<br>
+			<br>
+			<b>Radar Detection Required :</b> In some regulatory domains, radar
+            detection is required on some channels in the 5&#45;GHz band. If radar
+            detection is required on the channel, the AP uses the 802.11h
+            specification to avoid interference with other wireless devices.<br>
+			<br>
+			<b>Radar Detected :</b> Indicates whether another 802.11 device was detected on the channel.<br>
+			<br>
+			<b>Time Since Radar Last Detected :</b> Shows the amount of time that has passed since the device was last detected on the channel.<br>
+			<br>
+            On clicking <b>Neighbor APs </b> we will get following
+            details.<br><br>
+            <b>List of Managed Access Point's Neighbor APs</b> <br>
+			<b>Neighbor AP MAC :</b> The Ethernet MAC address of the neighbor AP
+            network, this could be a physical radio interface or VAP MAC
+            address. For D&#45;Link APs this is always a VAP MAC address. The
+            neighbor AP MAC address may be cross&#45;referenced in the RF Scan
+            status.<br>
+			<br>
+			<b>SSID :</b> Service Set ID of the neighbor AP network.<br>
+			<br>
+			<b>RSSI :</b> Received Signal Strength Indication, this is an
+            indicator of the signal strength relative to the neighbor and may
+            give an idea of the neighbor's distance from the managed AP. The
+            range is 1&#45;100, where 1 is the weakest signal strength.<br>
+			<br>
+			<b>Status :</b> Indicates the managed status of the AP, whether this
+            is a valid AP known to the Controller or a Rogue on the network. The
+            valid values are:<br>
+			<b>Managed:</b> The neighbor AP is managed by the wireless system.<br>
+			<b>Standalone:</b> The AP is managed in standalone mode and configured as a valid AP entry (local or RADIUS).<br>
+			<b>Rogue:</b> The AP is classified as a threat by one of the threat detection algorithms.<br>
+			<b>Unknown:</b> The AP is detected in the network but is not classified as a threat by the threat detection algorithms.<br>
+			<br>
+			<b>Age :</b> Indicates the time since this AP was last reported from an RF scan on the radio.<br>
+			<br>
+            <b>Radio : </b>Shows the wireless radio mode that each radio on the AP is using. <br>
+            <br>
+			<b>Clear All:</b> Clears all entries from the Neighbor
+            APs and Neighbor Clients list. This deletes all neighbors for all
+            radios on all APs not only for the currently selected AP and radio. The list is repopulated as neighbors are discovered.<br>
+			<br>
+            On clicking <b>Neighbor clients </b>we will get following details.<br> 
+            <br>
+            <b>List of Managed Access Point's Neighbor Clients</b> <br>
+            <br>
+			<b>Neighbor Client MAC :</b> The Ethernet MAC address of the
+            neighbor AP network, this could be a physical radio interface or VAP
+            MAC address. For D&#45;Link APs this is always a VAP MAC address. The
+            neighbor AP MAC address may be cross&#45;referenced in the RF Scan
+            status.<br>
+			<br>
+			<b>SSID :</b> Service Set ID of the neighbor AP network.<br>
+			<br>
+			<b>RSSI :</b> Received Signal Strength Indication, this is an
+            indicator of the signal strength relative to the neighbor and may
+            give an idea of the neighbor's distance from the managed AP. The
+            range is 1&#45;100, where 1 is the weakest signal strength.<br>
+			<br>
+			<b> Discovery Reason  :</b> By which way it has been discovered.<br>
+			<br> 
+            <b>Age :</b> Indicates the time since this AP was last reported
+            from an RF scan on the radio.<br><br>
+            <b>Radio: </b>Shows the wireless radio mode that each radio on the AP is using.<br>
+            <br>
+			<b>Clear All :</b> Clears all entries from the Neighbor
+            APs and Neighbor Clients list. The list is repopulated as neighbors
+            are discovered.<br>
+			<br>
+            After clicking <b>VAP Details </b> we will get following
+            information.<br>
+            <br>
+            <b>MAC Address:</b>The Ethernet address of managed AP.<br>
+            <br>
+            <b>Radio Mode: </b>In order to accommodate a broad range of
+            wireless clients and wireless network requirements,you can
+            select Radio 1 or Radio 2.By default, Radio 1 operates in IEEE
+            802.11a/n mode, and Radio 2 operates in IEEE 802.11b/g/n mode.<br>
+            <br>
+			<b>List of Managed Access Point's VAPs</b><br>
+			<b>VAP ID :</b> The integer ID used to identify the VAP (0&#45;15), this
+            is used to uniquely identify the VAP for configuration via
+            CLI/SNMP.<br>
+			<br>
+			<b>VAP Mode :</b> Indicates whether or not the VAP is enabled or
+            disabled. VAPs are always configured, but are only sending beacons
+            and accepting clients when they are Enabled.<br>
+			<br>
+			<b>BSSID :</b> The Ethernet address of the VAP.<br>
+			<br>
+			<b>SSID :</b> Indicates the network assigned to the VAP. The network
+            for each VAP is configured within the AP profile and the SSID is
+            based on the network configuration.<br>
+			<br>
+			<b>Client Authentications :</b> Indicates the total number of
+            clients currently authenticated with the VAP.<br><br>
+
+            After clicking <b>Distributed Tunnel </b>we will get following
+            information.<br><br>
+            The AP&#45;AP tunneling mode is used to support L3 roaming for wireless
+            clients without forwarding any data traffic to the wireless
+            controller.In the AP&#45;AP tunneling mode, when a client first associates
+            with an AP in the wireless system, the AP forwards the wireless
+            client's data using VLAN forwarding mode. The AP the client
+            initially associates with is called the Home AP. The AP the client
+            roams to is called the Association AP.The AP is identified by its MAC address and location. <br>
+            <br>
+            <b>Clients using AP as Home :</b>Number of clients that roamed away
+            from this AP using distributed tunneling mode and are tunneling data
+            back to this AP.<br>
+            <br>
+            <b>Clients using AP as Associate :</b>Number of clients that roamed
+            to this AP using distributed tunneling mode and are tunneling data
+            to the Home AP.<br>
+            <br>
+            <b>Distributed Tunnels : </b>Number of APs to which this AP has a
+            distributed L2 tunnel. The AP may be acting as Home AP or
+            Association AP for clients using the tunnel.<br>
+            <br>
+            <b>Multicast Replications :</b>Maximum number of tunnels on the Home
+            AP that are members of the same VLAN.<br>
+            <br>
+            <b>VLAN with Max Multicast Replications :</b>The VLAN ID that is
+            currently replicated the most number of times by the AP for sending
+            multicasts into distributed tunnels.<br><br>
+
+            On Clicking <b>AP Statistics </b> button we will get following
+            details.<br>
+            The detailed AP statistics show information
+            about the packets and bytes transmitted and received on the wired
+            and wireless interface of a particular access point managed by the
+            controller.<br>
+            <br>
+            <b>MAC Address:</b> Mac address of the selected AP.<br><br>
+            <b>WLAN Packets Received :</b>Total packets received by the AP on
+            the wireless network.<br>
+            <b>WLAN Bytes Received :</b>Total bytes received by the AP on the
+            wireless network.<br>
+            <b>WLAN Packets Transmitted : </b>Total packets transmitted by the
+            AP on the wireless network.<br>
+            <b>WLAN Bytes Transmitted :</b>Total bytes transmitted by the AP on
+            the wireless network.<br>
+            <b>WLAN Packets Receive Dropped :</b>Number of packets received by
+            the AP on the wireless network that were dropped.<br>
+            <b>WLAN Bytes Receive Dropped :</b>Number of bytes received by the
+            AP on the wireless network that were dropped.<br>
+            <b>WLAN Packets Transmit Dropped :</b>Number of packets transmitted
+            by the AP on the wireless network that were dropped.<br>
+            <b>WLAN Bytes Transmit Dropped :</b>Number of bytes transmitted by
+            the AP on the wireless network that were dropped.<br>
+            <b>Ethernet Packets Received :</b>Total packets received by the AP
+            on the wired network.<br>
+            <b>Ethernet Bytes Received :</b>Total bytes received by the AP on
+            the wired network.<br>
+            <b>Ethernet Packets Transmitted :</b>Total packets transmitted by
+            the AP on the wired network.<br>
+            <b>Ethernet Bytes Transmitted :</b>Total bytes transmitted by the AP
+            on the wired network.<br>
+            <b>Multicast Packets Received : </b>Total multicast packets received
+            by the AP on the wired network.<br>
+            <b>Total Receive Errors :</b>Total receive errors detected by the AP
+            on the wired network.<br>
+            <b>Total Transmit Errors :</b>Total transmit errors detected by the
+            AP on the wired network.<br>
+            <b>ARP Reqs Converted from Bcast to Ucast :</b>Number of ARP
+            requests that the AP converted from a broadcast packet to a unicast
+            packet before sending to the wireless link.<br>
+            <b>Filtered ARP Requests :</b>Number of ARP requests that AP was
+            able to drop instead of sending on the wireless link.<br>
+            <b>Broadcasted ARP Requests: </b>The number of ARP requests sent as
+            broadcasts on the VAPs. This counter does not include WDS links. The
+            same ARP frame may be counted multiple times when it is broadcasted
+            on multiple VAPs. The counter is available even when ARP suppression
+            is disabled.<br>
+            <br>
+
+            On clicking <b>Radio statistics</b> we will get following
+            details.<br>
+            The radio statistics show detailed
+            information about the packets and bytes transmitted and received on
+            the radio (wireless) interface of a particular access point managed
+            by the controller.<br>
+            Use the options above the table to select the AP and radio with the
+            settings to view. The AP is identified by its MAC address and
+            location. The radio is identified by its number and configured mode.
+            If the radio is disabled, the radio mode will be displayed as
+            Off.<br>
+            <br>
+            <b>Radio: </b>In order to accommodate a broad range of
+            wireless clients and wireless network requirements,you can
+            select Radio 1 or Radio 2.<br>
+            <br>
+            <b>WLAN Packets Received :</b>Total packets received by the AP on
+            this radio interface.<br><br>
+            <b>WLAN Bytes Received :</b>Total bytes received by the AP on this
+            radio interface.<br><br>
+            <b>WLAN Packets Transmitted :</b>Total packets transmitted by the AP
+            on this radio interface.<br><br>
+            <b>WLAN Bytes Transmitted :</b>Total bytes transmitted by the AP on
+            this radio interface.<br><br>
+            <b>WLAN Packets Receive Dropped :</b>Number of packets received by
+            the AP on this radio interface that were dropped.<br><br>
+            <b>WLAN Bytes Receive Dropped :</b>Number of bytes received by the
+            AP on this radio interface that were dropped.<br><br>
+            <b>WLAN Packets Transmit Dropped :</b>Number of packets transmitted
+            by the AP on this radio interface that were dropped.<br><br>
+            <b>WLAN Bytes Transmit Dropped :</b>Number of bytes transmitted by
+            the AP on this radio interface that were dropped.<br><br>
+            <b>Fragments Received :</b>Count of successfully received MPDU frames
+            of type data or management.<br><br>
+            <b>Fragments Transmitted :</b>Number of transmitted MPDU with an
+            individual address or an MPDU with a multicast address of type Data
+            or Management.<br><br>
+            <b>Multicast Frames Received :</b>Count of MSDU frames received with
+            the multicast bit set in the destination MAC address.<br><br>
+            <b>Multicast Frames Transmitted :</b>Count of successfully
+            transmitted MSDU frames where the multicast bit is set in the
+            destination MAC address.<br><br>
+            <b>Duplicate Frame Count :</b>Number of times a frame is received
+            and the Sequence Control field indicates is a duplicate.<br><br>
+            <b>Failed Transmit Count :</b>Number of times a MSDU is not
+            transmitted successfully due to transmit attempts exceeding either
+            the short retry limit or the long retry limit.<br><br>
+            <b>Transmit Retry Count :</b>Number of times a MSDU is successfully
+            transmitted To view statistics for a specific AP that the controller
+            manages, select its MAC address from the drop&#45;down menu above the
+            table.after one or more retries.<br><br>
+            <b>Multiple Retry Count :</b>Number of times a MSDU is successfully
+            transmitted after more than one retry.<br><br>
+            <b>RTS Success Count :</b>Count of CTS frames received in response
+            to an RTS frame.<br><br>
+            <b>RTS Failure Count :</b>Count of CTS frames not received in
+            response to an RTS frame.<br>
+            <b>ACK Failure Count :</b>Count of ACK frames not received when
+            expected.<br>
+            <b>FCS Error Count :</b>Count of FCS errors detected in a received
+            MPDU frame.<br>
+            <b>Frames Transmitted :</b>Count of each successfully transmitted
+            MSDU.<br>
+            <b>WEP Undecryptable Count :</b>Count of encrypted frames received
+            and the key configuration of the transmitter indicates that the
+            frame should not have been encrypted or that frame was discarded due
+            to the receiving station not implementing the privacy option.<br>
+            <br>
+
+            On clicking <b>VAP Statistics </b> we will get following details.<br>
+            The VAP statistics show information
+            about the client failures and number of packets and bytes
+            transmitted and received on each VAP on radio one or two for a
+            particular access point managed by the controller.<br>
+            Use the options above the table to select the AP, radio, and VAP
+            with the settings to view. The AP is identified by its MAC address
+            and location. The radio is identified by its number and configured
+            mode. If the radio is disabled, the radio mode will be displayed as
+            Off. The VAP is identified by the VAP ID and its SSID. All VAPs are
+            available regardless of whether they are enabled.<br>
+            <br>
+            <b>Radio: </b>In order to accommodate a broad range of
+            wireless clients and wireless network requirements,you can
+            select Radio 1 or Radio 2.<br>
+            <br>
+            <b>VAP:</b> Select from drop down to get desired VAP
+            statistics.<br><br>
+            <b>WLAN Packets Received :</b>Total packets received by the AP on
+            this VAP.<br>
+            <b>WLAN Bytes Received :</b>Total bytes received by the AP on this
+            VAP.<br>
+            <b>WLAN Packets Transmitted :</b>Total packets transmitted by the AP
+            on this VAP.<br>
+            <b>WLAN Bytes Transmitted :</b>Total bytes transmitted by the AP on
+            this VAP.<br>
+            <b>WLAN Packets Receive Dropped :</b>Number of packets received by
+            the AP on this VAP that were dropped.<br>
+            <b>WLAN Bytes Receive Dropped : </b>Number of bytes received by the
+            AP on this VAP that were dropped.<br>
+            <b>WLAN Packets Transmit Dropped :</b>Number of packets transmitted
+            by the AP on this VAP that were dropped.<br>
+            <b>WLAN Bytes Transmit Dropped :</b>Number of bytes transmitted by
+            the AP on this VAP that were dropped.<br>
+            <b>Client Association Failures : </b>Number of clients that have
+            been denied association to the VAP.<br>
+            <b>Client Authentication Failures :</b>Number of clients that have
+            failed authentication to the VAP.<br>
+            <br></p>
+
+
+:|managedEnd|:
+
+:|peerManaged|:
+            <p><b>Peer Controller Managed AP</b><br>
+            <br>
+            <b>Peer Controller Managed AP Status :</b>
+            <br>
+			<b>MAC Address :</b> Shows the MAC address of each AP managed by the peer Controller.<br>
+			<br>
+			<b>AP IP Address :</b> The IP address of the AP.<br>
+			<br>
+			<b>PEER IP Address :</b> The IP address of the PEER.<br>
+			<br>
+			<b>Location :</b> The descriptive location configured for the managed AP.<br>
+			<br>
+			<b>Profile :</b> The AP profile applied to the AP by the Controller.<br>
+			<br>
+			<b>Hardware ID :</b> The Hardware ID associated with the AP hardware platform .<br>
+            <br>
+            <b>Command Buttons:</b><br>
+            <b>Refresh :</b>Updates the page with the latest information.</p>
+:|peerManagedEnd|:
+
+:|authenticationFailed|:
+            <p><b>Authentication Failed
+               </b><br><br>
+			<b>Authentication Failed APs List : </b><br><br>
+			<b>MAC Address :</b> The Ethernet address of the AP.<!-- If the MAC
+            address of the AP is followed by an asterisk (*), it was reported by
+            a peer Controller.--><br>
+			<br>
+			<b>IP Address :</b> The IP address of the AP.<br>
+			<br>
+			<b>Last Failure Type :</b> Indicates the last type of failure that occurred, which can be one of the following:<br>
+            1&#45;Local Authentication :The authentication password configured in
+            the AP did not match the password configured in the local
+            database.<br>
+            2&#45;No Database Entry : The MAC address of the AP is not in the local
+            Valid AP database or the external RADIUS server database, so the AP
+            has not been validated.<br>
+            3&#45;Not Managed : The AP is in the Valid AP database, but the AP Mode
+            in the local database is not set to Managed.<br>
+            4&#45;RADIUS Authentication : The password configured in the RADIUS
+            client for the RADIUS server was rejected by the server.<br>
+            5&#45;RADIUS Challenged : The RADIUS server is configured to use the
+            Challenge&#45;Response authentication mode, which is incompatible with
+            the AP.<br>
+            6&#45;RADIUS Unreachable : The RADIUS server that the AP is configured
+            to use is unreachable<br>
+            7&#45;Invalid RADIUS Response : The AP received a response packet from
+            the RADIUS server that was not recognized or invalid.<br>
+            8&#45;Invalid Profile ID : The profile ID specified in the RADIUS
+            database may not exist on the controller. This can also happen with the
+            local database when the configuration has been received from a peer
+            controller.<br>
+            9&#45;Profile Mismatch&#45;Hardware Type : The AP hardware type specified in
+            the AP Profile is not compatible with the actual AP hardware.<br>
+            10&#45;AP Image Not Available : The controller does not have an appropriate
+            image available to deploy to the AP. This error is valid only when
+            the controller supports the Auto AP image upgrade and the Auto image
+            upgrade mode is enabled.<br>
+			<br>
+			<b>Age :</b> Time since failure occurred.<br>
+			<br>
+			<b> Command Buttons/right click options.</b> <br>
+			<br>
+            <b>Refresh : </b>Updates the page with the latest
+            information.<br><br>
+            <b>Manage : </b>Add selected APs from the Access Point Failure list to the Valid AP database.<br>
+			<br>
+			<b>View Details : </b>shows all information about that particular
+            mac address entry.These are the available details.<br>
+            <b>MAC Address :</b> The Ethernet address of the AP.<br>
+            <br>
+            <b>IP Address :</b> The IP address of the AP.<br>
+            <br>
+            <b>Last Failure Type :</b> Indicates the last type of failure that
+            occurred, which can be one of the following:<br>
+            1&#45;Local Authentication<br>
+            2&#45;No Database Entry<br>
+            3&#45;Not Managed<br>
+            4&#45;RADIUS Authentication<br>
+            5&#45;RADIUS Challenged<br>
+            6&#45;RADIUS Unreachable<br>
+            7&#45;Invalid RADIUS Response<br>
+            8&#45;Invalid Profile ID<br>
+            9&#45;Profile Mismatch&#45;Hardware Type<br>
+            <br>
+            <b>Vendor ID :</b> Vendor ID of the peer Controller software.<br>
+            <br> 
+            <b>Protocol Version :</b> Indicates the protocol version supported
+            by the software on the peer Controller.<br>
+            <br>
+            <b>Software Version :</b> The software version for the given peer Controller.<br>
+            <br>
+            <b>Hardware Type :</b> The Hardware ID associated with the AP hardware platform .<br>
+            <br>
+            <b>Reporting Controller :</b> The controller which reported
+            authentication failure .<br>
+            <br>
+            <b>Controller MAC Address :</b> The Ethernet address of the
+            Controller.<br>
+            <br>
+            <b>Controller IP Address :</b>  The IP address of the Controller.<br>
+            <br>
+            <b>Validation Failures :</b>Shows the count of association failures for this AP.<br>
+	    <br> 
+            <b>Authentication Failures :</b> Shows the number of 802.1X
+            Authentication failures detected for this AP.<br>
+            <br>
+            <b>Age :</b>Time since failure occurred.</p>
+            <p id="AP_RF_Scan_Status"><b>AP RF Scan Status </b><br>
+			<b>List of RF Scan Detected APs</b><br>
+			<b>MAC Address :</b>The Ethernet MAC address of the detected AP.
+            This could be a physical radio interface or VAP MAC. For D&#45;Link APs
+            this is always a VAP MAC address.<br>
+			<br>
+			<b>SSID :</b>Service Set ID of the network, which is broadcast in the detected beacon frame.<br>
+			<br>
+			<b>Physical Mode :</b> Indicates the 802.11 mode being used on the AP.<br>
+			<br>
+			<b>Channel :</b> Transmit channel of the AP.<br>
+			<br>
+			<b>Status :</b> Indicates the managed status of the AP, whether this
+            is a valid AP known to the Controller or a Rogue on the network. The
+            valid values are:<br>
+            <b>Managed:</b> The neighbor AP is managed by the wireless system.<br>	
+            <b>Standalone:</b> The AP is managed in standalone mode and
+            configured as a valid AP entry (local or RADIUS).<br>
+            <b>Rogue:</b> The AP is classified as a threat by one of the threat
+            detection algorithms.<br>	
+            <b>Unknown:</b> The AP is detected in the network but is not
+            classified as a threat by the threat detection algorithms.<br>
+			<br>	
+			<b>Age :</b>Time since this AP was last detected in an RF scan.<br>
+			<br></p>
+
+:|authenticationFailedEnd|:
+
+:|rfScan|:
+            <p><b>RF Scan </b><br><br>
+			<b>RF Scan APs List</b><br><br>
+			<b>MAC Address :</b>The Ethernet MAC address of the detected AP.
+            This could be a physical radio interface or VAP MAC. For D&#45;Link APs
+            this is always a VAP MAC address.<br>
+			<br>
+			<b>SSID :</b>Service Set ID of the network, which is broadcast in the detected beacon frame.<br>
+			<br>
+			<b>Physical Mode :</b> Indicates the 802.11 mode being used on the AP.<br>
+			<br>
+			<b>Channel :</b> Transmit channel of the AP.<br>
+			<br>
+			<b>Status :</b> Indicates the managed status of the AP, whether this
+            is a valid AP known to the Controller or a Rogue on the network. The
+            valid values are:<br>
+            <b>Managed:</b> The neighbor AP is managed by the wireless system.<br>	
+            <b>Standalone:</b> The AP is managed in standalone mode and
+            configured as a valid AP entry (local or RADIUS).<br>
+            <b>Rogue:</b> The AP is classified as a threat by one of the threat
+            detection algorithms.<br>	
+            <b>Unknown:</b> The AP is detected in the network but is not
+            classified as a threat by the threat detection algorithms.<br>
+			<br>	
+			<b>Age :</b>Time since this AP was last detected in an RF scan.<br>
+			<br>
+			<b>Command Buttons/right click options</b><br>
+			<br>
+            <b>Refresh : </b>Updates the page with the latest
+            information.<br><br>
+            <b>Details:</b> On clicking details we will get following
+            details.<br><br>
+            <b>MAC Address :</b> The Ethernet MAC address of the detected AP.
+            This could be a physical radio interface or VAP MAC. For D&#45;Link APs
+            this is always a VAP MAC address.<br>
+			<br>
+			<b>SSID :</b> Service Set ID of the network, which is broadcast in the detected beacon frame.<br>
+			<br>
+			<b>Channel :</b> Transmit channel of the AP.<br>
+			<br>
+			<b>Status :</b> Indicates the managed status of the AP, whether this
+            is a valid AP known to the Controller or a Rogue on the network. The valid values are:<br>
+            <br>    
+            <b>Managed:</b> The neighbor AP is managed by the wireless system.<br>	
+            <br>
+            <b>Standalone:</b> The AP is managed in standalone mode and configured as a valid AP entry (local or RADIUS).<br>
+            <br>
+            <b>Rogue:</b> The AP is classified as a threat by one of the threat detection algorithms.<br>	
+            <br>
+            <b>Unknown:</b> The AP is detected in the network but is not classified as a threat by the threat detection algorithms.<br>
+			<br>
+			<b>Initial Status :</b> If the AP is not rogue, the initial status
+            is equal to Status (Managed, Standalone, or Unknown). For rogue APs,
+            the initial status is the classification prior to this AP becoming
+            rogue.<br>
+			<br>
+			<b>Transmit Rate :</b> Indicates the rate at which the AP is currently transmitting data.<br>
+			<br>
+			<b>WIDS Rogue AP Mitigation :</b> Status indicating whether rogue AP mitigation is in progress for this AP.<br>
+			<br> 
+			<b>Age :</b> Time since this AP was last detected in an RF scan.<br>
+			<br>
+			<b>Discovered Age :</b> Time since this AP was first detected in an RF scan.<br>
+			<br>
+			<b>BSSID :</b> Basic Service Set Identifier advertised by the AP in the beacon frames.<br>
+			<br>
+			<b>Physical Mode :</b> Indicates the 802.11 mode being used on the AP.<br>
+			<br>
+			<b>Security Mode :</b> Security mode used by the AP.<br>
+			<br>
+			<b>802.11n Mode :</b> Indicates whether this AP supports IEEE 802.11n mode.<br>
+			<br>
+			<b>Beacon Interval :</b> Beacon interval for the neighbor AP network.<br>
+			<br>
+			<b>Highest Supported Rate :</b> Highest supported rate advertised by
+            this AP in the beacon frames. The rate is represented in increments of 1 Mbps.<br>
+			<br>
+			<b>Peer Managed AP :</b> Indicates whether this AP is managed by a Controller in the cluster.<br>
+			<br>
+			<b>Ad hoc Network :</b> Indicates whether the beacon frame was received from an ad hoc network.<br>
+			<br>
+			<b>OUI Description :</b>Identifies the manufacturer of the AP or
+            wireless client adapter based on the information in the OUI database
+            on the Controller.</p>
+:|rfScanEnd|:
+
+:|apHwCapability|:
+            <p><b>AP Hardware Capability </b>The controller can support APs that
+            have different hardware capabilities, such as the supported number
+            of radios, the supported IEEE 802.11 modes, and the software image
+             required by the AP.<br>
+             <br>
+			<b>List of Hardware Capabilities Supported by APs </b> <br><br>
+			<b>Hardware Type :</b> Identifies the ID number assigned to each AP
+            hardware type. The Controller supports up to six different AP
+            hardware types.<br>
+			<br>
+			<b>Hardware Type Description :</b> Includes a description of the platform and the supported IEEE 802.11 modes.<br>
+			<br>
+			<b>Radio Count :</b> Specifies whether the hardware supports one radio or two radios.<br>
+			<br>
+			<b>Image Type :</b> Specifies the type of software the hardware
+            requires.<br><br>
+            Click <b>Radio Information</b> right click option to see the radio
+            Information to selected hardware type.</p><br>
+
+    	     <p ><b>AP Hardware Radio Capability </b><br>
+                        <br>
+                        <b>Hardware Type Description :</b> Includes a 
+                        description of the platform and the supported IEEE 
+                        802.11 modes.<br><br>
+			        <b>Radio Mode : </b> Displays the radios mode Radio-1/Radio-2 
+                    supported on the hardware platform. On selecting Radio you 
+                    can see the radio related information for particular radio.
+                    <br> <br>
+                        <b>Radio Count :</b> Displays the number of radios supported on the hardware platform, which is either 1 or 2. <br>
+                        <br>
+                        <b>802.11a Support :</b> Shows whether support for IEEE 802.11a mode is enabled.<br>
+                        <br>
+                        <b>Radio Type Description :</b> Displays the type of radio, which might contain information such as the manufacturer name and supported IEEE 802.11 modes.<br>
+                        <br>
+              		<b>802.11bg Support :</b> Shows whether support for IEEE 802.11bg mode is enabled.<br>
+                        <br>
+			<b>VAP Count :</b> Displays the number of VAPs the radio supports.<br>
+			<br>	
+		<b>802.11n Support :</b> Shows whether support for IEEE 802.11n mode is enabled.<br>
+                        <br>
+	     </p>
+:|apHwCapabilityEnd|:
+
+:|deAuthenticationAttacks|:
+               <p><b>AP De&#45;Authentication
+                Attack Status </b><br>
+			<b>BSSID :</b>Shows the BSSID of the AP against which the attack is launched. The BSSID is a MAC address.<br>
+			<br>
+			<b>Channel :</b> Identifies the channel on which the rogue AP is operating.<br>
+			<br>
+			<b>Time Since Attack Started :</b> Shows the amount of time that has passed since the attack started on the AP.<br>
+			<br>
+			<b>RF Scan Report Age :</b> Shows the amount of time that has passed since the RF Scan reported this AP.<br>
+			<br>
+            <b>Command Button</b><br>
+            <b>Refresh</b> Updates with latest information.</p>
+:|deAuthenticationAttacksEnd|:
+
+:|associatedClients|:
+<p>Associated Clients Global Status</b><br>
+                <br>
+                <b>Total Clients : </b>Total number of clients in the database.
+                This total includes clients with an Associated, Authenticated,
+                or Disassociated status.<br>
+                <br>
+                <b>Authenticated Clients : </b>Total number of clients in the
+                associated client database with an Authenticated status.<br>
+                <br>
+                <b>802.11a Clients : </b>Total number of IEEE 802.11a only
+                clients that are authenticated.<br>
+                <br>
+                <b>802.11b/g Clients : </b>Total number of IEEE 802.11b/g only
+                clients that are authenticated.<br>
+                <br>
+                <b>802.11n Clients : </b>Total number of clients that are IEEE
+                802.11n capable and are authenticated. These include IEEE
+                802.11a/n, IEEE 802.11b/g/n, 5 GHz IEEE 802.11n, 2.4GHz IEEE
+                802.11n.<br>
+                <br>
+                <b>Maximum Associated Clients : </b>Maximum number of clients
+                that can associate with the wireless system. This is the maximum
+                number of entries allowed in the Associated Client database.<br>
+                <br>
+                <b>Detected Clients : </b>Number of wireless clients detected in
+                the WLAN.<br>
+                <br>
+                <b>Maximum Detected Clients : </b>Maximum number of clients that
+                can be detected by the controller. The number is limited by the size
+                of the Detected Client Database.<br>
+                <br>
+                <b>Maximum Pre&#45;authentication History Entries : </b>Maximum
+                number of Client Pre&#45;Authentication events that can be recorded
+                by the system.<br>
+                <br>
+                <b>Total Pre&#45;authentication History Entries : </b>Current number
+                of pre&#45;authentication history entries in use by the system.<br>
+                <br>
+                <b>Maximum Roam History Entries : </b>Maximum number of entries
+                that can be recorded in the roam history for all detected
+                clients.<br>
+                <br>
+                <b>Total Roam History Entries : </b>Current number of
+                pre&#45;authentication history entries in use by the system.</p>
+
+:|associatedClientsEnd|:
+
+:|wlanAssociatedClients|:
+<p><b>WLAN Associated Clients List </b>
+                <br>
+            <b>Client MAC Address :</b> The MAC address of the associated
+            client.<br><br>
+			<b>Client IP Address :</b> The IP address of the associated
+            client, if available.<br><br>
+			<b>SSID :</b> The network on which the client is connected.<br>
+			<br>
+			<b>BSSID :</b> The Ethernet MAC address for the managed AP VAP where this client is associated.<br>
+            <b>AP MAC Address :</b> The MAC address of the AP .<br>
+			<br>
+			These are the available <b>buttons/right click</b> options available for
+            this page.<br>			
+			<b>Disconnect: </b>Disassociates the selected client from the managed AP.<br>
+            <br>
+            <b>Details :</b> For each client associated with an AP that the
+            controller manages, the detailed status information about the client
+            and its association with the access point are shown here.<br>
+            <br>
+            <b>Neighbor AP Status :</b>The Neighbor APs page for
+            the associated client status shows information about access points
+            that the client detects. The information on this page can help you
+            determine the managed AP an associated client might use for
+            roaming.<br>
+            <br>
+            <b>Distributed Tunneling : </b> The Distributed
+            Tunneling page for the associated client status shows information
+            about access points that the client detects.<br>
+            <br>
+            <b>Client Statistics: </b>Shows information about the traffic a wireless client
+            receives and transmits while it is associated with a single AP. Use
+            the menu above the table to view details about an associated client.
+            Each client is identified by its MAC address.<br><br>
+            <b>Roam History Details: </b>The wireless system keeps a record of clients
+            as they roam from one managed AP to another managed AP. A history of
+            up to 10 APs is kept for each client. The Detected Client Roam
+            History page shows the managed APs with which the client has
+            associated.<br><br>
+            <b>Purge Roam History:</b> clears current roam history data from
+            Roam History section.<br><br>
+            <b>Pre&#45;Auth History : </b> The Detected Client Pre&#45;Authentication
+            History page shows information about the pre&#45;authentication requests
+            that the detected client has made.<br>
+            <br>
+            <b>Purge Pre&#45;Auth History: </b> clears pre auth data from
+            Pre&#45;Auth History section.<br><br> 
+            <br>
+			<b>Refresh: </b>Updates the page with the latest information.<br>
+            <br>
+            After clicking <b>Neighbor AP Status </b> we will get following
+            details.<br><br>
+            <b>AP MAC Address :</b>The base Ethernet address of the Unified
+            Wireless Controller managed AP.<br>
+            <br>
+            <b>Location :</b>The configured descriptive location for the managed
+            AP.<br>
+            <br>
+            <b>Radio :</b>The radio interface and its configured mode that
+            detected this client as a neighbor.<br>
+            <br>
+            <b>Discovery Reason :</b>Indicates one or more discovery methods for
+            the neighbor client. One or more of the following values may be
+            displayed:<br>
+            1&#45;RF Scan: The client was reported from an RF scan on the radio.
+            Note that client stations are difficult to detect via RF scan, the
+            other methods are more common for client neighbor detection.<br>
+            2&#45;Probe Request: The managed AP received a probe request from the
+            client.<br>
+            3&#45;Associated to Managed AP This neighbor client is associated to
+            another managed AP.<br>
+            4&#45;Associated to this AP: The client is associated to this managed AP
+            on the displayed radio.<br>
+            5&#45;Associated to Peer AP: The client is associated to an AP managed
+            by a peer controller.<br>
+            6&#45;Ad Hoc Rogue: The client was detected as part of an ad hoc network
+            with this AP.<br>
+            <br>
+            After clicking <b>Details</b> we get following details.<br>
+            <b>MAC Address : </b>MAC address of associated client. <br>
+            <br>
+            <b>SSID : </b>Indicates the network on which the client is
+            connected.<br>
+            <br>
+            <b>BSSID : </b>Indicates the Ethernet MAC address for the managed AP
+            VAP where this client is associated.<br>
+            <br>
+            <b>AP MAC Address : </b>This field indicates the base AP Ethernet
+            MAC address for the managed AP.<br>
+            <br>
+            <b>Status : </b>Indicates whether or not the client has associated
+            and/or authenticated. The valid values are:<br>
+            1&#45;Associated: The client is current associated to the managed AP.<br>
+            2&#45;Authenticated: The client is currently associated and
+            authenticated to the managed AP.<br>
+            3&#45;Disassociated: The client has disassociated from the managed AP,
+            if the client does not roam to another managed AP within the client
+            roam timeout, it will be deleted.<br>
+            <br>
+            <b>Channel : </b>Indicates the operating channel for the client
+            association.<br>
+            <br>
+            <b>User Name : </b>Indicates the user name of client that have
+            authenticated via 802.1X. Clients on networks with other security modes will not have a user name.<br>
+            <br>
+            <b>Inactive Period : </b>This field shows the amount of time since
+            data packets were last received from the client<br>
+            <br>
+            <b>Age : </b>Indicates the amount of time that has passed since the
+            controller received new status or statistics updates for this client.<br>
+            <br>
+            <b>Dot11n Capable : </b>Indicates whether the associated client
+            supports the IEEE 802.11n standard.<br>
+            <br>
+            <b>NetBIOS Name : </b>Identifies the NetBIOS name of the wireless
+            client. For Microsoft Windows hosts, the NetBIOS name is typically
+            the same as, or based on the host name.<br>
+            <br>
+            <b>Associating controller : </b>Shows whether the AP that the wireless
+            client is associated to is managed by the local controller or a peer
+            controller.<br>
+            <br>
+            <b>Controller MAC Address : </b>Shows the MAC address of the controller that
+            manages the AP to which the wireless client is associated.<br>
+            <br>
+            <b>Controller IP Address : </b>Shows the IP address of the controller that
+            manages the AP to which the wireless client is associated.<br>
+            <br>
+            <b>Location : </b>The descriptive location configured for the managed
+            AP.<br>
+            <br>
+            <b>Radio : </b>Displays the managed AP radio interface the client is
+            associated to and its configured mode.<br>
+            <br>
+            <b>VLAN : </b>If client is on a VAP using VLAN data forwarding mode,
+            indicates the current assigned VLAN.<br>
+            <br>
+            <b>Transmit Data Rate : </b>Indicates the rate at which the client
+            station is currently transmitting data.<br>
+            <br>
+            <b>Network Time : </b>Indicates the amount of time that has passed
+            since this client first authenticated with the network.<br>
+            <br>
+            <b>Detected IP Address : </b>Identifies the IPv4 address of the client, if available.<br>
+            <br>
+            <b>Tunnel IP Address : </b>This field is blank for all non&#45;tunneled
+            clients. For a tunneled client, this is the assigned tunnel IP
+            address.<br>
+            <br>
+            After clicking <b>Distributed Tunneling </b>we will get following
+            details.<br>
+            The AP&#45;AP tunneling mode is used to support L3 roaming for
+            wireless clients without forwarding any data traffic to the wireless
+            controller.In the AP&#45;AP tunneling mode, when a client first associates
+            with an AP in the wireless system, the AP forwards the wireless
+            client's data using VLAN forwarding mode. The AP the client
+            initially associates with is called the Home AP. The AP the client
+            roams to is called the Association AP.<br>
+            <br>
+            <b>Client MAC Address :</b> The MAC address of the associated
+            client.<br><br>
+            <b>Distributed Tunneling Status :</b> Indicates whether this client
+            is associated with a network that supports L2 distributed
+            tunneling.<br>
+            <br>
+            <b>Client Roam Status :</b> Indicates whether the client is on the
+            Home AP or has roamed to another AP and is using a tunnel. The field
+            can display one of the following values:<br>
+            1&#45;Home&#8212;Client is not using a tunnel.<br>
+            2&#45;Roaming&#8212;Client is using a tunnel.<br>
+            If distributed tunneling is disabled, the field displays the roam
+            status as Roaming.<br>
+            <br>
+            <b>Home AP MAC Address :</b> Shows the MAC Address of the Home AP
+            for the client. The value is meaningful only for clients that are
+            associated with networks enabled for distributed tunneling.<br>
+            <br>
+            <b>Associated AP MAC Address :</b>Shows the MAC Address of the AP to
+            which the client roamed via the distributed tunneling protocol.<br>
+            <br>
+            After clicking<b> Client Statistics</b> we will get following
+            details.<br><br>
+            This page shows information about the traffic a wireless client
+            receives and transmits while it is associated with a single AP. Use
+            the menu above the table to view details about an associated client.
+            Each client is identified by its MAC address.<br>
+            <br>
+            <b>Packets Received :</b>Total packets received from the client
+            station.<br>
+            <b>Bytes Received :</b>Total bytes received from the client
+            station.<br>
+            <b>Packets Transmitted :</b>Total packets transmitted to the client
+            station.<br>
+            <b>Bytes Transmitted :</b>Total bytes transmitted to the client
+            station.<br>
+            <b>Packets Receive Dropped :</b>Number of packets received from the
+            client station that were dropped.<br>
+            <b>Bytes Receive Dropped :</b>Number of bytes received from the
+            client station that were dropped.<br>
+            <b>Packets Transmit Dropped :</b>Number of packets transmitted to
+            the client station that were dropped.<br>
+            <b>Bytes Transmit Dropped :</b>Number of bytes transmitted to the
+            client station that were dropped.<br>
+            <b>Fragments Received :</b>Total fragmented packets received from
+            the client station.<br>
+            <b>Fragments Transmitted :</b>Total fragmented packets transmitted
+            to the client station.<br>
+            <b>Transmit Retries :</b>Number of times transmits to client station
+            succeeded after one or more retries.<br>
+            <b>Transmit Retries Failed :</b>Number of times transmits to client
+            station failed after one or more retries.<br>
+            <b>TS Violate Packets Received:</b> Count of packets received by an AP from a
+            wireless client for the specified access category.<br>
+            <b>TS Violate Packets Transmitted: </b>Count of packets transmitted by an AP 
+            to a wireless client for the specified access category.<br>
+            <b>Duplicates Received :</b>Total duplicate packets received from
+            the client station.<br>
+            <br>
+
+            After clicking <b>Roam History Details</b> we will get following
+            details.<br><br>
+            <b>MAC Address : </b>MAC address of the detected client.<br>
+            <br>
+            <b>AP MAC Address : </b>MAC Address of the managed AP to which the
+            client authenticated.<br>
+            <br>
+            <b>Radio: </b>Radio Number to which the client is
+            authenticated.<br>
+            <br>
+            <b>VAP MAC Address : </b>VAP MAC address to which the client
+            roamed.<br>
+            <br>
+            <b>SSID : </b>SSID Name used by the VAP.<br>
+            <br>
+            <b>Status: </b>A flag indicating whether the history
+            entry represents a new authentication or a roam event.<br>
+            <br>
+            <b>Time Since Event : </b>Time since the history entry was added.<br>
+            <br>
+            After clicking <b>Pre&#45;Auth History</b> we will get following
+            details.<br>
+            <br>
+            <b>MAC Address : </b>MAC address of the client.<br>
+            <br>
+            <b>AP MAC Address : </b>MAC Address of the managed AP to which the
+            client has pre&#45;authenticated.<br>
+            <br>
+            <b>Radio Interface Number : </b>Radio number to which the client is
+            authenticated, which is either Radio 1 or Radio 2.<br>
+            <br>
+            <b>VAP MAC Address : </b>VAP MAC address to which the client
+            roamed.<br>
+            <br>
+            <b>SSID : </b>SSID Name used by the VAP.<br>
+            <br>
+            <b>Age : </b>Time since the history entry was added.<br>
+            <br>
+            <b>User Name : </b>Indicates the user name of client that
+            authenticated via 802.1X.<br>
+            <br>
+            <b>Pre&#45;Authentication Status : </b>Indicates whether the client
+            successfully authenticated and shows a status of Success or
+            Failure.<br>
+            <br>
+            </p>
+
+:|wlanAssociatedClientsEnd|:
+
+:|adHocClients|:
+<p><b> WLAN Associated Ad Hoc Clients List</b><br>
+			<b>MAC Address :</b> The Ethernet address of the client. If the
+            Detection Mode is Beacon then the client is represented as an AP in
+            the RF Scan database and the Neighbor AP List. If the Detection Mode
+            is Data Frame then the client information is in the Neighbor Client
+            List.<br>
+			<br>
+			<b>AP MAC Address :</b> The base Ethernet MAC Address of the managed AP which detected the client.<br>
+			<br>
+			<b>Location :</b> The configured descriptive location for the managed AP.<br>
+			<br>
+			<b>Radio :</b> The radio interface and its configured mode that detected the ad hoc device.<br>
+			<br>
+			<b>Detection Mode :</b> The mechanism of detecting this Ad Hoc device. The possible values are Beacon Frame or Data Frame.<br>
+			<br>
+			<b>Age :</b>Time since last detection of the ad hoc network.<br>
+			<br>
+			These are the available <b>Buttons/right Click </b>options
+            available for this page. <br>
+			<b>select All </b>selects all ad hoc client entries from the
+            list<br><br>
+            <b>Note:</b> Clearing the list does not disassociate any of the ad hoc clients,
+            and the clients might still be involved in the ad hoc network.<br>
+			<br>
+			<b>Deny: </b>Blocks an ad hoc client from WLAN access. The MAC
+            address is added to the Known Client database where the default
+            action is Deny.<br>
+			<br>
+			<b>Allow: </b>Allows an ad hoc client access to the WLAN. The MAC
+            address is added to the Known Client database where the default
+            action is Allow.<br>
+			<br>
+            <b>Refresh:</b> Updates the page with the latest information.</p>
+
+:|adHocClientsEnd|:
+
+:|detectedClients|:
+ <p><b>WLAN Associated Detected Clients List</b><br>
+			<b>MAC Address :</b> The Ethernet address of the client.<br>
+			<br>
+			<b>Client Name :</b> Shows the name of the client, if available,
+            from the Known Client Database. If client is not in the database
+            then the field is blank.<br>
+			<br>
+			<b>Client Status :</b> Shows the client status, which can be one
+            of the following:<br>
+            <b>Authenticated :</b>The wireless client is authenticated with the wireless system.<br>
+            <b>Detected :</b>The wireless client is detected by the wireless system but is not a security threat.<br>	
+            <b>Black&#45;Listed :</b>The client with this MAC address is specifically denied access via MAC Authentication.<br>
+            <b>Rogue :</b>The client is classified as a threat by one of the threat detection algorithms.<br>
+			<br>
+            <b>Age :</b>Time since any event has been received for this client
+            that updated the detected client database entry.<br>
+			<br>
+			<b>Create Time :</b> Time since this entry was first added to the detected clients database.<br>
+			<br>
+            These are the available <b>Buttons/right click </b>options
+            available for this page.<br>
+            <b>Details : </b>Show detail information about the selected
+            client.<br>
+            <br>
+            <b>Rogue Classification : </b>The Wireless Intrusion
+            Detection System (WIDS) can help detect intrusion attempts into the
+            wireless network and take automatic actions to protect the network.
+            The Unified Wireless controller allows you to activate or deactivate
+            various threat detection tests and set threat detection thresholds.
+            The WIDS Client Rogue Classification  page provides information
+            about the results of these tests. If a client has been classified as
+            a rogue, this page provides information about which tests the client
+            might have failed to trigger the classification.<br>
+            <br>
+            <b>Pre&#45;Auth History : </b> The Detected Client Pre&#45;Authentication
+            History page shows information about the pre&#45;authentication requests
+            that the detected client has made.<br>
+            <br>
+            <b>Triangulation : </b>The Detected Client Triangulation page lists
+            up to three non&#45;sentry and three sentry managed APs that have
+            detected the client.<br>
+            <br>
+            <b>Purge Roam History:</b> clears current roam history data from
+            Roam History section.<br><br>
+            <b>Purge Pre&#45;Auth History: </b> clears pre auth data from
+            Pre&#45;Auth History section.<br><br> 
+            <b>Refresh: </b> Updates the page with the latest information.
+            After clicking <b>Details </b>button we will get
+            following details.<br><br>
+            After clicking <b>Details </b> we will get following
+            details.<br><br>
+            <b>MAC Address : </b>The Ethernet address of the client.<br>
+            <br>
+            <b>Client Status : </b>Shows the client status, which can be one of
+            the following:<br>
+            1. Authenticated Client is Authenticated with the system and is not Rogue.<br>
+            2. Detected Client is detected, not Authenticated, not rogue, and is
+            not found in the Known Clients Database.<br>
+            3. Known Client is detected and found in the Known Clients Database, but is not authenticated.<br>
+            4. Black Listed Client tried to associate with the system, but was rejected due to MAC authentication.<br>
+            5. Rogue Client failed the enabled threat tests.<br>
+            <br>
+            <b>Authentication Status : </b>Indicates whether this client is
+            authenticated.<br>
+            Note: The Client Status can be Rogue, but the authentication status
+            can still be Authenticated.<br>
+            <br>
+            <b>Threat Detection : </b>Indicates whether one of the threat detection tests has been triggered for this
+            client. If the test is disabled, the client will not be marked as a rogue, but 
+            you can still investigate why the threat was triggered.<br>
+            <br>
+            <b>Threat Mitigation Status : </b>Indicates whether threat
+            mitigation has been done for this client.<br>
+            <br>
+            <b>Time Since Entry Last Updated: </b>Shows the amount of time that
+            has passed since any event has been received for this client that
+            updated the detected client database entry.<br>
+            <br>
+            <b>Time Since Entry Create : </b>Shows the amount of time that has
+            passed since this entry was first added to the detected clients
+            database.<br>
+            <br>
+            <b>Client Name : </b>Shows the name of the client, if available,
+            from the Known Client Database. If the client is not in the database
+            then the field is blank.<br>
+            <br>
+            <b>RSSI : </b>If the client is authenticated with the managed AP,
+            this field displays the last RSSI value reported by the AP with
+            which the client is authenticated. The RSSI is a percentage from
+            1&#45;100%. A value of 0 means the AP is not detected.<br>
+            <br>
+            <b>Signal : </b>Last signal strength reported by the managed AP with
+            which the client is authenticated. The possible range is &#45;128 to 128
+            dBm.<br>
+            <br>
+            <b>Noise : </b>Last channel noise reported by the managed AP with
+            which the client is authenticated. The possible range is &#45;128 to 128
+            dBm.<br>
+            <br>
+            <b>Probe Req Recorded : </b>Number of probe requests recorded so far
+            during the probe collection interval.<br>
+            <br>
+            <b>Probe Collection Interval : </b>Shows the amount of time spent in
+            each probe collection period. The probe collection helps the controller
+            decide whether the client is a threat.<br>
+            <br>
+            <b>Highest Probes Detected : </b>Shows the largest number of probes
+            that the controller detected during a probe collection interval.<br>
+            <br>
+            <b>Channel : </b>Identifies the channel that the client is using.<br>
+            <b>Auth Msgs Recorded : </b>Shows the number of IEEE 802.11
+            Authentication messages recorded so far during the authentication
+            collection interval.<br>
+            <br>
+            <b>Auth Collection Interval : </b>Shows the amount of time spent in
+            each authentication collection period. The authentication collection
+            helps the controller decide whether the client is a threat.<br>
+            <br>
+            <b>Highest Auth Msgs : </b>Shows the largest number of
+            authentication messages that the controller detected during an
+            authentication collection interval.<br>
+            <br>
+            <b>De&#45;Auth Msgs Recorded : </b>Shows the number of IEEE 802.11
+            De&#45;Authentication messages recorded so far during the
+            de&#45;authentication  collection interval.<br>
+            <br>
+            <b>De&#45;Auth Collection Interval : </b>Shows the amount of time spent
+            in each de&#45;authentication collection period. The de&#45;authentication
+            collection helps the controller decide whether the client is a
+            threat.<br>
+            <br>
+            <b>Highest De&#45;Auth Msgs : </b>Shows the largest number of
+            de&#45;authentication messages that the controller detected during a
+            de&#45;authentication collection interval.<br>
+            <br>
+            <b>Authentication Failures : </b>Shows the number of 802.1X
+            Authentication failures detected for this client.<br>
+            <br>
+            <b>Probes Detected : </b>Shows the number of probes detected in the
+            last RF Scan.<br>
+            <br>
+            <b>Broadcast BSSID Probes : </b>Shows the number of probes to
+            broadcast BSSID in the last RF Scan.<br>
+            <br>
+            <b>Broadcast SSID Probes : </b>Shows the number of probes to
+            broadcast SSID in the last RF Scan.<br>
+            <br>
+            <b>Specific BSSID Probes : </b>Shows the number of probes to a
+            specific BSSID in the last RF Scan.<br>
+            <br>
+            <b>Specific SSID Probes : </b>Shows the number of probes to a specific SSID in the last RF Scan<br>
+            <br>
+            <b>Last Directed Probe BSSID : </b>Shows the last directed probe
+            BSSID detected in the RF Scan, which is a MAC address.<br>
+            <br>
+            <b>Last Directed Probe SSID : </b>Shows the name of the last
+            directed Probe SSID detected in the RF Scan.<br>
+            <br>
+            <b>Threat Mitigation Sent : </b>Shows whether threat mitigation has
+            been done for this client.<br>
+            <br>
+             After clicking <b>Rogue Classification</b> button we will get
+             following details.<br><br>
+            <b>MAC Address : </b>The Ethernet MAC address of the detected
+            wireless client.<br>
+            <br>
+            <b>Test Description : </b>Identifies the tests that were performed, which includes the
+            following:<br>
+            1&#45;Client is denied access in the Known Client Database.<br>
+            2&#45;Client exceeds the configured rate for transmitting 802.11 authentication requests.<br>
+            3&#45;Client exceeds the configured rate for transmitting probe requests.<br>
+            4&#45;Client exceeds the configured rate for transmitting de&#45;authentication requests.<br>
+            5&#45;Client exceeds the maximum number of failing authentications.<br>
+            6&#45;Known Client is authenticated with an Unknown AP.<br>
+            7&#45;MAC address of the client is from a registered manufacturer
+            identified in the OUI database.<br>
+            <br>
+            <b>Condition Detected : </b>Indicates whether the result of the test
+            was true or false.<br>
+            <br>
+            <b>Reporting MAC Address : </b>Identifies the MAC address of the AP
+            that reported the test results.<br>
+            <br>
+            <b>Radio : </b>Identifies which physical radio on the reporting AP
+            was responsible for the test results.<br>
+            <br>
+            <b>Test Config : </b>Shows whether this test is configured to report
+            rogues. Each test can be globally enabled or disabled to report a
+            positive result as a rogue.<br>
+            <br>
+            <b>Test Result : </b>Shows whether this test reported the device as
+            rogue. In some cases the test may report a positive result, be
+            enabled, but not report the device as rogue because the device is
+            allowed to operate in this mode.<br>
+            <br>
+            <b>Time Since First Report : </b>Time stamp indicating how long ago
+            this test first detected the condition.<br>
+            <br>
+            <b>Time Since Last Report : </b>Time stamp indicating how long ago
+            this test last detected the condition.<br><br>
+            After clicking <b>Pre&#45;Auth History</b> we will get following
+            details.<br>
+            <br>
+            <b>MAC Address : </b>MAC address of the client.<br>
+            <br>
+            <b>AP MAC Address : </b>MAC Address of the managed AP to which the
+            client has pre&#45;authenticated.<br>
+            <br>
+            <b>Radio Interface Number : </b>Radio number to which the client is
+            authenticated, which is either Radio 1 or Radio 2.<br>
+            <br>
+            <b>VAP MAC Address : </b>VAP MAC address to which the client
+            roamed.<br>
+            <br>
+            <b>SSID : </b>SSID Name used by the VAP.<br>
+            <br>
+            <b>Age : </b>Time since the history entry was added.<br>
+            <br>
+            <b>User Name : </b>Indicates the user name of client that
+            authenticated via 802.1X.<br>
+            <br>
+            <b>Pre&#45;Authentication Status : </b>Indicates whether the client
+            successfully authenticated and shows a status of Success or
+            Failure.<br>
+            <br>
+            After clicking <b>Triangulation Details </b> we will get following details.<br><br>
+            <b>Detected Client MAC Address :</b> MAC address of the client.<br>
+            <br>
+            <b>Sentry :</b> Identifies whether the radio that detected the
+            client is in sentry or non&#45;sentry mode.<br>
+            1&#45;Non&#45;Sentry: The radio that detected the client is not configured
+            in sentry mode. This means the radio can accept connections from
+            wireless clients and send and receive traffic.<br>
+            2&#45;Sentry: The radio that detected the client is configured in sentry
+            mode.Networks that deploy sentry APs or radios can detect devices on
+            the network quicker and perform more thorough security analysis.<br>
+            <br>
+            <b>MAC Address :</b> MAC Address of the managed AP that detected the
+            client.<br>
+            <br>
+            <b>Radio :</b> Radio number to which the client is authenticated,
+            which is either Radio 1 or Radio 2.<br>
+            <br>
+            <b>RSSI :</b> Received signal strength indicator in terms of
+            percentage for the non&#45;sentry AP. The range is 0&#45;100, where the
+            maximum value is 100. A value of 0 indicates that the client is not
+            detected.<br>
+            <br>
+            <b>Signal Strength :</b> Received signal strength in dBm. The
+            possible range is &#45;127 to 127. However, realistically, this value is
+            expected to range from &#45;95 to &#45;10.<br>
+            <br>
+            <b>Noise Level :</b> Noise reported on the channel by the non&#45;sentry
+            AP. The possible range is &#45;127 to 127.<br>
+            <br>
+            <b>Age :</b> Time since this AP detected the signal.<br>
+            <br>
+            After clicking <b>Roam History Details</b> we will get following
+            details.<br><br>
+            <b>MAC Address : </b>MAC address of the detected client.<br>
+            <br>
+            <b>AP MAC Address : </b>MAC Address of the managed AP to which the
+            client authenticated.<br>
+            <br>
+            <b>Radio: </b>Radio Number to which the client is
+            authenticated.<br>
+            <br>
+            <b>VAP MAC Address : </b>VAP MAC address to which the client
+            roamed.<br>
+            <br>
+            <b>SSID : </b>SSID Name used by the VAP.<br>
+            <br>
+            <b>Status: </b>A flag indicating whether the history
+            entry represents a new authentication or a roam event.<br>
+            <br>
+            <b>Time Since Event : </b>Time since the history entry was added.<br>
+            <br>
+
+:|detectedClientsEnd|:
+
+:|clustering|:
+<p><b>Peer Controller Status</b><br>
+            <b>Cluster Controller IP Address: </b>Ip Address of cluster
+            controller.<br>
+            <br>
+            <b>Peer Controllers: </b>Number of peer controllers.<br>
+            <br>
+            <b>Peer Controllers List :</b><br>
+            <br>
+			<b>IP Address :</b> IP address of the peer wireless Controller in the cluster.<br>
+			<br>
+			<b>Vendor ID :</b> Vendor ID of the peer Controller software.<br>
+			<br>
+			<b>Software Version :</b> The software version for the given peer Controller.<br>
+			<br>
+			<b>Protocol Version :</b> Indicates the protocol version supported by the software on the peer Controller.<br>
+			<br>
+			<b>Discovery Reason :</b> The discovery method of the given peer Controller, which can be through an L2 Poll or IP Poll.<br>
+			<br>
+			<b>Managed AP Count :</b> Shows the number of APs that the Controller currently manages.<br>
+			<br>
+			<b>Age :</b>Time since last communication with the Controller in Hours, Minutes, and Seconds.<br>
+            <br></p>
+
+:|clusteringEnd|:
+
+:|wdsGroupsStatus|:
+<p><b>WDS Group Status</b><br>
+				The Wireless Distribution System (WDS)-Managed AP feature allows you to add managed APs to the cluster using over-the-air WDS links through other managed APs. With WDS, APs may be located outdoors where wired connection to the data network is unavailable, or in remote buildings that are not connected to the main campus with a wired network. <br>The WDS AP group consists of the following managed APs
+<br>
+<br>Root AP—Acts as a bridge or repeater on the wireless medium and communicates with the controller via the wired link<br>
+<br>Satellite AP—Communicates with the controller via a WDS link to the Root AP<br>
+<br>The WDS links are secured using WPA2 Personal authentication and AES
+encryption.<br>This page displays summary information about configured WDS links. At least one group must be configured for the fields to display. To configure a WDS AP group, use the pages available within the WLAN WDS folder.<br>
+<br>The following fields are on this page.<br>
+<br>
+<b>ID :</b>Unique number that identifies the WDS AP group<br><br>
+<b>Configured AP Count :</b>Number of APs configured in this WDS AP group<br><br>
+<b>Connected Root AP  :</b>Number of Root APs currently being managed by the controller that are members of this WDS AP Group.<br><br>
+<b>Connected Satellite AP :</b>Number of Satellite APs currently being managed by the controller that are members of this WDS AP Group.<br><br>
+<b>Configured WDS Link Count :</b>Number of configured bidirectional links in the WDS AP Group.<br><br>
+<b>Detected WDS Links Count :</b>Number of WDS links detected in the system.
+APs on both sides of the link must detect each other in order for the link to
+be counted.<br><br></p>
+
+:|wdsGroupsStatusEnd|:
+
+:|wdsGroupApStatus|:
+<p><b>WDS AP Status</b><br><br>
+The WDS AP Group Status page displays detailed information about the configured APs and links in the WDS Group. From this page, you can also send a new password to group members.<br><br>
+The following fields are on the WDS AP Group Status page.<br><br>
+<b>ID:</b>Use the drop-down menu above the fields to select the group number that identifies the configured WDS AP group.<br><br>
+<b>Configured AP Count:</b>Number of APs configured in this WDS AP group<br><br>
+<b>Connected AP Count:</b>Number of APs managed by the controller that are members of this WDS AP Group. This number is the sum of the Connected Root APs and Connected Satellite APs.<br><br>
+<b>source AP Count:</b>Number of Root APs currently being managed by the controller that are members of this WDS AP Group.<br>
+<b>Destination AP Count:</b>Number of Satellite APs currently being managed by the controller that are members of this WDS AP Group.<br><br>
+<b>Source Bridge AP MAC:</b>MAC Address of the device elected as the Spanning Tree Root Bridge. If spanning tree is disabled this value is 00:00:00:00:00:00.<br><br>
+<b>Source Device Type:</b>The type of device elected as the Spanning Tree Root bridge(like None (STP is disabled),Root AP,Satellite AP,External Device (STP Root is not one of the APs))<br><br>
+<b>Config WDS Link Count:</b>Number of configured bidirectional links in the WDS AP Group.<br><br>
+<b>Detect WDS Links Count:</b>Number of WDS links detected in the system. APs on both sides of the link must detect each other in order for the link to be counted.<br><br>
+<b>Blocked WDS Link Count:</b>Number of WDS links blocked by the spanning tree protocol. If the AP on one side of the link reports the link as blocking then the link is counted by this status parameter.<br><br>
+<b>WDS Group Password Change Status:</b>Status of the last attempt to configure the password for the WDS Group (like Not Started,Success,Invalid Password,Requested,Timed Out)<br><br>
+<b>Edit Password:</b>To change the password for all controlleres and
+APs in this WDS Group, select the Edit checkbox, type the new password, and
+then click Apply Password. Password must be minumum of 8 characters and can be
+up to 63 characters in length.<br><br>
+Click <b>Save </b> to save your changes.<br>
+				<br>
+				Click <b>Cancel </b> to revert to the previous settings.
+    			<br>
+</p>
+
+:|wdsGroupApStatusEnd|:
+
+:|wdsApStatus|:
+<p><b>WDS AP Status Summary</b><br><br>
+The following fields are on this page.<br><br>
+<b>Group ID:</b>Use the drop-down menu above the fields to select the group number that identifies the configured WDS AP group.<br><br>
+<b>AP MAC Address:</b>Identifies the AP in the group by its MAC address<br><br>
+<b>AP Connection Status:</b>Indicates whether the AP is currently being managed by one of the controlleres in the cluster.<br><br>
+<b>Satellite Mode:</b>Indicates whether the AP is a Satellite AP connected to the network via a WDS link or a Root AP connected to the network via a wired link.<br><br>
+<b>STP Root Mode:</b>Indicates whether this AP is the root of the spanning tree. If spanning tree is disabled then the AP is always reported as Not STP Root.<br><br>
+<b>Root Path Cost:</b>Spanning Tree Path Cost to the root. The root AP always reports this value as 0. If spanning tree is disabled the value is also 0.<br><br>
+<b>Ethernet Port STP State:</b>When spanning tree is enabled on the APs in the WDS group this status parameter reports the spanning tree status of the Ethernet port.<br><br>
+<b>Ethernet Port Mode:</b>On Satellite APs the Ethernet port can be manually disabled. On root APs the port is always enabled.<br><br>
+<b>Ethernet Port Link State:</b>When the Ethernet port is enabled, this status
+reports the link state of the port.<br><br></p>
+
+:|wdsApStatusEnd|:
+
+:|wdsLinkStatus|:
+<p><b>WDS Link Status</b><br><br>
+The WDS Link Status page displays summary information about the link configuration and link state in a WDS Group.<br><br>
+The following fields are on the WDS Link Status page.<br><br>
+<b>ID:</b>The group number that identifies the configured WDS AP group.<br><br>
+<b>Source  AP MAC:</b>The MAC address of one end-point of the WDS link<br><br>
+<b>Source AP Radio:</b>The radio number of the WDS link endpoint on the source AP.<br><br>
+<b>Destination AP MAC:</b>The MAC address of the Destination AP in the group.<br><br>
+<b>Destination AP Radio:</b>The radio number of the WDS link endpoint on the destination AP.<br><br>
+<b>Source AP End-Point :</b>Indicates whether the AP specified by the destination MAC detected the AP specified by the source MAC.<br><br>
+<b>Destination AP End-Point:</b>Indicates whether the AP specified by the source MAC detected the AP specified by the destination MAC.<br><br>
+<b>Aggregation Mode:</b>When parallel links are defined between two APs, this field indicates whether this link is part of the aggregation link pair.<br><br>
+<b>Source AP STP:</b>Spanning Tree State of the link on the source AP, which is one of the following:<br><br>Disabled (STP is disabled or Link is down)<br><br>Forwarding<br><br>Learning<br><br>Listening<br><br>Blocking<br><br>
+<b>Destination AP STP:</b>Spanning Tree State of the link on the destination
+AP, which is one of the following:<br><br>Disabled (STP is disabled or Link is
+down)<br><br>Forwarding<br><br>Learning<br><br>Listening<br><br>Blocking<br><br></p>
+:|wdsLinkStatusEnd|:
+
+:|wdsLinkStatistics|:
+<p><b>WDS Link Statistics </b><br><br>
+This page displays summary information about the packets sent and received on the WDS links.<br><br>
+The following fields are on the WDS AP Link Status Summary page.<br><br>
+<b>ID:</b>The group number that identifies the configured WDS AP group.<br><br>
+<b>Source AP MAC:</b>The MAC address of one end-point of the WDS link<br><br>
+<b>source AP Radio:</b>The radio number of the WDS link endpoint on the source AP.<br><br>
+<b>Destination AP MAC:</b>The MAC address of the Source AP in the group.<br><br>
+<b>Destination Radio:</b>The radio number of the WDS link endpoint on the destination AP.<br><br>
+<b>Source AP Packets/Bytes Sent:</b>Number of packets/bytes sent by the source AP
+.<br><br>
+<b>Source AP Packets/Bytes Received:</b>Number of packets/bytes received by the
+source AP.<br><br>
+<b>Destination AP Packets/Bytes Sent:</b>Number of packets/bytes sent by the destination AP.<br><br>
+<b>Destination AP Packets/Bytes Received:</b>Number of packets/bytes received by the destination AP.<br><br>
+
+:|wdsLinkStatisticsEnd|:
+
+:|frontDesk|:
+<p><b>Billing - BillingDesk</b> This coantains following fields.<br>
+<b>Visitor Account Customization:</b><br><br>
+<b>Batch Generation:</b><br><br>
+<b>Begin Date:</b><br><br>
+<b>Maximum Usage Time:</b><br><br>
+<b>Maximum Usage Traffic:</b></br><br>
+<b>Expiration Date and Time:</b><br><br>
+<b>Generate:</b> This button will create batch generation for users.</p>
+:|frontDeskEnd|:
+
+:|viewAccounts|:
+<p><b>Billing Users:</b> This coantains following fields.<br>
+<b>User Name:</b><br>
+<b>Expiration Date:</b><br>
+<b>Usage Time Left(in Seconds):</b><br>
+<b>Bandwidth Usage Left(in MB):</b><br>
+<b>Right click options:</b><br><br>
+<b>Extend Session:</b>This option is used for extention of users data/time
+modification.It have following fields.<br>
+<b>Account Name:</b><br>
+<b>User Name:</b><br> 
+<b>Maximum Usage Traffic:</b><br>
+<b>Save</b> button is used for saving current configuration.<br><br>
+<b>View Details:</b>This section contains following fields.<br>
+<b>Account Name:</b><br>
+<b>Username:</b><br> 
+<b>Password:</b><br> 
+<b>Maximum Usage Time:</b><br>
+<b>Expiration Date/Time:</b><br>
+
+</p>
+
+:|viewAccountsEnd|:
+
+:|radiusAccountingStatistics|:
+<p><b>RADIUS Accounting Server Statistics</b><br><br>
+<b>Accounting Server Host Address :</b> Use the drop-down menu to select the IP
+address of the RADIUS accounting server for which to display statistics.<br>
+<br>
+<b>Round Trip Time (secs) :</b> Displays the time interval, in hundredths of a second,
+between the most recent Accounting-Response and the Accounting-Request that
+matched it from this RADIUS accounting server.<br>
+<br>
+<b>Accounting Requests :</b> The number of RADIUS Accounting-Request packets
+sent to this server. This number does not include retransmissions.<br>
+<br>
+<b>Accounting Retransmissions :</b> The number of RADIUS Accounting-Request
+packets retransmitted to this server.<br>
+<br>
+<b>Accounting Responses :</b> Displays the number of RADIUS packets received on
+the accounting port from this server.<br>
+<br>
+<b>Malformed Access Responses :</b> Displays the number of malformed RADIUS
+Accounting-Response packets received from this server. Malformed packets include
+packets with an invalid length. Bad authenticators and unknown types are not
+included as malformed accounting responses.<br>
+<br>
+<b>Bad Authenticators :</b> Displays the number of RADIUS Accounting-Response
+packets that contained invalid authenticators received from this accounting
+server.<br>
+<br>
+<b>Pending Requests </b> The number of RADIUS Accounting-Request packets
+destined for this server that have not yet timed out or received a response.<br>
+<br>
+<b>Timeouts :</b> The number of accounting timeouts to this server.
+Unknown Types - The number of RADIUS packets of unknown type which were received
+from this server on the accounting port.<br>
+<br>
+<b>Packets Dropped :</b> The number of RADIUS packets received from this server
+on the accounting port and dropped for some other reason.<br>
+</p>
+:|radiusAccountingStatisticsEnd|:

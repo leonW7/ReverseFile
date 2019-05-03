@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# radiusInit - initialization script for radius
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,08mar08,sdk segregated mgmt and non-mgmt cases
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_RADIUS" = "y" ]; then
+
+if [ "$INCLUDE_RADIUS_EAP" = "y" ]; then
+    if [ "$TEAMF1_MGMT" = "y" ]; then
+        $RADIUS_INSTALL_PATH/bin/radEap -d $DB_FILENAME
+    else
+        $RADIUS_INSTALL_PATH/bin/radEap
+    fi
+fi
+
+fi

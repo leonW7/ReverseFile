@@ -1,0 +1,510 @@
+<?lua
+require "teamf1lualib/bl_apProfilesSsid"
+require "teamf1lualib/bl_apProfiles"
+require "teamf1lualib/bl_networkProfiles"
+require "teamf1lualib/util"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "apProfileSsid"
+
+
+local guiApProfileSsid = require("com.teamf1.bl.wlan.approfilessid")
+local guiApProfile = require("com.teamf1.bl.wlan.approfile")
+local nwProfile = require("com.teamf1.bl.wlan.networkProfiles")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local apProfileTbl , networkProfileInfo
+local apProfileSsidTbl, errorCode, apRadioInfo
+errorCode, apProfileTbl = guiApProfile.apProfileGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+errorCode, networkProfileInfo = guiApProfileSsid.networkProileListGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+local profileId = 1
+local radioIndex = 1
+
+if (ButtonType and ButtonType == "profileRadio") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local page = "apProfilesSsid"
+    local removePrefix = page .. "."
+    configRow = util.removePrefix (configRow, removePrefix)
+    errorCode, apProfileSsidTbl, apRadioInfo = guiApProfileSsid.apProfileSsidGet (configRow)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+    profileId = tonumber(configRow.profileId)
+    radioIndex = apRadioInfo.radioIndex
+
+elseif (ButtonType and ButtonType == "ssIdChanged") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local page = "apProfilesSsid"
+    local removePrefix = page .. "."
+    configRow = util.removePrefix (configRow, removePrefix)
+    errorCode = guiApProfileSsid.apProfileSsidNetworkIdSet (configRow)
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+    errorCode, apProfileSsidTbl, apRadioInfo = guiApProfileSsid.apProfileSsidGet (configRow)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+    profileId = tonumber(configRow.profileId)
+    radioIndex = tonumber(configRow.radioIndex)
+    
+elseif (ButtonType and ButtonType == "enable") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local cookie = configRow["apProfilesSsid.checkbox"]
+    local configRow1 = util.split (cookie, "-")
+    local configRow2 = {}
+    configRow2.profileId  = configRow1[1]
+    configRow2.radioIndex = configRow1[2]
+    configRow2.vapId = configRow1[3]
+    configRow2.ssidStatus = 1
+    errorCode = guiApProfileSsid.apProfileSsidStatusSet (configRow2)
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    errorCode, apProfileSsidTbl, apRadioInfo = guiApProfileSsid.apProfileSsidGet (configRow2)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+    profileId = tonumber(configRow2.profileId)
+    radioIndex = tonumber(configRow2.radioIndex)
+
+elseif (ButtonType and ButtonType == "disable") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local cookie = configRow["apProfilesSsid.checkbox"]
+    local configRow1 = util.split (cookie, "-")
+    local configRow2 = {}
+    configRow2.profileId  = configRow1[1]
+    configRow2.radioIndex = configRow1[2]
+    configRow2.vapId = configRow1[3]
+    configRow2.ssidStatus = 0
+    errorCode = guiApProfileSsid.apProfileSsidStatusSet (configRow2)
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    errorCode, apProfileSsidTbl, apRadioInfo = guiApProfileSsid.apProfileSsidGet (configRow2)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+    profileId = tonumber(configRow2.profileId)
+    radioIndex = tonumber(configRow2.radioIndex)
+
+
+elseif (ButtonType and ButtonType == "config") then
+    local configRow = web.cgiToLuaTable(cgi)
+    local configRow1 = util.split (RowId, "-")
+    local configRow2 = {}
+    configRow2.profileId  = configRow1[1]
+    configRow2.radioIndex = configRow1[2]
+    configRow["networkProfileConfig.cookie"] = configRow1[4]
+    local msg
+    errorCode, msg = nwProfile.networkProfileListSet(configRow)       
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    elseif (errorCode == returnCodes.NOT_IMPLEMENTED_YET) then
+        statusErrorMessage = msg
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    errorCode, apProfileSsidTbl, apRadioInfo = guiApProfileSsid.apProfileSsidGet (configRow2)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    errorCode, networkProfileInfo = guiApProfileSsid.networkProileListGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end    
+    profileId = tonumber(configRow2.profileId)
+    radioIndex = tonumber(configRow2.radioIndex)
+    
+
+else
+    local configRow = {}
+    configRow.profileId = profileId
+    configRow.radioIndex = radioIndex
+    errorCode, apProfileSsidTbl, apRadioInfo = guiApProfileSsid.apProfileSsidGet (configRow)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end 
+    
+end
+if (true) then 
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmApProfilesSsid" id="tf1_frmApProfilesSsid">        
+            <input type="hidden" name="thispage" id="thispage" value="apProfilesSsid.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->
+
+        
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li id="edit">
+                    Edit
+                </li>
+                <li id="enable">
+                    Enable
+                </li>
+                <li id="disable">
+                    Disable
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center" height="23">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes 
+                    -->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=apProfiles.html">AP Profiles</a>
+                                </li>
+                                <li>
+                                    <a href="?page=apProfilesRadio.html">AP Profile
+                                    Radio</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=apProfilesSsid.html">AP Profile SSID</a>
+                                </li>
+                                <li>
+                                    <a href="?page=apProfilesQos.html">AP Profile
+                                    QoS</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>Access Point Profiles SSID List</h1>
+                    <div class="midArea">
+			    <div align="left">
+
+				    <form method="post" name="tf1_frmApProfilesSelectRadio" id = "tf1_frmApProfilesSelectRadio" >
+				    	<input type="hidden" name="thispage" id="thispage" value="apProfilesSsid.html">
+				    	<input type="hidden" name="button.profileRadio.apProfilesSsid" id="tf1_profileRadio" value="changed">
+                                <div class="configRow">
+                                    <label>AP Profile</label>
+                                    <select id="tf1_apProfile"
+                                        name="apProfilesSsid.profileId" onchange="this.form.submit()">
+                                        <?lua
+                                            if (apProfileTbl ~= nil) then
+                                                for k, v in pairs (apProfileTbl) do
+                                                    local row = apProfileTbl[k]
+                                                    ?>
+                                          <option value="$| row.profileId |$" $|
+                                          web.dropdownSelected( profileId ==
+                                          row.profileId) |$>$| row.profileId .."-" ..
+                                                    row.profileName or '' |$</option>
+                                            <?lua
+                                        end
+                                    end
+                                 ?>
+                                    </select>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>Radio Mode</label>
+                                    <?lua if (apRadioInfo.hwType ~= 10 and
+                                    apRadioInfo.hwType ~= 12) then
+
+                                    ?>
+                                    <p>
+                                        <input type="radio"
+                                        name="apProfilesSsid.radioIndex"
+                                        id="tf1_apRadio1" $|
+                                        web.radioSelected(radioIndex == 1) |$ checked= "checked" value="1" onchange="this.form.submit()">
+                                       $| apRadioInfo.radioMode1 |$ 
+                                    </p>
+                                    <p>
+                                        <input type="radio"  $|
+                                        web.radioSelected(radioIndex == 2) |$ name="apProfilesSsid.radioIndex" id="tf1_apRadio2" value="2" onchange="this.form.submit()">
+                                        $| apRadioInfo.radioMode2 |$
+                                    </p>
+                                    <?lua else
+                                     radioIndex = 2 ?>
+                                    <p>
+                                        <input type="radio"  $|
+                                        web.radioSelected(radioIndex == 2) |$ checked= "checked" name="apProfilesSsid.radioIndex" id="tf1_apRadio2" value="2" onchange="this.form.submit()">
+                                        $| apRadioInfo.radioMode2 |$
+                                    </p>
+                                    <?lua end?>
+			    </div>
+
+			    
+                                <div class="break">
+                                    &nbsp;
+			    </div>
+
+		    </form>
+			<form method="post" name="tf1_frmApProfilesSsId" id = "tf1_tf1_frmApProfilesSsId" >
+		    	<input type="hidden" name="thispage" id="thispage" value="apProfilesSsid.html">
+		    	<input type="hidden" name="button.ssIdChanged.apProfilesSsid" id="tf1_ssIdChanged" value="changed">
+		    	<input type="hidden" name="apProfilesSsid.vapId" id="tf1_configRowId" value="">
+		    	<input type="hidden" name="apProfilesSsid.networkId" id="tf1_SSID" value="">
+		    	<input type="hidden" name="apProfilesSsid.profileId" id="tf1_profile" value="$|
+                profileId |$">
+		    	<input type="hidden" name="apProfilesSsid.radioIndex" id="tf1_radioMode"
+                value="$| radioIndex |$">
+			</form>
+                                <div class="CLR">
+                                    <div class="demo_jui" id="tf1_apProfilesSsid">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                            <thead>
+                                                <tr>
+                                                    <th>SSID Name</th>
+                                                    <th>SSID Status</th>
+                                                    <th>VLAN</th>
+                                                    <th>Hide SSID</th>
+                                                    <th>Security </th>
+                                                    <th>Redirect</th>
+                                                    <th>Captive Portal</th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            if (apProfileSsidTbl ~= nil) then
+                                                for k, v in pairs (apProfileSsidTbl) do
+                                                local row = apProfileSsidTbl[k]
+                                                
+                                                local ssidStatus
+                                                    if(row.ssidStatus ==
+                                                    "Enabled") then
+                                                    ssidStatus = "1"
+                                                    else
+                                                    ssidStatus = "0"
+                                                    end
+                                                    
+                                                ?>
+                                            <tr class="gradeA"
+                                                id="apProfilesSsid$| profileId
+                                                .. "-" .. radioIndex  .. "-" ..
+                                                row.vapId .. "-" ..
+                                                row.networkId |$"
+                                                status="$| ssidStatus |$">
+                                                <td class="disableGrade">
+                                                <select
+                                                    onchange="document.getElementById('tf1_configRowId').value='$|
+                                                    row.vapId |$'; document.getElementById('tf1_SSID').value= this.options[this.selectedIndex].value; document.tf1_frmApProfilesSsId.submit();">
+                                                 <?lua
+                                            if (networkProfileInfo ~= nil) then
+                                                for k, v in pairs(networkProfileInfo) do
+                                                    local row1 = networkProfileInfo[k]
+                                                    ?>
+                                                  <option value="$| row1.networkId |$" $|
+                                                      web.dropdownSelected( row1.networkId
+                                                      == row.networkId) |$>$| row1.networkId
+                                                      .."-" ..row1.networkName or '' |$</option>
+                                                <?lua
+                                                end
+                                            end
+                                             ?>
+                                                </select>
+                                                </td>
+                                                <td>$| row.ssidStatus or '' |$</td>
+                                                <td>$| row.vlanId .. "-" ..
+                                                    row.vlanName or '' |$</td>
+                                                <td>$| row.hideSsid or '' |$</td>
+                                                <td>$| row.security or '' |$</td>
+                                                <td>$| row.redirect or '' |$</td>
+                                                <td>$| row.capitivePortal or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                            end
+                                                end
+                                                ?>
+                                        </table>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/apProfilesSsid.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            function apProfilesSsidValidate(frmId){
+
+    var txtFieldIdArr = new Array();
+    txtFieldIdArr[0] = "tf1_ssid, Please enter a valid SSID";
+    txtFieldIdArr[1] = "tf1_VLANId, Please enter a valid VLAN";
+    txtFieldIdArr[2] = "tf1_redirectUrl, Please enter a valid Redirect URL";
+    txtFieldIdArr[3] = "tf1_radiusAuthServerIP, Please enter a valid RADIUS Authentication Server IP Address";
+    txtFieldIdArr[4] = "tf1_WPAKey, Please enter a valid WPA Key";
+    txtFieldIdArr[5] = "tf1_preAuthLimit, Please enter a valid Pre-Authentication Limit";
+	txtFieldIdArr[6] = "tf1_keyCachingHoldTime, Please enter a valid Key Caching Hold Time";
+	txtFieldIdArr[7] = "tf1_bcastKeyRefreshRate, Please enter a valid Bcast Key Refresh Rate";
+	txtFieldIdArr[8] = "tf1_sessionKeyRefreshRate, Please enter a valid Session Key Refresh Rate"; 	
+	txtFieldIdArr[9] = "tf1_WEPKeyCharValue1, Please enter a valid WEP Key1"; 
+	txtFieldIdArr[10] = "tf1_WEPKeyCharValue2, Please enter a valid WEP Key2"; 
+	txtFieldIdArr[11] = "tf1_WEPKeyCharValue3, Please enter a valid WEP Key3"; 
+	txtFieldIdArr[12] = "tf1_WEPKeyCharValue4, Please enter a valid WEP Key4";        
+    
+    if (txtFieldArrayCheck(txtFieldIdArr) == false) 
+        return false;
+        
+    /**var ssidobj = document.getElementById('tf1_ssid');
+    if (ssidobj && !ssidobj.disabled) {
+        if (numericValueRangeCheck(ssidobj, '', '', 1, 4096, true, '', '') == false) 
+            return false;        
+    }*/
+    
+    var vlanobj = document.getElementById('tf1_VLANId');
+    if (vlanobj && !vlanobj.disabled) {
+        if (numericValueRangeCheck(vlanobj, '', '', 1, 4093, true, '', '') == false) 
+            return false;        
+    }
+    
+    if (ipv4Validate('tf1_radiusAuthServerIP', 'IP', false, true, "Invalid IP Address", "For Octect", true) == false) 
+        return false;
+    
+    var preAuthLimit= document.getElementById('tf1_preAuthLimit');
+    if (preAuthLimit && !preAuthLimit.disabled) {
+        if (numericValueRangeCheck(preAuthLimit, '', '', 0, 192, true, 'Invalid Pre-Authentication Limit', '') == false) 
+            return false;        
+    }
+
+	var keyCachingHoldTime = document.getElementById('tf1_keyCachingHoldTime');
+    if (keyCachingHoldTime && !keyCachingHoldTime.disabled) {
+        if (numericValueRangeCheck(keyCachingHoldTime, '', '', 0, 1440, true, 'Invalid Key Caching Hold Time', '') == false) 
+            return false;        
+    }
+
+	var bcastKeyRefreshRate = document.getElementById('tf1_bcastKeyRefreshRate');
+    if (bcastKeyRefreshRate && !bcastKeyRefreshRate.disabled) {
+        if (numericValueRangeCheck(bcastKeyRefreshRate, '', '', 0, 86400, true, 'Invalid Bcast Key Refresh Rate', '') == false) 
+            return false;        
+    }
+    
+	var sessionKeyRefreshRate= document.getElementById('tf1_sessionKeyRefreshRate');
+    if (sessionKeyRefreshRate&& !sessionKeyRefreshRate.disabled) {
+        if (numericValueRangeCheck(sessionKeyRefreshRate, '', '', 0, 86400, true, 'Invalid Session Key Refresh Rate', '') == false) 
+            return false;        
+    } 
+    
+    setHiddenChks(frmId);
+	return true;
+}
+
+            $(document).ready(function() {
+                $('.gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'editMenu' : function(t, e, rowId) {
+                            openForm('button.edit.apProfilesSsid.apProfilesSsid',rowId,'tf1_dialog','apProfilesSsid','apProfilesSsidForm.html', 'tf1_apProfilesSsidDailogContent','onloadapProfilesSsidFn');
+                        },
+                        'disableMenu' : function(t, e, rowId) {
+                            changeRowStauts('disable', 'tf1_frmApProfilesSsid', rowId, 'tf1_dialog', 'apProfilesSsid', 'apProfilesSsid', 'apProfilesSsid.apProfilesSsid');
+                        },
+                        'enableMenu' : function(t, e, rowId) {
+                            changeRowStauts('enable', 'tf1_frmApProfilesSsid', rowId, 'tf1_dialog', 'apProfilesSsid', 'apProfilesSsid', 'apProfilesSsid.apProfilesSsid');
+                        }
+                    },
+                    onShowMenu: function(e,menu,rowId) {
+                        if ($("#"+rowId).attr("status") == "1"){                            
+                            $('#enableMenu', menu).remove();
+                        } else {
+                            $('#disableMenu', menu).remove();
+                        }
+                        return menu;
+                    }    
+                });
+
+		$('.disableGrade').contextMenu('contextMenu', {                   
+                   onContextMenu: function(e) {
+                     return false;
+                   }
+               });
+
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+        });        
+            
+        </script>
+    </body>
+
+</html>
+<?lua end ?>

@@ -1,0 +1,20 @@
+<?lua
+?>
+<div id="tf1_wdsDailogContent">
+    <div class="topBg">
+        <h1 data-localize="13338">WDS Configuration</h1>
+        <close>
+	    <a href="#" id="btnClose" title="Close">X</a>
+        </close>
+    </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label data-localize="11636">MAC Address</label>
+            <input type="text" name="wds.macAddress" id="tf1_txtMacAddr" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, LANG_LOCALE['11295']+': ', '')">
+        </div>
+        <div class="break"> &nbsp;</div>
+    </div>
+<div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.config.wds5GHz.wds5GHz.-1" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="return validatewdsConfig();">
+</div>
+</div>

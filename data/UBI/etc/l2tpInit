@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# l2tpInit - initialization script for L2TP
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01d,21jan10,db   commented out the starting of L2TP while bootup
+# 01c,11aug08,vpp  redirecting errors to /dev/null.
+# 01b,02jul08,anp  added l2tp-connect script.
+# 01a,08feb08,jkg  written.
+
+if [ "$INCLUDE_L2TP" = "y" ]; then
+
+# creating /dev/pts/0 device for L2TP <-> PPP communication
+echo -n "Creating /dev/pts/0 pseudo device for L2TP <-> PPP communication... ";
+mknod /dev/pts/0 c 136 0 2> /dev/null
+chmod 620 /dev/pts/0 2> /dev/null 
+echo "Done"
+
+# Starting l2tp daemon 
+#echo -n "Starting l2tp daemon... ";
+#/pfrm2.0/bin/l2tp
+#echo "Done"
+
+# configuration files.
+mkdir -p /etc/ppp/peers
+cp /pfrm2.0/etc/options /etc/ppp
+cp /pfrm2.0/etc/l2tp /etc/ppp/peers
+cp /pfrm2.0/etc/l2tp-connect /etc/ppp
+ln -s /pfrm2.0/bin/pppd /usr/sbin/pppd
+touch /etc/ppp/filters
+
+L2TP_HDLC_MODULE=`lsmod| grep n_hdlc | awk '{print $1}'`
+# inserting modules
+if [ -z $L2TP_HDLC_MODULE ]; then
+    [ -f $PFRM_L2TP_MODULES_DIR/n_hdlc.ko ]&&{ insmod $PFRM_L2TP_MODULES_DIR/n_hdlc.ko; }
+fi
+fi

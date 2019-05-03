@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="net-ethernet-config" prompt="net-config[ethernet]> "> 
+    <COMMAND name="save" help="Save ethernet configuration changes">
+	     <ACTION>lua clishCfgObjExec("netEth")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save ethernet configuration changes and exit current mode." 
+	     view="root-view"
+	     viewid="">
+	     <ACTION>lua clishCfgObjExec("netEth")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="vlan-enable" help="Enable/Disable VLAN for this interface.">
+	<PARAM name="enable" 
+	       help="Enable/Disable VLAN."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("netEth", "ethernet.vlanEnabled", 
+		    "${enable}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="native-vlan" help="Enable/Disable native VLAN status.">
+	<PARAM name="enable" 
+	       help="Enable/Disable VLAN status for this interface."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("netEth", "vlan.native", "${enable}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="vlanid" help="Set VLAN Id.">
+	<PARAM name="id" 
+	       help="VLAN identifier."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("netEth", "ethernet.vlanId", "${id}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+    <COMMAND name="net ethernet" help="Ethernet configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="net ethernet configure"
+             help="Ethernet configuration mode."
+             view="net-ethernet-config" viewid="">
+	<PARAM name="interface_name" 
+	       help="Interface to configure."
+	       ptype="STRING"/>	       
+            <ACTION>lua clishCfgObjNew ("netEth", ethCfgInit,
+		    ethCfgSave, ethCfgInputVal, "${interface_name}")
+	    </ACTION>
+    </COMMAND>
+
+</CLISH_MODULE>

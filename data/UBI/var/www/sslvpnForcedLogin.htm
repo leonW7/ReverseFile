@@ -1,0 +1,82 @@
+<?lua
+require "teamf1lualib/sslAdmin"
+
+local strings = {'11306', '12642', '12643', '10472', '10366', '10187', '10370', '12609', '10794', '12265', '12230', '11359', '10792', '10185', '10894', '12228', '12464', '10543', '11040', '11041', '11042', '11061'}
+local trStrings = I18N.translate(strings)
+
+if (ButtonType and ButtonType == "logout") then
+    -- go to next page - which will be login page
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "continue") then
+    local inputTable = web.cgiToLuaTable(cgi) 
+    -- When security is high
+    local status, statusMsg = sslAdmin.forcedLogin(inputTable)
+    if (status == 2) then 
+        web.goToPage(SSL_PORTAL_PAGE, false, true)
+    else
+        statusMessage = trStrings[statusMsg] or 'i18nHTMLMissing'
+        -- go back to login page
+        web.goToPage("index", true, true)    
+    end
+else
+?>
+
+
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>$|COMPANY_NAME|$ : $|APP_NAME|$ </title>
+<!--
+Copyright (c) 2009 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+<link href="images/style.css" rel="stylesheet" type="text/css">
+
+<script language="JavaScript" src="js/menu.js" type="text/javascript"></script></head>
+<body marginwidth="0" marginheight="3" topmargin="3" leftmargin="0" rightmargin="0" bottommargin="0" class="bg1">
+<?lua web.includeMenu("mainMenu0.htm")?><div align="center">
+<table border="0" cellpadding="0" cellspacing="0" class="brLR w840">
+    <tr>
+        <td class="bg0 midBg" valign="top" align="center">
+            <div class="bg4 br1 w550">
+            <table width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td class="h1 bg3" colspan="2">$| trStrings["11306"] or 'i18nHTMLMissing' |$</td>
+                        <td class="h1 bg3">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl1">&nbsp;</td>
+                        <td class="lbl2">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="secError1" colspan="2">$| statusMessage or '' |$</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl20" colspan="2">$| trStrings["12642"] or 'i18nHTMLMissing' |$.<br>$| trStrings["12643"] or 'i18nHTMLMissing' |$.</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl1">&nbsp;</td>
+                        <td class="lbl2">&nbsp;</td>
+                    </tr>
+                    <form method="post" action="platform.cgi">
+                    <input type="hidden" name="thispage" value="sslvpnForcedLogin.htm">
+                    <input type="hidden" name="Users.UserName" value="$| loginInfo["Users.UserName"] or '' |$">
+                    <input type="hidden" name="Users.Password" value="$| loginInfo["Users.Password"] or '' |$">
+                    <input type="hidden" name="Login.userAgent" value="$| loginInfo["Login.userAgent"] or '' |$">
+                    <tr class="submitBg">
+                        <td class="lbl4"><input type="submit" value="$| trStrings["10472"] or 'i18nHTMLMissing' |$" name="button.continue.deviceStatus" class="submit" title="$| trStrings["10472"] or 'i18nHTMLMissing' |$"></td>
+                        <td class="lbl2"><input type="submit" value="$| trStrings["10366"] or 'i18nHTMLMissing' |$" name="button.logout.index" class="submit" title="$| trStrings["10366"] or 'i18nHTMLMissing' |$"></td>
+                    </tr>
+                    </form>
+                    </table>
+            </div>
+        </tr>
+</table>
+</div>
+<?lua web.includeMenu("footer.htm")?>
+</body>
+</html>
+<?lua end ?>

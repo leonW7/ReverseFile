@@ -1,0 +1,655 @@
+
+<div align="center">
+	<div class="midWidth">
+		<div class="logo FL">
+			Unified Services Router - $| UNIT_NAME |$</div>
+		<div class="FR headerRight">
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tr>
+                    <td valign="top">
+                        
+					<h5 class="FR" id="tf1_langDisplay"></h5>
+					<h4 class="FR divider">Language:</h4>
+					
+					<h5 class="FR" id="tf1_loginUserNameGroup"></h5>
+					<h4 class="FR">Logged in as:</h4>					
+					</td>
+					<td rowspan="2" valign="top">
+					<a class="btnLogout" href="?page=index.html">
+					<div>
+						<div>
+									<icon>
+										Logout
+									</icon>
+								</div>
+					</div>
+					</a></td>
+				</tr>
+				<tr>
+					<td valign="top">
+					<h5 class="FR" id="tf1_firmwareVersion"></h5>
+					<h4 class="FR divider">Firmware:</h4>
+					<h5 class="FR" id="tf1_serialNum"></h5>
+					<h4 class="FR">Serial:</h4>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" valign="top">
+					<div id="tf1MenuSearch" class="FR systemSearch">
+                        <input id="menuSearch" onfocus="watermark('menuSearch','System Search...');" onblur="watermark('menuSearch','System Search...');" value="System Search..." />
+                        <input type="hidden" id="tf1_hidWatermark" value="System Search...">
+						<div id="menuList">
+						</div>
+					</div>
+					<div class="FR">
+						<a class="wizard" href="#">Wizard</a>
+					</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="midWidth menuBg">
+			<div>
+				<div>
+					<div align="center">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+								 <ul id="menu">
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu1" class="mMenu">
+												<a class="subMenu1" href="#">Status</a>
+												<div class="subMenu1List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>Dashboard</h3>
+															<ul>
+																<li>
+																	<a href="?page=dashboard.html">Dashboard</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>System Information</h3>
+															<ul>
+																<li>
+																	<a href="?page=deviceInfo.html">Device</a>
+																</li>
+																<li>
+																	<a href="?page=logInfo.html">All Logs</a>
+																</li>
+																<li>
+																	<a href="?page=usbStatus.html">USB Status</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Network Information</h3>
+
+															<ul>
+																<li>
+																	<a href="?page=dhcpClientInfoLan.html">DHCP Leased Clients</a>
+																</li>
+                                                                <?lua if (UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+																<li>
+																	<a href="?page=captivePortalSessions.html">Captive Portal Sessions</a>
+																</li>
+                                                                <?lua end?>
+																<li>
+																	<a href="?page=activeSessions.html">Active Sessions</a>
+                                                                </li>
+                                                                <li>
+																<a href="?page=activeVpns.html">Active VPNs</a>
+                                                                </li>
+																<li>
+																	<a href="?page=interfaces.html">Interface Statistics</a>
+																</li>
+                                                            	<?lua if
+                                                                (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then ?>
+																<li>
+																	<a href="?page=wirelessClients.html">Wireless Clients</a>
+																</li>
+ 																<li>
+																	<a href="?page=wirelessStatistics.html">Wireless Statistics</a>
+																</li>
+                                                                <?lua end ?>
+																<li>
+																	<a href="?page=deviceStatistics.html">Device Statistics</a>
+																</li>
+                                                                <li>
+																	<a href="?page=lanClients.html">LAN Clients</a>
+																</li>
+                                                                <li>
+                                                                    <a href="?page=sessionLimitStatus.html">Session Limiting Status</a>
+                                                                </li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<?lua if (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then ?>
+											<li id="mainMenu2" class="mMenu">
+												<a class="subMenu2" href="#">Wireless</a>
+												<div class="subMenu2List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>General</h3>
+															<ul>
+																<li>
+																	<a href="?page=accessPoints.html">Access Points</a>
+																</li>
+																<li>
+																	<a href="?page=profiles.html">Profiles</a>
+																</li>
+																<li>
+																	<a href="?page=radioConfig.html">Radio Settings</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Advanced</h3>
+															<ul>
+																<li>
+																	<a href="?page=wmm.html">WMM</a>
+																</li>
+																<li>
+																	<a href="?page=wds.html">WDS</a>
+																</li>
+																<li>
+																	<a href="?page=advancedWireless.html">Advanced Settings</a>
+																</li>
+																<li>
+																	<a href="?page=wps.html">WPS</a>
+																</li>
+																<!--li>
+																	<a href="?page=fbWiFi.html">Facebook WiFi</a>
+																</li-->
+															</ul>
+														</div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<?lua end ?>
+											<li id="mainMenu3"  class="mMenu">
+												<a class="subMenu3" href="#">Network</a>
+												<div class="subMenu3List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>LAN</h3>
+															<ul>
+																<li>
+																	<a href="?page=lanSettings.html">LAN Settings</a>
+																</li>
+																<li>
+																	<a href="?page=lanDhcpReservedIps.html">LAN DHCP Reserved IPs</a>
+																</li>
+																<li>
+																	<a href="?page=ipMacBinding.html">IP/MAC Binding</a>
+																</li>
+			                                                    <li>
+                                                                	<a href="?page=igmpSetup.html">IGMP Setup</a>
+                                                                </li>
+																<li>
+																	<a href="?page=upnp.html">UPnP</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>VLAN</h3>
+															<ul>
+																<li>
+																	<a href="?page=vlanSettings.html">VLAN Settings</a>
+																</li>
+																<li>
+																	<a href="?page=portVlan.html">Port VLAN</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Internet (IPv4)</h3>
+															<ul>
+			                                                <?lua
+                                                            local wan1DispName
+				                                            local wan2DispName
+				                                            if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+                                                                wan1DispName = "WAN1 Settings"
+					                                            wan2DispName = "WAN2 / DMZ Setting"
+				                                            else
+					                                            wan1DispName = "WAN Settings"
+					                                            wan2DispName = "Rollover WAN Settings"
+				                                            end
+			                                                ?>
+			                                                <li>
+															    <a href="?page=ipv4Wan1Settings.html">$|wan1DispName|$</a>
+														    </li>
+                                                            <li>
+                                                                <?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                                                <a href="?page=ipv4Wan2DmzSetting.html">$|wan2DispName|$</a>
+                                                                <?lua else ?>
+                                                                <a href="?page=wan3Settings.html">$|wan2DispName|$</a>
+                                                                <?lua end ?>
+															</li>
+                                                            <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                                                            <li>
+                                                                <a href="?page=wan3Settings.html">WAN3 Settings</a>
+                                                            </li>
+                                                            <?lua end ?>
+                                                            <li>
+                                                                <a href="?page=wanMode.html">WAN Mode</a>
+                                                            </li>
+                                                            <li>
+																<a href="?page=routingMode.html">Routing Mode</a>
+                                                            </li>
+                                                            <li>
+																<a href="?page=ipAliasing.html">IP Aliasing</a>
+                                                            </li>
+                                                            <li>
+																<a href="?page=dmzSettings.html">DMZ Settings</a>
+															</li>
+															<li>
+																<a href="?page=dmzDhcpReservedIps.html">DMZ DHCP Reserved IPs</a>
+															</li>
+			                                                <li>
+                                                                <a href="?page=dynamicDnsWan1Settings.html">Dynamic DNS</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="?page=bandwidthProfiles.html">Traffic Management</a>
+                                                            </li>
+                                                            <?lua if(UNIT_NAME ~= "DSR-150" and UNIT_NAME ~= "DSR-150N") then ?>
+               <li>
+			        <a href="?page=jumboFrame.html">Jumbo Frame</a>
+			   </li>
+               <?lua end ?>
+                                                	    </ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Routing</h3>
+															<ul>
+																<li>
+	                                                                <a href="?page=staticRouting.html">Static Routes</a>
+                                                                </li>
+                                                        		<?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                                                <li>
+																	<a href="?page=rip.html">RIP</a>
+																</li>
+																<li>
+																	<a href="?page=ospf.html">OSPF</a>
+																</li>
+																<li>
+																	<a href="?page=protocolBinding.html">Protocol Binding</a>
+                                                                </li>
+                                                                <?lua end ?>
+	                                                        </ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Ipv6</h3>
+															<ul>
+	                                                            <li>
+                                                            		<a href="?page=ipMode.html">IP Mode</a>
+                                                                </li>
+	                                                            <li>
+                                                            		<a href="?page=ipv6Wan1Settings.html">IPv6 Wan1 Settings</a>
+                                                        	    </li>
+                                                        		<?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                                        	    <li>
+                                                            		<a href="?page=ipv6Wan2Settings.html">IPv6 Wan2 Settings</a>
+                                                        	    </li>
+                                                        		<?lua end ?>
+                                                                <li>
+                                                            		<a href="?page=ipv6StaticRouting.html">Static Routing</a>
+                                                                </li>
+                                                        		<?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                                        	    <li>
+                                                            		<a href="?page=ospfV3.html">OSPFv3</a>
+                                                                </li>
+                                                                <?lua end ?>
+                                                        	    <li>
+                                                            		<a href="?page=ipv6ToIpv4.html">6 to 4 Tunnelling</a>
+                                                                </li>
+                                                                <li>
+                                                            		<a href="?page=isatapTunnels.html">ISATAP Tunnels</a>
+                                                                </li>
+                                                                <?lua if (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then ?>
+                                                        	    <li>
+                                                            		<a href="?page=teredoTunnel.html">Tereod Tunnel</a>
+                                                        	    </li>
+                                                                <?lua end ?>
+                                                        	    <li>
+                                                            		<a href="?page=ipv6LanSettings.html">IPv6 LAN Settings</a>
+                                                                </li>
+                                                                <li>
+                                                        	        <a href="?page=ipv6TunnelsStatus.html">IPv6 Tunnels Status</a>
+                                                        	    </li>
+                                                            </ul>
+														</div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu4"  class="mMenu">
+												<a class="subMenu4" href="#">VPN</a>
+												<div class="subMenu4List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>IPSec VPN</h3>
+															<ul>
+																<li>
+																	<a href="?page=policies.html">Policies</a>
+																</li>
+																<li>
+																	<a href="?page=tunnelMode.html">Tunnel Mode</a>
+																</li>
+																<li>
+																	<a href="?page=dhcpRange.html">DHCP Range</a>
+																</li>
+																<li>
+																	<a href="?page=trustedCertificates.html">Certificates</a>
+																</li>
+															<li>
+																	<a href="?page=easyVpnSetup.html">Easy VPN Setup</a>
+																</li>
+															<li>
+																	<a href="?page=oneToOneMapping.html">One To One Mapping</a>
+																</li>
+														</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>PPTP VPN</h3>
+															<ul>
+																<li>
+																	<a href="?page=pptpServer.html">PPTP Server</a>
+																</li>
+																<li>
+																	<a href="?page=pptpClient.html">PPTP Client</a>
+																</li>
+																<li>
+																	<a href="?page=pptpActiveUsers.html">PPTP Active Users</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>L2TP VPN</h3>
+															<ul>
+																<li>
+																	<a href="?page=l2tpServer.html">L2TP Server</a>
+																</li>
+        <li>
+																	<a href="?page=l2tpClient.html">L2TP Client</a>
+																</li>
+																<li>
+																	<a href="?page=l2tpActiveUsers.html">L2TP Active Users</a>
+																</li>
+															</ul>
+														</div>
+<?lua if(COUNTRY_CODE ~= "RU") then ?>
+														<div class="subMenuCols">
+															<h3>SSL VPN</h3>
+															<ul>
+																<li>
+																	<a href="?page=sslVpnServer.html">SSL VPN Server Policy</a>
+																</li>
+																<li>
+																	<a href="?page=sslVpnPortalLayouts.html">Portal Layouts</a>
+																</li>
+																<li>
+																	<a href="?page=sslVpnResources.html">Resources </a>
+																</li>
+																<li>
+																	<a href="?page=sslVpnClient.html">SSL VPN Client</a>
+																</li>
+																<li>
+																	<a href="?page=sslVpnClientRoutes.html">Client Routes</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>OpenVPN</h3>
+															<ul>
+																<li>
+																	<a href="?page=openVpnSettings.html">OpenVPN Settings</a>
+																</li>
+																<li>
+																	<a href="?page=openVpnLocalNetworks.html">Local Networks</a>
+																</li>
+																<li>
+																	<a href="?page=openVpnRemoteNetworks.html">Remote Networks</a>
+																</li>
+																<li>
+																	<a href="?page=serverClientCertificate.html">Authentication</a>
+																</li>
+                                                                <li>
+																	<a href="?page=omniSslConfiguration.html">OmniSSL Configuration</a>
+                                                                </li>
+																<li>
+																	<a href="?page=omniSSLServerPolicy.html">OmniSSL Server Policy</a>																
+                                                                </li>
+                                                                <li>
+																	<a href="?page=openvpnCertificates.html">OpenVPN Certificates</a>																
+                                                                </li>
+															</ul>
+														</div>
+                                                        <?lua end ?>
+                                                        <div class="subMenuCols">
+                                            	    	    <h3>GRE</h3>
+                                                	    	<ul>
+                                                		    	<li>
+                                                			    	<a href="?page=greTunnels.html">GRE</a>
+                                                    			</li>
+                                                    		</ul>
+                                              	        </div>
+												    </div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu5" class="mMenu">
+												<a class="subMenu5" href="#">Security</a>
+												<div class="subMenu5List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>Authentication</h3>
+															<ul>
+																<li>
+																	<a href="?page=getUsersDb.html">Internal User Database</a>
+																</li>
+																<li>
+																	<a href="?page=radiusServer.html">External Auth Server</a>
+																</li>
+                                                                 <?lua if (UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+																<li>
+																	<a href="?page=radiusAccountingCfg.html">Radius Accounting</a>
+																</li>
+                                                                <?lua end?>
+																<li>
+																	<a href="?page=loginProfiles.html">Login Profiles</a>
+                                                                </li>
+                                                                <li>
+																	<a href="?page=servicesRouteMgmt.html">Services Route Management</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Web Content Filter</h3>
+															<ul>
+																<li>
+																	<a href="?page=contentFiltering.html">Static Filtering</a>
+																</li>
+																<li>
+																	<a href="?page=approvedCategory.html">Dynamic Filtering</a>
+																</li>
+                                                                <li>
+                                                                    <a href="?page=urlFilteringACL.html">URL Filtering ACL</a>
+                                                                </li>
+                                                            </ul>
+														</div>
+ 	
+														<div class="subMenuCols">
+															<h3>Firewall</h3>
+															<ul>
+																<li>
+																	<a href="?page=firewallRules.html">Firewall Rules</a>
+																</li>
+																<li>
+																	<a href="?page=schedules.html">Schedules</a>
+																</li>
+																<li>
+																	<a href="?page=blockedClients.html">Blocked Clients</a>
+																</li>
+																<li>
+																	<a href="?page=customServices.html">Custom Services</a>
+																</li>
+																<li>
+																	<a href="?page=algs.html">ALGs</a>
+																</li>
+																<li>
+																	<a href="?page=vpnPassthrough.html">VPN Passthrough</a>
+																</li>
+																<li>
+																	<a href="?page=applicationRules.html">Dynamic Port Forwarding</a>
+																</li>
+																<li>
+																	<a href="?page=attackChecks.html">Attack Checks</a>
+																</li>
+																<li>
+																	<a href="?page=intelAmt.html">Intel® AMT</a>
+																</li>
+                                                                <?lua
+                                                                if (UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150" and PRODUCT_ID ~= "DSR-1000AC_Ax" and PRODUCT_ID ~=  "DSR-500AC_Ax" and PRODUCT_ID ~= "DSR-1000_Bx" and PRODUCT_ID ~= "DSR-500_Bx") then ?>
+																<li>
+																	<a href="?page=ips.html">IPS</a>
+																</li>
+                                                                <?lua end ?>
+															</ul>
+														</div>
+													</div>
+												</div>	
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu6" class="mMenu">
+												<a class="subMenu6" href="#">Maintenance</a>
+												<div class="subMenu6List">
+													<div class="submenuDiv">
+														<div class="subMenuCols subMenuColsFirst">
+															<h3>Administration</h3>
+															<ul>
+																<li>
+																	<a href="?page=adminSettings.html">System Setting</a>
+																</li>
+																<li>
+																	<a href="?page=dateTime.html">Date and Time</a>
+                                                                </li>
+                                                                <li>
+																	<a href="?page=sessionSettings.html">Session Settings</a>
+																</li>
+																<li>
+																	<a href="?page=licenseUpdate.html">License Update</a>
+																</li>
+																<li>
+																	<a href="?page=usbSharePorts.html">USB Share Ports</a>
+																</li>
+																<li>
+																	<a href="?page=inbox.html">SMS Service</a>
+                                                                </li>
+                                                                <li>
+																	<a href="?page=packageManager.html">Package Manager</a>
+																</li>
+																<li>
+																	<a href="?page=setLanguage.html">Set Language</a>
+																</li>
+																<li>
+																	<a href="?page=webAccessFilter.html">Web GUI Management</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Management</h3>
+															<ul>
+                                                                <li>
+																	<a href="?page=remoteManagement.html">Remote Management</a>
+																</li>															
+                                                                <li>
+																	<a href="?page=snmp.html">SNMP</a>
+																</li>
+																<li>
+																	<a href="?page=networkTools.html">Diagnostics</a>
+                                                                </li>
+																<li>
+																	<a href="?page=powerSaving.html">Power Saving</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Firmware & Config</h3>
+															<ul>
+																<li>
+																	<a href="?page=systemPc.html">Firmware Upgrade</a>
+																</li>
+																<li>
+																	<a href="?page=backupRestore.html">Backup / Restore</a>
+																</li>
+																<li>
+																	<a href="?page=softReboot.html">Soft Reboot</a>
+																</li>
+															</ul>
+														</div>
+														<div class="subMenuCols">
+															<h3>Logs Settings</h3>
+															<ul>
+																<li>
+																	<a href="?page=facilityLogs.html">Log Facilities</a>
+																</li>
+																<li>
+																	<a href="?page=routingLogs.html">Routing Logs</a>
+																</li>
+																<li>
+																	<a href="?page=systemLogs.html">System Logs</a>
+																</li>
+																<li>
+																	<a href="?page=remoteLogging.html">Remote Logging</a> 
+																</li>
+																<li>
+																	<a href="?page=smsEvent.html">SMS Logging</a> 
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										</ul>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="breadCrumb">
+			<div id="breadCrumb">
+			</div>
+			<div class="helpRefresh">
+				<div class="topRightLinks refresh">
+					<input type="button" value class="refreshButton" title="Refresh"  id="tf1_refreshButton">
+				</div>
+				<div class="topRightLinks help">
+					<input type="button" value class="helpButton" title="Help">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

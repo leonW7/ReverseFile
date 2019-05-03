@@ -1,0 +1,321 @@
+<?lua 
+
+require "teamf1lualib/vlanSettings_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/vlan_returnCodes"
+
+	PAGE_HELP = "network"
+	if(UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+	PAGE_HELP_SECTION = "vlanSettings_econa"
+	else
+	PAGE_HELP_SECTION = "vlanSettings"
+	end
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local vlan_returnCodes = require ("com.teamf1.core.vlan_returnCodes")
+local errorFlag, ret, ipMode
+ret, ipMode = ipv6ModeGet()
+if (ButtonType and ButtonType == "delete") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["vlanSettings.checkbox"]) == "string") then
+                inputTable["vlanSettings.cookie"] = cgi["vlanSettings.checkbox"]
+                errorFlag = vlanSettingsDelete (inputTable)
+        elseif (type(cgi["vlanSettings.checkbox"]) == "table") then
+                errorFlag = vlanSettingsDeleteAll ()
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "add") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if (tonumber(ipMode) ~= 3) then
+            inputTable["vlanSettings.vlanIPv6"] = "0" 
+        end
+        errorFlag, cookie = vlanSettingsCreate (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "edit") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        inputTable["vlanSettings.cookie"] = cgi["configRowId"]
+        errorFlag, cookie = vlanSettingsSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "configStatus") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        inputTable["vlanSettings.cookie"] = "1"
+        errorFlag, cookie = vlanStatusSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+-- get vlan info
+else
+    local vlanInfoTable
+    errorFlag, vlanInfoTable = vlanSettingsGetAllInfo()    
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+    local errorFlag, vlanEnable= vlanStatusGet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    if (vlanEnable == "0") then
+        statusInfoMessage = errorMap.errorStringGet (vlan_returnCodes.COMP_VLAN_NOT_ABLE_TO_CONFIGURE_VLANSETTINGS)
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    LANG_LOCALE = "13273,30111,13277,11748,13274,13017,10454,10327,10166,13273,13274,11374,10454,14077,12623,11560,12462,30197,30199,10330,11898,10490,14076,14075,11622,10615,11127,11129,11735,10731,10735,10738,10737,10805,12977,10929,10685,12537,12782,11564,11126,12654,11535,10885,12414,12326,12290,12402,12392,12269,12302,12353,30112,13489,10740,12956,12980,10933,10687,10921,11393,30113,30454,30485,12733,14081,11039,11789,12795,10862,10695,12758,10449,11387,30626,30627,30628,30629,30630,30631,30632,30633,30634,11251,13663,12525,50107,50108,12034,12036,12002,11350,12119,12091,12108,12040,11290,12732,11286"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+</head>
+
+<body onload="onloadCall()">
+
+<!-- Section for Pop up dialog starts -->
+         <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmVlanSettings" id="tf1_frmVlanSettings">        
+            <input type="hidden" name="thispage" id="thispage" value="vlanSettings.html">
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+			<?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                            if (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua else ?>
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua end?>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$ 
+                        </p>
+                    </div>
+                        <h1>$| LANG_LOCALE['13273'] |$</h1>
+                            <div class="midArea">
+                                <div align="left">
+                                    <form name="tf1_frmVlanConfiguration" id="tf1_frmVlanConfiguration" action="platform.cgi" method="post">
+                                    <input type="hidden" name="thispage" id="thispage" value="vlanSettings.html">
+                                        <div class="configRow">
+                                            <label>$| LANG_LOCALE['30111'] |$</label>
+                                            <?lua 
+                                                if (vlanEnable == "1") then
+                                                    statusStr="enable-disable-on"
+                                                    statusVar = "1"
+                                                else
+                                                    statusStr="enable-disable-off"
+                                                    statusVar = "0"
+                                                end
+                                            ?>
+                                            <a class="$| statusStr |$" alt="" id="vlanStatus"></a>
+                                            <input type="hidden" name="vlanSettings.vlanStatus" value="$| statusVar |$"> 
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+					<div class="submitRow">							
+                                            <input type="submit" name="button.configStatus.VlanStatus.vlanSettings" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" onclick="setHiddenChks('tf1_frmVlanConfiguration');">							
+                                            <input type="reset" class="btnSubmit" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" onclick="this.form.reset(); resetImgOnOff('tf1_frmVlanConfiguration');">
+                                        </div>
+                                        <div class="break">&nbsp;</div>
+                                    </form>
+                                </div> <!-- close align = left -->
+                                <div class="break">&nbsp;</div>
+                    <h1>$| LANG_LOCALE['13277'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_vlanSettings">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11748'] |$</th>
+                                        <th>$| LANG_LOCALE['13274'] |$</th>
+                                        <th>$| LANG_LOCALE['11387'] |$</th>
+                                        <th>$| LANG_LOCALE['13017'] |$</th>
+									<?lua if (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then ?>
+                                        <th>$| LANG_LOCALE['10454'] |$</th>
+                                        <th>$| LANG_LOCALE['10327'] |$</th>
+                                        <?lua end
+                                        if (ipMode ~= "1") then
+                                        ?>
+                                        <th>$| LANG_LOCALE['13663'] |$</th>
+                                        <th>$| LANG_LOCALE['12525'] |$</th>
+                                        <?lua end ?>
+                                    </tr>
+                                </thead>
+
+                                <?lua 
+                                    local i = 0
+                                    for k, v in pairs (vlanInfoTable) do
+                                        i=i+1
+                                    local row = vlanInfoTable[i]
+                                    if(row["vlanSettings.accessType"] == "2") then
+                                        row["vlanSettings.accessType"] = LANG_LOCALE['14081']
+                                    else
+                                        row["vlanSettings.accessType"] = LANG_LOCALE['11039']
+                                    end
+                                ?>
+                                <tr class="gradeA" id="vlanSettings$| row["vlanSettings.rowId"] |$">
+                                    <td>$| row["vlanSettings.vlanName"] or '' |$</td>
+                                    <td>$| row["vlanSettings.vlanId"] or '' |$</td>
+                                    <td>$| row["vlanSettings.StaticIp"] or '' |$</td>
+                                    <td>$| row["vlanSettings.NetMask"] or '' |$</td>
+								<?lua if (UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then ?>
+                                    <td>$| row["vlanSettings.accessType"] or '' |$</td>
+                                    <td>$| row["vlanSettings.authenticationTypeName"] or LANG_LOCALE['11789'] |$</td>
+                                    <?lua end 
+                                    if (ipMode ~= "1") then
+                                    ?>
+                                    <td>$| row["vlanSettings.prefix"] or '' |$</td>
+                                    <td>$| row["vlanSettings.prefixLength"] or '' |$</td>
+                                    <?lua end ?>
+                                </tr>
+
+                                    <?lua 
+                                        end 
+                                    ?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10166'] |$" value="$| LANG_LOCALE['10166'] |$" id="tf1_btnShowModal" onclick="openForm('button.add.vlanSettings.vlanSettings',-1,'tf1_dialog','vlanSettings','vlanSettingsForm.html', 'tf1_vlanSettingsDailogContent','onLoadVlanSettingsFn')">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+	<?lua
+	    local sslVpnStAddr = db.getAttribute("SSLVPNClientConf","_ROWID_",1,"BeginClientAddress") or ''
+	    local sslVpnEndAddr = db.getAttribute("SSLVPNClientConf","_ROWID_",1,"EndClientAddress") or ''
+	?>
+        <input type="hidden" value="$| sslVpnStAddr |$" id="hdSslVpnStAddr">
+        <input type="hidden" value="$| sslVpnEndAddr |$" id="hdSslVpnEndAddr">
+        <input type="hidden" value="$| UNIT_NAME |$" id="hdUnitName">
+        <input type="hidden" value="$| ipMode or '' |$" id="hdMode">
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv6AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/vlanSettings.js"></script>
+        <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+
+                $('#tf1_vlanSettings .gradeA').contextMenu('contextMenu', {
+                                    bindings : {
+                                        'editMenu' : function(t, e, rowId) {
+                                openForm('button.edit.vlanSettings.vlanSettings',rowId,'tf1_dialog','vlanSettings','vlanSettingsForm.html', 'tf1_vlanSettingsDailogContent','onLoadVlanSettingsFn');                                    
+                                        },
+                                        'deleteMenu' : function(t, e, rowId) {
+                                    deleteRows('button.delete.vlanSettings.vlanSettings', 'tf1_frmVlanSettings', rowId, 'optionSelectAll', 'tf1_dialog', 'vlanSettings', 'vlanSettings');
+                                        }
+                                    }
+                                });
+
+                   oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 2 }
+                    ]
+
+                });
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+    });
+
+        </script>
+    </body>
+</html>
+<?lua end ?>

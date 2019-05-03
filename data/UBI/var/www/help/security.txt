@@ -1,0 +1,3079 @@
+:|noHelpSet|:
+No Help Set configured or not available.
+:|noHelpSetEnd|:
+
+:|getUserDb|:
+                <p><b>Get UsersDB:</b> The user may only add system users using
+                the CSV file upload mechanism. Before adding users to different
+                groups, the groups must be created using GUI. Also edit and
+                delete operations on users can be more conveniently handled
+                through GUI as it is much easier to select a particular user for
+                edit/delete. This mechanism of csv file upload is more
+                convenient than GUI only for adding a large number of users
+                where users could be added at one go rather than one at a time
+                through the GUI.<br>
+                This features lets the user to import users database in a csv
+                file.<br>
+                <br>
+                <b>Get Users DB file:</b>Browse and select the csv format file
+                on the local host containing the users database.<br>
+                <br>
+                Click <b>Upload</b> button to apply the configuration<br>
+                <br>
+                <b>Note:</b>The user may only add system users using the CSV
+                file upload mechanism. Before adding users to different groups,
+                the groups must be created using GUI. Also edit and delete
+                operations on users can be more conveniently handled through GUI
+                as it is much easier to select a particular user for
+                edit/delete. This mechanism of csv file upload is more
+                convenient than GUI only for adding a large number of users
+                where users could be added at one go rather than one at a time
+                through the GUI. <br>
+                <br></p>
+:|getUserDbEnd|:
+
+:|groups|:
+         <p ><b>Groups List:</b><br>
+                                <br>                      
+ 				<b>Group Name:</b> The group is the first level grouping to which a user 
+				belongs.<br>
+				<br>
+				<b>Description:</b> This column displays a short description of the group as entered by the user.<br>
+				<br>
+                                <br>
+				The actions that can be taken on groups are:
+				<br>
+				<b>Select All:</b> Selects all the groups in the table.<br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the groups configuration 
+				page, allowing you to make changes to the selected group.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected group or groups.<br>
+				<br>
+				<b>Add(by clicking on Add New Group):</b> Clicking this button will link to the groups configuration 
+				page.</p>
+				<p ><b>Groups Configuration:<br>
+				Group Name:</b> This is the unique identifier for the group, can 
+				use any alphanumeric characters.<br>
+                <br>
+				<b>Description:</b> User can enter a small description of the group. It can be
+				something like a description of the privileges of the group.<br>
+				<br>
+				<b>User Type:</b> Selecting a
+                usertype allows the group to enjoy privileges of that particular
+                usertype. Some buttons cannot be clicked simultaneously.
+                This is by design because selecting some of these privileges
+                simultaneously may cause conflicts between the internal
+                settings.<br>
+                <br>
+                <b>PPTP User:</b> The users of the group having PPTP User as privilege can connect to PPTP VPN networks.<br>
+                <br>
+                <b>L2TP User:</b> The users of the group having L2TP User as privilege can connect to L2TP VPN networks.<br>
+                <br>
+		<b>OpenVPN User:</b> The users of the group having OpenVPN User as privilege can connect to OpenVPN networks.<br>
+                <br>
+                <b>Xauth User:</b> The users of the group having Xauth User as privilege can connect to IPSec VPN networks.<br>
+                <br>
+                <b>SSLVPN User:</b> The users of the group having SSLVPN User as privilege can connect to SSL VPN networks.<br>
+                <br>
+                <b>Captive Portal User:</b> The users of the group having Captive Portal privilege will have permissions to access the Internet/Networks through Captive Portal authentication.<br>
+                <br>
+                <b>Admin:</b> The users of the group having Admin privilege will have super user privileges. Such users can do configurations across the device and each user can be granted with one or more privileges among the PPTP, L2TP , OpenVPN, SSLVPN, CaptivePortal user privileges. <br>
+                <br>
+                <b>Guest User (readonly):</b> The users of the group having Guest User privilege will only have view only permissions. Such users cannot configure the device.<br>
+                <br>
+                <b>Network:</b> The users of the group will have the selected privileges only. Each user under the group can be granted with one or more privileges among the PPTP, L2TP, Xauth, OpenVPN, SSLVPN, CaptivePortal user privileges.<br>
+                <br>
+                                <b>Idle Timeout:</b> This field defines idle timeout for the group. This means the session for each user will expire after stated amount of time.<br>
+                 <br>
+				<br-->
+                <b>Maximum Limit For Groups:</b> Maximum Limit for adding Groups
+                is 100.<br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+                <p ><b>Login Policies:</b><br>
+                <br>
+                The table lists the login policies that can be added to the selected user.<br>	
+                <br>
+                <b>Group :</b> This is the name of the group that can have its login policy edited<br>
+			<br>
+	        <b> Status : </b> This displays the status of the groups, that can be <b>Allow / Deny</b> from Logging to the device GUI. <br>
+				<br>
+                                 The actions that can be taken on Login Policies are:
+				<br>
+				<b>Select All:</b> Selects all the policies in the table.<br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the Login policies configuration 
+				page, allowing you to make changes to the selected policy.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected policy or policies.<br>
+				<br>
+				<p ><b>Login Policies Configuration:<br>
+				Group Name:</b> This is the unique identifier for the group, can 
+				use any alphanumeric characters.<br>
+                <br>
+        			<b>Disable Login:</b> Enable to prevent the users of this group from logging into 
+				the devices management interface(s)<br>
+				<br>
+				<b>Deny Login from WAN interface:</b> Enable to prevent the users of this group 
+				from logging in from a WAN (wide area network) interface. In this 
+				case only login through LAN is allowed.<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+        			<p ><b>Browser Policies:</b><br>
+                                <br>
+                                The table lists the Browser Policies, where specific browsers can have management login policies associated to them. <br>
+				<br>
+                                <b>Group : </b> This is the name of the group that can have its login 
+				policy edited.<br>
+                                <br>
+				<b> Added Client Browsers :</b> This displays the web browser(s) upon which the group login policies can be defined.<br>
+				<br>
+                                <b> Status :</b> This displays the status of the groups, that can be <b>Allow / Deny</b> from Logging to the device GUI.<br>
+                                <br>
+                                 The actions that can be taken on Browser Policies are:
+				<br>
+				<b>Select All:</b> Selects all the policies in the table.<br>
+				<br>
+                                <b>Allow:</b> The Allow button will chage the status of the policies in the table to <b>Allow</b> state.<br>
+				<br>
+                                <b>Deny:</b> The Deny button will change the status of the policies in the table to <b>Deny</b> state.<br>
+				<br>
+                                <b>Delete Browsers:</b> The Delete Browsers button will delete the selected policy according to the selected client browser only.<br>
+				<br>
+				<b>Add Browser:</b>The Add Browser button will add the selected client browser according to the selected group policy only.<br>
+				<br>
+                                <b>Add (by clicking on Add Browser Policies):</b> Clicking this button will link to the Browser Policies configuration page.</p>
+				<p ><b>Browser Policies Configuration:<br>
+                                 Group Name:</b> This is the name of the group that can have its login 
+				policy edited.<br>
+                                <br>
+ 				<b>Add Defined Browser:</b> 
+				<br>
+				<b>Client Browser:</b>
+				This list displays the web browsers that have been added to the 
+				Defined Browsers list, upon which group login policies can be defined.
+				<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+  
+				<p ><b>IP Policies:</b><br>
+                                <br>
+                                The table lists the Group Policy by Source IP Address.<br>
+				<br>
+                                <b> Group : </b> This is the name of the group that can have its login 
+				policy edited.<br>
+                                <br>
+				<b> Source Address Type :</b> This field displays the type of source address 
+				(single address or subnetwork) for the group.<br>
+				<br>
+                                <b> Network Address / IP Address  :</b> This displays the IP or Network address added to the Defined Addresses list.<br>
+                                <br>
+                                <b> Mask Length  :</b> This displays the mask length of the network address configured.<br>
+				<br>
+                                <b> Status   :</b> This displays the status of the groups, that can be <b>Allow / Deny</b> from Logging to the device GUI.<br>
+                                <br>
+                                The actions that can be taken on IP Policies are:
+				<br>
+				<b>Select All:</b> Selects all the policies in the table.<br>
+				<br>
+                                <b>Allow:</b> The Allow button will chage the status of the policies in the table to <b>Allow</b> state.<br>
+				<br>
+                                <b>Deny:</b> The Deny button will change the status of the policies in the table to <b>Deny</b> state.<br>
+				<br>
+                                <b>Delete IP Policies:</b> The Delete IP Policies button will delete the selected policy according to the selected IP Address and Subnet Mask only.<br>
+				<br>
+				<b>Add IP Policy:</b> The Add IP Policy button will add the IP policy for the selected group policy.<br>
+				<br>
+                                 <b>Add(by clicking on Add IP Policies):</b> Clicking this button will link to the IP Policies configuration page.</p>
+				<p ><b>IP Policies Configuration:<br>
+                              
+				Group Name:</b> The group name is a unique identifier<br>
+				<br>
+				<b>Defined Addresses Configuration:</b>  The list of defined Addresses indicates the type of source address 
+				(single address or subnetwork), the specific Network Address or 
+				IP address, and mask length if applicable.<br>
+				<br>
+				<b>Source Address Type: </b>Select either IP address or IP Network. <br>
+				<br>
+				<b>Network Address/IP Address:</b> Enter the IP or Network address 
+				to add to the Defined Addresses list.<br>
+				<br>
+				<b>Mask Length:</b> If entering a network address, define the mask 
+				length (0&#45;32).<br>				<br>
+				Click <b>Save</b> to save your changes.<br>
+
+				<br>
+				</p>
+                
+:|groupsEnd|:
+
+:|groups_econa|:
+				<p ><b>Groups List:</b><br>
+                                <br>                      
+ 				<b>Group Name:</b> The group is the first level grouping to which a user 
+				belongs.<br>
+				<br>
+				<b>Description:</b> This column displays a short description of the group as entered by the user.<br>
+				<br>
+                                <br>
+				The actions that can be taken on groups are:
+				<br>
+				<b>Select All:</b> Selects all the groups in the table.<br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the groups configuration 
+				page, allowing you to make changes to the selected group.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected group or groups.<br>
+				<br>
+				<b>Add(by clicking on Add New Group):</b> Clicking this button will link to the groups configuration 
+				page.</p>
+				<p ><b>Groups Configuration:<br>
+				Group Name:</b> This is the unique identifier for the group, can 
+				use any alphanumeric characters.<br>
+                <br>
+				<b>Description:</b> User can enter a small description of the group. It can be
+				something like a description of the privileges of the group.<br>
+				<br>
+				<b>User Type:</b> Selecting a
+                usertype allows the group to enjoy privileges of that particular
+                usertype. Some buttons cannot be clicked simultaneously.
+                This is by design because selecting some of these privileges
+                simultaneously may cause conflicts between the internal
+                settings.<br>
+                <br>
+                <b>PPTP User:</b> The users of the group having PPTP User as privilege can connect to PPTP VPN networks.<br>
+                <br>
+                <b>L2TP User:</b> The users of the group having L2TP User as privilege can connect to L2TP VPN networks.<br>
+                <br>
+		<b>OpenVPN User:</b> The users of the group having OpenVPN User as privilege can connect to OpenVPN networks.<br>
+                <br>
+                <b>Xauth User:</b> The users of the group having Xauth User as privilege can connect to IPSec VPN networks.<br>
+                <br>
+                <b>SSLVPN User:</b> The users of the group having SSLVPN User as privilege can connect to SSL VPN networks.<br>
+                <br>
+                <b>Admin:</b> The users of the group having Admin privilege will have super user privileges. Such users can do configurations across the device and each user can be granted with one or more privileges among the PPTP, L2TP , OpenVPN, SSLVPN user privileges. <br>
+                <br>
+                <b>Guest User (readonly):</b> The users of the group having Guest User privilege will only have view only permissions. Such users cannot configure the device.<br>
+                <br>
+                <b>Network:</b> The users of the group will have the selected privileges only. Each user under the group can be granted with one or more privileges among the PPTP, L2TP, Xauth, OpenVPN, SSLVPN user privileges.<br>
+                <br>
+                                <b>Idle Timeout:</b> This field defines idle timeout for the group. This means the session for each user will expire after stated amount of time.<br>
+                 <br>
+				<br-->
+                <b>Maximum Limit For Groups:</b> Maximum Limit for adding Groups
+                is 100.<br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+                <p ><b>Login Policies:</b><br>
+                <br>
+                The table lists the login policies that can be added to the selected user.<br>	
+                <br>
+                <b>Group :</b> This is the name of the group that can have its login policy edited<br>
+			<br>
+	        <b> Status : </b> This displays the status of the groups, that can be <b>Allow / Deny</b> from Logging to the device GUI. <br>
+				<br>
+                                 The actions that can be taken on Login Policies are:
+				<br>
+				<b>Select All:</b> Selects all the policies in the table.<br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the Login policy configuration 
+				page, allowing you to make changes to the selected policy.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected policy or policies.<br>
+				<br>
+
+                    <b>Add (by clicking on  Add Login Policies):</b> Clicking this button will link to the Login Policies configuration page.</p>
+				<p ><b>Login Policies Configuration:<br>
+				Group Name:</b> This is the unique identifier for the group, can 
+				use any alphanumeric characters.<br>
+                <br>
+        			<b>Disable Login:</b> Enable to prevent the users of this group from logging into 
+				the devices management interface(s)<br>
+				<br>
+				<b>Deny Login from WAN interface:</b> Enable to prevent the users of this group 
+				from logging in from a WAN (wide area network) interface. In this 
+				case only login through LAN is allowed.<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+        			<p ><b>Browser Policies:</b><br>
+                                <br>
+                                The table lists the Browser Policies, where specific browsers can have management login policies associated to them. <br>
+				<br>
+                                <b>Group : </b> This is the name of the group that can have its login 
+				policy edited.<br>
+                                <br>
+				<b> Added Client Browsers :</b> This displays the web browser(s) upon which the group login policies can be defined.<br>
+				<br>
+                                <b> Status :</b> This displays the status of the groups, that can be <b>Allow / Deny</b> from Logging to the device GUI.<br>
+                                <br>
+                                 The actions that can be taken on Browser Policies are:
+				<br>
+				<b>Select All:</b> Selects all the policies in the table.<br>
+				<br>
+                                <b>Allow:</b> The Allow button will chage the status of the policies in the table to <b>Allow</b> state.<br>
+				<br>
+                                <b>Deny:</b> The Deny button will change the status of the policies in the table to <b>Deny</b> state.<br>
+				<br>
+                                <b>Delete Browsers:</b> The Delete Browsers button will delete the selected policy according to the selected client browser only.<br>
+				<br>
+				<b>Add Browser:</b>The Add Browser button will add the selected client browser according to the selected group policy only.<br>
+				<br>
+                                <b>Add (by clicking on Add Browser Policies):</b> Clicking this button will link to the Browser Policies configuration page.</p>
+				<p ><b>Browser Policies Configuration:<br>
+                                 Group Name:</b> This is the name of the group that can have its login 
+				policy edited.<br>
+                                <br>
+ 				<b>Add Defined Browser:</b> 
+				<br>
+				<b>Client Browser:</b>
+				This list displays the web browsers that have been added to the 
+				Defined Browsers list, upon which group login policies can be defined.
+				<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+  
+				<p ><b>IP Policies:</b><br>
+                                <br>
+                                The table lists the Group Policy by Source IP Address.<br>
+				<br>
+                                <b> Group : </b> This is the name of the group that can have its login 
+				policy edited.<br>
+                                <br>
+				<b> Source Address Type :</b> This field displays the type of source address 
+				(single address or subnetwork) for the group.<br>
+				<br>
+                                <b> Network Address / IP Address  :</b> This displays the IP or Network address added to the Defined Addresses list.<br>
+                                <br>
+                                <b> Mask Length  :</b> This displays the mask length of the network address configured.<br>
+				<br>
+                                <b> Status   :</b> This displays the status of the groups, that can be <b>Allow / Deny</b> from Logging to the device GUI.<br>
+                                <br>
+                                The actions that can be taken on IP Policies are:
+				<br>
+				<b>Select All:</b> Selects all the policies in the table.<br>
+				<br>
+                                <b>Allow:</b> The Allow button will chage the status of the policies in the table to <b>Allow</b> state.<br>
+				<br>
+                                <b>Deny:</b> The Deny button will change the status of the policies in the table to <b>Deny</b> state.<br>
+				<br>
+                                <b>Delete IP Policies:</b> The Delete IP Policies button will delete the selected policy according to the selected IP Address and Subnet Mask only.<br>
+				<br>
+				<b>Add IP Policy:</b> The Add IP Policy button will add the IP policy for the selected group policy.<br>
+				<br>
+                                 <b>Add(by clicking on Add IP Policies):</b> Clicking this button will link to the IP Policies configuration page.</p>
+				<p ><b>IP Policies Configuration:<br>
+                              
+				Group Name:</b> The group name is a unique identifier.<br>
+				<br>
+				<b>Defined Addresses Configuration:</b>  The list of defined Addresses indicates the type of source address 
+				(single address or subnetwork), the specific Network Address or 
+				IP address, and mask length if applicable.<br>
+           The table lists the Group Policy by Source IP Address.<br>
+				<br>
+                                <b> Group : </b> This is the name of the group that can have its login 
+				policy edited.<br>
+                                <br>
+				<b> Source Address Type :</b> This field displays the type of source address 
+				(single address or subnetwork) for the group.<br>
+				<br>
+                                <b> Network Address / IP Address  :</b> This displays the IP or Network address added to the Defined Addresses list.<br>
+                                <br>
+                                <b> Mask Length  :</b> This displays the mask length of the network address configured.<br>
+				<br>
+                                <b> Status   :</b> This displays the status of the groups, that can be <b>Allow / Deny</b> from Logging to the device GUI.<br>
+                                <br>
+                                The actions that can be taken on IP Policies are:
+				<br>
+				<b>Select All:</b> Selects all the policies in the table.<br>
+				<br>
+                                <b>Allow:</b> The Allow button will chage the status of the policies in the table to <b>Allow</b> state.<br>
+				<br>
+                                <b>Deny:</b> The Deny button will change the status of the policies in the table to <b>Deny</b> state.<br>
+				<br>
+                                <b>Delete IP Policies:</b> The Delete IP Policies button will delete the selected policy according to the selected IP Address and Subnet Mask only.<br>
+				<br>
+				<b>Add IP Policy:</b> The Add IP Policy button will add the IP policy for the selected group policy.<br>
+				<br>
+                                 <b>Add(by clicking on Add IP Policies):</b> Clicking this button will link to the IP Policies configuration page.</p>
+				<p ><b>IP Policies Configuration:<br>
+                              
+				Group Name:</b> The group name is a unique identifier<br>
+				<br>
+				<b>Defined Addresses Configuration:</b>  The list of defined Addresses indicates the type of source address 
+				(single address or subnetwork), the specific Network Address or 
+				IP address, and mask length if applicable.<br>
+				<br>
+				<b>Source Address Type: </b>Select either IP address or IP Network. <br>
+				<br>
+				<b>Network Address/IP Address:</b> Enter the IP or Network address 
+				to add to the Defined Addresses list.<br>
+				<br>
+				<b>Mask Length:</b> If entering a network address, define the mask 
+				length (0&#45;32).<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+
+				<br>
+				</p>
+                
+
+
+:|groups_econaEnd|:
+
+:|users|:
+                <p ><b>Users:</b> Authentication of the users (IPsec, SSL VPN,
+                or GUI) is done by the router using either a local database on
+                the router or external authentication servers (i.e. LDAP or
+                RADIUS). User level policies can be specified by browser, IP
+                address of the host, and whether the user can login to the
+                router's GUI in addition to the SSL VPN portal.<br>
+                <br>
+				<b>List of Users</b><br>
+				<br>
+				<b>User Name:</b> The user name is a unique identifier.<br>
+				<br>
+				<b>Group:</b> The group is the first level grouping to which the 
+				user belongs.<br>
+				<br>
+				<b>Login Status:</b> the ability for this user to login to the routers 
+				GUI is highlighted here.<br>
+				<br>
+				The actions that can be taken on users are:<br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the users 
+				in the table.<br>
+								<br>
+				<b>Edit:</b> The Edit button will link to the<?lua if(HIGH_SEC == "HIGH") then ?> SSL Users page <?lua else ?> Users page <?lua end ?>, allowing 
+				you to make changes to the selected user.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected user or users<br>
+				<br>
+				<b>Add New User:</b> Clicking this button will link to the <?lua if(HIGH_SEC == "HIGH") then ?> SSL Users page. <?lua else ?> Users page.</p>
+				<p ><b>Users Config:<br>
+				User Name:</b> This is the unique identifier for the user, can use 
+				any alphanumeric characters.<br>
+				<br>
+				<b>First Name:</b> The users first name, this is useful when the 
+				authentication domain is an external server (i.e. RADIUS).<br>
+				<br>
+				<b>Last Name:</b> The users last name, this is useful when the authentication 
+				domain is an external server (i.e. RADIUS).<br>
+				<br>
+				<b>Select Group:</b> The dropdown list contains configured groups 
+				available for the user.<br>
+				<br>
+				<b>Password:</b> The password must contain alphanumeric, or _ characters.<br>
+				<br>
+				<b>Confirm Password:</b> The password entered in this field must 
+				match the one above for the password to be set.<br>
+				<br>
+				<b>Idle Timeout:</b> This is the session timeout for the user. The 
+				default is 5 minutes of no activity. <br>
+                <br>
+                <b>Enable Change Password:</b> This is the  option for
+                administrator to enable/disable "Change Password" link in captivePortal Page. <br>
+				<br>
+		<b>MultiLogin:</b> This is the option for
+                administrator to enable/disable MultiLogin Sessions. <br>
+				<br>
+		<b>Edit Password:</b> Enable this option for edit the current Logged in User 
+		password with the new one. <br>
+				<br>	
+		<b>Current Logged In Administrator Password:</b> Give Current password that is in use. <br>
+				<br>
+		<b>New Password:</b> The New password that User want to change with current password.
+		The New password must contain alphanumeric, or _ characters.<br>
+				<br>
+		<b>Confirm New Password:</b> The password entered in this field must 
+				match the one above for the New password to be set.<br>
+				<br>
+                <b>Maximum Limit For Users:</b> Maximum Limit for adding Users 
+                is 400.<br>
+                <br>
+                <b>Maximum Limit For Users Per Group:</b> Maximum Limit for adding
+                Users per Group is 100.<br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+:|usersEnd|:
+
+:|users_500|:
+                <p ><b>Users:</b> Authentication of the users (IPsec, SSL VPN,
+                or GUI) is done by the router using either a local database on
+                the router or external authentication servers (i.e. LDAP or
+                RADIUS). User level policies can be specified by browser, IP
+                address of the host, and whether the user can login to the
+                router's GUI in addition to the SSL VPN portal.<br>
+                <br>
+				<b>List of Users</b><br>
+				<br>
+				<b>User Name:</b> The user name is a unique identifier.<br>
+				<br>
+				<b>Group:</b> The group is the first level grouping to which the 
+				user belongs.<br>
+				<br>
+				<b>Login Status:</b> the ability for this user to login to the routers 
+				GUI is highlighted here.<br>
+				<br>
+				The actions that can be taken on users are:<br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the users 
+				in the table.<br>
+								<br>
+				<b>Edit:</b> The Edit button will link to the<?lua if(HIGH_SEC == "HIGH") then ?> SSL Users page <?lua else ?> Users page <?lua end ?>, allowing 
+				you to make changes to the selected user.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected user or users<br>
+				<br>
+				<b>Add New User:</b> Clicking this button will link to the <?lua if(HIGH_SEC == "HIGH") then ?> SSL Users page. <?lua else ?> Users page.</p>
+				<p ><b>Users Config:<br>
+				User Name:</b> This is the unique identifier for the user, can use 
+				any alphanumeric characters.<br>
+				<br>
+				<b>First Name:</b> The users first name, this is useful when the 
+				authentication domain is an external server (i.e. RADIUS).<br>
+				<br>
+				<b>Last Name:</b> The users last name, this is useful when the authentication 
+				domain is an external server (i.e. RADIUS).<br>
+				<br>
+				<b>Select Group:</b> The dropdown list contains configured groups 
+				available for the user.<br>
+				<br>
+				<b>Password:</b> The password must contain alphanumeric, or _ characters.<br>
+				<br>
+				<b>Confirm Password:</b> The password entered in this field must 
+				match the one above for the password to be set.<br>
+				<br>
+				<!--b>Idle Timeout:</b> This is the session timeout for the user. The 
+				default is 5 minutes of no activity. <br>
+                <br-->
+                <b>Enable Change Password:</b> This is the  option for
+                administrator to enable/disable "Change Password" link in captivePortal Page. <br>
+				<br>
+		<b>MultiLogin:</b> This is the option for
+                administrator to enable/disable MultiLogin Sessions. <br>
+				<br>
+		<b>Edit Password:</b> Enable this option for edit the current Logged in User 
+		password with the new one. <br>
+				<br>	
+		<b>Current Logged In Administrator Password:</b> Give Current password that is in use. <br>
+				<br>
+		<b>New Password:</b> The New password that User want to change with current password.
+		The New password must contain alphanumeric, or _ characters.<br>
+				<br>
+		<b>Confirm New Password:</b> The password entered in this field must 
+				match the one above for the New password to be set.<br>
+				<br>
+                <b>Maximum Limit For Users:</b> Maximum Limit for adding Users 
+                is 300.<br>
+                <br>
+                <b>Maximum Limit For Users Per Group:</b> Maximum Limit for adding
+                Users per Group is 50.<br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+:|users_500End|:
+
+:|users_econa|:
+                <p ><b>Users:</b> Authentication of the users (IPsec, SSL VPN,
+                or GUI) is done by the router using either a local database on
+                the router or external authentication servers (i.e. LDAP or
+                RADIUS). User level policies can be specified by browser, IP
+                address of the host, and whether the user can login to the
+                router's GUI in addition to the SSL VPN portal.<br>
+                <br>
+				<b>List of Users</b><br>
+				<br>
+				<b>User Name:</b> The user name is a unique identifier.<br>
+				<br>
+				<b>Group:</b> The group is the first level grouping to which the 
+				user belongs.<br>
+				<br>
+				<b>Login Status:</b> the ability for this user to login to the routers 
+				GUI is highlighted here.<br>
+				<br>
+				The actions that can be taken on users are:<br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the users 
+				in the table.<br>
+								<br>
+				<b>Edit:</b> The Edit button will link to the<?lua if(HIGH_SEC == "HIGH") then ?> SSL Users page <?lua else ?> Users page <?lua end ?>, allowing 
+				you to make changes to the selected user.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected user or users<br>
+				<br>
+				<b>Add New User:</b> Clicking this button will link to the <?lua if(HIGH_SEC == "HIGH") then ?> SSL Users page. <?lua else ?> Users page.</p>
+				<p ><b>Users Config:<br>
+				User Name:</b> This is the unique identifier for the user, can use 
+				any alphanumeric characters.<br>
+				<br>
+				<b>First Name:</b> The users first name, this is useful when the 
+				authentication domain is an external server (i.e. RADIUS).<br>
+				<br>
+				<b>Last Name:</b> The users last name, this is useful when the authentication 
+				domain is an external server (i.e. RADIUS).<br>
+				<br>
+				<b>Select Group:</b> The dropdown list contains configured groups 
+				available for the user.<br>
+				<br>
+				<b>Password:</b> The password must contain alphanumeric, or _ characters.<br>
+				<br>
+				<b>Confirm Password:</b> The password entered in this field must 
+				match the one above for the password to be set.<br>
+				<br>
+				<!--b>Idle Timeout:</b> This is the session timeout for the user. The 
+				default is 5 minutes of no activity. <br>
+                <br-->
+                <!--b>Enable Change Password:</b> This is the  option for
+                administrator to enable/disable "Change Password" link in captivePortal Page. <br>
+				<br>
+		<b>MultiLogin:</b> This is the option for
+                administrator to enable/disable MultiLogin Sessions. <br>
+				<br-->
+		<b>Edit Password:</b> Enable this option for edit the current Logged in User 
+		password with the new one. <br>
+				<br>	
+		<b>Current Logged In Administrator Password:</b> Give Current password that is in use. <br>
+				<br>
+		<b>New Password:</b> The New password that User want to change with current password.
+		The New password must contain alphanumeric, or _ characters.<br>
+				<br>
+		<b>Confirm New Password:</b> The password entered in this field must 
+				match the one above for the New password to be set.<br>
+				<br>
+                <b>Maximum Limit For Users:</b> Maximum Limit for adding Users 
+                is 200.<br>
+                <br>
+                <b>Maximum Limit For Users Per Group:</b> Maximum Limit for adding
+                Users per Group is 25.<br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+:|users_econaEnd|:
+
+:|macAuthentication|:
+            <p><b>MAC Authentication:</b> The database contains wireless client MAC addresses and names. The database is used to retrieve client descriptive names from the RADIUS server as well as implement MAC Authentication. <br>
+            <br>
+            <b>List Type: </b>
+            Two type of list are black(for block) and white (allow).<br>
+            <br>
+            <b>MAC Authentication List </b> <br>
+			<b>MAC Address :</b>Shows the MAC address of the known client.<br>
+			<br>	
+				
+			<b>Name :</b>Shows the descriptive name configured for the client
+            when it was added to the Known Client database.<br>
+			<br>
+			<b>Authentication Action :</b>When MAC authentication is enabled on
+            the network, this field shows the action to take on a wireless
+            client. The following options are available.<br>
+			<b>Grant :</b> Allow the client with the specified MAC address to
+            access the network.<br>
+			<br>
+			<b>Deny :</b> Prohibit the client with the specified MAC address
+            from accessing the network.<br>
+			<b>Global Action :</b>Use the global white&#45;list or black&#45;list action
+            configured on the Advanced Global Configuration page to determine
+            how to handle the client.<br>
+            <br>
+            The actions that can be taken on static routes are: <br>
+            <br>
+            <b>(Check Box At First Column Header):</b> Selects all the tunnels 
+            in the table. <br>
+            <br>
+			<b>Delete :</b> Removes the selected client from the Known Client
+            database.<br>
+			<br>
+			<b>Edit	:</b> changes the setting of particular mac address ,which
+            we select.<br>
+            <br>
+            <b>Add New Mac Authentication:</b> Adds a client with the MAC address you enter in the
+            field to the Known Client database.<br>
+			<br> </p>
+            <p ><b>MAC Authentication Configuration<br>
+			MAC Address :</b>Shows the MAC address of the known client.<br>
+			<br>	
+			<b>Name :</b>Shows the descriptive name configured for the client
+            when it was added to the Known Client database.<br>
+			<br>
+			<b>Authentication Action :</b>When MAC authentication is enabled on
+            the network, this field shows the action to take on a wireless
+            client. The following options are available.<br>
+			<b>Grant :</b> Allow the client with the specified MAC address to
+            access the network.<br>
+			<br>
+			<b>Deny :</b> Prohibit the client with the specified MAC address
+            from accessing the network.<br>
+			<b>Global Action :</b>Use the global white&#45;list or black&#45;list action
+            configured on the Advanced Global Configuration page to determine
+            how to handle the client.<br>
+            <br>
+            <b>Command Buttons</b><br>
+            <b>Save :</b> Updates the controller with the values you enter.<br>
+			</p>
+:|macAuthenticationEnd|:
+
+:|passwordRules|:
+Password Rules Help Starts.
+:|passwordRulesEnd|:
+
+:|radiusServer|:
+                <p><b>Radius Server:</b> The RADIUS server is an external authentication server that can be used to associate wireless clients to an AP using RADIUS authentication. This authentication is also referred to as Enterprise mode, and is available for WPA or WPA2 security.It can be used for authenticating users that want to connect to the IPSec,L2TP,PPTP,SSL VPN and wireless networks provided by this device. If the first/primary RADIUS server is not accessible at any time, then the device will attempt to contact the secondary RADIUS server for user authentication.<br>
+				<br><b>Radius Server Configuration:</b><br>
+				<br>
+                <b>NAS Interface</b> Select the WAN interface on which the radius 
+                authentication packets are sent in case of load balancing.By default
+                it is WAN1.<br>
+				<br>
+				<b>Server Checking :</b> Check status of configured servers, it checks whether servers are up or not.<br>
+				<br>
+				<b>Authentication Server 1 (Primary):</b> IP address of the primary RADIUS authentication server.<br>
+				<br>
+				<b>Authentication Server 2 (Secondary):</b> IP address of the secondary RADIUS authentication server.<br>
+				<br>
+				<b>Authentication Server 3 (Optional):</b> IP address of the optional RADIUS authentication server.<br>
+				<br>
+				<b>Authentication Port:</b> RADIUS authentication server port to send RADIUS messages.<br>
+				<br>
+				<b>Secret:</b> Secret key that allows the device to log into the configured	RADIUS server. It must match the                 secret on RADIUS server.<br>
+				<br>
+				<b>Timeout:</b> Set the amount of time in seconds, the router should wait for a response from the 
+				RADIUS server.<br>
+				<br>
+				<b>Retries:</b> This determines the number of tries the router will make to the RADIUS server before
+				 giving up.<br>
+				<br>
+                <p>Click <b>Save</b> to save the settings.</p>
+                <p>Click <b>Cancel</b> to revert to the previous settings.</p>
+:|radiusServerEnd|:
+
+:|radiusServer_econa|:
+                <p><b>Radius Server:</b> The RADIUS server is an external authentication server that can be used to associate wireless clients to an AP using RADIUS authentication. This authentication is also referred to as Enterprise mode, and is available for WPA or WPA2 security.It can be used for authenticating users that want to connect to the IPSec,L2TP,PPTP,SSL VPN and wireless networks provided by this device. If the first/primary RADIUS server is not accessible at any time, then the device will attempt to contact the secondary RADIUS server for user authentication.<br>
+				<br><b>Radius Server Configuration:</b><br>
+				<br>
+				<b>Server Checking :</b> Check status of configured servers, it checks whether servers are up or not.<br>
+				<br>
+				<b>Authentication Server 1 (Primary):</b> IP address of the primary RADIUS authentication server.<br>
+				<br>
+				<b>Authentication Server 2 (Secondary):</b> IP address of the secondary RADIUS authentication server.<br>
+				<br>
+				<b>Authentication Server 3 (Optional):</b> IP address of the optional RADIUS authentication server.<br>
+				<br>
+				<b>Authentication Port:</b> RADIUS authentication server port to send RADIUS messages.<br>
+				<br>
+				<b>Secret:</b> Secret key that allows the device to log into the configured	RADIUS server. It must match the                 secret on RADIUS server.<br>
+				<br>
+				<b>Timeout:</b> Set the amount of time in seconds, the router should wait for a response from the 
+				RADIUS server.<br>
+				<br>
+				<b>Retries:</b> This determines the number of tries the router will make to the RADIUS server before
+				 giving up.<br>
+				<br>
+                <p>Click <b>Save</b> to save the settings.</p>
+                <p>Click <b>Cancel</b> to revert to the previous settings.</p>
+:|radiusServer_econaEnd|:
+
+:|pop3Server|:
+                <p><b>POP3 Server:</b> If SSL support is enabled than it is mandatory to select a certificate authority.<br>
+				<br>
+                <b>POP3 Server Configuration:</b><br>
+				<br>
+				<b>Server Checking :</b> Check status of configured servers, it checks whether servers are up or not.<br>
+				<br>
+				<b>Authentication Server 1 (Primary):</b> IP address of the primary authentication server.<br>
+				<br>
+				<b>Authentication Server 2: (Secondary)</b> IP address of the second authentication server.<br>
+				<br>
+				<b>Authentication Server 3: (Optional)</b> IP address of the third(Optional) authentication server.<br>
+				<br>
+				<b>Authentication Port:</b> Authentication port for respective authentication server.<br>
+				<br>
+				<b>SSL Enable:</b> Enable SSL support for POP3. If this option is enabled, it is mandatory to select a 
+				certificate authority for it.<br>
+				<br>
+				<b>CA File:</b> Certificate Authority to verify POP3 server's certificate.<br>
+				<br>
+				<b>Timeout:</b> Set the amount of time in seconds, the router should wait for a response from the 
+				authentication server.<br>
+				<br>
+				<b>Retries:</b> This determines the number of tries the router will make to the POP3 server before 
+				giving up.<br>
+				<br>
+				<p>Click <b>Save</b> to save the settings.</p>
+				<p>Click <b>Cancel</b> to revert to the previous settings.</p>
+:|pop3ServerEnd|:
+
+:|pop3TrustedCa|:
+                <p ><b>POP3 Trusted CA:</b> User can add and delete CA Files here. <br>
+				<br>
+                <b>POP3 CA Files List:</b> List of uploaded CA Files.<br>
+				<br>
+				<b>Delete:</b> Will delete selected CA File.<br>
+				<br>
+                <b>Add CA File:</b> Will let you add a new CA File.<br>
+                <br>
+	        <b>CA File:</b> Certificate Authority to verify POP3 server's certificate.<br> <br>
+
+				<b>Browse :</b> Click this button to select a CA file from the host.<br>
+				<br>
+				<b>Upload :</b> Upload a new CA File.<br></p>
+:|pop3TrustedCaEnd|:
+
+:|ldapServer|:
+                <p ><b>LDAP Server:</b> The user can configure authentication
+                servers for LDAP authentication. He has to supply details like
+                authentication server IP addresses, LDAP Attributes, LDAP Base
+                DN, server retries and timeout value.<br>
+				<br>
+                <b>LDAP Server Configuration:</b><br>
+				<br>
+				<b>Server Checking :</b> Check status of configured servers, it checks whether servers are up or not.<br>
+				<br>
+				<b>Authentication Server 1:</b> IP address of the primary authentication server.<br>
+				<br>
+				<b>Authentication Server 2:</b> IP address of the second(Optional) authentication server.<br>
+				<br>
+				<b>Authentication Server 3:</b> IP address of the third(Optional) authentication server.<br>
+				<br>
+				<b>LDAP attribute 1-4:</b> These are attributes related to LDAP users configured in LDAP server.These may 
+				include attributes like SAM account name, Associated domain name etc.These can be used to distinguish between 				 different users having same user name.<br>
+				<br>
+                                <b>LDAP Base DN:</b> LDAP authentication requires a base domain name. To get a base DN, please contact your system administrator.<br>
+				<br>
+				<b>Second LDAP Base DN (optional):</b> Base domain name for authentication server 2.<br>
+				<br>
+				<b>Third LDAP Base DN (optional):</b> Base domain name for authentication server 3.<br>
+				<br>
+				<b>Timeout:</b> Set the amount of time in seconds, the router should wait for a response from the 
+				 authentication server.<br>
+				<br>
+				<b>Retries:</b> This determines the number of tries the router will make to the LDAP server before giving up.<br>
+				<br>
+				<b>First Administrator Account:</b> Primary admin account in LDAP server that will be used when LDAP 
+				authentication is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password:</b> Primary admin password.<br>
+				<br>
+				<b>Second Administrator Account:</b> Second admin account in LDAP server that will be used when LDAP 
+                 authentication is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password:</b> Second admin password.<br>
+				<br>
+				<b>Third Administrator Account:</b> Third admin account in LDAP server that will be used when LDAP 
+				authentication is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password:</b> Third admin password.<br>
+				<br></p>
+				<p>Click <b>Save</b> to save the settings.</p>
+                <p>Click <b>Cancel</b> to revert to the previous settings.</p>
+:|ldapServerEnd|:
+ 
+:|adServer|:
+                <p><b>AD Server:</b> The user can configure authentication
+                server address, active directory domain , timeout and number of
+                retries.<br>
+				<br>
+                <b>Active Directory Configuration:</b><br>
+				<br>
+				<b>Server Checking :</b> Check status of configured servers, it checks whether servers are up or not.<br>
+				<br>
+				<b>Authentication Server 1:</b> IP address of the primary authentication server.<br>
+				<br>
+				<b>Authentication Server 2:</b> IP address of the second(Optional) authentication server.<br>
+				<br>
+				<b>Authentication Server 3:</b> IP address of the third(Optional) authentication server.<br>
+				<br>
+				<b>Active Directory Domain:</b> Enter the Active Directory domain name in this field. Users that are registered in the Active Directory  
+				database can now access the SSL VPN portal by using their Active Directory username and password.<br>
+				<br>
+				<b>Second Active Directory Domain (optional):</b> Active Directory Domain for Authentication Server 2.<br>
+				<br>
+				<b>Third Active Directory Domain (optional):</b> Active Directory Domain for Authentication Server 3.<br>
+				<br>
+				<b>Timeout:</b> Set the amount of time in seconds, the router should wait for a response from the
+				 Activce Directory server.<br>
+				<br>
+				<b>Retries:</b> This determines the number of tries the router will make to the Active Directory server before 
+				giving up.<br>
+				<br>
+				<b>First Administrator Account (optional):</b>Primary admin account in Active directory domain that will be used when Active directory domain is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password (optional):</b>Primary admin password.</br>
+				<br>
+				<b>First Server Hostname (optional):</b>Enter the primary server hostname for Active directory.<br>
+				<br>
+				<b>Second Administrator Account (optional):</b>Second admin account in Active directory domain that will be used when Active directory domain is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password (optional):</b>Secondary admin password.</br>
+				<br>
+				<b>Second Server Hostname (optional):</b>Enter the second server hostname for Active directory.<br>
+				<br>
+				<b>Third Administrator Account (optional):</b>Third admin account in Active directory domain that will be used when Active directory domain is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password (optional):</b>Third admin password.</br>
+				<br>
+				<b>Third Server Hostname (optional):</b>Enter the third server hostname for Active directory.<br>
+				</p>
+				<p>Click <b>Save</b> to save the settings.</p>
+				<p>Click <b>Cancel</b> to revert to the previous settings.</p>
+:|adServerEnd|:
+
+:|ntDomain|:
+                <p><b>NT Domain:</b> The user can Use workgroup for
+                authentication server 1, second workgroup for authentication
+                server 2, third workgroup for authentication server 3.<br>
+				<br>
+                <b>NT Domain Configuration:</b><br>
+				<br>
+				<b>Server Checking :</b> Check status of configured servers, it checks whether servers are up or not.<br>
+				<br>
+				<b> Authentication Server 1:</b> IP address of the primary authentication server.<br>
+				<br>
+				<b>Authentication Server 2:</b> IP address of the second(optional) authentication server.<br>
+				<br>
+				<b>Authentication Server 3:</b> IP address of the third(optional) authentication server.<br>
+				<br>
+				<b>Workgroup:</b> Workgroup for Authentication Server 1.The NT domain type of authentication requires the
+				 workgroup field; contact your administrator for the workgroup needed to configure NT Domain
+				 authentication.<br>
+				<br>
+				<b>Second Workgroup (optional):</b> Workgroup for Authentication Server 2.<br>
+				<br>
+				<b>Third Workgroup (optional):</b>Workgroup for Authentication Server 3.<br>
+				<br>
+				<b>Timeout:</b> Set the amount of time in seconds, the router should wait for a response from the
+				 authentication server.<br>
+				<br>
+				<b>Retries:</b> This determines the number of tries the router will make to the authentication server 
+				before giving up.<br>
+				<br>
+				<b>First Administrator Account (optional):</b>Primary admin account in NT domain that will be used when NT domain is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password (optional):</b>Primary admin password.</br>
+				<br>
+				<b>First Server Hostname (optional):</b>Enter the primary server hostname for NT domain.<br>
+				<br>
+				<b>Second Administrator Account (optional):</b>Second admin account in NT domain that will be used when NT domain is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password (optional):</b>Secondary admin password.</br>
+				<br>
+				<b>Second Server Hostname (optional):</b>Enter the second server hostname for NT domain.<br>
+				<br>
+				<b>Third Administrator Account (optional):</b>Third admin account in NT domain that will be used when NT domain is required for PPTP/L2TP connection.<br>
+				<br>
+				<b>Password (optional):</b>Third admin password.</br>
+				<br>
+				<b>Third Server Hostname (optional):</b>Enter the third server hostname for NT domain.<br>
+				</p>
+				<p>Click <b>Save</b> to save the settings.</p>
+
+				<p>Click <b>Cancel</b> to revert to the previous settings.</p>
+
+:|ntDomainEnd|:
+
+:|loginProfiles|:
+                <p>
+   				<b>Login Profiles List:</b> List of login page profiles available on system. These profiles can be used for authenticating SSL VPN and Captive Portal (if available on system) sessions.<br>
+				<br>
+				<b>Profile Name: </b>The name of the Profile.<br>
+                <br>
+                <b>Browser Title: </b>The title for the Profile.<br>
+                <br>
+                <b>Status: </b>  The status of the Profile can be Enabled (active) or 
+				Disabled (configured but not in use).<br>
+                <br>
+                The actions that can be taken on login profiles are: <br>
+				<br>
+				<b>(Check Box at First Column Header):</b> Selects all the login
+                profiles in the table. <br>
+				<br>
+                <b>Show Preview:</b> Will show preview of the page, if a profile is selected.<br>
+                <br>
+				<b>Edit:</b> Can edit the added profiles. Cannot edit Default Profile.<br><br>
+				<b>Delete:</b> Will delete the profile selected. You cannot delete the 
+				default profile and the current profile being used.<br><br>
+				<b>Add New Login Profile:</b> Will let you add a new profile. Maximum allowed number of profiles 
+				are 5 excluding default.</p>
+
+                <p><b>Login Profile Configuration:<br>
+				</b><br> Login page display can be altered
+				 by modifying the settings available here.
+				<br>
+				<br>
+				<b>General Details:</b><br><br>
+				<b>ProfileName:</b> Name of the profile that is being added.<br><br>
+				<b>Browser Title:</b> It is the browser title.<br><br>
+                <b>Background:</b> Select the background either image or color for the page.<br><br>
+                <b>Page Background Image:</b> It will set the page background image for the page.<br><br>
+                <b>Add: </b>It will let you to add a new image.This image can be set as the background image for the profile.<br><br>
+				<b>Page Background Color:</b> Sets the background color of the page.<br><br>
+				<b>Custom Color: </b>Customize background color of the page.<br><br>
+				<b>Minimal Page for Mobile Devices :</b>Check this option to configure the Minimal Page for Mobile Devices<br> <br>
+				<b>Header Details:</b><br>
+				It Allows user to configure how the header portion of the page should be displayed.
+				<br><br>
+				<b>Background:</b> Select the background either image or color for the header portion.<br><br>
+                <b>Header Background Image:</b> Sets the header background image for the header portion.<br><br>
+				<b>Add: </b>Will let you add a new image.This image can be set as header image for this profile.<br><br>
+				<b>Header Background Color:</b> Sets the background color of
+                the header section if you configure the Background as
+                "color"<br><br>
+				<b>Custom Color:</b>Customize background color of the Header
+                Portion<br> <br>
+				<b>Header Caption:</b>Text to be displayed in the header portion.<br><br>
+				<b>Caption Font:</b> Font for the header text to be displayed.<br><br>
+				<b>Font Size:</b> Font size for the header text to be displayed.<br><br>
+				<b>Font Color:</b>  Color in which the text is to be displayed.<br><br>
+				<b>Login Details:</b><br>
+				It Allows user to configure how the Login Area of the page should be displayed.
+				<br><br>
+				<b>Login Section Title: </b>Title for the Login Box<br><br>
+				<b>Welcome Message: </b>Message which is displayed when a user visits the page.<br><br>
+                <b>Error Message: </b>Error Message displayed when user enters invalid credentials.<br><br>
+                <b>Advertisement Details:</b><br>
+                It Allows user to configure how the Advertisement of the page should be displayed.
+				<br><br>
+				<b>Enable Advertisement: </b>Allows user to enable or disable the Advertisement <br><br>
+				<b>Ad Place: </b>Allows user to select either top or bottom to place the Advertisement.<br><br>
+				<b>Ad Content: </b>Allows user to write the content of the Advertisement.<br><br>
+				<b>Font:</b> Font for the information to be displayed.<br><br>
+				<b>Font Size:</b> Font size for the information to be displayed.<br><br>
+				<b>Font Color: </b>Color in which the information is to be displayed.<br><br>
+				<b>Footer Details:</b><br>
+				It Allows user to configure the footer portion of the page.<br><br>
+                <b>Change Footer Content: </b> Check this option,to  configure the footer
+                portion of the page.<br>
+                <br>
+                <b>Footer Content: </b> Footer message which is displayed when a user visits
+                the page. <br><br>
+				<b>Footer Font Color: </b>Color in which the footer is to be displayed.<br><br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+			    </p>
+:|loginProfilesEnd|:
+:|loginProfiles_econa|:
+		<p>
+   				<b>Login Profiles List:</b> List of login page profiles available on system. These profiles can be used for authenticating SSL VPN and Captive Portal (if available on system) sessions.<br>
+				<br>
+				<b>Profile Name: </b>The name of the Profile.<br>
+                <br>
+                <b>Browser Title: </b>The title for the Profile.<br>
+                <br>
+                <b>Status: </b>The status of profile can be not in use(configured but not in use) or name of SSL VPN portal
+                layout(if it is associated with configured login profile).<br>
+                <br>
+                The actions that can be taken on login profiles are: <br>
+				<br>
+				<b>(Check Box at First Column Header):</b> Selects all the login
+                profiles in the table. <br>
+				<br>
+                <b>Show Preview:</b> Will show preview of the page, if a profile is selected.<br>
+                <br>
+				<b>Edit:</b> Can edit the added profiles. Cannot edit Default Profile.<br><br>
+				<b>Delete:</b> Will delete the profile selected. You cannot delete the 
+				default profile and the current profile being used.<br><br>
+				<b>Add New Login Profile:</b> Will let you add a new profile. Maximum allowed number of profiles 
+				are 5 excluding default.</p>
+
+                <p><b>Login Profile Configuration:<br>
+				</b><br> Login page display can be altered
+				 by modifying the settings available here.
+				<br>
+				<br>
+				<b>General Details:</b><br><br>
+				<b>ProfileName:</b> Name of the profile that is being added.<br><br>
+				<b>Browser Title:</b> It is the browser title.<br><br>
+                <b>Background:</b> Select the background either image or color for the page.<br><br>
+                <b>Page Background Image:</b> It will set the page background image for the page.<br><br>
+                <b>Add: </b>It will let you to add a new image.This image can be set as the background image for the profile.<br><br>
+				<b>Page Background Color:</b> Sets the background color of the page.<br><br>
+				<b>Custom Color: </b>Customize background color of the page.<br><br>
+				<b>Minimal Page for Mobile Devices :</b>Check this option to configure the Minimal Page for Mobile Devices<br> <br>                
+				<b>Header Details:</b><br>
+				It Allows user to configure how the header portion of the page should be displayed.
+				<br><br>
+				<b>Background:</b> Select the background either image or color for the header portion.<br><br>
+                <b>Header Background Image:</b> Sets the header background image for the header portion.<br><br>
+				<b>Add: </b>Will let you add a new image.This image can be set as header image for this profile.<br><br>
+				<b>Header Background Color:</b> Sets the background color of
+                the header section if you configure the Background as
+                "color"<br><br>
+				<b>Custom Color:</b>Customize background color of the Header
+                Portion<br> <br>
+				<b>Header Caption:</b>Text to be displayed in the header portion.<br><br>
+				<b>Caption Font:</b> Font for the header text to be displayed.<br><br>
+				<b>Font Size:</b> Font size for the header text to be displayed.<br><br>
+				<b>Font Color:</b>  Color in which the text is to be displayed.<br><br>
+				<b>Login Details:</b><br>
+				It Allows user to configure how the Login Area of the page should be displayed.
+				<br><br>
+				<b>Login Section Title: </b>Title for the Login Box<br><br>
+				<b>Welcome Message: </b>Message which is displayed when a user visits the page.<br><br>
+                <b>Error Message: </b>Error Message displayed when user enters invalid credentials.<br><br>
+                <b>Advertisement Details:</b><br>
+                It Allows user to configure how the Advertisement of the page should be displayed.
+				<br><br>
+				<b>Enable Advertisement: </b>Allows user to enable or disable the Advertisement <br><br>
+				<b>Ad Place: </b>Allows user to select either top or bottom to place the Advertisement.<br><br>
+				<b>Ad Content: </b>Allows user to write the content of the Advertisement.<br><br>
+				<b>Font:</b> Font for the information to be displayed.<br><br>
+				<b>Font Size:</b> Font size for the information to be displayed.<br><br>
+				<b>Font Color: </b>Color in which the information is to be displayed.<br><br>
+				<b>Footer Details:</b><br>
+				It Allows user to configure the footer portion of the page.<br><br>
+                <b>Change Footer Content: </b> Check this option,to  configure the footer
+                portion of the page.<br>
+                <br>
+                <b>Footer Content: </b> Footer message which is displayed when a user visits
+                the page. <br><br>
+				<b>Footer Font Color: </b>Color in which the footer is to be displayed.<br><br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+			    </p>
+
+:|loginProfiles_econaEnd|:
+
+:|loginProfilesSla|:
+                <p ><b>SLA :</b> Service Level Agreement are the set of rules temporary
+                Captive Portal user needs to accept before accessing internet or
+                other services.This page displays the set of rules configured by
+                admin. Admin can edit/change them using Edit button.<br>
+                <br>
+                <b>Login Profiles SLA Service rule:</b><br>
+                <br>
+                <b>Terms of Service Rules:</b> Shows the set of rules temporary and SLA type captive portal users needs to 
+                accept before accessing internet.<br>
+                <br>
+				<b>Change Terms of Service Rules :</b> We (Admin User) can make changes to the terms of service rules.<br>
+				<br></p>
+				<p >Click <b>Save</b> To Saves your changes.</p>
+				<br>
+				<p>Click <b>Cancel</b> to revert to the previous.<br></p>
+:|loginProfilesSlaEnd|:
+
+:|servicesRouteMgmt|:
+                <p>
+   				<b>Services Route Management List:</b> List of services with route management entries.<br>
+				<br>
+				<b>Service: </b>The name of the Service.<br>
+                <br>
+                <b>Service Interface: </b>The Interface Name of the service.<br>
+                <br>
+                <b>Routing Interface: </b>  The Interface Name of the Route on which we are interested to send the traffic.<br>
+                <br>
+                The actions that can be taken on login profiles are: <br>
+				<br>
+				<b>(Check Box at First Column Header):</b> Selects all the service routes in the table. <br>
+				<br>
+				<b>Edit:</b> Can edit the Service Route.<br><br>
+				<b>Delete:</b> Will delete the Service Route.<br><br>
+				<b>Add Service Route:</b> Will let you add a new Service Route.
+                Maximum allowed number of Service routes are three, As we have
+                supported only three radius servers.</p>
+
+                <p><b>Service Route Management Configuration:<br>
+				</b><br> Login page display can be altered
+				 by modifying the settings available here.
+				<br>
+				<br>
+				<b>Service Name:</b> Name of the Service that is being added.<br><br>
+				<b>Service Interface:</b> Select the name of the Serice Interface. In case of radius server it can be primary or Secondary or Tertiary.<br><br>
+                <b>Route Interface:</b> Interface on which we are interested in sending the traffic. VLAN or IPSEC here.<br><br>
+                <b>VLAN Name:</b> Name of the VLAN, on which we are interested to send the traffic.<br><br>
+                <b>Policy Name:</b> Name of the IPSEC Policy, on which we are interested to send the traffic.<br><br>
+
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+			    </p>
+:|servicesRouteMgmtEnd|
+
+
+:|billingProfile|:
+                <p ><b>Billing Profiles:</b> Frontdesk User uses billing
+                profiles created here to generate user for respective profiles.
+                All configured properties of the profile will be applied to user
+                created.Using this page we can add/edit/delete billing
+                profiles.<br> 
+                <br>
+                <b>Billing Profile List:</b><br>
+                <br>
+                <b>Name:</b> Name of the Profile.<br>
+                <br>
+                <b>Billing Status:</b> Shows the list of accounting limitations applied on this profile.<br>
+                <br>
+                <b>Description:</b> Description of the profile entered by user while creating profile<br>
+                <br>
+                The actions that can be taken on billing profiles are: <br>
+				<br>
+				<b>(Check Box at First Column Header):</b> Selects all the billing profiles 
+				in the table. <br>
+				<br>
+                <b>Edit:</b> Can edit the added profiles. <br>
+                <br>
+                <b>Delete:</b> Will delete the profile selected.<br>
+                <br>
+                <b>Add New Billing Profile:</b> Will let you add a new profile.<br>
+                <br> </p>
+                <p ><b>Billing Profile Configuration:</b> <br><br>
+                We can create customized accounting and billing types using billing profiles.All profiles created here are 
+                displayed to frontdesk user on his homepage.He can generate temporary captiveportal users for a profile and 
+                those users will be having these accounting and billing properties applied<br>
+                <br>
+                <b>Profile Name:</b> Each profile will be having a profile Name to identify itself.<br>
+                <br>
+                <b>Profile Description:</b> This is the description of the profile <br>
+                <br>
+                <b>Allow Multi Login:</b> Checking this option will allow multiple users to use same captive portal login 
+                 credentials created for this profile to login simultaneously.<br>
+                <br>
+                <b>Allow customized account on Frontdesk:</b> Checking this option enables frontdesk user to give customized                  account name to the captiveportal users being created on this profile.<br>
+                <br>
+                <b>Allow batch generation on Frontdesk:</b> Checking this option enables frontdesk user to generate a batch 
+                of temporary CP users at one click.<br>
+                <br>
+                <b>Session Idle TimeOut:</b> Idle timeout for CP users generated for this profile.<br>
+                <br>
+                <b>Show alert message on login page while rest of usage time/traffic under:</b>Entera value here in 
+                Hours/Days/MB/GB to get an alert message when usage time/traffic left reaches the desired limit.By default 
+                if 0 is entered it implies no alert message is required.<br>
+                <br>
+                <b>Basic Limit By Duration:</b> Limitations on Duration basis.<br>
+                <br>
+                <b>Valid Begin:</b> There are 3 types of limiting user access by duration.<br>
+                Start While Account Created: Activate account when user is created<br>
+                <br>
+                <b>Start While Account Login:</b> Activate account when user first login using his credentials.<br>
+                <br>
+                <b>Begin From:</b> Activate account from this date<br>
+                <br>
+                <b>Allow frontdesk to modify duration:</b> Checking this option enables frontdesk user to modify duration 
+                 limits.<br>
+                <br>
+                <b>Basic Limit By Usage:</b> Limits on Usage basis.<br>
+                <br>
+                <b>Maximum Usage Time:</b> Maximum time user can stay login before his account expires <br>
+                <br>
+                <b>Maximum Usage Traffic:</b>Maximum traffic user can use before his account expires. 
+                Only inbound traffic shall be considered towards bandwidth usage.<br>
+                <br>
+                <b>Allow frontdesk to modify usage:</b>Checking this option enables frontdesk user to 
+                modify usage limits.<br>
+                <br> 
+                <br>
+				Click <b>Save </b> to save the settings.<br>
+				<br></p>
+:|billingProfileEnd|:
+
+:|staticFiltering|:
+				<p ><b>Static Filtering: </b> Approved or Blocked URL's can be
+                configured only when content Filtering is enabled.<br>
+                <br>
+                <b>Content Filtering </b>
+				<br>
+				Click the ON/OFF button in order to support 
+				URL filtering. The default is to have this 
+				feature disabled.<br>
+				<br>
+				<b>Web Proxy:</b> A proxy server (or simply, proxy) allows computers 
+				to route connections to other computers through the proxy, thus 
+				circumventing certain firewall rules. For example, if connections 
+				to a specific IP address are blocked by a firewall rule, the requests 
+				can be routed through a proxy that is not blocked by the rule, rendering 
+				the restriction ineffective. Enabling this feature blocks proxy 
+				servers.<br>
+				<br>
+				<b>Java:</b> Blocks java applets from being downloaded from pages 
+				that contain them. Java applets are small programs embedded in web 
+				pages that enable dynamic functionality of the page. A malicious 
+				applet can be used to compromise or infect computers. Enabling this 
+				setting blocks Java applets from being downloaded.<br>
+				<br>
+				<b>ActiveX:</b> Similar to Java applets, ActiveX controls are installed 
+				on a Windows computer while running Internet Explorer. A malicious 
+				ActiveX control can be used to compromise or infect computers. Enabling 
+				this setting blocks ActiveX applets from being downloaded.<br>
+				<br>
+				<b>Browser Cookies:</b> Cookies are used to store session information by 
+				websites that usually require login. However, several websites use 
+				cookies to store tracking information and browsing habits. Enabling this option filters 
+				out cookies from being created by a website.<br>
+				<br>
+				<b>Note:</b> Many websites require that cookies be accepted in order 
+				for the site to be accessed properly. Blocking cookies may cause 
+				many websites to not function properly.<br>
+				<br>
+                <br>
+                <b>Functional Priority of Features </b><br>
+                <br>
+                Following is the priority of the features. Starting from <b>Highest to the lowest</b> .<br>
+                <br>
+                <b>Protocol binding</b>,<br>
+                <b>Attack Checks (SYN Flood/WAN ping/ICMP Flood)</b>, <br>
+                <b>Block MAC</b>, <br>
+                <b>IP/MAC binding</b>, <br>
+                <b>Firewall Settings</b>, <br>
+                <b>Approved URLs</b>, <br>
+                <b>Blocked URLs</b>, <br>
+                <b>Category Filtering</b>, <br>
+                <b>Content Filtering</b>, <br>
+                <b>Attack checks (UDP Flood)</b>. <br>
+                <br>
+				Click <b>Save </b> to save the settings.<br>
+				<br>
+				Click <b>Cancel </b> to revert to previous settings.</p>
+:|staticFilteringEnd|:
+
+:|approvedUrls|:
+                <p ><b>Approved URL:</b> <br>
+                The list of websites here are always allowed to be accessed, and
+                have higher priority than blocked URL and lesser priority
+                than any configured firewall rules.
+                <br>Example: If www.yahoo.com is added to the blocked URL list and www.yahoo.com 
+				is added to the trusted domain list, then www.yahoo.com will be 
+				allowed but mail.yahoo.com will not allowed. <br>
+				<br>
+				<b>Approved URLs List</b><br>
+				<br>
+				<b>URL:</b> This is the URL or domain name for which 
+				content filtering is bypassed.<br>
+				<br>
+				The actions that can be taken on domains are: <br>
+				<br>
+				<b>Select All:</b> Selects all the domains 
+				in the table. <br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the approved URL configuration 
+				page, allowing you to make changes to the selected domain. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected approved URL (s).<br>
+				<br>
+				<b>Add New Approved URL:</b> Clicking this button will link to the approved URL configuration 
+				page.<br>
+                <br>
+		<b>Note:</b> User can configure MAX of 100 entries.Last '/' character in the browsed URL is not matched with the added URL.<br><br>
+                <b>Upload URLs List from File:</b> Browse and select the csv
+                format file on the local host containing the URLs.<br>
+                <br> 
+		<b>Export URLs List to File:</b> This features lets the user to
+                export approved URLs in a csv file.<br>
+                <br>
+				<b>Approved URLs Configuration:</b> <br>
+               
+				Those names entered in the trusted domain list will be bypassed 
+				by blocked URL filtering. Example: If *yahoo* is added to the blocked 
+				URLs list and www.yahoo.com is added to the trusted domain list, 
+				then www.yahoo.com will be allowed but mail.yahoo.com will not be allowed.
+				<br>
+				<br>
+				<b>URL:</b> Enter the domain name for which content filtering needs 
+				to be bypassed.<br>
+				<br>
+				Click <b>Save</b> to save the settings.<br>
+
+			<br>	<b>Approved URLs List configuration:</b> <br>
+                <br>
+				<b>URL List:</b> Click <b>Browse</b> or <b>Choose File</b> to select the csv format file 
+				from the local host containing approved URLs list .<br><br>
+                <b>Functional Priority of Features </b><br>
+                <br>
+                Following is the priority of the features. Starting from <b>Highest to the lowest</b> .<br>
+                <br>
+                <b>Protocol binding</b>,<br>
+                <b>Attack Checks (SYN Flood/WAN ping/ICMP Flood)</b>, <br>
+                <b>Block MAC</b>, <br>
+                <b>IP/MAC binding</b>, <br>
+                <b>Firewall Settings</b>, <br>
+                <b>Approved URLs</b>, <br>
+                <b>Blocked URLs</b>, <br>
+                <b>Category Filtering</b>, <br>
+                <b>Content Filtering</b>, <br>
+                <b>Attack checks (UDP Flood)</b>. <br>
+                <br>
+
+				Click <b>Upload</b> to upload the list to the device. <br></p>
+
+:|approvedUrlsEnd|:
+
+:|approvedUrlsAC|:
+                <p ><b>Approved URL:</b> <br>
+                The list of websites here are always allowed to be accessed, and
+                have higher priority than blocked URL and lesser priority
+                than any configured firewall rules.
+                <br>Example: If www.yahoo.com is added to the blocked URL list and www.yahoo.com 
+				is added to the trusted domain list, then www.yahoo.com will be 
+				allowed but mail.yahoo.com will not allowed. <br>
+				<br>
+				<b>Approved URLs List</b><br>
+				<br>
+				<b>URL:</b> This is the URL or domain name for which 
+				content filtering is bypassed.<br>
+				<br>
+				The actions that can be taken on domains are: <br>
+				<br>
+				<b>Select All:</b> Selects all the domains 
+				in the table. <br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the approved URL configuration 
+				page, allowing you to make changes to the selected domain. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected approved URL (s).<br>
+				<br>
+				<b>Add New Approved URL:</b> Clicking this button will link to the approved URL configuration 
+				page.<br>
+                <br>
+		<b>Note:</b> User can configure MAX of 200 entries.Last '/' character in the browsed URL is not matched with the added URL.<br><br>
+                <b>Upload URLs List from File:</b> Browse and select the csv
+                format file on the local host containing the URLs.<br>
+                <br> 
+		<b>Export URLs List to File:</b> This features lets the user to
+                export approved URLs in a csv file.<br>
+                <br>
+				<b>Approved URLs Configuration:</b> <br>
+               
+				Those names entered in the trusted domain list will be bypassed 
+				by keyword filtering. Example: If yahoo is added to the blocked 
+				keywords list and www.yahoo.com is added to the trusted domain list, 
+				then www.yahoo.com will be allowed but mail.yahoo.com will not be allowed.
+				<br>
+				<br>
+				<b>URL:</b> Enter the domain name for which content filtering needs 
+				to be bypassed.<br>
+				<br>
+				Click <b>Save</b> to save the settings.<br>
+
+			<br>	<b>Approved URLs List configuration:</b> <br>
+                <br>
+				<b>URL List:</b> Click <b>Browse</b> or <b>Choose File</b> to select the csv format file 
+				from the local host containing approved URLs list .<br><br>
+                <b>Functional Priority of Features </b><br>
+                <br>
+                Following is the priority of the features. Starting from <b>Highest to the lowest</b> .<br>
+                <br>
+                <b>Protocol binding</b>,<br>
+                <b>Attack Checks (SYN Flood/WAN ping/ICMP Flood)</b>, <br>
+                <b>Block MAC</b>, <br>
+                <b>IP/MAC binding</b>, <br>
+                <b>Firewall Settings</b>, <br>
+                <b>Approved URLs</b>, <br>
+                <b>Blocked URLs</b>, <br>
+                <b>Category Filtering</b>, <br>
+                <b>Content Filtering</b>, <br>
+                <b>Attack checks (UDP Flood)</b>. <br>
+                <br>
+
+				Click <b>Upload</b> to upload the list to the device. <br></p>
+
+:|approvedUrlsACEnd|:
+
+:|blockedKeywords|:
+                <p ><b>Blocked URLs:</b> The list of blocked URLs have
+                lower priority than approved URLs, but higher priority than configured
+                firewall rules. URLs defined in this list can be used to
+                block LAN access to URL's. <br>
+                <br>
+                
+				<b>Blocked All URL Configuration:</b> Click the Block All URL ON/OFF button in order to block all the URL. The default is to have this feature is disabled.<br>
+				<br>
+				<b>Blocked URLs List:</b> The table lists all the Blocked URLls 
+				and allows several operations on the URLs. Up to 64 URLs 
+				can be added to the list<br>
+				<br>
+                <b>URL:</b> The URL to be blocked. All website 
+				names (web site URL, newsgroup name, etc.) or pages that contain 
+                the specified URL will be blocked by the router. With this 
+                feature we can also block specific domains eg "*.yahoo.com". If the user
+                wants to block the whole yahoo.com domain, yahoo.com can be given as the 
+                URL to block. If the user wants to block all sites except mail with 
+                yahoo.com domain, the user can add *.yahoo.com string to the blocked URLs 
+                page and mail.yahoo.com to Approved URLs page. This way all sites with domain
+                "yahoo.com" eg., astrology.yahoo.com, news.yahoo.com etc will be blocked but 
+                mail.yahoo.com will be accessible.<br>
+                <br>
+				<b>Status:</b> The status of the rule can be enabled or disabled.<br>
+				<br>
+				The actions that can be taken on URLs are: <br>
+				<br>
+				<b>Select All</b> Selects all the URLs
+				in the Blocked URLs table. <br>
+				<br>
+				<b>Edit:</b> Opens the blocked URL configuration page.<br>
+				<br>
+				<b>Enable:</b> Enables the selected URLs to block list<br>
+				<br>
+				<b>Disable:</b> Disables the selected URLs from block list.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected URL or URLs from block 
+				list.<br>
+				<br>
+				<b>Add New URL:</b> Opens the blocked URL configuration page to add 
+				a new rule.<br>
+                <br>
+                <b>Upload URLs List from File:</b> Browse and select the csv
+                format file on the local host containing the URLs.<br>
+                <br>
+                <b>Export URLs List to File:</b> This features lets the user to
+                import URLs in a csv file.<br>
+                <br>
+
+				<b>Blocked URLs Configuration:</b> <br>
+				Example: If *yahoo* is added to the list, any website containing the 
+ 				word yahoo in its URL or page contents will be blocked<br>
+ 				<br>
+				<b>Blocked URL:</b> All website names (web site URL, newsgroup name, 
+				etc.) or pages that contain the specified URL will be 
+				blocked by the router. A single URL can be up to 63 characters 
+				in length.<br>
+				<br>
+                <b>Note:</b> Last '/' character in the browsed URL is not matched with the added URL. <br>
+                <br>
+				Click <b>Save</b> to save the configuration.<br>
+				
+				<br> <b>Blocked URLs List Configuration:</b> <br>
+                                
+                                <br><b>Blocked URL List:</b> Click <b>Browse</b> or <b>Choose File</b> to select a 
+				cvs file containig the list of URLs to be blocked from the host.<br>
+                                <br>
+                                <b>Functional Priority of Features </b><br>
+                <br>
+                Following is the priority of the features. Starting from <b>Highest to the lowest</b> .<br>
+                <br>
+                <b>Protocol binding</b>,<br>
+                <b>Attack Checks (SYN Flood/WAN ping/ICMP Flood)</b>, <br>
+                <b>Block MAC</b>, <br>
+                <b>IP/MAC binding</b>, <br>
+                <b>Firewall Settings</b>, <br>
+                <b>Approved URLs</b>, <br>
+                <b>Blocked URLs</b>, <br>
+                <b>Category Filtering</b>, <br>
+                <b>Content Filtering</b>, <br>
+                <b>Attack checks (UDP Flood)</b>. <br>
+                <br>
+                                Click <b>Upload</b> to Upload the file.<br>
+	
+		
+	</p>
+:|blockedKeywordsEnd|:
+
+:|dynamicFiltering|:
+                <p ><b>Dynamic Filtering:</b> You can block access to certain
+                category of websites based on this configuration. List of
+                categories to be blocked. <br>
+                <br>
+                <b>Non-Managed Action :</b> Action to be taken for the Non Managed Site. Allow or Block(default is allow).<br>
+                <br>
+                <b>Allow Override :</b> Allow the sites categorized under Blocked categories.<br>
+                <br>
+                <b>Override Timeout :</b> Seconds for which all disallowed categories will be allowed.<br>
+                <br>
+                <b>Update on Access :</b> Restart the override timer on each new access to disallowed categories.<br>
+                <br>
+                <b>Dynamic Filtering Configuration:</b> Click ON/OFF button for the categories to be configured for 
+                blocking. Access to a website belonging to one of these configured categories will be 
+                blocked with an error page.<br>
+                <br>
+                <b>Adult :</b>Sites that host explicit sex content, nudity and sites that use profanity.<br>
+                <br>
+                <b>News:</b>Sites that offer news and information on current events, including newspapers, broadcasters and other publishers.<br>
+                <br>
+                <b>Job Search:</b>Sites that offer job listings, interview coaching and other employment-related services.<br>
+                <br>
+                <b>Gambling:</b>Sites that offer online gambling or information about gambling.<br>
+                <br>
+                <b>Travel/Tourism:</b>Sites with travel and tourism information like city maps and services including planning trips, reservations
+                                      for bus/train/airlines, hotel booking etc.<br>
+                <br>
+                <b>Shopping:</b>Online shops, catalogs, auction sites and classified ads etc.<br>
+                <br>
+                <b>Entertainment:</b>Websites for TV, movies, entertainment news etc. and sites hosting video content of movies,shows etc.<br>
+                <br>
+                <b>Chat Rooms/IMs:</b>Social networking sites, chatrooms and instant messaging sites.<br>
+                <br>
+                <b>Dating Sites:</b>Online dating, matchmaking, relationship advice, personal ads and web pages related to marriage.<br>
+                <br>
+                <b>Game Sites:</b>Sites that offer online games, MORPG and information about computer games, cheat codes etc.<br>
+                <br>
+                <b>Investment Sites:</b>Sites for brokerages, trusts, insurance and other investments related organizations.<br>
+                <br>
+                <b>E-Banking:</b>Sites providing online banking services offered by financial institutions<br>
+                <br>
+                <b>Crime Terrorism:</b>Sites providing information on anti-social activities like murder, sabotage, bombing etc.<br>
+                <br>
+                <b>Personal Beliefs/Cults:</b>Sites about religion, places of worship, religious groups, and occultism.<br>
+                <br>      
+                <b>Politics:</b>Sites about politics, elections and legislation and sites that promote a politician or political party.<br>
+                <br>
+                <b>Sports:</b>Sites about sports teams, fan clubs, and generally about all kinds of sports.<br>
+                <br>
+                <b>www-E-Mail Sites:</b>Websites that allow users to send and/or receive email through a web accessible email account.<br>
+                <br>
+                <b>Violence/Undesirable:</b>Sites that promote violence, militancy, hatred, racism or contain gory information.<br>
+                <br>
+                <b>Malicious:</b>Sites that are infected and sites that are used as a channel to distribute malwares.<br>
+                <br>
+                <b>Search Sites:</b>Search engine websites supporting searching of the web and other online content.<br>
+                <br>
+                <b>Health Sites:</b>Sites related to personal health and medical services with information on finding doctors, recovery,etc.<br>
+                <br>
+                <b>Clubs and Societies:</b>Sites dedicated to communities, bulletin boards and clubs.<br>
+                <br>
+                <b>Music/Video:</b>Sites for internet radio, streaming media, musicians, bands, and MP3 download sites.<br>
+                <br>
+                <b>Business Oriented:</b>Sites for large corporations, enterprises, small and medium business firms.<br>
+                <br>
+                <b>Government Blocking List:</b>Australian Broadcasting Authorities'(ABA) block list<br>
+                <br>
+                <b>Educational:</b>Websites of educational institutions and sites containing educational materials, reference materials including
+                                   dictionaries, and encyclopedias etc.<br>
+                <br>
+                <b>Advertising:</b>Sites that serve advertisements. This category is meant for identifying and blocking ad servers and
+                                   not as an ad filter.<br>
+                <br>
+                <b>Drugs/Alcohol:</b>Sites that promote or sell alcoholic beverages and sites that give directions on how to
+                                     make cocktail recipes etc.<br>
+                <br>
+                <b>Computing/IT:</b>Sites about computing, software, hardware and technology and websites of companies providing 
+                                    these technology products.<br>
+                <br>
+                <b>Swimsuit/Lingerie/Models:</b>Sites displaying or selling lingerie/bikini etc. that could be considered as not 
+                                                relevant for younger age-groups.<br>
+                <br>
+                <b>Remote Control/Desktop:</b>RemoteControl/Desktop sites.<br>
+                <br>
+                <b>Functional Priority of Features </b><br>
+                <br>
+                Following is the priority of the features. Starting from <b>Highest to the lowest</b> .<br>
+                <br>
+                <b>Protocol binding</b>,<br>
+                <b>Attack Checks (SYN Flood/WAN ping/ICMP Flood)</b>, <br>
+                <b>Block MAC</b>, <br>
+                <b>IP/MAC binding</b>, <br>
+                <b>Firewall Settings</b>, <br>
+                <b>Approved URLs</b>, <br>
+                <b>Blocked URLs</b>, <br>
+                <b>Category Filtering</b>, <br>
+                <b>Content Filtering</b>, <br>
+                <b>Attack checks (UDP Flood)</b>. <br>
+                <br>
+                Click <b>Save</b> to save the settings.<br>
+                <br>
+                Click <b>Cancel</b> to revert to previous settings.<br>
+                </p>
+:|dynamicFilteringEnd|:
+
+:|urlFilteringACL|:
+                <p>
+                <b> URL Filtering Access Control:</b><br>
+                Disable or Enable the URL Filtering Access Control feature.<br>
+                <br>
+                <b>Action:</b><br>
+                Choose blacklist or whitelist option to take action on the
+                configured profile's user base or network.<br>
+                <b>Blacklist:</b><br>
+                The configured network is controlled by static or dynamic
+                filtering rules, while rest clients are not.<br>
+                <b>Whitelist:</b><br>
+                The configured network is not controlled by static or dynamic
+                filtering rules, while rest clients are.<br>
+                <br>
+                <b>URL Filtering Access Control List:</b><br>
+                <b>Profile Name:</b><br>
+                Shows the name of the profile has been configured for a
+                particular network.<br>
+                <br>
+                <b>Type:</b><br>
+                Shows the network type selected for configuring a
+                profile.<br>
+                <b>Single IP:</b><br>
+                Configure the IP Address of the client to be controlled in
+                the ACL profile.<br>
+                <b>Range:</b><br>
+                Configure the IP Address Range of the clients to be controlled
+                in the ACL profile.<br>
+                <b>Interface:</b><br>
+                Configure the interface from the drop down list to select the
+                complete network to be controlled in the ACL profile.<br>
+                <br>
+                <b>Network:</b><br>
+                Shows the configured network for the ACL profile.
+                <b>IP Address:</b><br>
+                Configure the IP Address of the client to be controlled in
+                the ACL profile when selected the profile type to be Single
+                IP.<br>
+                <b>Start Address:</b><br>
+                Configure the Start IP Address of the clients to be controlled in
+                the ACL profile when the selected profile type is Range.<br>
+                <b>End Address:</b><br>
+                Configure the End IP Address of the clients to be controlled in
+                the ACL profile when the selected profile type is Range.<br>
+                <b>Interface:</b><br>
+                Select the Interface from the drop down list to select the
+                complete network to be controlled in the ACL profile when the
+                selected profile type is Interface.<br>
+                <br>
+                Click <b>Add New Profile</b> to create a new ACL profile.<br>
+                Right Click  and select <b>Edit</b> to edit the ACL profile.<br>
+                Right Click and <b>Select All</b> to select all the configured
+                profiles.<br>
+                Right Click  and select <b>Delete</b> to delete the ACL profile.<br>
+                Click <b>Save</b> to save the settings.<br>
+                <br>
+                Click <b>Cancel</b> to revert to previous settings.<br>
+                <br>
+                </p>
+:|urlFilteringACLEnd|:
+
+:|firewallRules|:
+                <p><b>Default Outbound Policy for IPv4:</b> <br>
+				This configuration field determines whether LAN or DMZ users can 
+				access the internet in the absence of specific allowed outbound rules. 
+				To permit any outbound traffic to pass through the firewall and 
+				reach the WAN, use <b>Allow Always</b> as the default outbound policy.
+				<br>
+				<br>
+				In order to closely manage the outbound traffic use <b>Block Always</b> 
+				as the default outbound policy. In this case the router admin will 
+				need to configure firewall and application rules in order to permit 
+				outbound traffic from LAN and DMZ addresses. <br>
+				<br></p>
+				<p ><b>Firewall Rules:</b> Inbound rules govern access from the WAN to the LAN or DMZ. Using firewall rules allow you to specify which local resources can be accessed from the internet. By default all access from the internet blocked from accessing the secure LAN, except in response to requests from the LAN or DMZ. Outbound (LAN/DMZ to WAN) rules restrict access to traffic leaving your network, selectively allowing only specific local users to access outside resources. Firewall rules are applied in the order listed. As a general rule, you should move the strictest rules (those with the most specific services or addresses) to the top of the list.  <br>
+                <br>
+				<b>IPv4 Firewall Rules List:</b><br>
+				The List of Available Firewall Rules table includes all firewall 
+				rules for this device and allows several operations on the firewall 
+				rules. <br>
+				<br>
+				<b>Status:</b> The status of the rule can be Enabled (active) or 
+				Disabled (configured but not in use).<br>
+				<br>
+				<b>From Zone:</b> The source of the traffic that is controlled by 
+				this firewall rule: LAN, VLAN, WAN or DMZ.<br>
+				<br>
+				<b>To Zone:</b> The destination of the traffic that is controlled 
+				by this firewall rule: Secure, Secure(VLAN) or Public.<br>
+				<br>
+				<b>Service:</b> The service that is controlled by this firewall 
+				rule. The name usually indicates the type of traffic the rule covers 
+				such as FTP, SSH, telnet, ping, etc. Services not already in the 
+				list can be added as a Custom Service.<br>
+				<br>
+				<b>Action:</b> The action to be taken on the enabled rule:<br>
+				<br>
+				<b>Block Always:</b> Block selected service at all times.<br>
+				<b>Enable Always:</b> Allow data matching the selected service to 
+				pass through at all times. <br>
+				<b>Block by schedule, otherwise allow:</b> Works in conjunction 
+				with a predefined schedule. The selected service will be blocked 
+				during the schedule interval and will be allowed to pass through 
+				at other times. <br>
+				<b>Allow by schedule, otherwise block:</b> Works in conjunction 
+				with a predefined schedule. The selected service will be allowed 
+				to pass through during the schedule interval and will be blocked 
+				at other times. <br>
+				<br>
+				<b>Source Hosts:</b> The hosts that originate the traffic for this 
+				firewall rule: Any, Single, Range.<br>
+				<br>
+				<b>Destination Hosts:</b> The hosts that receive the traffic for 
+				this firewall rule: Any, Single, Range.<br>
+				<br>
+				<b>Local Server:</b> An IP address and port number of a machine 
+				on the secure zone(LAN) which is hosting the server. It is displayed 
+				in the form: &lt;IP address:port number&gt;. <br>
+				<br>
+				For example, if a machine with an IP address of 192.168.1.100 on 
+				the LAN side is running a telnet server on port 2000, then the table 
+				will display 192.168.10.100:2000. If the telnet server is running 
+				on the default port (port 23), then the table will display only 
+				the IP address.<br>
+				<br>
+				<b>Internet Destination:</b> The WAN port that is the destination 
+				for the traffic.<br>
+				<br>
+				The actions that can be taken on firewall rules are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the firewall 
+				rules in the table. <br>
+				<br>
+				<b>Edit:</b> Opens the Firewall Rule Configuration page to edit 
+				the selected rule. <br>
+				<br>
+				<b>Enable:</b> Enables the selected firewall rules.<br>
+				<br>
+				<b>Disable:</b> Disables the selected firewall rules.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected firewall rule(s).<br>
+				<br>
+				<b>Add New IPV4 Firewall Rule:</b> Opens the Firewall Rule Configuration page to add a 
+				new rule. <br><br>
+				<b>Note:</b> User can configure MAX of 600 entries.<br><br> </p>
+				<p ><b>Firewall Rules Configuration:<br>
+				From Zone:</b> Set the source for the traffic that is controlled 
+				by this rule: Secure (LAN), Secure (VLAN), Insecure (WAN1/WAN2), or DMZ.<br>
+				<br>
+				<b>Available VLANs:</b> Select VLAN name from the list of available VLANs
+				if From Zone is selected as SECURE (VLAN).
+				<br>
+				<br>
+				<b>To Zone:</b> Set the destination for traffic that is controlled 
+				by this rule: Insecure, Secure (VLAN) or Public.<br>
+				<br>
+				<b>Available VLANs:</b> Select VLAN name from the list of available VLANs
+				if To Zone is selected as SECURE (VLAN). If From Zone is chosen as SECURE (VLAN)  
+				then VLAN selected there will not be displayed in this drop&#45;down list<br>
+				<br>
+				<b>Service:</b> Choose the type of service that is controlled by 
+				this firewall rule. Common services are included in the drop&#45;down 
+				list. You can add additional services on the Firewall &gt; Services 
+				page.<br>
+				<br>
+<b>Note:</b> While configuring firewall rules for TFTP, H.323 or SIP, please make sure that the corresponding ALG is also turned on. This is required to facilitate the data traffic which will follow the initial control connection negotiation.<br><br>
+				<b>Action:</b> Choose the action to be taken:<br>
+				<br>
+				<b>Block Always:</b> Block the selected service at all times.
+				<br>
+				<b>Enable Always:</b> Allow the selected service to pass through 
+				at all times. <br>
+				<b>Block by schedule, otherwise allow:</b> Works in conjunction 
+				with a schedule defined on the Schedule Configuration page. The 
+				selected service will be blocked during the scheduled interval and 
+				will be allowed to pass through at other times. <br>
+				<b>Allow by schedule, otherwise block:</b> Works in conjunction 
+				with a schedule defined on the Schedule Configuration page. The 
+				selected service will be allowed to pass through during the scheduled 
+				interval and will be blocked at other times. <br>
+				<br>
+				<b>Select Schedule:</b> Choose a predefined schedule from the drop&#45;down 
+				list. <br>
+				<br>
+				<b>Source Hosts:</b> Select one of the following:<br>
+				<br>
+				<b>Any:</b> Choose this option for a rule that applies to traffic 
+				from all hosts.<br>
+				<b>Single Address:</b> Choose this option for a rule that applies 
+				to traffic from one host. Enter the IP address of the host in the
+				<b>From</b> box.<br>
+				<b>Address Range:</b> Choose this option for a rule that applies 
+				to traffic from a group of computers/devices within an IP address 
+				range. To specify the range, enter the first address in the <b>From</b> 
+				box, and enter the final address in the <b>To</b> box.<br>
+				<br>
+				<b>Destination Hosts:</b> Select one of the following:<br>
+				<b>Any:</b> Choose this option for a rule that applies to traffic 
+				destined for all hosts.<br>
+				<b>Single Address:</b> Choose this option for a rule that applies 
+				to traffic destined for one host. Enter the IP address of the host 
+				in the <b>From</b> box.<br>
+				<b>Address Range:</b> Choose this option for a rule that applies 
+				to traffic destined for a group of computers/devices within an IP 
+				address range. To specify the range, enter the first address in 
+				the <b>From</b> box, and enter the final address in the <b>To</b> 
+				box.<br>
+				<br>
+				<b>Log:</b> Specify whether or not the packets for this rule should 
+				be logged. To log details for all packets that match this rule, 
+				select Always. Select Never to disable logging.<br>
+&nbsp;<br>
+				For example, if an outbound rule for a schedule is selected as Block 
+				Always, then for every packet that tries to make an outbound connection 
+				for that service, a message with the packet&#39;s source address and 
+				destination address (and other information) will be recorded in 
+				the log. Enabling logging may generate a significant volume of log 
+				messages and is recommended for debugging purposes only.<br>
+				<br>
+				<b>QoS Priority:</b> Assign a priority to IP packets of this service. 
+				The priorities are defined by &quot;Type of Service (TOS) in the Internet 
+				Protocol Suite&quot; standards, RFC 1349. The gateway marks the Type 
+				Of Service (TOS) field as defined below:<br>
+				<br>
+				<b>Normal&#45;Service:</b> No special priority is given to the traffic. 
+				The IP packets for services with this priority are marked with a 
+				TOS value of 0. <br>
+				<b>Minimize&#45;Cost:</b> Choose this option when data must be transferred 
+				over a link that has a lower &quot;cost&quot;. The IP packets for services 
+				with this priority are marked with a TOS value of 2. <br>
+				<b>Maximize&#45;Reliability:</b> Choose this option when data needs 
+				to travel to the destination over a reliable link and with little 
+				or no retransmission. The IP packets for services with this priority 
+				are marked with a TOS value of 4. <br>
+				<b>Maximize&#45;Throughput:</b> Choose this option when the volume of 
+				data transferred during an interval is important even if the latency 
+				over the link is high. The IP packets for services with this priority 
+				are marked with a TOS value of 8. <br>
+				<b>Minimize&#45;Delay:</b> Choose this option when the time required 
+				(latency) for the packet to reach the destination must be low. The 
+				IP packets for services with this priority are marked with a TOS 
+				value of 16.<br>
+				<br>
+				<b>Source NAT Settings</b><br>
+				<br>
+				These settings are available when the rule manages traffic being 
+				allowed from the LAN / DMZ to the WAN. Source Network Address Translation 
+				(SNAT) requires rewriting the source or destination IP address of 
+				incoming IP packets as they pass through the firewall. <br>
+				<b>Note:</b>Source Nat Settings options will be configurable if at
+                least one WAN is in NAT Routing Mode independent of the WAN Mode
+                configured.<br>
+				<br>
+				<b>External IP Address:</b> You can use choose WAN interface address 
+				or choose Single Address. <br>
+				<br>
+				<b>Single IP Address:</b> If Single Address was selected for the 
+				External IP address, define it here.<br>
+				<br>
+				<b>WAN Interface:</b> Choose one of the available configured WAN 
+				interfaces if the SNAT is to be done on all matching traffic coming 
+				from that interface.<br>
+				<br>
+				<b>Destination NAT Settings</b><br>
+				These settings are required when the traffic is coming from the 
+				WAN to the DMZ or the LAN. Destination Network Address Translation 
+				maps a public IP address (your WAN1 address, WAN2
+				address, or another address) to an IP address on your private network.<br>
+				<br>
+				<b>Internal IP Address:</b> Specify an IP address of a machine on 
+				the Local Network which is hosting the server. <br>
+				<br>
+				<b>Enable Port Forwarding:</b> Check this box to enable port forwarding 
+				to the port that you specify in the Translate Port Number field.<br>
+				<br>
+				<b>Translate Port Number:</b> Enter the port number to use for port 
+				forwarding. For example, if a machine on the Local Network side 
+				is running a telnet server on port 2000, then check the Enable Port 
+				Forwarding box and type 2000 in the Translate Port Number field. 
+				If the server is listening on the default port 23, then the box 
+				can be left unchecked.<br>
+				<br>
+				<b>External IP Address:</b> Select the internet destination IP address 
+				that is used for this firewall rule: WAN1, WAN2, 
+				or Other. If you choose Other, enter the IP address in the Other 
+				IP Address field.<br>
+				<br>
+				<b>Other IP Address:</b> Enter the WAN IP address that will map 
+				to the internal server. <br>
+				<br>
+                <b>Functional Priority of Features </b><br>
+                <br>
+                Following is the priority of the features. Starting from <b>Highest to the lowest</b> .<br>
+                <br>
+                <b>Protocol binding</b>,<br>
+                <b>Attack Checks (SYN Flood/WAN ping/ICMP Flood)</b>, <br>
+                <b>Block MAC</b>, <br>
+                <b>IP/MAC binding</b>, <br>
+                <b>Firewall Settings</b>, <br>
+                <b>Approved URLs</b>, <br>
+                <b>Blocked URLs</b>, <br>
+                <b>Category Filtering</b>, <br>
+                <b>Content Filtering</b>, <br>
+                <b>Attack checks (UDP Flood)</b>. <br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				</p>
+:|firewallRulesEnd|:
+
+:|firewallRulesIpv6|:
+		<p><b>Default Outbound Policy for IPv6:</b> <br>
+				This configuration field determines whether LAN or DMZ users can 
+				access the internet in the absence of specific allowed outbound rules. 
+				To permit any outbound traffic to pass through the firewall and 
+				reach the WAN, use <b>Allow Always</b> as the default outbound policy.
+				<br>
+				<br>
+				In order to closely manage the outbound traffic use <b>Block Always</b> 
+				as the default outbound policy. In this case the router admin will 
+				need to configure firewall and application rules in order to permit 
+				outbound traffic from LAN and DMZ addresses. <br>
+				<br></p>
+				<p ><b>Firewall Rules:</b> Inbound rules govern access from the WAN to the LAN or DMZ. Using firewall rules allow you to specify which local resources can be accessed from the internet. By default all access from the internet blocked from accessing the secure LAN, except in response to requests from the LAN or DMZ. Outbound (LAN/DMZ to WAN) rules restrict access to traffic leaving your network, selectively allowing only specific local users to access outside resources. Firewall rules are applied in the order listed. As a general rule, you should move the strictest rules (those with the most specific services or addresses) to the top of the list.  <br>
+                <br>
+				<b>IPv6 Firewall Rules List:</b><br>
+				The List of Available Firewall Rules table includes all firewall 
+				rules for this device and allows several operations on the firewall 
+				rules. <br>
+				<br>
+				<b>Status:</b> The status of the rule can be Enabled (active) or 
+				Disabled (configured but not in use).<br>
+				<br>
+				<b>From Zone:</b> The source of the traffic that is controlled by 
+				this firewall rule: LAN, VLAN, WAN or DMZ.<br>
+				<br>
+				<b>To Zone:</b> The destination of the traffic that is controlled 
+				by this firewall rule: Secure, Secure(VLAN) or Public.<br>
+				<br>
+				<b>Service:</b> The service that is controlled by this firewall 
+				rule. The name usually indicates the type of traffic the rule covers 
+				such as FTP, SSH, telnet, ping, etc. Services not already in the 
+				list can be added as a Custom Service.<br>
+				<br>
+				<b>Action:</b> The action to be taken on the enabled rule:<br>
+				<br>
+				<b>Block Always:</b> Block selected service at all times.<br>
+				<b>Enable Always:</b> Allow data matching the selected service to 
+				pass through at all times. <br>
+				<b>Block by schedule, otherwise allow:</b> Works in conjunction 
+				with a predefined schedule. The selected service will be blocked 
+				during the schedule interval and will be allowed to pass through 
+				at other times. <br>
+				<b>Allow by schedule, otherwise block:</b> Works in conjunction 
+				with a predefined schedule. The selected service will be allowed 
+				to pass through during the schedule interval and will be blocked 
+				at other times. <br>
+				<br>
+				<b>Source Hosts:</b> The hosts that originate the traffic for this 
+				firewall rule: Any, Single, Range.<br>
+				<br>
+				<b>Destination Hosts:</b> The hosts that receive the traffic for 
+				this firewall rule: Any, Single, Range.<br>
+				<br>
+				The actions that can be taken on firewall rules are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the firewall 
+				rules in the table. <br>
+				<br>
+				<b>Edit:</b> Opens the Firewall Rule Configuration page to edit 
+				the selected rule. <br>
+				<br>
+				<b>Enable:</b> Enables the selected firewall rules.<br>
+				<br>
+				<b>Disable:</b> Disables the selected firewall rules.<br>
+				<br>
+				<b>Delete:</b> Deletes the selected firewall rule(s).<br>
+				<br>
+				<b>Add New IPV6 Firewall Rule:</b> Opens the Firewall Rule Configuration page to add a 
+				new rule. <br><br>
+				<b>Note:</b> User can configure MAX of 600 entries.<br><br></p>
+				<p ><b>Firewall Rules Configuration:<br>
+				From Zone:</b> Set the source for the traffic that is controlled 
+				by this rule: Secure (LAN), Secure (VLAN), Insecure (WAN1/WAN2), or DMZ.<br>
+				<br>
+				<b>Available VLANs:</b> Select VLAN name from the list of available VLANs
+				if From Zone is selected as SECURE (VLAN).
+				<br>
+				<br>
+				<b>To Zone:</b> Set the destination for traffic that is controlled 
+				by this rule: Insecure, Secure (VLAN) or Public.<br>
+				<br>
+				<b>Available VLANs:</b> Select VLAN name from the list of available VLANs
+				if To Zone is selected as SECURE (VLAN). If From Zone is chosen as SECURE (VLAN)  
+				then VLAN selected there will not be displayed in this drop&#45;down list<br>
+				<br>
+				<b>Service:</b> Choose the type of service that is controlled by 
+				this firewall rule. Common services are included in the drop&#45;down 
+				list. You can add additional services on the Firewall &gt; Services 
+				page.<br>
+				<br>
+				<b>Action:</b> Choose the action to be taken:<br>
+				<br>
+				<b>Block Always:</b> Block the selected service at all times.
+				<br>
+				<b>Enable Always:</b> Allow the selected service to pass through 
+				at all times. <br>
+				<b>Block by schedule, otherwise allow:</b> Works in conjunction 
+				with a schedule defined on the Schedule Configuration page. The 
+				selected service will be blocked during the scheduled interval and 
+				will be allowed to pass through at other times. <br>
+				<b>Allow by schedule, otherwise block:</b> Works in conjunction 
+				with a schedule defined on the Schedule Configuration page. The 
+				selected service will be allowed to pass through during the scheduled 
+				interval and will be blocked at other times. <br>
+				<br>
+				<b>Select Schedule:</b> Choose a predefined schedule from the drop&#45;down 
+				list. <br>
+				<br>
+				<b>Source Hosts:</b> Select one of the following:<br>
+				<br>
+				<b>Any:</b> Choose this option for a rule that applies to traffic 
+				from all hosts.<br>
+				<b>Single Address:</b> Choose this option for a rule that applies 
+				to traffic from one host. Enter the IP address of the host in the
+				<b>From</b> box.<br>
+				<b>Address Range:</b> Choose this option for a rule that applies 
+				to traffic from a group of computers/devices within an IP address 
+				range. To specify the range, enter the first address in the <b>From</b> 
+				box, and enter the final address in the <b>To</b> box.<br>
+				<br>
+				<b>Destination Hosts:</b> Select one of the following:<br>
+				<b>Any:</b> Choose this option for a rule that applies to traffic 
+				destined for all hosts.<br>
+				<b>Single Address:</b> Choose this option for a rule that applies 
+				to traffic destined for one host. Enter the IP address of the host 
+				in the <b>From</b> box.<br>
+				<b>Address Range:</b> Choose this option for a rule that applies 
+				to traffic destined for a group of computers/devices within an IP 
+				address range. To specify the range, enter the first address in 
+				the <b>From</b> box, and enter the final address in the <b>To</b> 
+				box.<br>
+				<br>
+				<b>Log:</b> Specify whether or not the packets for this rule should 
+				be logged. To log details for all packets that match this rule, 
+				select Always. Select Never to disable logging.<br>
+&nbsp;<br>
+				For example, if an outbound rule for a schedule is selected as Block 
+				Always, then for every packet that tries to make an outbound connection 
+				for that service, a message with the packet&#39;s source address and 
+				destination address (and other information) will be recorded in 
+				the log. Enabling logging may generate a significant volume of log 
+				messages and is recommended for debugging purposes only.<br>
+				<br>
+				<b>Source NAT Settings</b><br>
+				<br>
+				These settings are available when the rule manages traffic being 
+				allowed from the LAN / DMZ to the WAN. Source Network Address Translation 
+				(SNAT) requires rewriting the source or destination IP address of 
+				incoming IP packets as they pass through the firewall. <br>
+				<br>
+				<b>External IP Address:</b> You can use choose WAN interface address 
+				or choose Single Address. <br>
+				<br>
+				<b>Single IP Address:</b> If Single Address was selected for the 
+				External IP address, define it here.<br>
+				<br>
+				<b>WAN Interface:</b> Choose one of the available configured WAN 
+				interfaces if the SNAT is to be done on all matching traffic coming 
+				from that interface.<br>
+				<br>
+				<b>Destination NAT Settings</b><br>
+				These settings are required when the traffic is coming from the 
+				WAN to the DMZ or the LAN. Destination Network Address Translation 
+				maps a public IP address (your WAN1 address, WAN2
+				address, or another address) to an IP address on your private network.<br>
+				<br>
+				<b>Internal IP Address:</b> Specify an IP address of a machine on 
+				the Local Network which is hosting the server. <br>
+				<br>
+				<b>Enable Port Forwarding:</b> Check this box to enable port forwarding 
+				to the port that you specify in the Translate Port Number field.<br>
+				<br>
+				<b>Translate Port Number:</b> Enter the port number to use for port 
+				forwarding. For example, if a machine on the Local Network side 
+				is running a telnet server on port 2000, then check the Enable Port 
+				Forwarding box and type 2000 in the Translate Port Number field. 
+				If the server is listening on the default port 23, then the box 
+				can be left unchecked.<br>
+				<br>
+				<b>External IP Address:</b> Select the internet destination IP address 
+				that is used for this firewall rule: WAN1, WAN2, 
+				or Other. If you choose Other, enter the IP address in the Other 
+				IP Address field.<br>
+				<br>
+				<b>Other IP Address:</b> Enter the WAN IP address that will map 
+				to the internal server. <br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				</p>
+:|firewallRulesIpv6End|:
+
+:|bridgeFirewallRules|:
+			<br>
+			<p><b>Bridge Firewall Rules</b><p>
+			<br>
+			<p><b>List of Bridge Firewall Rules</b></p>
+			<br>
+			<p>The List of Available Bridge Firewall Rules table includes all firewall rules for the bridged 
+			network interfaces and allows several operations on the firewall rules.</p>
+                        <br>
+			<p><b>Status:</b> The status of the rule can be Enabled (active) or Disabled (configured but not in 			    use).</p>
+			<br>
+			<p><b>Direction:</b> The direction of the source of the traffic that is controlled by this firewall 			    rule: Inbound or Outbound.</p>
+			<br>
+			<p><b>Service:</b> The service that is controlled by this firewall rule.The name usually indicates 
+			the type of traffic the rule covers such as FTP, SSH, telnet, ping, etc. Services not already in the 			    list can be added as a Custom Service.</p>
+			<br>
+			<p><b>Action:</b> The action to be taken on the enabled rule:</p>
+			<br>
+			<p><b>Block Always:</b> Block selected service at all times.</p>
+			<p><b>Allow Always:</b> Allow data matching the selected service to pass through at all times.</p>
+			<br>
+			<p><b>Source Hosts:</b> The hosts that originate the traffic for this firewall rule: Any, Single,
+			 Range.</p>
+			<br>
+			<p><b>Destination Hosts:</b> The hosts that receive the traffic for this firewall rule: Any, Single, 			    Range.</b>
+			<br>
+			<p><b>Source MAC:</b> The MAC Address of the hosts that originate the traffic for this firewall rule			    : Any , Single, Range.</p>
+			<br>			
+			<p><b>Destination MAC:</b> The MAC Address of the hosts that receive the traffic for this firewall 
+			rule: Any, Single, Range.</p>
+			<br>
+			<p>The actions that can be taken on firewall rules are:</p>
+			<p><b>Rigt click on the Record to get more options.</b></p>
+ 			<br>
+			<p><b>Select All:</b> The check box selects all the firewall rules in the table.</p>
+			<br>
+			<p><b>Edit:</b> Opens the Bridge Firewall Rule Configuration page to edit the selected rule.</p>
+			<br>
+			<p><b>Enable:</b> Enables the selected firewall rules.</p>
+			<br>
+			<p><b>Disable:</b> Disables the selected firewall rules.</p>
+			<br>
+			<p><b>Delete:</b> Deletes the selected firewall rule(s).</p>
+			<br>
+			<p><b>Add New Bridge Firewall Rule:</b> Opens the Bridge Firewall Rule Configuration page to add a
+			 new rule.</p>
+			<br>
+			<p><b>Bridge Firewall Rule Configuration</b></p>
+			<br>
+			<p><b>Direction:</b> Set the direction of the traffic that is controlled by this rule: Inbound, 
+			Outbound.</p>
+			<br>
+			<p><b>Service:</b> Choose the type of service that is controlled by this firewall rule. Common 
+			services are included in the drop-down list. You can add additional services on the Firewall > 	
+			Services page.</p>
+			<br>
+			<p><b>Action:</b> Choose the action to be taken:</p>
+			<br>
+			<p><b>Block Always:</b> Block the selected service at all times.</p>
+			<br>
+			<p><b>Allow Always:</b> Allow the selected service to pass through at all times.</p>
+			<br>
+			<p><b>Source Hosts:</b> Select one of the following:</p>
+			<br>
+			<p><b>Any:</b> Choose this option for a rule that applies to traffic from all hosts of the bridged 
+			network.</p>
+			<br>
+			<p><b>Single Address:</b> Choose this option for a rule that applies to traffic from one host. Enter 			    the IP address of the host in the From box.
+			<br>	
+			<p><b>Address Range:</b> Choose this option for a rule that applies to traffic from a group of 
+			computers/devices within an IP address range. To specify the range, enter the first address in<b> 
+			from box</b>, and enter the final address in <b>to box</b>.</p>
+			<br>
+			<p><b>Destination Hosts:</b> Select one of the following:</P>
+			<br>
+			<p><b>Any:</b> Choose this option for a rule that applies to traffic destined for all hosts of the 
+			bridge network.</p>
+			<br>
+			<p><b>Single Address:</b> Choose this option for a rule that applies to traffic destined for one
+			 host. Enter the IP address of the host in <b>From box</b>.</p>
+			<br>
+			<p><b>Address Range:</b> Choose this option for a rule that applies to traffic destined for a group 			    of computers/devices within an IP address range. To specify the range, enter the first address in 
+			the <b>From box</b>, and enter the final address in the <b>To box</b>.</p>
+			<br>
+			<p><b>Source MAC:</b> Select one of the following:</p>
+			<br>
+			<p><b>Any:</b> Choose this option for a rule that applies to traffic from all MAC Addresses of the 
+			hosts belonging to the bridged network.</p>
+			<br>
+			<p><b>Single MAC:</b> Choose this option for a rule that applies to traffic destined from one MAC 
+			Address. Enter the MAC address of the host in the <b>From box</b>.</p>
+			<br>
+			<p><b>MAC Range:</b> Choose this option for a rule that applies to traffic from a group of computers			    /devices within a MAC address range. To specify the range, enter the first MAC address in the<b>
+                        From box</b>, and enter the final MAC address in the <b>To box</b>.</p>
+			<br>
+			<p><b>Destination MAC:</b> Select one of the following:</p>
+			<br>
+			<p><b>Any:</b> Choose this option for a rule that applies to traffic destined for all MAC Addresses 			    of the hosts belonging to the bridge network.</p>
+			<br>
+			<p><b>Single MAC:</b> Choose this option for a rule that applies to traffic destined for one MAC 
+			Address. Enter the MAC address of the host in the From box.</p>
+			<br>
+			<p><b>MAC Range:</b> Choose this option for a rule that applies to traffic destined for a group of 
+			computers/devices within MAC address range. To specify the range, enter the first MAC address in the 			    <b>From box</b>,and enter the final MAC address in the <b>To box</b>.</p>
+			<br>
+			<p>Click <b>Save </b>button to save your changes.</p>
+			<br>
+			<br>
+			<br>
+			<br>
+
+
+:|bridgeFirewallRulesEnd|:
+
+:|schedules|:
+                <p><b>Schedules:</b> Schedules are a very useful feature to allow firewall rules to be enabled or disabled based on the time of day or day of the week. Configured schedules will be available to select in the firewall rule configuration page. All schedules will follow the time in the routers configured time zone.
+<br>
+                <br>
+				<b>Schedules List:</b><br>
+				<br>
+				Schedules define the timeframes under which firewall rules may be 
+				applied. <br>
+				<br>
+				<b>Name:</b> Name of the schedule for identification and management 
+				purposes<br>
+				<br>
+				<b>Days:</b> The days when the schedule is active.<br>
+				<br>
+				<b>Start Time:</b> The start time for the schedule<br>
+				<br>
+				<b>End Time:</b> The end time for the schedule. <br>
+				<br>
+				The actions that can be taken on schedules are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the schedules 
+				in the table. <br>
+				<br>
+				<b>Edit:</b> Opens the Schedule Configuration page, to edit the 
+				selected schedule. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected schedule or schedules.<br>
+				<br>
+				<b>Add New Schedule:</b> Opens the Schedule Configuration page
+                to add a new schedule.</p>
+                <p ><b>Schedule Config:<br>
+                <br>
+				Name:</b> Enter a unique name to identify the schedule. This name 
+				will be available in the Firewall Rule Configuration page in the 
+				&quot;Select Schedule&quot; dropdown list.<br>
+				<br>
+				<b>Scheduled Days</b><br>
+				<br>
+				<b>Select one of the following options:</b><br>
+				<b>All Days:</b> The schedule applies to all days. This option is 
+				the default selection.<br>
+				<br>
+				<b>Specific Days:</b> The schedule applies to the specified days. 
+				Check the box for each day to include in this schedule.<br>
+				<br>
+				<b>Schedule Time of Day</b><br>
+				Select one of the following options: <br>
+				<br>
+				<b>All Day:</b> The schedule applies to the entire day.<br>
+				<br>
+				<b>Specific Times:</b> The schedule applies to the range of hours 
+				that are specified in the Start Time and End Time fields. <br>
+				<br>
+				<b>Start Time:</b> Enter the hour and minute, and select AM or PM.
+				<br>
+				<br>
+				<b>End Time:</b> Enter the hour and minute, and select AM or PM.<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				</p>
+:|schedulesEnd|:
+
+:|blockedClients|:
+                <p ><b>Blocked Clients: </b>Adding MAC adding to the list will
+                result in denying access to the clients having these MAC address
+                .<br>
+                <br>
+                <b>Block MAC Clients List:</b> Shows the list of MAC Address blocked from 
+                 accessing internet.<br>
+                 <br>
+                <b>MAC Address:</b> MAC address to be blocked<br>
+				<br>
+                <b>Description:</b> Description/Reason for blocking.<br>
+				<br>
+                The actions that can be taken on blocked clients are: <br>
+                <br>
+                <b>(Check Box At First Column Header):</b> Selects all the block
+                Lists in the table. <br>
+                <br>
+				<b>Edit:</b> Can edit the added MAC.<br>
+				<br>
+				<b>Delete:</b> Will delete the MAC address selected. <br>
+				<br>
+				<b>Add New Blocked Clients:</b> Will let you add a new MAC address to the list.<br>
+				<br></p>
+				<p ><b>Block Client Configuration:</b>
+				<br>
+				<b>MAC Address:</b> Enter the MAC address to block.<br>
+				<br>
+				<b>Description:</b> Enter the description/reason for blocking.<br>
+				<br>
+                <b>Functional Priority of Features </b><br>
+                <br>
+                Following is the priority of the features. Starting from <b>Highest to the lowest</b> .<br>
+                <br>
+                <b>Protocol binding</b>,<br>
+                <b>Attack Checks (SYN Flood/WAN ping/ICMP Flood)</b>, <br>
+                <b>Block MAC</b>, <br>
+                <b>IP/MAC binding</b>, <br>
+                <b>Firewall Settings</b>, <br>
+                <b>Approved URLs</b>, <br>
+                <b>Blocked URLs</b>, <br>
+                <b>Category Filtering</b>, <br>
+                <b>Content Filtering</b>, <br>
+                <b>Attack checks (UDP Flood)</b>. <br>
+                <br>
+				Click <b>Save</b> to Saves your changes .<br>
+				</p>
+:|blockedClientsEnd|:
+
+:|customServices|:
+                <p ><b>Custom Services:</b> While common services use known
+                TCP/UDP/BOTH/ICMP/ICMPv6 ports, many custom or uncommon
+                applications require traffic to be sent through the firewall.
+                This section allows you to define traffic type and static ports
+                for a unique identifier and then create firewall rules for this
+                user-defined service. <br>
+                <br>
+				<b>Custom Services List</b><br>
+				<b>Name:</b> Name of the service for identification and management 
+				purposes. <br>
+				<br>
+				<b>Type:</b> The layer 4 Protocol that the service uses: TCP, UDP, BOTH 
+				ICMP or ICMPv6<br>
+				<br>
+                <b>Source Port Range:</b> Source Port Range is the TCP or UDP port of a range/ports 
+                the service uses.<br>
+                <br>
+				<b>ICMP Type/Destination Port Range:</b> ICMP Type field is enabled when the 
+				layer 3 protocol (in the Type field) is selected as ICMP or ICMPv6. 
+				The ICMP type is a numeric value that can range between 0 and 40, 
+				while for ICMPv6 the type ranges from 1 to 255. Destination Port Range is the 
+				TCP or UDP port of a range/ports the service uses. <br>
+				<br>
+				The actions that can be taken on custom services are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the custom 
+				services in the table. <br>
+				<br>
+				<b>Edit:</b> Opens the Custom Services Configuration page, to edit 
+				the selected custom Service. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected custom service or custom services.<br>
+				<br>
+				<b>Add New Custom Service:</b> Opens the Custom Service Configuration page to add a 
+				new service.<b><br>
+				<br></p>
+				<p >Custom Services Config:</b> <br>
+				Created services are available as options for firewall rule configuration.<br>
+				<br>
+				<b>Name:</b> Name of the service for identification and management 
+				purposes. <br>
+				<br>
+				<b>Type:</b> The layer 3 Protocol that the service uses. Can be 
+				TCP, UDP, BOTH, ICMP or ICMPv6<br>
+				<br>
+				<b>Port Type:</b> Radio Button for select "Port Range" or "Multiple Port" for custom service.<br><br>
+				<b>ICMP Type:</b> This field is enabled when the layer 3 protocol 
+				(in the Type field) is selected as ICMP or ICMPv6. The ICMP type is a numeric 
+                value that can range between 0 and 40, while for ICMPv6 the type ranges from 1 to 255. 
+                For a list of ICMP types, visit the following URL: 
+				<a href="http://www.iana.org/assignments/icmp-parameters">http://www.iana.org/assignments/icmp-parameters</a>.<br>
+				<br>
+				<b>Source Start Port:</b> The starting port in source port range that the service uses.<br>
+				<br>
+				<b>Source Finish Port:</b> The ending port in source port range that the service uses.<br>
+                <br>
+                <b>Destination Start Port:</b> The starting port in destination port range that the service 
+                uses.<br>
+				<br>
+				<b>Destination Finish Port:</b> The ending port in destination port range that the service 
+				uses.<br>
+                <br>
+				<b>Source Ports:</b> Field support "," separated list of source port numbers 
+                for Port Type as Multiple Port option.<br>
+                <br>
+                <b>Destination Ports:</b> Field support "," separated list of destination  port numbers for 
+                Port Type as Multiple Port option.<br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				</p>
+:|customServicesEnd|:
+
+:|algs|:
+                <p ><b>ALGs:</b> ALGs are security component that enhance the firewall and NAT support of this router to seamlessly support application layer protocols. Because the ALG understands the protocol used by the specific application that it supports, it is a very secure and efficient way of introducing support for client applications through the router's firewall. <br>
+                <br>
+				<b>Enable ALGs</b><br>
+				This router supports kernel level ALGs for the following protocols:<br>
+				<br>
+				Check with the system administrator of your corporate network whether 
+				your VPN client supports NAT traversal. Note that L2TP VPN connections 
+				typically use IPsec to secure the connection. To achieve multiple 
+				VPN pass&#45;through in this case, the IPsec ALG must be enabled.<br>
+				<br>
+				<b>RTSP:</b> Allows applications that use Real Time Streaming Protocol 
+				to receive streaming media from the internet. QuickTime and Real 
+				Player are some of the common applications using this protocol.<br>
+				<br>
+				<b>SIP:</b> Allows devices and applications using VoIP (Voice over 
+				IP) to communicate across NAT. Some VoIP applications and devices 
+				have the ability to discover NAT devices and work around them. This 
+				ALG may interfere with the operation of such devices. If you are 
+				having trouble making VoIP calls, try turning this ALG off.<br>
+				<br>
+				<b>H.323:</b> Allows H.323 (specifically Microsoft Netmeeting) clients 
+				to communicate across NAT. Note that if you want your buddies to 
+				call you, you should also set up a virtual server for NetMeeting.
+				<br>
+				<br>
+				<b>TFTP:</b> Allows Trivial FTP (TFTP) clients and servers to transfer 
+				data across NAT<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+				Click <b>Cancel</b> to revert to the previous settings.</p>
+:|algsEnd|:
+
+:|smtpAlg|:
+                <p><b>SMTP ALG :</b>The SMTP ALG Status needs to be enabled for this feature to
+                work. The SMTP protocol generally works on TCP port 25. But if a
+                different port is configured in the local environment, then
+                appropriate configuration needs to be done in the 'port' field
+                on the page. <br>
+                <br>
+                <b>Status:</b> The user has to enable this option to configure
+                other options.
+				<br>
+				<br>
+				<b>Port:</b> This is the port on which the smtp packets are expected.
+				<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+				Click <b>Cancel</b> to revert to the previous settings.
+				</p>
+:|smtpAlgEnd|:
+
+:|approvedMailIds|:
+                <p ><b>Approved Mail Ids:</b> <br>
+				<br>
+                <b>Approved Mail Ids List:</b> This is the list of Mail Ids 
+                that are approved by the user.<br>
+				<br>
+				<b>Mail Id:</b> This displays the E&#45;Mail IDs configured to be
+                approved
+				<br>
+				<br>
+				The actions that can be taken on approved maid Ids are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the mail
+                Ids in the table. <br>
+				<br>
+				<b>Edit:</b>To edit an already existing entry<br>
+				<br>
+				<b>Delete:</b> To delete an entry from the list
+				<br>
+				<br>
+				<b>Add New Approved Mail Ids:</b> To Add a new entry in the list
+				</p>
+                <p ><b>Approved Mail Ids Configuration:</b>The user is supposed
+                to add the Mail Id here and apply the settings. <br>				
+				<br>
+                <b>Mail Id:</b>Configure the mail id to be approved 
+                in the adjacent text box.
+				<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				</p>
+:|approvedMailIdsEnd|:
+
+:|blockedMailIds|:
+                <p ><b>Blocked Mail Ids:</b> <br>
+				<br>
+                <b>Blocked Mail Ids List:</b> This is the list of Mail Ids that are 
+                blocked by the user.<br>
+				<br>
+				<b>Mail Id:</b>This displays the E&#45;Mail IDs configured to be
+                blocked
+				<br>
+				<br>
+                The actions that can be taken on blocked maid Ids are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the mail
+                Ids in the table. <br>
+				<br>
+				<b>Edit:</b> To edit an existing entry<br>
+				<br>
+				<b>Delete:</b> To delete an entry
+				<br>
+				<br>
+				<b>Add New Blocked Mail Id:</b> To add a new entry
+				</p>
+                <p ><b>Blocked Mail Ids Configuration:</b>The user is 
+                supposed to add the Mail Id here and apply the settings. <br>				
+				<br>
+				<b>Mail Id:</b> Configure the mail id in the adjacent text box.
+				<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				</p>
+:|blockedMailIdsEnd|:
+
+:|mailFiltering|:
+                <p ><b>Mail Filtering:</b> This page enables the user to take
+                action on a mail from/to a 'specific mailId' with a 'specific
+                subject'. The  action mentioned here will take priority over all other MAIL
+                related configurations.<br>
+				<br>
+                <b>Mail Filtering List:</b> Lists all the Subjects and Mail ids which are to allowed/blocked. <br>
+				<br>
+				<b>Subject:</b> Displays the subject that is to be considered for
+                taking action<br>
+				<br>
+				<b>Mail Id:</b> Displays the E&#45;Mail Id from/to which the
+                configured subject is to be checked
+                <br>
+                <b>Action:</b> Displays the Action that is to be taken (Block or
+                Allow).
+				<br>
+				<br>
+                The actions that can be taken on mail filtering are: <br>
+				<br>
+				<b>(Check Box At First Column Header):</b> Selects all the mail
+                filterings in the table. <br>
+				<br>
+				<b>Edit:</b>Edit an existing entry<br>
+				<br>
+				<b>Delete:</b> Delete a single or multiple entries.
+				<br>
+				<br>
+				<b>Add New Mail Filter:</b> Add a new entry
+				</p>
+				<p ><b>Mail Filtering Configuration:</b> <br>				
+				<br>
+				<b>Subject:</b>Enter the complete subject string that needs to checked.<br>
+				<br>
+                <b>Mail Id:</b>he Mail Id from/to which it is received/sent.<br>
+                <b>Action:</b>To allow or to block the mail.<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+                </p>
+:|mailFilteringEnd|:
+
+:|vpnPassthrough|:
+                <p><b>VPN Passthrough: </b>This router's firewall settings can be configured to allow outbound encrypted VPN traffic for IPsec, PPTP, and L2TP VPN tunnel connections. This LAN to WAN passthrough support is easy to enable on this page as compared to creating a specific service-specific firewall outbound policy. <br>
+                <br>
+                <b>VPN Passthrough:<br>
+				</b> Choose one or more of the following to enable pass through for 
+				the device. <br>
+				<br>
+				<b>IPsec:</b> Enable this to allow IPsec tunnels to pass through 
+				the router<br>
+				<br>
+				<b>PPTP:</b> Enable this to allow PPTP tunnels to pass through the 
+				router. <br>
+				<br>
+				<b>L2TP:</b> Enable this to allow L2TP tunnels to pass through the 
+				router<br>
+				<br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+				Click <b>Cancel</b> to revert to the previous settings.
+				</p>
+:|vpnPassthroughEnd|:
+
+:|applicationRules|:
+                <p><b>Application Rules:</b> <br>
+				Application rules are also commonly referred to as port triggering 
+				rules. Port triggering allows computers on the private network (LAN 
+				or DMZ) to request one or more ports to be forwarded to them. Unlike 
+				basic port forwarding, which forwards ports to only one IP address, 
+				port triggering waits for an outbound request from the private network 
+				on one of the defined outgoing ports. It then automatically sets 
+				up forwarding to the IP address from where the request was made. 
+				When the application ceases to transmit data over the port, the 
+				router waits for a timeout interval and then closes the port or 
+				range of ports, making them available to other computers on the 
+				private network. <br>
+				For example, if an IRC client on the private network makes a connection 
+				request through port 6667 and sends its username information to 
+				the IRC server, the IRC server will send an IDENT verification packet 
+				on port 113 to check the authenticity of the IRC client. In NAT 
+				mode, the router will discard this packet since it doesn&#39;t know 
+				which computer to send the request on port 113 to. A Port Triggering 
+				rule can define port 6667 (or the range: 6660 to 7000) as the outgoing 
+				(trigger) port(s) and port 113 as the incoming (response) port.<br>
+				<br>
+				<b>Application Rules List</b><br>
+				<b>Name:</b> Displays the user&#45;defined name for this rule.<br>
+				<br>
+				<b>Status:</b> Displays the current status of the rule, i.e., whether 
+				it is enabled or disabled.<br>
+				<br>
+				<b>Protocol:</b> Displays whether the port uses the TCP or UDP protocol.
+				<br>
+				<br>
+				<b>Interface:</b> Displays interface name on which port triggering 
+				rule is configured.<br>
+				<br>
+				<b>Outgoing Ports:</b> Displays the port number or range of port 
+				numbers that will trigger this rule when a connection request for 
+				outgoing traffic is made. If the outgoing connection uses only one 
+				port, then both the <b>Start Port</b> and <b>End Port</b> fields 
+				will display the same port number. <br>
+				<br>
+				<b>Incoming Ports:</b> Displays the port number or range of port 
+				numbers used by the remote system to respond to the request it receives. 
+				If the incoming connection uses only one port, then both the<b> 
+				Start Port</b> and <b>End Port</b> fields will display the same 
+				port number. <br>
+				<br>
+				The actions that can be taken on port triggering rules are: <br>
+				<br>
+				<b>(Check Box at First Column Header):</b> Selects all the rules 
+				in the table. <br>
+				<br>
+				<b>Edit:</b> Opens the Port Triggering Configuration page, to edit 
+				the selected rule. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected rule or rules.<br>
+				<br>
+				<b>Add:</b> Opens the Port Triggering Configuration page to add 
+				a new rule.</p>
+				<b>Note:</b> User can configure MAX of 100 entries.<br><br>
+                <p ><b>Application Rules Config:</b> <br>
+				This page is used to configure port triggering for applications 
+				when the router is in NAT mode. <br>
+				<br>
+				<b>Name:</b> Specify an easily identifiable name for this rule.
+				<br>
+				<br>
+				<b>Enable:</b> Specify whether to enable or disable the rule.
+				<br>
+				<br>
+				<b>Protocol:</b> Specify whether the port uses the TCP or UDP protocol.
+				<br>
+				<br>
+				<b>Interface:</b> Specify interface name on which port triggering 
+				rule is configured whether the interface is LAN or DMZ.
+				<br>
+				<br>
+				<b>Outgoing (Trigger) Port Range</b><br>
+				Specify the port number or range of port numbers that will trigger 
+				this rule when a connection request from outgoing traffic is made. 
+				If the outgoing connection uses only one port, then specify the 
+				same port number in the Start Port and To Port fields. <br>
+				<br>
+				<b>Incoming (Response) Port Range</b><br>
+				Specify the port number or range of port numbers used by the remote 
+				system to respond to the request it receives. If the incoming connection 
+				uses only one port, then specify the same port number in the<b> 
+				Start Port</b> and <b>To Port</b> fields.<br>
+				<br>
+				Click <b>Save</b> to save the settings.<br>
+				</p>
+:|applicationRulesEnd|:
+
+:|applicationRulesAC|:
+                <p><b>Application Rules:</b> <br>
+				Application rules are also commonly referred to as port triggering 
+				rules. Port triggering allows computers on the private network (LAN 
+				or DMZ) to request one or more ports to be forwarded to them. Unlike 
+				basic port forwarding, which forwards ports to only one IP address, 
+				port triggering waits for an outbound request from the private network 
+				on one of the defined outgoing ports. It then automatically sets 
+				up forwarding to the IP address from where the request was made. 
+				When the application ceases to transmit data over the port, the 
+				router waits for a timeout interval and then closes the port or 
+				range of ports, making them available to other computers on the 
+				private network. <br>
+				For example, if an IRC client on the private network makes a connection 
+				request through port 6667 and sends its username information to 
+				the IRC server, the IRC server will send an IDENT verification packet 
+				on port 113 to check the authenticity of the IRC client. In NAT 
+				mode, the router will discard this packet since it doesn&#39;t know 
+				which computer to send the request on port 113 to. A Port Triggering 
+				rule can define port 6667 (or the range: 6660 to 7000) as the outgoing 
+				(trigger) port(s) and port 113 as the incoming (response) port.<br>
+				<br>
+				<b>Application Rules List</b><br>
+				<b>Name:</b> Displays the user&#45;defined name for this rule.<br>
+				<br>
+				<b>Status:</b> Displays the current status of the rule, i.e., whether 
+				it is enabled or disabled.<br>
+				<br>
+				<b>Protocol:</b> Displays whether the port uses the TCP or UDP protocol.
+				<br>
+				<br>
+				<b>Interface:</b> Displays interface name on which port triggering 
+				rule is configured.<br>
+				<br>
+				<b>Outgoing Ports:</b> Displays the port number or range of port 
+				numbers that will trigger this rule when a connection request for 
+				outgoing traffic is made. If the outgoing connection uses only one 
+				port, then both the <b>Start Port</b> and <b>End Port</b> fields 
+				will display the same port number. <br>
+				<br>
+				<b>Incoming Ports:</b> Displays the port number or range of port 
+				numbers used by the remote system to respond to the request it receives. 
+				If the incoming connection uses only one port, then both the<b> 
+				Start Port</b> and <b>End Port</b> fields will display the same 
+				port number. <br>
+				<br>
+				The actions that can be taken on port triggering rules are: <br>
+				<br>
+				<b>(Check Box at First Column Header):</b> Selects all the rules 
+				in the table. <br>
+				<br>
+				<b>Edit:</b> Opens the Port Triggering Configuration page, to edit 
+				the selected rule. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected rule or rules.<br>
+				<br>
+				<b>Add:</b> Opens the Port Triggering Configuration page to add 
+				a new rule.</p>
+				<b>Note:</b> User can configure MAX of 100 entries.<br><br>
+                <p ><b>Application Rules Config:</b> <br>
+				This page is used to configure port triggering for applications 
+				when the router is in NAT mode. <br>
+				<br>
+				<b>Name:</b> Specify an easily identifiable name for this rule.
+				<br>
+				<br>
+				<b>Enable:</b> Specify whether to enable or disable the rule.
+				<br>
+				<br>
+				<b>Protocol:</b> Specify whether the port uses the TCP or UDP protocol.
+				<br>
+				<br>
+				<b>Interface:</b> Specify interface name on which port triggering 
+				rule is configured whether the interface is LAN or DMZ.
+				<br>
+				<br>
+				<b>Outgoing (Trigger) Port Range</b><br>
+				Specify the port number or range of port numbers that will trigger 
+				this rule when a connection request from outgoing traffic is made. 
+				If the outgoing connection uses only one port, then specify the 
+				same port number in the Start Port and To Port fields. <br>
+				<br>
+				<b>Incoming (Response) Port Range</b><br>
+				Specify the port number or range of port numbers used by the remote 
+				system to respond to the request it receives. If the incoming connection 
+				uses only one port, then specify the same port number in the<b> 
+				Start Port</b> and <b>To Port</b> fields.<br>
+				<br>
+				Click <b>Save</b> to save the settings.<br>
+				</p>
+:|applicationRulesACEnd|:
+
+:|applicationRulesStatus|:
+                <p ><b>Application Rules Status:<br>
+                <br>
+                Application Rules Status List:<br>
+				LAN / DMZ IP address:</b> The internal network IP address that triggered 
+				the application rule to be active, and resulted in response ports 
+				being opened.<br>
+				<br>
+				<b>Open Ports:</b> The incoming response ports that have been opened 
+				through this firewall based on the internal devices request.<br>
+				<br>
+				<b>Time Remaining (sec):</b> remaining time in seconds for which 
+				the open ports will allow external traffic. This time is reset whenever 
+				traffic is sent from the LAN / DMZ out on the trigger ports. <br>
+				<br>
+				</p>
+:|applicationRulesStatusEnd|:
+
+:|attackChecks|:
+                <p ><b>Attack Checks:</b> For added security, it is recommended
+                that you enable Stealth Mode. This blocks ping and ARP response
+                from the WAN interfaces. Ping is often used by malicious
+                Internet users to locate active networks or PCs. <br> 
+                <br>
+				<b>WAN Security Checks</b><br>
+				<br>
+				<b>Enable Stealth Mode:</b> If Stealth Mode is enabled, the router 
+				will not respond to port scans from the WAN. This makes it less 
+				susceptible to discovery and attacks.<br>
+				<br>
+				<b>Block TCP Flood:</b> If this option is enabled, the router will 
+				drop all invalid TCP packets and be protected from a SYN flood attack.<br>
+				<br>
+                <b>TCP Filter Check</b><br>
+                <b>Filter Check:</b> If this option is enabled, then router will drop invalid TCP packets(FIN,RST and ACK) going with SNAT while the connection is closed. Some of the other packets like TCP OUT-OF-WINDOW are also considered to be invalid. Disable this option while taking performance in Ixia setup as enabling this option will effect the throughput. <br><br>
+				<b>LAN Security Checks</b><br>
+				<b>Block UDP Flood:</b>If this option is enabled, the router will 
+				not accept more than the configured value in 'UDP Connection Limit' which indicates 
+                                simultaneous, active UDP connections from a single computer on the LAN. <br>
+				<br>
+                		<b>UDP Connection Limit:</b> You can set the number of simultaneous active 
+                		UDP connections to be accepted from a single computer on the LAN, the default
+                		is 25<br>
+		                <br>
+				<b>ICSA Settings</b><br>
+				<b>Block ICMP Notification:</b> selecting this prevents ICMP packets 
+				from being identified as such. ICMP packets, if identified, can 
+				be captured and used in a Ping (ICMP) flood DoS attack. <br>
+				<br>
+				<b>Block Fragmented Packets:</b> selecting this option drops any 
+				fragmented packets through or to the gateway.<br>
+				<br>
+				<b>Block Multicast Packets:</b> selecting this option drops multicast 
+				packets, which could indicate a spoof attack, through or to the 
+				gateway.<br>
+				<br>
+				<b>Block Spoofed IP Packets:</b> Selecting this option drops
+                		spoofed IP packets, which could indicate a spoof attack, through
+                		or to the gateway.<br>
+                		<br>
+				<b>DoS Attacks</b><br>
+				<br>
+				<b>SYN Flood Detect Rate (max/sec):</b> The rate at which the SYN 
+				Flood can be detected.<br>
+				<br>
+				<b>Echo Storm (ping pkts/sec):</b> The number of ping packets per 
+				second at which the router detects an Echo storm attack from the 
+				WAN and prevents further ping traffic from that external address.
+				<br>
+				<br>
+				<b>ICMP Flood (ICMP pkts/sec):</b> The number of ICMP packets per 
+				second at which the router detects an ICMP flood attack from the 
+				WAN and prevents further ICMP traffic from that external address.
+				<br>
+				<br>
+                <b>Functional Priority of Features </b><br>
+                <br>
+                Following is the priority of the features. Starting from <b>Highest to the lowest</b> .<br>
+                <br>
+                <b>Protocol binding</b>,<br>
+                <b>Attack Checks (SYN Flood/WAN ping/ICMP Flood)</b>, <br>
+                <b>Block MAC</b>, <br>
+                <b>IP/MAC binding</b>, <br>
+                <b>Firewall Settings</b>, <br>
+                <b>Approved URLs</b>, <br>
+                <b>Blocked URLs</b>, <br>
+                <b>Category Filtering</b>, <br>
+                <b>Content Filtering</b>, <br>
+                <b>Attack checks (UDP Flood)</b>. <br>
+                <br>
+				Click <b>Save</b> to save your changes.<br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous settings.</p>
+:|attackChecksEnd|:
+
+:|intelAmt|:
+		<p><b>Intel<sup>&reg;</sup> AMT:</b><br><br>
+
+Intel<sup>&reg;</sup> Active Management Technology enables IT managers to remotely access and manage every networked computing system, even those that lack a working operating system or hard drive, or are turned off as long as the PC/Notebook is connected to line power and to the network even if PC/Notebook is off or OS is crashed. Intel<sup>&reg;</sup> AMT uses a separate management processor that runs independently on the client machine and can be reached through the wired or wireless network. With D-Link DSR Routers, Intel<sup>&reg;</sup> AMT Technology could cross Internet seamlessly and it's an ideal solution to help IT managers for asset management over Internet.<br><br>
+			<b>Enable Ports:</b> When enabled, inbound/outbound firewall rules are added for certain ports to enable Intel<sup>&reg;</sup> AMT service.<br><br>
+			<b>WAN Hosts:</b> If the user selects ANY, all WAN side hosts are granted access to the local server. If the user selects "Specify WAN IPs", he must provide a comma separated list of WAN host addresses that are to be allowed access to the Local Server (LAN Host).<br><br>
+			<b>WAN Host Addresses:</b> The user must provide a comma separated list of WAN IP addresses that must be allowed access to the Local Server in case he has selected "Specify WAN IPs" in the Drop down menu. Only commas are allowed and there should be no spaces between the comma and the IP address.<br><br>
+			<b>Internal IP Address:</b> The user must provide a single IP address of the LAN host (Local Server).<br><br>
+			<b>Intel<sup>&reg;</sup> Amt Reflector</b><br><br>
+			<b>Enable Reflector:</b> Check this box to reflect back the data on selected ports to the client initiating the connection.<br><br>
+			<b>Redirect to Port 16992:</b> Check this box to redirect to port 16992 of the client initiating the connection.<br><br>
+			<b>Listen on Port:</b> Enter the port on which server should listen for incoming connections.<br><br>
+			<b>Redirect to Port 16993:</b> Check this box to redirect to port 16993 of the client initiating the connection.<br><br>
+			<b>Listen on Port:</b> Enter the port on which server should listen for incoming connections.<br><br>
+			<b>Redirect to Port 16994:</b> Check this box to redirect to port 16994 of the client initiating the connection.<br><br>
+			<b>Listen on Port:</b> Enter the port on which server should listen for incoming connections.<br><br>
+			<b>Redirect to Port 16995:</b> Check this box to redirect to port 16995 of the client initiating the connection.<br><br>
+			<b>Listen on Port:</b> Enter the port on which server should listen for incoming connections.<br><br>
+			<b>Redirect to Port 9971:</b> Check this box to redirect to port 9971 of the client initiating the connection.<br><br>
+			<b>Listen on Port:</b> Enter the port on which server should listen for incoming connections.<br><br>
+Click <b>Save</b> to save your changes. <br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|intelAmtEnd|:
+
+:|ips|:
+			<p><b>IPS:</b></p>
+			<p><b>Intrusion Detection/Prevention Enable</b></p>
+			<p>This gateway has an intrusion detection system (IDS) that  allows you 
+			to detect, log and block malicious attacks that can potentially impact 
+			security and usability of the device.This is a passive detection tool used    			   to log and alert the user of potential threats. This	page has the basic 
+			configuration settings used to enable IDS.</p>
+			<p><b>Enable Intrusion Detection:</b> Click <b>ON/OFF</b> button to enable or disable Intrusion Detection. Click ON to allow intrusion events to be detected and logged. Each incoming packet to the gateway is reviewed for 			   potential malicious attacks,	based on the settings configured in this page.			      </p>
+			<p><b>Enable Intrusion Prevention:</b> Click <b>ON/OFF</b> button to enable or disable intrusion prevention. Click ON to allow the devices 
+			intrusion prevention system to monitoring inline traffic from the WAN. This			   can affect system performance.</p>
+			<p><b>IPS/IDS Checks Active Between</b></p>
+			<p><b>LAN and WAN:</b> Click <b>ON/OFF</b> button to enable or disable IPS checks between LAN and WAN. Click ON to enable IPS/IDS between the secure LAN and 			   public WAN.</p>
+			<p><b>DMZ and WAN:</b> Click <b>ON/OFF</b> to enable or disable IPS checks between DMZ and WAN. Click this ON to enable IPS/IDS between the secure DMZ and 			   public WAN.</p>
+			<p><b>IPS Status</b></p>
+			<p><b>Number of Signatures Loaded:</b> This is a static number of intrusion 			   signatures that are stored in the router and are used for detecting IPS 
+			events.</p>
+             		<p>Click <b>Save</b> to save your changes.</p> 
+ 			<p>Click <b>Cancel</b> to revert to the previous settings.</p>
+
+:|ipsEnd|:
+
+:|ips_single|:
+	                <p><b>IPS:</b><br><br>
+        	        <b>Intrusion Detection/Prevention Enable</b><br><br>
+			This gateway has an intrusion detection system (IDS) that allows you to 
+			detect, log, and block malicious attacks that can potentially impact 
+			security and usability of the device. This is a passive detection tool used			   to log and alert the user of potential threats. This page has the basic 			      configuration settings used to enable IDS.<br><br>
+	                <b>Enable Intrusion Detection:</b> Click <b>ON/OFF</b> button to enable or disable intrusion detection. Click ON to allow intrusion events to be 
+			detected and logged. Each incoming packet to the gateway is reviewed for 
+			potential malicious attacks, based on the settings configured in this page.			  <br><br>
+	               <b>Enable Intrusion Prevention:</b> Click <b>ON/OFF</b> button to enable or disable intrusion Prevention. Click ON to allow the devices intrusion 
+			prevention system to monitoring inline traffic from the WAN. This can
+			affect system performance.<br><br>
+                	<b>IPS/IDS Checks Active Between</b><br><br>
+	                <b>LAN and WAN:</b> Click <b>ON/OFF</b> button to allow checks between LAN and WAN. Click ON to enable IPS/IDS between the secure LAN and 
+			public WAN.<br><br>
+	                <b>IPS Status</b><br><br>
+	               <b>Number of Signatures Loaded:</b> This is a static number of intrusion 
+			signatures that are stored in the router and are used for detecting IPS
+			events.<br><br>
+	                Click <b>Save</b> to save your changes. <br>
+                        <br>
+                	Click <b>Cancel</b> to revert to the previous settings.</p>
+:|ips_singleEnd|:
+
+
+:|radiusAcc|:
+<p><b>Radius Accounting Configuration</b> <br>
+                <br>
+                <b>Accounting Server IP:</b> Radius Accounting server IP address.<br>
+                <br>
+                <b>Accounting Server Name:</b>Configured Accounting server name.<br>
+                <br>
+                Click <b>Edit</b> to modify configured accounting server. <br>
+				<br>
+				Click <b>Delete</b> to Delete the selected Accounting Server.Default Accounting server can't be deleted. <br>
+				<br>
+				Click <b>Add</b> to add new accounting server.<br>
+                <br></p>
+:|radiusAccEnd|:
+
+:|radiusAccGlobalSettings|:
+                <p><b>Radius Accounting Global Configuration</b> <br>
+                <b>Accounting Mode:</b> Click on checkbox to select whether the RADIUS accounting mode is enabled or disabled. By default it is disabled.<br> 	
+ 	            <br>
+                <b>Accounting Interim Update Mode:</b>Enable the option to send Radius Accounting (Interim-Update) based on Interim Interval Period. By default this mode is disabled. <br>
+				<br>
+                <b>Accounting Interim Interval: </b>The interim Interval at which Radius Accounting (Interim-Update) packets should be sent by the switch. The value should be in the range 300 - 3600. By default it is not configured. <br>
+				<br>
+				Click <b>Save Settings</b> to save the settings.<br>
+				<br>
+				Click <b>Cancel</b> to revert to previous settings.
+                <br></p>
+:|radiusAccGlobalSettingsEnd|:
+
+:|radiusAccountingCfg|:
+                <p><b>Radius Accounting Configuration</b> <br>
+				<br>
+                <b>Captive Portal:</b> Click the check box to enable or disable
+                the radius accounting for captiveportal feature.<br>
+				<br>
+                <b>Radius Accounting Interim Interval</b> The interim Interval
+                at which Radius Accounting (Interim-Update) packets should be
+                sent by the device. The value should be in the range 300 - 3600.
+                By default it is 300.<br>
+				<br>
+                <b>NAS Interface</b> Select the WAN interface on which the radius 
+                accounting packets are sent in case of load balancing.By default
+                it is WAN1.<br>
+                <br>
+                <b>Note:</b> Disabling Radius Accounting for a feature will stop
+                accounting for the existing sessions.Enabling Radius Accounting
+                for a feature will start accounting only for the sessions which
+                are started after enabling.<br>
+				<br>
+                Click <b>Save Settings</b> to save the settings.<br>
+				<br>
+				Click <b>Cancel</b> to revert to previous settings.
+                <br></p>
+:|radiusAccountingCfgEnd|:
+
+:|radiusAccountingCfgServer|:
+                <p><b>Radius Server:</b> The Radius server is an
+                external accounting server that can be used for accounting
+                traffic in the session maintained by the device.If the
+                first/primary Radius server is not accessible at any time, then
+                the device will attempt to contact the secondary Radius server
+                for accounting.<br>
+				<br><b>Radius Accounting Server Configuration:</b><br>
+				<br>
+				<b>Accounting Server 1 (Primary):</b> IP address of the primary Radius server.<br>
+				<br>
+				<b>Accounting Server 2 (Secondary):</b> IP address of the secondary Radius  server.<br>
+				<br>
+				<b>Accounting Server 3 (Tertiary):</b> IP address of the tertiary Radius  server.<br>
+				<br>
+				<b>Accounting Port:</b> Radius server port to send Radius Accounting messages.<br>
+				<br>
+				<b>Secret:</b> Secret key that allows the device to log into the configured	Radius server. It must match the secret on Radius server.<br>
+				<br>
+                <p>Click <b>Save</b> to save the settings.</p>
+                <p>Click <b>Cancel</b> to revert to the previous settings.</p>
+:|radiusAccountingCfgServerEnd|:
+

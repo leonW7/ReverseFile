@@ -1,0 +1,65 @@
+<?lua
+require "teamf1lualib/bl_knownClients"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local guiKnownClients = require("com.teamf1.bl.wlan.knownclient")
+local errorMap        = require ("com.teamf1.core.errorMap")
+local returnCodes     = require ("com.teamf1.core.returnCodes")
+
+local clientInfo = {}
+local errorCode
+
+if (cgi.configRowId ~= "-1") then
+    errorCode, clientInfo = guiKnownClients.knownClientsCurGet (cgi)
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+end
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_knownClientsDailogContent">
+    <div class="topBg">
+        <h1>MAC Authentication Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>MAC Address </label>
+            <?lua if (cgi.configRowId ~= "-1") then ?>
+            <p> $| clientInfo.macAddress or '' |$ </p>
+            <input type="hidden" name="knownClients.macAddress" value="$| clientInfo.macAddress |$">
+            <?lua else ?>
+            <input type="text" name="knownClients.macAddress" id="tf1_txtMacAddr" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify (event, this, true, '', '')">
+            <?lua end ?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Name </label><input type="text" maxlength="31" name="knownClients.name"
+            value="$| clientInfo.name or '' |$" id="tf1_clientName"> </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Authentication Action</label>
+        	<p><input type="radio" $| web.radioSelected(clientInfo.authType ==
+            0) |$ name="knownClients.authType" id="tf1_authAction1" value="0" checked>Global</p>
+        	<p><input type="radio" $| web.radioSelected(clientInfo.authType ==
+            1) |$ name="knownClients.authType" id="tf1_authAction2" value="1">Grant</p>
+        	<p><input type="radio" $| web.radioSelected(clientInfo.authType ==
+            2) |$ name="knownClients.authType" id="tf1_authAction3" value="2">Deny</p>    
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit" name="button.config.knownClients.knownClients.$|
+        cgi["configRowId"] |$" onclick="return knownClientsValidate ()" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->

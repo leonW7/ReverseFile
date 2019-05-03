@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# dot11Init - initialization script for dot11
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,01mar08,sdk start dot11d differenty for mgmt and non-mgmt case
+# 01a,01jun07,rks written
+
+insmod /pfrm2.0/lib/modules/dot11/kdot11.ko
+insmod /pfrm2.0/lib/modules/dot11/asf.ko
+insmod /pfrm2.0/lib/modules/dot11/adf.ko
+insmod /pfrm2.0/lib/modules/dot11/ath_hal.ko
+insmod /pfrm2.0/lib/modules/dot11/ath_dfs.ko
+insmod /pfrm2.0/lib/modules/dot11/ath_rate_atheros.ko
+insmod /pfrm2.0/lib/modules/dot11/ath_dev.ko
+insmod /pfrm2.0/lib/modules/dot11/umac.ko
+
+if [ "$INCLUDE_DOT11" = "y" ]; then
+
+echo -n "Starting dot11 daemon..."
+
+if [ "$TEAMF1_MGMT" != "n" ]; then
+    $DOT11_INSTALL_PATH/bin/dot11d $DB_FILENAME &
+else
+    $DOT11_INSTALL_PATH/bin/dot11d &
+fi
+
+echo "Done"
+
+if [ "$INCLUDE_DOT11_IAPP" = "y" ]; then
+echo -n "Starting iapp daemon..."
+$DOT11_INSTALL_PATH/bin/iappd $DOT11_IAPP_INTERFACE $DB_FILENAME 1 &
+echo "Done"
+fi
+
+fi

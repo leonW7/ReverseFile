@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="security-firewall-smtpAlg-config" prompt="security-config[smtpAlg]> "> 
+    <COMMAND name="save" help="save SmtpAlg configuration changes.">
+	     <ACTION>lua clishCfgObjExec("smtpAlg")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save SmtpAlg configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("smtpAlg")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back SmtpAlg configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="smtp_Alg_Status" help="Enable/disable SmtpAlg status">
+	<PARAM name="smtp_enable" 
+        help="Enable/ Disable Smtp Alg."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("smtpAlg", "smtpAlg.smtpAlgStatus", 
+		    "${smtp_enable}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="port" help="Set the port you want to use for Smtp Alg.">
+	<PARAM name="port" 
+	       help="Port Number."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("smtpAlg","smtpAlg.port","${port}")
+	</ACTION>
+    </COMMAND>
+  </VIEW>
+<!--=======================================================-->
+<VIEW name="security-firewall-smtpAlg-approvedMailId" prompt="security-config[smtpAlg]> "> 
+    <COMMAND name="save" help="save ApprovedMailId configuration changes.">
+	     <ACTION>lua clishCfgObjExec("approvedMailIdList")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save ApprovedMailId configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("approvedMailIdList")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ApprovedMailId configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="approved_Mail_Id" help="Approved Mail_Id">
+	<PARAM name="ApprovedMailId" 
+        help="Enter Mail_Id to be approved"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("approvedMailIdList", "approvedMailIdList.approvedMailId", 
+		    "${ApprovedMailId}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-firewall-smtpAlg-blockedMailId" prompt="security-config[smtpAlg]> "> 
+    <COMMAND name="save" help="save BlockedMailId configuration changes.">
+	     <ACTION>lua clishCfgObjExec("blockedMailIdList")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save BlockedMailId configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("blockedMailIdList")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back BlockedMailId configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="blocked_Mail_Id" help="Blocked Mail_Id">
+	<PARAM name="BlockedMailId" 
+        help="Enter Mail_Id to be blocked"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("blockedMailIdList", "blockedMailIdList.blockedMailId", 
+		    "${BlockedMailId}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="security-firewall-smtpAlg-subjectList" prompt="security-config[smtpAlg]> "> 
+    <COMMAND name="save" help="save subjectList configuration changes.">
+	     <ACTION>lua clishCfgObjExec("subjectList")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save subjectList configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("subjectList")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back subjectList configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+     <COMMAND name="subject" help="Subject in the Mail_Id">
+	<PARAM name="Subject" 
+        help="Enter the Subject"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("subjectList", "subjectList.subject", 
+		    "${Subject}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="mail_Id" help="Enter the Mail_Id">
+	<PARAM name="MailId" 
+        help="Enter the Mail_Id"
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("subjectList", "subjectList.mailId", 
+		    "${MailId}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="action" help="Action Allow/Block">
+	<PARAM name="Action" 
+        help="Enter the action to be Taken"
+	       ptype="FIREWALL_POLICY"/>
+	<ACTION>lua clishCfgObjAdd ("subjectList", "subjectList.action", 
+		    "${Action}")
+        </ACTION>
+    </COMMAND>
+  </VIEW>
+<!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg" help="smtpAlg configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg approvedMailId" help="approvedMailId configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg blockedMailId" help="blockedMailId configuration setup."/>
+<!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg subjectList" help="subjectList configuration setup."/>
+
+     <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg configure"
+             help="SmtpAlg configuration mode."
+             viewid="" view="security-firewall-smtpAlg-config">
+                   <ACTION>lua clishCfgObjNew ("smtpAlg", 
+                              smtpAlgCfgInit, smtpAlgCfgSave, 
+				       smtpAlgCfgInputVal)
+                   </ACTION>
+               </COMMAND>
+       <!--=======================================================-->
+     <COMMAND name="show security firewall smtpAlg" help="."/>
+     <COMMAND name="show security firewall smtpAlg configure" help="."/>
+     <COMMAND name="show security firewall smtpAlg configure setup"
+	     help="Show SmtpAlg Status.">
+	<DETAIL>
+    This command shows SmtpAlg Status.
+    &lt; Enable/Disable
+       </DETAIL>
+       <ACTION>lua clishCmdExec (smtpAlgGet)</ACTION>
+    </COMMAND>          
+     <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg approvedMailId add"
+             help="It allows Configure approved MailId."
+             viewid="" view="security-firewall-smtpAlg-approvedMailId">
+                   <ACTION>lua clishCfgObjNew ("approvedMailIdList", 
+                              approvedMailIdCfgInit, approvedMailIdCfgSave, 
+				       approvedMailIdCfgInputVal)
+                   </ACTION>
+               </COMMAND>
+     <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg approvedMailId edit"
+             help="It allows to edit a approved MailId."
+             viewid="" view="security-firewall-smtpAlg-approvedMailId">
+             <PARAM name="row_id" 
+	         help=" Row Id Of the rule to be edited"
+	         ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("approvedMailIdList", 
+                              approvedMailIdCfgInit, approvedMailIdCfgSave, 
+				       approvedMailIdCfgInputVal,"${row_id}")
+                   </ACTION>
+               </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg approvedMailId delete" 
+             help="It allows to delete a approved MailId.">
+             <PARAM name="row_id" 
+	       help="Row Id Of the profile to be deleted"
+	       ptype="UINT"/>
+             <ACTION>lua clishCmdExec(approvedMailIdCfgDel,"${row_id}")
+            </ACTION>
+        </COMMAND>
+        <!--=======================================================-->
+ 
+     <COMMAND name="show security firewall smtpAlg approvedMailId" help="."/>
+<COMMAND name="show security firewall smtpAlg approvedMailId setup"
+	     help="Show List of Approved Mail_Id.">
+	<DETAIL>
+This command shows List of Approved Mail_Id.
+&lt; Approved MailId
+       </DETAIL>
+       <ACTION>lua clishCmdExec (approvedMailIdListGet)</ACTION>
+    </COMMAND>          
+    <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg blockedMailId add"
+             help="It allows to Configure a blocked MailId."
+             viewid="" view="security-firewall-smtpAlg-blockedMailId">
+                   <ACTION>lua clishCfgObjNew ("blockedMailIdList", 
+                              blockedMailIdCfgInit, blockedMailIdCfgSave, 
+				       blockedMailIdCfgInputVal)
+                   </ACTION>
+               </COMMAND>
+     <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg blockedMailId edit"
+             help="It allows to edit a blocked MailId."
+             viewid="" view="security-firewall-smtpAlg-blockedMailId">
+             <PARAM name="row_id" 
+	         help=" Row Id Of the rule to be edited"
+	         ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("blockedMailIdList", 
+                              blockedMailIdCfgInit, blockedMailIdCfgSave, 
+				       blockedMailIdCfgInputVal,"${row_id}")
+                   </ACTION>
+               </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg blockedMailId delete" 
+             help="It allows to delete a blocked MailId.">
+             <PARAM name="row_id" 
+	       help="Row Id Of the profile to be deleted"
+	       ptype="UINT"/>
+             <ACTION>lua clishCmdExec(blockedMailIdCfgDel,"${row_id}")
+            </ACTION>
+        </COMMAND>
+        <!--=======================================================-->
+
+     <COMMAND name="show security firewall smtpAlg blockedMailId" help="."/>
+     <COMMAND name="show security firewall smtpAlg blockedMailId setup"
+	     help="Show List of Blocked Mail_Id.">
+	<DETAIL>
+This command shows List of Blocked Mail_Id.
+&lt; Blocked MailId
+       </DETAIL>
+       <ACTION>lua clishCmdExec (blockedMailIdListGet)</ACTION>
+    </COMMAND>  
+        <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg subjectList add"
+             help="It allows to add subject with MailId and action."
+             viewid="" view="security-firewall-smtpAlg-subjectList">
+                   <ACTION>lua clishCfgObjNew ("subjectList", 
+                              subjectListCfgInit, subjectListCfgSave, 
+				       subjectListCfgInputVal)
+                   </ACTION>
+               </COMMAND>
+     <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg subjectList edit"
+             help="It allows to edit subject with MailId and action."
+             viewid="" view="security-firewall-smtpAlg-subjectList">
+             <PARAM name="row_id" 
+	         help=" Row Id Of the rule to be edited"
+	         ptype="UINT"/>
+                   <ACTION>lua clishCfgObjNew ("subjectList", 
+                              subjectListCfgInit, subjectListCfgSave, 
+				       subjectListCfgInputVal,"${row_id}")
+                   </ACTION>
+               </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="security firewall smtpAlg subjectList delete" 
+             help="It allows to delete the configuration.">
+             <PARAM name="row_id" 
+	       help="Row Id Of the profile to be deleted"
+	       ptype="UINT"/>
+             <ACTION>lua clishCmdExec(subjectListCfgDel,"${row_id}")
+            </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+<COMMAND name="show security firewall smtpAlg subjectList" help="."/>
+     <COMMAND name="show security firewall smtpAlg subjectList setup"
+	     help="Show List of Subject, Mail_Id, Action.">
+	<DETAIL>
+This command shows List of configured the Subject and corresponding mail Id.
+&lt;Subject&gt;: Mail_Id 	
+&lt;Action
+       </DETAIL>
+       <ACTION>lua clishCmdExec (subjectListGet)</ACTION>
+   </COMMAND> 
+<!--=======================================================-->
+</CLISH_MODULE>

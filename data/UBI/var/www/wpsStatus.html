@@ -1,0 +1,10 @@
+<?lua
+	local wpsConfig = db.getRow ("dot11WPSSessStatus", "_ROWID_", "1")
+    local wpsStatus = ""
+    local wpsMsg = ""
+    if (wpsConfig ~= nil) then
+	    wpsStatus = wpsConfig["dot11WPSSessStatus.sessionStatus"] or ''
+	    wpsMsg = wpsConfig["dot11WPSSessStatus.sessionMsg"] or ''
+	end
+?>
+$|wpsStatus .. "||||" .. wpsMsg or '' |$

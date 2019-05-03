@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<VIEW name="IntelAmt-server-config" prompt="IntelAmt-server-config[policy]> ">
+<COMMAND name="save" help="Save InterlAmt server configuration changes.">
+        <ACTION>lua clishCfgObjExec("IntelAmt")</ACTION>
+    </COMMAND>
+<COMMAND name="cancel" help="Roll back IntelAmt server configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+<COMMAND name="exit" 
+             help="Save IntelAmt server configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("IntelAmt")</ACTION>
+    </COMMAND>
+<COMMAND name="enable_Intel_Amt"
+             help="enable/disable Intel Amt Ports.">
+     <PARAM name="IntelAmtPort_enable" 
+            help="enable/disable IntelAmt server."
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmt", "IntelAmt.Status","${IntelAmtPort_enable}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="Wan_hosts"
+             help="IntelAmt Wan Host Type.">
+     <PARAM name="IntelAmt_Address_Type" 
+            help="Intel Amt Wan Host Type."
+            ptype="WAN_HOST"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmt", "IntelAmt.AddressType","${IntelAmt_Address_Type}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="Wan_host_Address"
+             help="IntelAmt Wan Host Address">
+     <PARAM name="IntelAmt_External_IpStr" 
+            help="Intel Amt Wan Host Addresses."
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmt", "IntelAmt.ExternalIpStr","${IntelAmt_External_IpStr}")
+         </ACTION>
+    </COMMAND>
+    
+<COMMAND name="Internal_Address"
+             help="IntelAmt intenal Address">
+     <PARAM name="IntelAmt.LocalServerIp" 
+            help="Intel Amt Local server ip Addresses."
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmt", "IntelAmt.LocalServerIp","${IntelAmt.LocalServerIp}")
+         </ACTION>
+    </COMMAND>
+
+</VIEW>
+
+
+<!--=======================================================-->
+<COMMAND name="net intel_Amt" help="net policy mode."/>
+<COMMAND name="net intel_Amt server" help="net policy mode."/>
+    <COMMAND name="net intel_Amt server configure"
+             help=" Intel Amt server configuration mode"
+             view="IntelAmt-server-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("IntelAmt", 
+                                       IntelAmtServerCfgInit, 
+                                       IntelAmtServerCfgSave,
+                                       IntelAmtServerInputVal)
+	    </ACTION>
+</COMMAND>
+
+<!--=======================================================-->
+
+<VIEW name="IntelAmt-Reflector-config" prompt="IntelAmt-Reflector-config[policy]>">
+<COMMAND name="save" help="Save InterlAmt Reflector configuration changes.">
+        <ACTION>lua clishCfgObjExec("IntelAmtReflector")</ACTION>
+    </COMMAND>
+<COMMAND name="cancel" help="Roll back IntelAmt server configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+<COMMAND name="exit" 
+             help="Save IntelAmt server configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("IntelAmtReflector")</ACTION>
+    </COMMAND>
+
+
+<COMMAND name="enable" help ="enable intelAmt reflectors on port"/>
+        
+        <COMMAND name="enable Intel_Amt_Reflector"
+             help="enable/disable Ports.">
+     <PARAM name="IntelAmtPort_Reflector_enable" 
+            help="enable/disable IntelAmt reflector"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtStart.enable","${IntelAmtPort_Reflector_enable}")
+         </ACTION>
+     </COMMAND>
+
+<COMMAND name="enable Intel_Amt_Reflector_destport" help ="enable intelamt reflectors on different ports"/>
+
+<COMMAND name="enable Intel_Amt_Reflector_destport 16992"
+             help="enable/disable Ports.">
+     <PARAM name="IntelAmtPort_Reflector_destport_16992" 
+            help="enable/disable IntelAmt reflector for port 16992"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector","IntelAmtPorts.enable_16992","${IntelAmtPort_Reflector_destport_16992}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="enable Intel_Amt_Reflector_destport 16993"
+             help="enable/disable Ports.">
+     <PARAM name="IntelAmtPort_Reflector_destport_16993" 
+            help="enable/disable IntelAmt reflector for port 16993"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.enable_16993","${IntelAmtPort_Reflector_destport_16993}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="enable Intel_Amt_Reflector_destport 16994"
+             help="enable/disable Ports.">
+     <PARAM name="IntelAmtPort_Reflector_destport_16994" 
+            help="enable/disable IntelAmt reflector for port 16994"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.enable_16994","${IntelAmtPort_Reflector_destport_16994}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="enable Intel_Amt_Reflector_destport 16995"
+             help="enable/disable Ports.">
+     <PARAM name="IntelAmtPort_Reflector_destport_16995" 
+            help="enable/disable IntelAmt reflector for port 16995"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.enable_16995","${IntelAmtPort_Reflector_destport_16995}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="enable Intel_Amt_Reflector_destport 9971"
+             help="enable/disable Ports.">
+     <PARAM name="IntelAmtPort_Reflector_destport_9971" 
+            help="enable/disable IntelAmt reflector for port 9971"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.enable_9971","${IntelAmtPort_Reflector_destport_9971}")
+         </ACTION>
+     </COMMAND>
+
+<COMMAND name="Intel_Amt_Reflector_srcport" help = "set port number for different ports"/>
+
+<COMMAND name="Intel_Amt_Reflector_srcport 16992"
+             help="Enter source port value for 16992">
+     <PARAM name="IntelAmtPort_Reflector_srcport_16992" 
+            help="enable/disable IntelAmt reflector for src port 16992"
+            ptype="PORT_NUM"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.srcPort_16992","${IntelAmtPort_Reflector_srcport_16992}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="Intel_Amt_Reflector_srcport 16993"
+             help="Enter source port value for 16993">
+     <PARAM name="IntelAmtPort_Reflector_srcport_16993" 
+            help="enable/disable IntelAmt reflector for port 16993"
+            ptype="PORT_NUM"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.srcPort_16993","${IntelAmtPort_Reflector_srcport_16993}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="Intel_Amt_Reflector_srcport 16994"
+             help="Enter source port value for 16994">
+     <PARAM name="IntelAmtPort_Reflector_srcport_16994" 
+            help="enable/disable IntelAmt reflector for port 16994"
+            ptype="PORT_NUM"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.srcPort_16994","${IntelAmtPort_Reflector_srcport_16994}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="Intel_Amt_Reflector_srcport 16995"
+             help="Enter source port value for 16995">
+     <PARAM name="IntelAmtPort_Reflector_srcport_16995" 
+            help="enable/disable IntelAmt reflector for port 16995"
+            ptype="PORT_NUM"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.srcPort_16995","${IntelAmtPort_Reflector_srcport_16995}")
+         </ACTION>
+    </COMMAND>
+<COMMAND name="Intel_Amt_Reflector_srcport 9971"
+             help="Enter source port value for 9971">
+     <PARAM name="IntelAmtPort_Reflector_srcport_9971" 
+            help="enable/disable IntelAmt reflector for port 9971"
+            ptype="PORT_NUM"/>
+         <ACTION>lua clishCfgObjAdd("IntelAmtReflector", "IntelAmtPorts.srcPort_9971","${IntelAmtPort_Reflector_srcport_9971}")
+         </ACTION>
+    </COMMAND>
+
+
+</VIEW>
+
+<!--=======================================================-->
+<COMMAND name="net intel_Amt_Reflector" help="net policy mode."/>
+    <COMMAND name="net intel_Amt_Reflector configure"
+             help=" Intel Amt Reflector configuration mode"
+             view="IntelAmt-Reflector-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("IntelAmtReflector", 
+                                       IntelAmtServerCfgInit, 
+                                       IntelAmtServerCfgSave,
+                                       IntelAmtServerInputVal)
+	    </ACTION>
+</COMMAND>
+
+<!--=======================================================-->
+<COMMAND name="show net intel_Amt" help="show IntelAmt details"/>
+<!--=======================================================-->
+<COMMAND name="show net intel_Amt server" help ="show IntelAmt Server Configuration"/>
+<!--=======================================================-->
+ <COMMAND name="show net intel_Amt Reflector" help ="show IntelAmt Reflector Configuration"/>
+<!--=======================================================-->
+    <COMMAND name="show net intel_Amt server setup"
+	     help="Display Intel_Amt server Configuration.">
+	     <ACTION>lua clishCmdExec (IntelAmtServerGet)
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show net intel_Amt Reflector setup"
+	     help="Display Intel_Amt Reflector Configuration.">
+	     <ACTION>lua clishCmdExec (IntelAmtReflectorGet)
+             </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+
+</CLISH_MODULE>

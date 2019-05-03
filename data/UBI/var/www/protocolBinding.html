@@ -1,0 +1,238 @@
+<?lua 
+require "teamf1lualib/protocolBinding_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "ProtocolBinding"
+	
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local errorFlag
+
+if (ButtonType and ButtonType == "delete") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["protocolBinding.checkbox"]) == "string") then
+                inputTable["protocolBinding.cookie"] = cgi["protocolBinding.checkbox"]
+                errorFlag = protocolBindingDelete (inputTable)
+        elseif (type(cgi["protocolBinding.checkbox"]) == "table") then
+                errorFlag = protocolBindingDeleteAll (cgi["protocolBinding.checkbox"])
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "add") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        errorFlag, cookie = protocolBindingCreate (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "edit") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        inputTable["protocolBinding.cookie"] = cgi["configRowId"]
+        errorFlag, cookie = protocolBindingSet (inputTable)
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "enable") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["protocolBinding.checkbox"]) == "string") then
+                inputTable["protocolBinding.cookie"] = cgi["protocolBinding.checkbox"]
+                errorFlag = protocolBindingEnable (inputTable)
+        elseif (type(cgi["protocolBinding.checkbox"]) == "table") then
+                errorFlag = protocolBindingEnableAll ()
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "disable") then
+        local inputTable = web.cgiToLuaTable(cgi)
+        if(type(cgi["protocolBinding.checkbox"]) == "string") then
+                inputTable["protocolBinding.cookie"] = cgi["protocolBinding.checkbox"]
+                errorFlag = protocolBindingDisable (inputTable)
+        elseif (type(cgi["protocolBinding.checkbox"]) == "table") then
+                errorFlag = protocolBindingDisableAll ()
+        end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+else
+    local protocolInfo
+    errorFlag, protocolInfo = protocolBindingGetAll ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "12573,12831,11595,12901,10713,10150,13711,30015,30017,30018,10226,13712,13713,12965,10920,12388,12266,12387,12194,13327,12795,10862,10875,10749,10695,13004,30154,30014"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+    <!-- Section for Pop up dialog starts -->
+         <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form action="platform.cgi" method="post" name="tf1_frmProtocolBinding" id="tf1_frmProtocolBinding">        
+            <input type="hidden" name="thispage" id="thispage" value="protocolBinding.html">
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'edit');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$
+                </li>
+                <li id="enable">
+                    $| LANG_LOCALE['10875'] |$
+                </li>
+                <li id="disable">
+                    $| LANG_LOCALE['10749'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['12573'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_protocolBinding">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['13004'] |$</th>
+                                        <th>$| LANG_LOCALE['12831'] |$</th>
+                                        <th>$| LANG_LOCALE['11595'] |$</th>
+                                        <th>$| LANG_LOCALE['12901'] |$</th>
+                                        <th>$| LANG_LOCALE['10713'] |$</th>
+                                    </tr>
+                                </thead>
+                                 <?lua 
+                                        local i = 0
+                                        local status
+                                        for k, v in pairs (protocolInfo) do
+                                        i=i+1
+                                        local row = protocolInfo[i]
+                                        if (row["Enabled"] == 'Enable') then
+                                            status = "1"
+                                            row["Enabled"] = LANG_LOCALE['10875']
+                                        else
+                                            status = "0"
+                                            row["Enabled"] = LANG_LOCALE['10749']
+                                        end
+                                        
+                                        if (row["LocalGatewayType"] == "Dedicated WAN") then
+                                            row["LocalGatewayType"] = LANG_LOCALE['30014']
+                                        elseif (row["LocalGatewayType"] == "Configurable WAN") then
+                                            row["LocalGatewayType"] = LANG_LOCALE['30154']
+                                        else
+                                            row["LocalGatewayType"] = LANG_LOCALE['13327']
+                                        end
+
+                                        if (row["sourceNetwork"] == "Any") then
+                                            row["sourceNetwork"] = LANG_LOCALE['10226']
+                                        end
+                                        
+                                        if (row["destinationNetwork"] == "Any") then
+                                            row["destinationNetwork"] = LANG_LOCALE['10226']
+                                        end
+
+                                 ?>
+                                <tr class="gradeA" id="protocolBinding$| row["_ROWID_"]|$" status="$| status |$">
+                                    <td>$| row["Enabled"] or ''|$</td>
+                                    <td>$| row["ServiceName"] or ''|$</td>
+                                    <td>$| row["LocalGatewayType"] or ''|$</td>
+                                    <td>$| row["sourceNetwork"] or ''|$</td>
+                                    <td>$| row["destinationNetwork"] or ''|$</td>
+                                </tr>
+                                <?lua 
+                                      end 
+                                ?>
+
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModal">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['10150'] |$" value="$| LANG_LOCALE['10150'] |$" id="btSave" onclick="openForm('button.add.protocolBinding.protocolBinding',-1,'tf1_dialog','protocolBinding','protocolBindingForm.html', 'tf1_protocolBindingDailogContent','onLoadProtocolBindingFn');">
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/protocolBindingConfig.js"></script>
+    </body>
+</html>
+<?lua end ?>
+

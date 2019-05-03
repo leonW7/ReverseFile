@@ -1,0 +1,813 @@
+<?lua 
+require "teamf1lualib/bl_syslogServer"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/admin_license"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "sysLogServer"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap    = require("com.teamf1.core.errorMap")
+local syslog      = require("com.teamf1.bl.logging.syslog")
+local license     = require ("com.teamf1.core.admin.license")
+
+local wcfLicence = license.wcfLicenseStatusGet ()
+
+    configRow = {}
+    if (ButtonType and ButtonType == "config") then
+        local inputTable = web.cgiToLuaTable(cgi)
+
+        errorFlag = syslog.syslogServerSectionSetAll (inputTable)
+    if (errorFlag == 0) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    elseif (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+        web.goToPage (NextPage, true, true)
+    else
+        returnCode, configRow = syslog.syslogServerSectionGetAll()
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+LANG_LOCALE
+="13033,13034,11033,10991,10207,13036,11609,11610,14007,12844,14008,14009,14010,14011,14012,14013,14014,12405,11283,12003,13061,11282,10855,10865,13032,14350,13563,12758,10449,13446,11761,13447,11007"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage or '' |$</p>
+                </div>
+                    <?lua end ?>
+               <div align="left">
+                   <nav class="nav-bg">
+                   <ul class="menu">
+                       <li>
+                           <a href="?page=remoteLogging.html">$| LANG_LOCALE['10865'] |$</a>
+                       </li>
+                       <li class="current">
+                           <a href="?page=sysLogServer.html">$| LANG_LOCALE['13032'] |$</a>
+                       </li>
+                   </ul>
+                   </nav>
+               </div>                          
+                    <div class="FL2">
+                        <p class="hint">
+                             $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13034'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmSysLogServer"
+                                id="tf1_frmSysLogServer" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="sysLogServer.html">
+                            <?lua if ((UNIT_NAME == "DSR-150" or UNIT_NAME == "DSR-150N") or (UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500AC" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000AC")) then ?>
+                                <div class="configRow" id="tf1_enableSysLogServer1_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 1</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable0"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer1"></a>
+                                    <input type="hidden" name="sysLogServer.Enable0" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer1_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName1_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text"  id="tf1_sysLogName1" maxlength="32"  onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName0" value="$| configRow ["sysLogServer.serverName0"] or '' |$">
+                                </div>
+                                <div class="break" id="break_sysLogName1_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility1_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility1"
+                                         name ="sysLogServer.facilityId0">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId0"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId0"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId0"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId0"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId0"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId0"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId0"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId0"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility1_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity1_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                     <select id="tf1_sysLogSeverity1"  name= "sysLogServer.severity0">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity0"] == "0") |$ value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity0"] == "128") |$ value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $|  web.dropdownSelected(configRow["sysLogServer.severity0"] == "64") |$ value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity0"] == "32") |$ value="32">$| LANG_LOCALE['14009'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity0"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity0"]  == "8") |$ value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity0"] == "4") |$ value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $|  web.dropdownSelected(configRow["sysLogServer.severity0"] == "2") |$ value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity0"]  == "1") |$ value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity1_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_enableSysLogServer2_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 2</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable1"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer2"></a>
+                                    <input type="hidden" name="sysLogServer.Enable1" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer2_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName2_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text" id="tf1_sysLogName2" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }"  name="sysLogServer.serverName1" value="$| configRow ["sysLogServer.serverName1"] or '' |$">
+                                </div>
+                                <div class="break" id="break_sysLogName2_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility2_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility2"  name ="sysLogServer.facilityId1">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId1"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId1"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId1"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId1"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId1"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId1"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId1"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId1"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                        </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility2_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity2_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity2" name= "sysLogServer.severity1">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity1"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity2_div">
+                                    &nbsp;
+                                </div>
+
+                                <?lua end if ((UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-250N") or (UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500AC" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000AC")) then ?>
+                                <div class="configRow" id="tf1_enableSysLogServer3_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 3</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable2"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer3"></a>
+                                    <input type="hidden" name="sysLogServer.Enable2" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer3_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName3_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text"  id="tf1_sysLogName3" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName2" value="$| configRow ["sysLogServer.serverName2"] or '' |$">
+                                </div>
+                                <div class="break" id="break_sysLogName3_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility3_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility3"
+                                        name ="sysLogServer.facilityId2">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId2"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId2"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId2"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId2"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId2"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId2"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId2"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId2"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                      </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility3_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity3_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity3"  name= "sysLogServer.severity2">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "16") |$  value="16">$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity2"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity3_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_enableSysLogServer4_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 4</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable3"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer4"></a>
+                                    <input type="hidden" name="sysLogServer.Enable3" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer4_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName4_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text"  id="tf1_sysLogName4" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName3" value="$| configRow ["sysLogServer.serverName3"] or '' |$">
+                                </div>
+                                <div class="break" id="break_sysLogName4_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility4_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility4"
+                                        name ="sysLogServer.facilityId3">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId3"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId3"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId3"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId3"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId3"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId3"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId3"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId3"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility4_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity4_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity4"
+                                        name="sysLogServer.severity3">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity3"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity4_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_enableSysLogServer5_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 5</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable4"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>        
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer5"></a>
+                                    <input type="hidden" name="sysLogServer.Enable4" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer5_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName5_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text"  id="tf1_sysLogName5" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName4" value="$| configRow ["sysLogServer.serverName4"] or '' |$">
+                                </div>
+                                <div class="break" id="break_sysLogName5_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility5_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility5" name="sysLogServer.facilityId4">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId4"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId4"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId4"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId4"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId4"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId4"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId4"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId4"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility5_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity5_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity5" name="sysLogServer.severity4">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                         <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity4"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity5_div">
+                                    &nbsp;
+                                </div>
+
+                                <?lua end if ((UNIT_NAME == "DSR-500" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500AC") or (UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000AC")) then ?>
+                                <div class="configRow" id="tf1_enableSysLogServer6_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 6</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable5"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>     
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer6"></a>
+                                    <input type="hidden" name="sysLogServer.Enable5" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer6_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName6_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text"  id="tf1_sysLogName6" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName5" value="$| configRow ["sysLogServer.serverName5"] or '' |$">
+                                </div>
+                                <div class="break" id="break_sysLogName6_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility6_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility6" name="sysLogServer.facilityId5">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId5"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId5"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId5"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId5"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId5"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId5"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId5"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId5"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                        </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility6_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity6_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity6" name="sysLogServer.severity5">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                         <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity5"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity6_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_enableSysLogServer7_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 7</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable6"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>        
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer7"></a>
+                                    <input type="hidden" name="sysLogServer.Enable6" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer7_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName7_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text" id="tf1_sysLogName7" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName6" value="$| configRow ["sysLogServer.serverName6"] or '' |$">
+                                </div>
+                                <div class="break" id="break_sysLogName7_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility7_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility7" name="sysLogServer.facilityId6">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId6"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId6"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId6"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId6"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId6"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId6"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId6"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId6"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility7_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity7_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity7" name="sysLogServer.severity6">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                         <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity6"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity7_div">
+                                    &nbsp;
+                                </div>
+
+                                <?lua end if ((UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000AC")) then ?>
+                                <div class="configRow" id="tf1_enableSysLogServer8_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 8</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable7"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>    
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer8"></a>
+                                    <input type="hidden" name="sysLogServer.Enable7" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer8_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName8_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text" id="tf1_sysLogName8" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName7" value="$| configRow ["sysLogServer.serverName7"] or '' |$" >
+                                </div>
+                                <div class="break" id="break_sysLogName8_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility8_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility8" name="sysLogServer.facilityId7">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId7"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId7"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId7"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId7"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId7"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId7"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId7"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId7"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                          </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility8_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity8_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity8" name="sysLogServer.severity7">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity7"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity7"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity7"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity7"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                         <option $|web.dropdownSelected(configRow["sysLogServer.severity7"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity7"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity7"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity7"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity7"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity8_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_enableSysLogServer9_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 9</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable8"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>    
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer9"></a>
+                                    <input type="hidden" name="sysLogServer.Enable8" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer9_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName9_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text" id="tf1_sysLogName9" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName8" value="$| configRow ["sysLogServer.serverName8"] or '' |$" >
+                                </div>
+                                <div class="break" id="break_sysLogName9_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility9_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility9" name="sysLogServer.facilityId8">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId8"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId8"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId8"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId8"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId8"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId8"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId8"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId8"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                          </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility9_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity9_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity9" name="sysLogServer.severity8">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity8"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity8"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity8"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity8"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                         <option $|web.dropdownSelected(configRow["sysLogServer.severity8"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity8"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity8"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity8"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity8"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity9_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_enableSysLogServer10_div">
+                                    <label>$| LANG_LOCALE['13033'] |$ 10</label>
+                                    <?lua
+                                    if (configRow["sysLogServer.Enable9"] == "1") then
+                                        statusStr = "enable-disable-on"
+                                        statusVar = "1"
+                                        CheckedVar = "checked"
+                                    else
+                                        statusStr = "enable-disable-off"
+                                        statusVar = "0"
+                                        CheckedVar = ""
+                                    end
+                                    ?>    
+                                    <a class="$| statusStr |$" alt="" id="tf1_enableSysLogServer10"></a>
+                                    <input type="hidden" name="sysLogServer.Enable9" value="$| statusVar |$">
+                                </div>
+                                <div class="break" id="break_enableSysLogServer10_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogName10_div">
+                                    <label>$| LANG_LOCALE['11033'] |$</label>
+                                    <input type="text" id="tf1_sysLogName10" maxlength="32" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidate(this.id) || validateFQDN(this.id)); }" name="sysLogServer.serverName9" value="$| configRow ["sysLogServer.serverName9"] or '' |$" >
+                                </div>
+                                <div class="break" id="break_sysLogName10_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogFacility10_div">
+                                    <label>$| LANG_LOCALE['10991'] |$</label>
+                                    <select id="tf1_sysLogFacility10" name="sysLogServer.facilityId9">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId9"] == "255") |$ value="255">$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId9"] == "0") |$ value="0">$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId9"] == "3") |$ value="3">$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N") then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId9"] == "16") |$ value="16">$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId9"] == "18") |$ value="18">$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId9"] == "19") |$ value="19">$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId9"] == "20") |$ value="20">$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.facilityId9"] == "21") |$ value="21">$| LANG_LOCALE['11007'] |$</option>                                        
+                                          </select>
+                                </div>
+                                <div class="break" id="break_sysLogFacility10_div">
+                                    &nbsp;
+                                </div>
+
+                                <div class="configRow" id="tf1_sysLogSeverity10_div">
+                                    <label>$| LANG_LOCALE['12844'] |$</label>
+                                    <select id="tf1_sysLogSeverity10" name="sysLogServer.severity9">
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity9"] == "0") |$  value="0">$| LANG_LOCALE['10207'] |$ </option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity9"] == "128") |$  value="128">$| LANG_LOCALE['14007'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity9"] == "64") |$  value="64">$| LANG_LOCALE['14008'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity9"] == "32") |$  value="32">$| LANG_LOCALE['14009'] |$</option>
+                                         <option $|web.dropdownSelected(configRow["sysLogServer.severity9"] == "16") |$ value="16" >$| LANG_LOCALE['14010'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity9"] == "8") |$  value="8">$| LANG_LOCALE['14011'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity9"] == "4") |$  value="4">$| LANG_LOCALE['14012'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity9"] == "2") |$  value="2">$| LANG_LOCALE['14013'] |$</option>
+                                        <option $| web.dropdownSelected(configRow["sysLogServer.severity9"] == "1") |$  value="1">$| LANG_LOCALE['14014'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_sysLogSeverity10_div">
+                                    &nbsp;
+                                </div>
+
+                                <?lua end ?>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" onClick="return sysLogConfigValidate('tf1_frmSysLogServer')" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" name = "button.config.sysLogServer">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onClick="this.form.reset(); resetImgOnOff('tf1_frmSysLogServer'); return sysLogServerOnreset();">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/sysLogServer.js"></script>
+    </body>
+</html>
+<?lua end ?>

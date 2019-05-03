@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="net-vlan-config" prompt="net-config[vlanConfig]> "> 
+    <COMMAND name="save" help="Save vlan configuration changes.">
+	     <ACTION>lua clishCfgObjExec("vlan")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save vlan changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("vlan")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+       <COMMAND name="vlan-name"
+             help="Name for vlan.">
+             <PARAM name="vlanName"
+                    help="Name for Vlan"
+                    ptype="STRING_ALPHA_NUM"/>
+             <ACTION>lua clishCfgObjAdd ("vlan","vlan.vlanName", "${vlanName}")              
+             </ACTION>
+    </COMMAND>
+	<COMMAND name="inter-vlan-routing"
+             help="Enable/Disable interVlan Routing .">
+             <PARAM name="interVlan"
+                    help="Enable/Disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua clishCfgObjAdd ("vlan","interVLANRouting.status", "${interVlan}")              
+             </ACTION>
+    </COMMAND>
+       <COMMAND name="showCP-profiles" check_supported="Y"
+             help="available captive portal profiles">
+             <ACTION>lua clishCmdExec (captivePortalShowProfile)              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="captive-portal-enable"
+             help="Enable captive portal">
+             <PARAM name="accessType"
+                    help="Select accessType "
+                    ptype="CHOICE_INT_CP"/>
+             <ACTION>lua clishCfgObjAdd ("vlan","interVLANRouting.accessType", "${accessType}")              
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="captive-portal-user" help="accessType is Permanent User "/>
+ 	<COMMAND name="captive-portal-user auth-mode" help="authentication-server for user">
+		<PARAM name="authMode"
+            help=" authentication type"
+            ptype="CP_AUTH_MODE"/>
+         <ACTION>lua clishCfgObjAdd ("vlan", "CaptivePortalVLAN.authMode","${authMode}")
+             </ACTION>
+    </COMMAND>
+       <COMMAND name="captive-portal-user auth-type" help="authentication-type for user">
+	<PARAM name="authType"
+            help=" authentication server type"
+            ptype="CP_AUTH_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("vlan", "CaptivePortalVLAN.authType","${authType}")
+             </ACTION>
+    </COMMAND>
+           <COMMAND name="captive-portal-user CP-profile" help="captive portal profile for user">
+		<PARAM name="perCPprofile"
+            help=" captive protal Profile Id"
+            ptype="CP_PROFILE"/>
+         <ACTION>lua clishCfgObjAdd ("vlan", "CaptivePortalVLAN.profileId","${perCPprofile}")
+             </ACTION>
+     </COMMAND>
+   
+     <COMMAND name="captive-portal-user Redirect-Type" help="captive portal profile for user"> 
+		<PARAM name="perredirect"
+            help=" captive protal redirect type"
+            ptype="REDIRECT_TYPE"/>
+         <ACTION>lua clishCfgObjAdd ("vlan", "CaptivePortalVLAN.redirectType","${perredirect}")
+             </ACTION>
+     </COMMAND>
+
+ </VIEW>
+
+<!--=======================================================-->
+<VIEW name="net-port-vlan-config" prompt="net-port-config[portVlanConfig]> "> 
+    <COMMAND name="save" help="Save vlan configuration changes.">
+	     <ACTION>lua clishCfgObjExec("portVlan")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save vlan changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("portVlan")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="mode"
+             help="Port Vlan mode  .">
+             <PARAM name="vlanMode"
+                    help="vlan port mode"
+                    ptype="PORT_VLAN_MODE"/>
+             <ACTION>lua clishCfgObjAdd ("portVlan","VlanPortMgmt.PortVlanMode", "${vlanMode}")              
+             </ACTION>
+    </COMMAND>
+         <COMMAND name="pvid"
+             help="Port Vlan ID">
+             <PARAM name="pvid"
+                    help="Port vlan ID  "
+                    ptype="VLANID_RANGE"/>
+             <ACTION>lua clishCfgObjAdd ("portVlan","VlanPortMgmt.DefaultPVID", "${pvid}")              
+             </ACTION>
+     </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-vlan-membership-config" prompt="Vlan-config[membership]> ">
+    <COMMAND name="save" help="Save Vlan Membership configuration changes.">
+        <ACTION>lua clishCfgObjExec("vlanMembership")</ACTION>
+     </COMMAND>
+    <COMMAND name="cancel" help="Roll back vlan membership configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+    <COMMAND name="exit" 
+             help="Save vlan membership configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("vlanMembership")</ACTION>
+     </COMMAND>
+    <COMMAND name="membership" 
+             help="vlan membership.Give comma seperated VLAN ID values."/>
+      <COMMAND name="membership add" 
+             help="vlan membership.Give comma seperated VLAN ID values.">
+             <PARAM name="vlanIds1"
+                help="Give vlan Id comma seperated values."
+            	ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("vlanMembership","vlan.vlanIds1", "${vlanIds1}")
+        </ACTION>
+     </COMMAND>
+      <COMMAND name="membership remove" 
+             help="vlan membership.Give comma seperated VLAN ID values.">
+             <PARAM name="vlanIds2"
+                help="Give vlan Id comma seperated values."
+            	ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("vlanMembership","vlan.vlanIds2", "${vlanIds2}")
+        </ACTION>
+     </COMMAND>
+
+</VIEW> 
+
+<!--=======================================================-->
+    <COMMAND name="net port-vlan" help ="port vlan "/>
+<!--=======================================================-->
+     <COMMAND name="net port-vlan lan_edit" check_supported="Y"
+             help="Vlan port name range 1-4 ."
+              view="net-port-vlan-config" viewid="">
+             <PARAM name="portnamew"
+                    help="Vlan Port name"
+                    ptype="PORTNAMEW"/>
+                        <ACTION>lua clishCfgObjNew ("portVlan", 
+                                       portVlanInit, 
+                                       portVlanSave,
+                                       portVlanInputVal,
+                                       "${portnamew}","edit")
+	    </ACTION>
+    </COMMAND>
+
+
+<!--=======================================================-->
+<COMMAND name="net port-vlan wlan_edit"
+         help="SSID to be edited.Use command 'show net wireless_vlan status 'to dislay all SSID's Name with rowid"
+         view="net-port-vlan-config" viewid="">
+         <PARAM name="rowID"
+                help="Row ID"
+                ptype="UINT"/>
+               <ACTION>lua clishCfgObjNew ("portVlan",
+                                            portWVlanInit,
+                                            portWVlanSave,
+                                            portWVlanInputVal,
+                                            "${rowID}","edit")
+               </ACTION>
+           </COMMAND>                                    
+<!--=======================================================-->
+    <COMMAND name="net vlan-membership" help ="vlan-membership"/>
+<!--=======================================================-->
+<COMMAND name="net vlan-membership lan_edit" check_supported="Y"
+	help="net vlan membership for the vlan and Wlan port"
+	view="net-vlan-membership-config" viewid="">
+	 <PARAM name="portw"
+                help="Vlan Port"
+                ptype="PORTNAMEW"/>
+                  <ACTION>lua clishCfgObjNew ("vlanMembership",
+                  				vlanMembershipInit,
+                  				vlanMembershipSave,
+         					vlanMembershipInputVal,"${portw}")
+                  </ACTION>
+</COMMAND>
+<!--=======================================================-->
+<COMMAND name="net vlan-membership wlan_edit" check_supported="Y"
+         help="SSID to be edited.Use command 'show net wireless_vlan status 'to dislay all SSID's Name with rowid"
+         view="net-vlan-membership-config" viewid="">
+          <PARAM name="rowID"
+                 help="Row ID"
+                 ptype="UINT"/>
+                 <ACTION>lua clishCfgObjNew ("vlanMembership",
+                                              wvlanMembershipInit,
+                                              wvlanMembershipSave,
+                                              wvlanMembershipInputVal,"${rowID}")
+          </ACTION>
+   </COMMAND>                                           
+
+<!--=======================================================-->
+<VIEW name="MultiVlan-edit-config" prompt="MultiVlan-config[policy]> ">
+<COMMAND name="save" help="Save Multi Vlan server configuration changes.">
+        <ACTION>lua clishCfgObjExec("MultivlanSub")</ACTION>
+    </COMMAND>
+<COMMAND name="cancel" help="Roll back Multi Vlan server configuration changes.">
+        <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+
+<COMMAND name="exit" 
+             help="Save Multivlan server configuration changes and exit current mode."
+             view="root-view" viewid="">
+        <ACTION>lua clishCfgObjExec("MultivlanSub")</ACTION>
+</COMMAND>
+
+<COMMAND name="ip-address"
+             help="IP of given MultiVlan subnetVlan.">
+     <PARAM name="addr_ip" 
+            help="add IP."
+            ptype="IP_ADDR"/>
+         <ACTION>lua  clishCfgObjAdd("MultivlanSub","ifStatic.StaticIp","${addr_ip}")
+         </ACTION>
+     </COMMAND>
+
+<COMMAND name="subnet-mask"
+    help="Add subnet mask for Multivlan.">
+     <PARAM name="mas_subnet" 
+            help="Subnet mask for the vlan"
+            ptype="IP_ADDR"/>
+         <ACTION>lua
+             clishCfgObjAdd("MultivlanSub","ifStatic.NetMask","${mas_subnet}")
+         </ACTION>
+     </COMMAND>
+
+<COMMAND name="dhcp-mode"
+    help="Select the DHCP Mode.">
+     <PARAM name="dhcp_mod" 
+            help="Subnet mask for the vlan"
+            ptype="DHCPV4_MODE"/>
+         <ACTION>lua clishCfgObjAdd("MultivlanSub","dhcp.dhcpEnabled","${dhcp_mod}")
+         </ACTION>
+    </COMMAND>
+
+<COMMAND name="domain-name"
+    help="domain name for vlan.">
+     <PARAM name="dom_nam" 
+            help="domain name for the vlan"
+            ptype="DHCP_DOMAIN"/>
+         <ACTION>lua clishCfgObjAdd("MultivlanSub","dhcp.domainName","${dom_nam}")
+         </ACTION>
+    </COMMAND>
+
+<COMMAND name="start-ip"
+    help="starting ip address of the dhcp mode.">
+     <PARAM name="ip_start" 
+            help="Starting ip for the vlan"
+            ptype="IP_ADDR"/>
+         <ACTION>lua clishCfgObjAdd("MultivlanSub","dhcp.startAddress","${ip_start}")
+         </ACTION>
+</COMMAND>
+
+<COMMAND name="end-ip"
+    help="ending ip of the Valn.">
+     <PARAM name="ip_end" 
+            help="ending ip for the vlan"
+            ptype="IP_ADDR"/>
+         <ACTION>lua
+             clishCfgObjAdd("MultivlanSub","dhcp.endAddress","${ip_end}")
+         </ACTION>
+</COMMAND>
+
+<COMMAND name="primary-dns"
+    help="Primary dns for the vlan.">
+     <PARAM name="dns_primary" 
+            help="primary dns for the vlan"
+            ptype="IP_ADDR"/>
+         <ACTION>lua
+             clishCfgObjAdd("MultivlanSub","dhcp.primaryDnsServer","${dns_primary}")
+         </ACTION>
+</COMMAND>
+
+<COMMAND name="secondary-dns"
+    help="Secondary dns for the vlan.">
+     <PARAM name="dns_secondary" 
+            help="secondary dns for the vlan"
+            ptype="IP_ADDR"/>
+         <ACTION>lua
+             clishCfgObjAdd("MultivlanSub","dhcp.secondaryDnsServer","${dns_secondary}")
+         </ACTION>
+</COMMAND>
+
+<COMMAND name="default_gw"
+    help="Set default gateway.">
+     <PARAM name="defaultgw" 
+            help="Default Gateway."
+            ptype="IP_ADDR"/>
+         <ACTION>lua
+             clishCfgObjAdd("MultivlanSub","dhcp.defaultGw", "${defaultgw}")
+         </ACTION>
+</COMMAND>
+
+<COMMAND name="lease-time"
+    help="Lease time for the vlan.">
+     <PARAM name="time_lease" 
+            help="lease time for the vlan"
+            ptype="LEASETIME"/>
+         <ACTION>lua
+             clishCfgObjAdd("MultivlanSub","dhcp.leaseTime","${time_lease}")
+         </ACTION>
+</COMMAND>
+
+<COMMAND name="relay-gateway"
+    help="relay gateway for the vlan.">
+     <PARAM name="relay_gat" 
+            help="relay gateway for the vlan"
+            ptype="IP_ADDR"/>
+         <ACTION>lua
+             clishCfgObjAdd("MultivlanSub","DhcpRelay.RelayGateway","${relay_gat}")
+         </ACTION>
+</COMMAND>
+
+
+<COMMAND name="enable-dns-proxy"
+    help="relay gateway for the vlan.">
+     <PARAM name="enable_dns" 
+            help="relay gateway for the vlan"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua
+             clishCfgObjAdd("MultivlanSub","dhcp.enableDnsProxy","${enable_dns}")
+         </ACTION>
+</COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-vlan-ipv6-config" prompt="net-config[vlan-ipv6]> "> 
+    <COMMAND name="save" help="Save VLAN configuration changes.">
+	     <ACTION>lua clishCfgObjExec("vlanv6")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save VLAN configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("vlanv6")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back VLAN configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+    <COMMAND name="IPv6_enable" help="Set IPv6 Vlan status">
+	<PARAM name="ip_address" 
+	       help="Ipv6 Vlan status"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "ifStatic.isEnabled", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="static" help="Set system VLAN Settings."/>
+    <COMMAND name="static address" help="Set system VLAN IP address.">
+	<PARAM name="ip_address" 
+	       help="VLAN IP address."
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "ifStatic.StaticIp", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="static prefix_value" help="Prefix length">
+	<PARAM name="prefix_length" 
+	       help="Prefix Length"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "ifStatic.PrefixLength", 
+		    "${prefix_length}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp" help="Set system VLAN Settings."/>
+    <COMMAND name="dhcp server_enable" help="Set dhcpv6 server status">
+	<PARAM name="ip_address" 
+	       help="Prefix Length"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.isEnabled", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp mode" help="DHCPv6 Mode">
+	<PARAM name="ip_address" 
+	       help="DHCPv6 Mode"
+	       ptype="DHCPV6_MODE"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.statelessMode", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp domain_name" help="dhcp server domain name">
+	<PARAM name="ip_address" 
+	       help="dhcpv6 domain server name"
+	       ptype="DHCP_DOMAIN"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.domainName", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp server_preference" help="server preference number">
+	<PARAM name="ip_address" 
+	       help="dhcp server preference number"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.serverPreference", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp dns_type" help="dns server type">
+	<PARAM name="ip_address" 
+	       help="DNS Server Type 1(useDnsProxy) 2(useDnsFromISP) 3(useBelow)"
+	       ptype="DHCPV6S_DNS_T"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.useDNSServersFrom", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp primary_dns" help="primary dns server ">
+	<PARAM name="ip_address" 
+	       help="Primary dns server "
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.primaryDNSServer", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp secondary_dns" help="Secondary dns server">
+	<PARAM name="ip_address" 
+	       help="Secondary dns server"
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.secondaryDNSServer", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dhcp rebind_time" help="Rebind time">
+	<PARAM name="ip_address" 
+	       help="rebind time"
+	       ptype="DHCPV6S_REBIND_TIME"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.leaseTime", 
+		    "${ip_address}")
+	</ACTION>
+</COMMAND>
+    <COMMAND name="dhcp Prefix_delegation" help="Prefix Delegation">
+	<PARAM name="ip_address" 
+	       help="Prefix Delegation Status"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("vlanv6", "dhcpv6s.prefixDelegation", 
+		    "${ip_address}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+    <COMMAND name="net multivlan" help ="Multivlan server configure"/>
+<!--=======================================================-->
+    <COMMAND name="net multivlan subnet" help ="Multivlan Server configure"/>
+<!--=======================================================-->
+
+     <COMMAND name="net multiVlan subnet edit"
+             help=" Multivlan server edit mode"
+             view="MultiVlan-edit-config" viewid="">
+             <PARAM name="vlanID"
+                 help="MultiVlan Id you want to edit."
+                 ptype="VLANID_RANGE"/>
+            <ACTION>lua clishCfgObjNew ("MultivlanSub", 
+                                       MultivlanSubInit, 
+                                       MultivlanSubSave,
+                                       MultivlanSubInputVal,
+                                       "${vlanID}","edit")
+	    </ACTION>
+    </COMMAND>
+    
+<!--=======================================================-->
+    <COMMAND name="net vlan" help="vlan Configuration Changes."/>
+<!--=======================================================-->
+    <COMMAND name="net vlan ipv6" help="vlan ipv6 configuration."/>
+<!--=======================================================-->
+
+    <COMMAND name="net vlan ipv6 configure"
+        help="IPv6 VlAN configuration/edit mode."
+        view="net-vlan-ipv6-config" viewid="">
+        <PARAM name="vlanID"
+            help="Vlan Id you want to config/edit."
+                 ptype="VLANID_RANGE"/>
+            <ACTION>lua clishCfgObjNew ("vlanv6", vlanIPv6CfgInit, vlanIPv6CfgSave, 
+				       vlanIPv6CfgInputVal, "${vlanID}","edit")
+	    </ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="net vlan config" help="vlan configuration ."/>    
+    <!--=======================================================-->
+    <COMMAND name="net vlan config add"
+             help="Add a vlan."
+             view="net-vlan-config" viewid="">
+    <PARAM name="vlan_id" 
+           help="Give id of the vlan to be created. "
+           ptype="VLAN_ID_RANGE"/>
+               <ACTION>lua clishCfgObjNew ("vlan",vlanCfgInit, vlanCfgSave,vlanCfgInputVal,"${vlan_id}","add")
+                    </ACTION>
+    </COMMAND>
+    <COMMAND name="net vlan config edit"
+             help="Edit a configured vlan."
+             view="net-vlan-config" viewid="">
+    <PARAM name="vlan_Id" 
+           help="Enter Id of vlan to be edited,use 'show net vlan configuration' for available vlan list"
+           ptype="VLANID_RANGE"/>
+           	<ACTION>lua clishCfgObjNew ("vlan",vlanCfgInit, vlanCfgSave,vlanCfgInputVal,"${vlan_Id}","edit")
+                    </ACTION>
+                  
+    </COMMAND>
+    <COMMAND name="net vlan config delete"
+             help="Delete a vlan.">
+    <PARAM name="VlanId" 
+           help="Enter vlan ID of vlan to be deleted"
+           ptype="VLAN_ID_RANGE"/>
+          	<ACTION>lua clishCmdExec (vlanAvailableDelete,"${VlanId}")
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="net vlan config enable"
+             help="Enable vlan configuration.">
+              	<ACTION>lua clishCmdExec (vlanConfigEnable)
+                   </ACTION>
+    </COMMAND>
+    <COMMAND name="net vlan config disable"
+             help="Disable vlan configuration.">
+              	<ACTION>lua clishCmdExec (vlanConfigDisable)
+                   </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

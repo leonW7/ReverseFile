@@ -1,0 +1,245 @@
+<?lua
+require "teamf1lualib/bridgeTrafficSelectors_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+    PAGE_HELP = "network"
+    PAGE_HELP_SECTION = "bridgeTrafficSelectors"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+-- traffic Selector business Logic
+local BTS_bl = require("com.teamf1.bl.network.bridgeTrafficSelectors")
+
+local returnCode, BBWP_Table = BTS_bl.bridgeBandwidthProfilesGetAll() 
+
+local configRowId
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if (RowId == "-1") then 
+        local returnCode, cookie = BTS_bl.bridgeTrafficSelectorCreate(inputTable) 
+            if (returnCode == returnCodes.SUCCESS) then
+                statusSuccessMessage = errorMap.errorStringGet (returnCode)
+            else 
+                statusErrorMessage = errorMap.errorStringGet (returnCode)
+	    end
+            web.goToPage(NextPage, true, true)
+    else
+        inputTable["L2TrafficSelector.cookie"] = RowId
+        local returnCode, cookie = BTS_bl.bridgeTrafficSelectorEdit(inputTable) 
+ 
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+        web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local cookieTbl = {}
+    local tempVar   = 1
+    if (type(cgi["bridgeTrafficSelectors.checkbox"]) == "string") then
+        cookieTbl[tempVar] = inputTable["bridgeTrafficSelectors.checkbox"]
+    else
+        for k, v in pairs(cgi["bridgeTrafficSelectors.checkbox"]) do
+            cookieTbl[tempVar] = v
+            tempVar = tempVar + 1
+        end
+    end
+
+    -- call the BL logic
+    errorFlag = BTS_bl.bridgeTrafficSelectorsDelete (cookieTbl)
+    
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+else    
+    local returnCode
+    returnCode, bridgeTrafficSelectorTab, BBWP_Status  = BTS_bl.bridgeTrafficSelectorInfoGet()
+ 
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "10358,13133,30148,30149,50149,30166,12831,13130,30167,11384,14043,30168,30169,10342,12831,13130,11387,12028,12133,12048,12795,10862,10695,10356"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form name action="platform.cgi" method="post" name="tf1_frmBridgeTrafficSelectors" id="tf1_frmBridgeTrafficSelectors">    
+            <input type="hidden" name="thispage" id="thispage" value="bridgeTrafficSelectors.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>
+        <!-- Section for Pop up dialog ends -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onClick="setSelectAll (this.id, 'edit');"/>
+                    &nbsp;$| LANG_LOCALE['12795'] |$
+                </li>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$
+                </li>
+                <li id="delete">
+                    $| LANG_LOCALE['10695'] |$
+                </li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=bandwidthProfiles.html">$| LANG_LOCALE['10358'] |$</a>
+                                </li>
+				<li>
+                                    <a href="?page=trafficSelectors.html">$| LANG_LOCALE['13133'] |$</a>
+                                </li>
+                                <?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                <li>
+                                	<a href="?page=bridgeBandwidthProfiles.html">$| LANG_LOCALE['30148'] |$</a>
+                                </li>
+                                <li class="current">
+                                	<a href="?page=bridgeTrafficSelectors.html">$| LANG_LOCALE['30149'] |$</a>
+                                </li>
+                                <?lua end ?>
+                                <li>
+                                	<a href="?page=sessionLimit.html">$| LANG_LOCALE['50149'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=bandwidthManagement.html">$| LANG_LOCALE['10356'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['30166'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui"  id="tf1_bridgeTrafficSelectors">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['12831'] |$</th>
+                                        <th>$| LANG_LOCALE['13130'] |$</th>
+                                        <th>$| LANG_LOCALE['30167'] |$</th>
+                                    </tr>
+                                </thead>
+				<?lua
+                                    local i = 0						
+                                    for k,v in pairs(bridgeTrafficSelectorTab) do
+                                        i = i + 1							
+                                        local row = bridgeTrafficSelectorTab[i]
+                                        local selector = ""
+                                        if (tonumber(row["L2TrafficSelector.MatchType"]) == 1) then
+                                            selector = LANG_LOCALE['11384']
+                                        elseif (tonumber(row["L2TrafficSelector.MatchType"]) == 2) then
+                                            selector = LANG_LOCALE['14043']
+                                        end
+                                ?>
+                                    <tr class="gradeA" id="bridgeTrafficSelectors$| row["L2TrafficSelector._ROWID_"] |$">
+                                        <td>$| row["L2TrafficSelector.ServiceName"] or '' |$</td>
+                                        <td>$| selector |$</td>
+                                        <td>$| row["L2TrafficSelector.ProfileName"]  or ''  |$</td>
+                                    </tr>
+                                <?lua end ?>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="buttonsRow" id="tf1_btnShowModal">
+                        <input type="button" class="btnSubmit" title="$| LANG_LOCALE['30168'] |$" value="$| LANG_LOCALE['30168'] |$" id="btSave" name="button.add.bridgeTrafficSelectors.bridgeTrafficSelectors.-1" onclick="openForm('button.add.bridgeTrafficSelectors.bridgeTrafficSelectors',-1,'tf1_dialog','bridgeTrafficSelectors','bridgeTrafficSelectorsForm.html', 'tf1_bridgeTrafficSelectorsDailogContent','onloadBridgeTrafficSelFn');">
+                    </div>
+                </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?lua web.includeMenu("footer.html")?>
+                </td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/macValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/bridgeTrafficSelectors.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#tf1_bridgeTrafficSelectors .gradeA').contextMenu('contextMenu', {
+				bindings : {
+				'editMenu' : function(t, e, rowId) {
+				openForm('button.edit.bridgeTrafficSelectors.bridgeTrafficSelectors',rowId,'tf1_dialog','bridgeTrafficSelectors','bridgeTrafficSelectorsForm.html', 'tf1_bridgeTrafficSelectorsDailogContent','onloadBridgeTrafficSelFn');	
+				},
+				'deleteMenu' : function(t, e, rowId) {
+					deleteRows('button.delete.bridgeTrafficSelectors.bridgeTrafficSelectors', 'tf1_frmBridgeTrafficSelectors', rowId, 'optionSelectAll', 'tf1_dialog', 'bridgeTrafficSelectors', 'bridgeTrafficSelectors');
+				}
+            }
+			});
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+				$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+			   	});
+			});
+		</script>
+	</body>
+</html>
+<?lua end ?>

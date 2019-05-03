@@ -1,0 +1,65 @@
+<?lua 
+require "teamf1lualib/voiceVlan_bl"
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie, port, mode, vlan, priority        
+    if (ButtonType and ButtonType == "edit") then
+       returnCode, cookie, port, mode, vlan, priority =  voiceGet (inputCookie) 
+    end    
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<div id="tf1_voiceVlanDailogContent">
+    <div class="topBg">
+        <h1>Voice VLAN Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow" id="tf1_interface_div">
+            <label>Interface </label><select size="1" name="voiceVlan.port" value="$| port or '' |$" id="tf1_interface">
+                            <option value="1" $| web.dropdownSelected(port == "1") |$ >Port1</option>
+                            <option value="2" $| web.dropdownSelected(port == "2") |$ >Port2</option>
+                            <option value="3" $| web.dropdownSelected(port == "3") |$ >Port3</option>
+                            <option value="4" $| web.dropdownSelected(port == "4") |$ >Port4</option>            </select> </div>
+        <div class="break" id="break2_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_voiceVlanMode1_div">
+            <label>Voice VLAN Mode </label>
+            <p>
+            <input type="radio" name="voiceVlan.mode" id="tf1_voiceVlanMode1"  value="1" $| web.radioSelected(mode == "1") |$   id="tf1_voiceVlanMode1" onclick="voiceVlanModeChange('tf1_voiceVlanMode1');" checked=''> 
+            VLAN </p>
+            <p>
+            <input type="radio" name="voiceVlan.mode" id="tf1_voiceVlanMode2" value="2" $| web.radioSelected(mode == "2") |$  onclick="voiceVlanModeChange('tf1_voiceVlanMode2');" > 
+            Dot1q </p>
+        </div>
+        <div class="break" id="break3_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtVlan_div">
+            <label>VLAN ID</label>
+            <input type="text" id="tf1_txtVlan" name="voiceVlan.vlan" value="$| vlan or '' |$" maxlength="4" onkeypress="return numericValueCheck (event, '')" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 4096, true, 'Invalid Vlan Id:', '');}" class="one">
+            <dl>
+                [Range: 1 - 4096]
+            </dl>
+        </div>
+        <div class="break" id="break4_div">
+&nbsp; </div>
+        <div class="configRow" id="tf1_txtCustomDotVal_div">
+            <label>Custom Dot1q Value </label>
+            <input type="text" id="tf1_txtCustomDotVal" name="voiceVlan.priority" value="$| priority or '' |$" maxlength="1" onkeypress="return numericValueCheck (event, '');" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 7, true, 'Invalid Vlan Id:', '');}" class="one">
+            <dl>
+                [Range: 1 - 7]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+                                <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                                <?lua if(cgi["configRowId"] == "-1") then?>
+        <input type="submit" name="button.add.voiceVlan" onclick="return voiceVlanConfigValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                <?lua else?>
+        <input type="submit" name="button.edit.voiceVlan" onclick="return voiceVlanConfigValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                <?lua end?>
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->

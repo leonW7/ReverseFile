@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# privatetunnelInit - initialization script for privatetunnel
+#
+# Copyright (c) 2012, TeamF1, Inc.
+#
+# @copyright (c) 2015, TeamF1 Networks Pvt. Ltd.
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01b,04nov15,ss   ported OmniSSL changes to M8.
+# 01a, 28mar13,AS written
+#
+
+# private tunnel initialization
+echo -n "Private Tunnel Intialization ......."
+
+mkdir -p /var/tmp/
+cp -a /pfrm2.0/etc/ptcore /etc/
+

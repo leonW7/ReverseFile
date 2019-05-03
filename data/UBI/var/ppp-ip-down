@@ -1,0 +1,100 @@
+#!/bin/sh
+# ppp-ip-down script
+# modified by anp
+
+# remove the dns file
+rm -f "/var/wan"$(($LINKNAME))"Dns"
+
+# remove the wan up time file
+rm -f "/var/wan"$(($LINKNAME))"Time-2"
+
+# remove the wan up time file
+rm -f "/var/wan"$(($LINKNAME + 1))"Name"
+
+# remove the ip file
+rm -f "/var/wan"$(($LINKNAME))"Ip"
+
+# remove the wan gw file
+rm -f "/var/wan"$(($LINKNAME))"Gw"
+
+# update the user session information
+B=$(cat "/var/ppp_user_session" | grep -n $IPREMOTE | cut -d ":" -f1)
+sed -i "$B"d "/var/ppp_user_session"
+
+PPTP_SERVER="pptpServer"
+L2TP_SERVER="l2tpServer"
+
+STATUS=0
+
+if [ "$6" = "$PPTP_SERVER" ];then
+COMP_ID=41
+SEND_SMS=1
+LOG_MESSAGE="PPTP tunnel disconnects for user: $PEERNAME with client IP: $IPREMOTE"
+elif [ "$6" = "$L2TP_SERVER" ];then
+COMP_ID=47
+LOG_MESSAGE="L2TP tunnel disconnects for user: $PEERNAME with client IP: $IPREMOTE"
+SEND_SMS=1
+fi
+
+export LD_LIBARY_PATH=$LD_LIBARY_PATH:/pfrm2.0/lib
+
+# update the networkInterface table
+/pfrm2.0/bin/pppStatsUpdate -d /tmp/system.db -a 0.0.0.0                       \
+                                              -g 0.0.0.0                       \
+                                              -p 0.0.0.0                       \
+                                              -s 0.0.0.0                       \
+                                              -i $LINKNAME
+
+# turn off USB LED when ppp-ip-down is called
+
+MODEL_ID=$(head -n 1 /proc/productData/product_model_id);
+
+
+
+# check USB LED of threeG only for OCTEON DEVICES.
+
+if [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500N" ] || 
+   [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000N" ] ||
+   [ $MODEL_ID == "DSR-500AC" ] || [ $MODEL_ID == "DSR-1000AC" ] ;then
+
+   USB1FILE=/var/usb1Info
+   USB2FILE=/var/usb2Info
+   USB1_PROC_FILE=/proc/usb1_status
+   USB2_PROC_FILE=/proc/usb2_status
+
+   if [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-500AC" ];then
+       NIMF_FILE=/var/nimfConn-WAN2-2
+   elif [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000AC" ];then
+       NIMF_FILE=/var/nimfConn-WAN3-2
+   fi
+
+   WAN_TYPE=$(head -n 1 $NIMF_FILE);
+
+   if [ -e $USB1FILE ] && [ $WAN_TYPE == "threeg" ];then
+       dev=$(head -n 1 $USB1FILE | cut -d : -f3)
+       if [ $dev == "3G" ];then
+           if [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000N" ]|| [ $MODEL_ID == "DSR-1000AC" ];then
+               echo ""  > $NIMF_FILE
+           elif [ $MODEL_ID == "DSR-500" ] || [ $MODEL_ID == "DSR-500N" ] || [ $MODEL_ID == "DSR-500AC" ];then
+               echo ""  > $NIMF_FILE
+           fi    
+           echo "0" > $USB1_PROC_FILE
+       fi    
+   fi
+
+   if [ -e $USB2FILE ] && [ $WAN_TYPE == "threeg" ];then
+       dev=$(head -n 1 $USB2FILE | cut -d : -f3)
+       if [ $dev == "3G" ];then
+           if [ $MODEL_ID == "DSR-1000" ] || [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000AC" ];then
+               echo ""  > $NIMF_FILE
+           fi
+           echo "0" > $USB2_PROC_FILE
+       fi    
+   fi
+fi
+
+if [ $SEND_SMS = "1" ];then
+# executing smsSupportConfig binary to send sms on vpn tunnel up/down
+/pfrm2.0/bin/smsSupportConfig /tmp/system.db $COMP_ID "$LOG_MESSAGE"
+/pfrm2.0/bin/eventTraps /tmp/system.db $COMP_ID $STATUS "$LOG_MESSAGE"
+fi

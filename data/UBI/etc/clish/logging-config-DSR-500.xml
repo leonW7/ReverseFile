@@ -1,0 +1,797 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="system-logging-ipv4-config" prompt="system-config[logging-ipv4]> "> 
+    <COMMAND name="save" help="Save logging configuration changes.">
+	<ACTION>lua clishCfgObjExec("logging")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save logging configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	<ACTION>lua clishCfgObjExec("logging")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back logging configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="lan_wan_accept_packet_logs" help="lan to wan accepted Pkts Enable/Disable">
+	     <PARAM name="acceptedPkts" 
+	       help="lan to wan accepted Pkts Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.LANToWANAccept", "${acceptedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="lan_wan_drop_packet_logs" help="lan to wan dropped Pkts Enable/Disable">
+	     <PARAM name="droppedPkts" 
+	       help="lan to wan dropped Pkts Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.LANToWANDrop", "${droppedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wan_lan_accept_packet_logs" help="wan to lan accepted Pkts logs  Enable/Disable">
+	     <PARAM name="acceptedPkts" 
+	       help="wan to lan accepted Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.WANToLANAccept", "${acceptedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wan_lan_drop_packet_logs" help="wan to lan dropped Pkts logs Enable/Disable">
+	     <PARAM name="droppedPkts" 
+	       help="wan to lan dropped Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.WANToLANDrop", "${droppedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wan_dmz_accept_packet_logs" help="wan to dmz accepted Pkts logs  Enable/Disable">
+	     <PARAM name="acceptedPkts" 
+	       help="wan to dmz accepted Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.WANToDMZAccept", "${acceptedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wan_dmz_drop_packet_logs" help="wan to dmz dropped Pkts logs Enable/Disable">
+	     <PARAM name="droppedPkts" 
+	       help="wan to dmz dropped Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.WANToDMZDrop", "${droppedPkts}")
+        </ACTION>
+    </COMMAND>
+<COMMAND name="dmz_wan_accept_packet_logs" help="dmz to wan accepted Pkts logs  Enable/Disable">
+	     <PARAM name="acceptedPkts" 
+	       help="dmz to wan accepted Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.DMZToWANAccept", "${acceptedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="dmz_wan_drop_packet_logs" help="dmz to wan dropped Pkts logs Enable/Disable">
+	     <PARAM name="droppedPkts" 
+	       help="dmz to wan dropped Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.DMZToWANDrop", "${droppedPkts}")
+        </ACTION>
+    </COMMAND>
+<COMMAND name="dmz_lan_accept_packet_logs" help="dmz to lan accepted Pkts logs  Enable/Disable">
+	     <PARAM name="acceptedPkts" 
+	       help="dmz to lan accepted Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.DMZToLANAccept", "${acceptedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="dmz_lan_drop_packet_logs" help="dmz to lan dropped Pkts logs Enable/Disable">
+	     <PARAM name="droppedPkts" 
+	       help="dmz to lan dropped Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.DMZToLANDrop", "${droppedPkts}")
+        </ACTION>
+    </COMMAND>
+<COMMAND name="lan_dmz_accept_packet_logs" help="lan to dmz accepted Pkts logs  Enable/Disable">
+	     <PARAM name="acceptedPkts" 
+	       help="lan to dmz accepted Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.LANToDMZAccept", "${acceptedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="lan_dmz_drop_packet_logs" help="lan to dmz dropped Pkts logs Enable/Disable">
+	     <PARAM name="droppedPkts" 
+	       help="lan to dmz dropped Pkts logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.LANToDMZDrop", "${droppedPkts}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="unicast_traffic_logs" help="All Unicast Traffic logs Enable/Disable">
+	     <PARAM name="unicastTrafficPkts" 
+	       help="All Unicast Traffic logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.UnicastTraffic", "${unicastTrafficPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="broadcast_or_multicast_traffic_logs" help="All Broadcast/Multicast Traffic logs Enable/Disable">
+	     <PARAM name="broadcastOrMulticastTraffic" 
+	       help="All Broadcast/Multicast Traffic logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.BroadCastORMulticastTraffic", "${broadcastOrMulticastTraffic}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="bandwidth_limit_logs" help="Bandwidth Limit logs Enable/Disable">
+	     <PARAM name="bandwidthLimitLogs" 
+	       help="band width limit logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.BandwidthLimitLogs", "${bandwidthLimitLogs}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="ftp_logs" help="FTP logs Enable/Disable">
+	     <PARAM name="ftpLogs" 
+	       help="ftp logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.FtpLogs", "${ftpLogs}")
+        </ACTION>
+    </COMMAND>
+  <!--   <COMMAND name="icmp_invalid_logs" help="Invalid ICMP Packets logs Enable/Disable">
+	     <PARAM name="icmpInvalidLogs" 
+	       help="Invalid ICMP Packets Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.IcmpInvalidLogs", "${icmpInvalidLogs}")
+        </ACTION>
+    </COMMAND> -->
+    <COMMAND name="icmp_redirect_logs" help="Redirected ICMP Packets logs Enable/Disable">
+	     <PARAM name="icmpRedirectLogs" 
+	       help="Redirected ICMP Packets Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.IcmpRedirectedLogs", "${icmpRedirectLogs}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="log_invalid_packet" help="Log invalid packet Enable/Disable">
+	     <PARAM name="logInvalidPacket" 
+	       help="Log invalid packet Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.logInvalidPacket", "${logInvalidPacket}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_vlan_accept_packet_logs" help="vlan to vlan accepted Pkts Enable/Disable">
+	     <PARAM name="acceptedPkts" 
+	       help="vlan to vlan accepted Pkts Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.LANToLANAccept", "${acceptedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="vlan_vlan_drop_packet_logs" help="vlan to vlan dropped Pkts Enable/Disable">
+	     <PARAM name="droppedPkts" 
+	       help="vlan to vlan dropped Pkts Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.LANToLANDrop", "${droppedPkts}")
+        </ACTION>
+    </COMMAND>    
+    <COMMAND name="wcf_accept_packet_logs" help="WCF accepted Pkts Enable/Disable">
+	     <PARAM name="acceptedPkts" 
+	       help="WCF accepted Pkts Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.webCategoryAccept", "${acceptedPkts}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wcf_drop_packet_logs" help="WCF dropped Pkts Enable/Disable">
+	     <PARAM name="droppedPkts" 
+	       help="WCF dropped Pkts Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.webCategoryDrop", "${droppedPkts}")
+        </ACTION>
+    </COMMAND>   
+    <COMMAND name="remote_classification_server_logs" help="Remote classification Server Logs Enable/Disable">
+	     <PARAM name="WCFServerLogs" 
+	       help="Remote classification Server Logs Enable/Disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("logging", "FirewallLogs.categoryServerLogs", "${WCFServerLogs}")
+        </ACTION>
+    </COMMAND>    
+</VIEW>
+<!--=======================================================-->
+<VIEW name="system-logging-facility-config" prompt="system-config[logging-facility]> "> 
+    <COMMAND name="save" help="Save log Facility configuration changes.">
+	<ACTION>lua clishCfgObjExec("logFacility")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save log facility configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	<ACTION>lua clishCfgObjExec("logFacility")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back log Facility configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="level_options_set" help="Set level options. This command can be
+run multiple times in this view to set different level options.">
+	<PARAM name="level" 
+	       help="Level identifier."
+	       ptype="LOG_LEVEL_T"/>
+	<PARAM name="level_options" 
+	       help="Logging level options."
+	       ptype="LOG_LEVEL_OPTIONS_T"/>
+	<PARAM name="enable" 
+	       help="Enable/Disable this logging option."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua local fld = nil
+		    local levelFld = nil
+		    local set = 0
+
+		    if ("${level}" == "Emergency") then 
+		    levelFld = "emergency"
+		    elseif ("${level}" == "Alert") then
+		    levelFld = "alert"
+		    elseif ("${level}" == "Critical") then
+		    levelFld = "critical"
+		    elseif ("${level}" == "Error") then
+		    levelFld = "error"
+		    elseif ("${level}" == "Warning") then
+		    levelFld = "warning"
+		    elseif ("${level}" == "Notification") then
+		    levelFld = "notice"
+		    elseif ("${level}" == "Information") then
+		    levelFld = "information"
+		    elseif ("${level}" == "Debugging") then
+		    levelFld = "debug"
+		    end
+
+		    if ("${level_options}" == "Display_In_Event_Log") then
+		    fld = "logConfig." .. levelFld .. "1"
+		    elseif ("${level_options}" == "Send_to_syslog") then
+		    fld = "logConfig." .. levelFld .. "3"
+		    elseif ("${level_options}" == "Display_on_telnet" or
+			   "${level_options}" == "Display_on_SSH_monitor") then
+		    fld = "logConfig." .. levelFld .. "4"
+		    end
+		    		    
+		    clishCfgObjAdd ("logFacility", fld, "${enable}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="system-logging-remote-config" prompt="system-config[logging-remote]> "> 
+    <COMMAND name="save" help="Save remoteLogging configuration changes.">
+        <ACTION>lua clishCfgObjExec("syslog")
+	  </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save remote logging configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("syslog")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back remote logging configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="log_identifier" help="Set the log identifier prefixed to both, 
+e-mail and Syslog messages.">
+	<PARAM name="identifier" 
+	       help="Log identifier string."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "emailLogs.logId", "${identifier}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="email_logs_enable" help="Set whether or not system emails scheduled 
+logs.">
+	<PARAM name="enabled" 
+	       help="Email logs enabled or disabled."
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "emailLogsEnable", "${enabled}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="email_server" help="Set options for emailing of logs.">
+	<PARAM name="ip_address" 
+	       help="IP Address or internet name of an SMTP server."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.emailServer",
+		    "${ip_address}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="smtp_port" 
+	     help="The SMTP port of the e-mail server.">
+	<PARAM name="smtpPort" 
+	       help="The SMTP port of the e-mail server."
+	       ptype="PORT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.smtpPort", "${smtpPort}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="return_email_address" 
+	     help="Set email address SMTP server replies are sent.">
+	<PARAM name="email" 
+	       help="Return email address."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.fromAddr", "${email}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="send_to_email_address" 
+	     help="Set email address where logs and alerts will be sent.">
+	<PARAM name="email" 
+	       help="Send to email address."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.toAddr", "${email}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="send_to_email_address2" 
+	     help="Set email address where logs and alerts will be sent.">
+	<PARAM name="email2" 
+	       help="Send to email address."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.toAddr2", "${email2}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="send_to_email_address3" 
+	     help="Set email address where logs and alerts will be sent.">
+	<PARAM name="email3" 
+	       help="Send to email address."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.toAddr3", "${email3}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="smtp_auth" help="Set SMTP authentication details."/>
+    <COMMAND name="smtp_auth type" 
+	     help="Set SMTP authentication types.">
+	<PARAM name="smtp_auth" 
+	       help="SMTP authentication types."
+	       ptype="LOG_SMTP_AUTH_T"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.auth",
+		    "${smtp_auth}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="smtp_auth username" 
+	     help="Set SMTP authentication username (for plain and CRAM-MD5 auth).">
+	<PARAM name="username" 
+	       help="Username for SMTP authentication."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.userName", "${username}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="smtp_auth password" 
+	     help="Set SMTP authentication password (for plain and CRAM-MD5 auth).">
+	<PARAM name="password" 
+	       help="Password for SMTP authentication."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.passWord", "${password}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="Tls_Enable" 
+	     help="Enable Tls support (for plain and CRAM-MD5 auth).">
+	<PARAM name="tlsSupport" 
+	       help="Enable Tls support (for plain and CRAM-MD5 auth)."
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.tlsSupport", "${tlsSupport}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="identd_from_smtp_server_enable" 
+	     help="Enable/Diable to identd from smtp server.">
+	<PARAM name="identdSmtp" 
+	       help="Enable/Disable identd from smtp server."
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "smtpServer.respondIdentd", "${identdSmtp}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="schedule" help="Set schedule for sending log by email."/>
+    <COMMAND name="schedule unit" help="Set schedule unit.">
+	<PARAM name="unit"
+	       help="Schedule unit."
+	       ptype="SCHED_UNIT_T"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "crontabunit", "${unit}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="schedule day" help="Set schedule day.">
+	<PARAM name="day"
+	       help="Schedule day. Required only if unit is 'daily'."
+	       ptype="SCHED_DAY_T"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "crontab.dayOfWeek", "${day}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="schedule time" help="Set schedule time.">
+	<PARAM name="time" 
+	       help="Schedule time. Required only if unit is 'daily' or 'weekly'."
+	       ptype="SCHED_TIME_T"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "crontab.hour", "${time}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="schedule meridiem" help="Set schedule meridiem.">
+	<PARAM name="meridiem" 
+	       help="Time in A.M. or P.M. Required only if unit is 'daily' or 'weekly'."
+	       ptype="SCHED_MERIDIEM_T"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "crontab.meridiem",
+		    "${meridiem}")
+        </ACTION>
+    </COMMAND>
+	<COMMAND name="syslog_server" help="syslog"/>
+	<COMMAND name="syslog_server server_name1" help="server1"/>
+	<COMMAND name="syslog_server server_name2" help="server2"/>	
+	<COMMAND name="syslog_server server_name3" help="server3"/>
+	<COMMAND name="syslog_server server_name4" help="server4"/>	
+	<COMMAND name="syslog_server server_name5" help="server5"/>	
+	<COMMAND name="syslog_server server_name6" help="server6"/>	
+	<COMMAND name="syslog_server server_name7" help="server7"/>
+	 
+	 <COMMAND name="syslog_server server_name1 enable" help="Boolean Choice Y/N">
+	<PARAM name="Enable" 
+	       help="Enter 1 to enable or 0 to disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.Enable0", "${Enable}")
+        </ACTION>
+    </COMMAND>
+ 	
+
+    <COMMAND name="syslog_server server_name1 IP_or_FQDN" help="Set Syslog server.">
+	<PARAM name="serverName" 
+	       help="Enter either the syslog server IP Address or FQDN."
+	       ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.serverName0", "${serverName}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name1 severity" help="Set Syslog severity.">
+	<PARAM name="severity" 
+	       help="Enter the syslog server severity"
+	       ptype="SYSLOG_SEVERITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.severity0", "${severity}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name1 facility" help="Set Syslog facility.">
+	<PARAM name="facilityId" 
+	       help="Enter the syslog server facility"
+	       ptype="SYSLOG_FACILITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.facilityId0", "${facilityId}")
+        </ACTION>
+    </COMMAND>
+
+	 <COMMAND name="syslog_server server_name2 enable" help="Boolean Choice Y/N ">
+	<PARAM name="Enable"
+	       help="Enter 1 to enable or 0 to disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.Enable1", "${Enable}")
+        </ACTION>
+    </COMMAND>
+ 	
+
+	
+	<COMMAND name="syslog_server server_name2 IP_or_FQDN" help="Set Syslog server.">
+	<PARAM name="serverName" 
+	       help="Enter either the syslog server IP Address or FQDN."
+	       ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.serverName1", "${serverName}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name2 severity" help="Set Syslog severity.">
+	<PARAM name="severity" 
+	       help="Enter the syslog server severity"
+	       ptype="SYSLOG_SEVERITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.severity1", "${severity}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name2 facility" help="Set Syslog facility.">
+	<PARAM name="facilityId" 
+	       help="Enter the syslog server facility"
+	       ptype="SYSLOG_FACILITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.facilityId1", "${facilityId}")
+        </ACTION>
+    </COMMAND>
+
+	 <COMMAND name="syslog_server server_name3 enable" help="Boolean Choice Y/N ">
+	<PARAM name="Enable" 
+	       help="Enter 1 to enable or 0 to disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.Enable2", "${Enable}")
+        </ACTION>
+    </COMMAND>
+
+
+	<COMMAND name="syslog_server server_name3 IP_or_FQDN" help="Set Syslog server.">
+	<PARAM name="serverName" 
+	       help="Enter either the syslog server IP Address or FQDN."
+	       ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.serverName2", "${serverName}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name3 severity" help="Set Syslog severity.">
+	<PARAM name="severity" 
+	       help="Enter the syslog server severity"
+	       ptype="SYSLOG_SEVERITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.severity2", "${severity}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name3 facility" help="Set Syslog facility.">
+	<PARAM name="facilityId" 
+	       help="Enter the syslog server facility"
+	       ptype="SYSLOG_FACILITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.facilityId2", "${facilityId}")
+        </ACTION>
+    </COMMAND>
+	
+	 <COMMAND name="syslog_server server_name4 enable" help="Boolean Choice Y/N">
+	<PARAM name="Enable" 
+	       help="Enter 1 to enable or 0 to disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.Enable3", "${Enable}")
+        </ACTION>
+    </COMMAND>
+
+
+	<COMMAND name="syslog_server server_name4 IP_or_FQDN" help="Set Syslog server.">
+	<PARAM name="serverName" 
+	       help="Enter either the syslog server IP Address or FQDN."
+	       ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.serverName3", "${serverName}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name4 severity" help="Set Syslog severity.">
+	<PARAM name="severity" 
+	       help="Enter the syslog server severity"
+	       ptype="SYSLOG_SEVERITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.severity3", "${severity}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name4 facility" help="Set Syslog facility.">
+	<PARAM name="facilityId" 
+	       help="Enter the syslog server facility"
+	       ptype="SYSLOG_FACILITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.facilityId3", "${facilityId}")
+        </ACTION>
+    </COMMAND>
+
+	 <COMMAND name="syslog_server server_name5 enable" help="Boolean Choice Y/N ">
+	<PARAM name="Enable" 
+	       help="Enter 1 to enable or 0 to disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.Enable4", "${Enable}")
+        </ACTION>
+    </COMMAND>
+
+
+	<COMMAND name="syslog_server server_name5 IP_or_FQDN" help="Set Syslog server.">
+	<PARAM name="serverName" 
+	       help="Enter either the syslog server IP Address or FQDN."
+	       ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.serverName4", "${serverName}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name5 severity" help="Set Syslog severity.">
+	<PARAM name="severity" 
+	       help="Enter the syslog server severity"
+	       ptype="SYSLOG_SEVERITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.severity4", "${severity}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name5 facility" help="Set Syslog facility.">
+	<PARAM name="facilityId" 
+	       help="Enter the syslog server facility"
+	       ptype="SYSLOG_FACILITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.facilityId4", "${facilityId}")
+        </ACTION>
+    </COMMAND>
+	
+	 <COMMAND name="syslog_server server_name6 enable" help="Boolean Choice Y/N ">
+	<PARAM name="Enable" 
+	       help="Enter 1 to enable or 0 to disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.Enable5", "${Enable}")
+        </ACTION>
+    </COMMAND>
+
+
+	<COMMAND name="syslog_server server_name6 IP_or_FQDN" help="Set Syslog server.">
+	<PARAM name="serverName" 
+	       help="Enter either the syslog server IP Address or FQDN."
+	       ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.serverName5", "${serverName}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name6 severity" help="Set Syslog severity.">
+	<PARAM name="severity" 
+	       help="Enter the syslog server severity"
+	       ptype="SYSLOG_SEVERITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.severity5", "${severity}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name6 facility" help="Set Syslog facility.">
+	<PARAM name="facilityId" 
+	       help="Enter the syslog server facility"
+	       ptype="SYSLOG_FACILITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.facilityId5", "${facilityId}")
+        </ACTION>
+    </COMMAND>
+
+	 <COMMAND name="syslog_server server_name7 enable" help="Boolean Choice Y/N ">
+	<PARAM name="Enable" 
+	       help="Enter 1 to enable or 0 to disable"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.Enable6", "${Enable}")
+        </ACTION>
+    </COMMAND>
+
+
+	<COMMAND name="syslog_server server_name7 IP_or_FQDN" help="Set Syslog server.">
+	<PARAM name="serverName" 
+	       help="Enter either the syslog server IP Address or FQDN."
+	       ptype="STRING32"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.serverName6", "${serverName}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name7 severity" help="Set Syslog severity.">
+	<PARAM name="severity" 
+	       help="Enter the syslog server severity"
+	       ptype="SYSLOG_SEVERITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.severity6", "${severity}")
+        </ACTION>
+    </COMMAND>
+
+	<COMMAND name="syslog_server server_name7 facility" help="Set Syslog facility.">
+	<PARAM name="facilityId" 
+	       help="Enter the syslog server facility"
+	       ptype="SYSLOG_FACILITY"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "sysLogInfo.facilityId6", "${facilityId}")
+        </ACTION>
+    </COMMAND>
+
+
+</VIEW>
+<!--=======================================================-->
+<VIEW name="system-logging-ipv6-config" prompt="system-config[logging-ipv6]> "> 
+    <COMMAND name="save" help="Save ipv6 logging configuration changes.">
+        <ACTION>lua clishCfgObjExec("syslog")
+	  </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save ipv6 logging configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("syslog")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back ipv6 logging configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="lan_wan_accept_enable" help="Enable/Disable logging for the LAN to WAN Accept packets">
+	<PARAM name="lanwanAcceptEnable" 
+	       help="Enable/Disable logging for the LAN to WAN Accept packets"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "FirewallLogs6.LANToWANAccept", "${lanwanAcceptEnable}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="lan_wan_drop_enable" help="Enable/Disable logging for the LAN to WAN Dropped packets">
+	<PARAM name="lanwanDropEnable" 
+	       help="Enable/Disable logging for the LAN to WAN Dropped packets"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "FirewallLogs6.LANToWANDrop", "${lanwanDropEnable}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wan_lan_accept_enable" help="Enable/Disable logging for the WAN to LAN Accept packets">
+	<PARAM name="wanlanAcceptEnable" 
+	       help="Enable/Disable logging for the WAN to LAN Accept packets"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "FirewallLogs6.WANToLANAccept", "${wanlanAcceptEnable}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wan_lan_drop_enable" help="Enable/Disable logging for the WAN to LAN Dropped packets">
+	<PARAM name="wanlanDropEnable" 
+	       help="Enable/Disable logging for the WAN to LAN Dropped packets"
+	       ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("syslog", "FirewallLogs6.WANToLANDrop", "${wanlanDropEnable}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="system-logging-SMS-config" prompt="system-config[logging-SMS]> "> 
+    <COMMAND name="save" help="Save SMS logging configuration changes">
+	     <ACTION>lua clishCfgObjExec("smsEvents")</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save SMS logging settings and exit current mode" 
+	     view="root-view" viewid="">
+         <ACTION>lua clishCfgObjExec("smsEvents")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back SMS logging configuration changes">
+         <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+   	<COMMAND name="enter_mobile_num"
+             help="Enter mobile number on which SMS will be sent">
+             <PARAM name="mobileNum"
+                    help="Enter mobile number on which SMS will be sent"
+                    ptype="MOBILE_NUMBER"/>
+             <ACTION>lua clishCfgObjAdd ("smsEvents", "smsEvents.ReceiverInfo", "${mobileNum}")</ACTION>
+    </COMMAND>
+    <COMMAND name="wan_up/down" help="Enable this option to get WAN UP/Down event based SMS">
+        <PARAM name="wanEvent"
+            help="Enable this option to get WAN UP/Down event based SMS"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("smsEvents", "smsEvents.WANStatusInfo", "${wanEvent}")</ACTION>
+   </COMMAND>
+ <COMMAND name="vpn_connect/disconnect" help="Enable this option to get VPN connect/disconnect event based SMS">
+        <PARAM name="vpnEvent"
+            help="Enable this option to get VPN connect/disconnect event based SMS"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("smsEvents", "smsEvents.VPNStatusInfo", "${vpnEvent}")</ACTION>
+   </COMMAND>
+ <COMMAND name="cpu_memory_usage_reaches_80%" help="Enable this option to get event based SMS when CPU/Memory usage reached to 80%">
+        <PARAM name="cpuEvent"
+            help="Enable this option to get event based SMS when CPU/Memory usage reached to 80%"
+            ptype="CHOICE_INT"/>
+        <ACTION>lua clishCfgObjAdd ("smsEvents", "smsEvents.CPUUtilizationInfo", "${cpuEvent}")</ACTION>
+   </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+    <COMMAND name="system logging" 
+             access="admin" help="."/>
+<!--=======================================================-->
+    <COMMAND name="system logging ipv4"
+        help="System logging configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="system logging facility"
+        help="System log Facility configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="system logging facility Options"
+        help="System log Facility configuration.">
+    <ACTION>lua clishCmdExec (availFacilityoptGet)
+     </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system logging remote"
+        help="System remoteLogging configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="system logging ipv6"
+        help="System ipv6 logs configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="system logging SMS"
+        help="System SMS logs configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="system logging ipv4 configure"
+        help="System logging configuration mode."
+        view="system-logging-ipv4-config" viewid="">
+        <ACTION>lua clishCfgObjNew ("logging", logCfgInit, 
+		    logCfgSave, logCfgVal)
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system logging facility configure"
+        help="System logging facility configuration mode."
+        view="system-logging-facility-config" viewid="">
+	<PARAM name="facility" 
+	    help="Facility type to configure." 
+	    ptype="STRING"/>
+        <ACTION>lua clishCfgObjNew ("logFacility", loggingCfgInit, 
+		    loggingCfgSave, loggingCfgInputVal, "${facility}")
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system logging remote configure"
+        help="System remote Logging configuration mode."
+        view="system-logging-remote-config" viewid="">
+        <ACTION>lua clishCfgObjNew ("syslog", syslogCfgInit, 
+		    syslogCfgSave, syslogCfgInputVal)
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system logging ipv6 configure"
+        help="System ipv6 logs configuration mode."
+        view="system-logging-ipv6-config" viewid="">
+        <ACTION>lua clishCfgObjNew ("syslog", ipv6LogsCfgInit, 
+		    ipv6LogsCfgSave, ipv6LogsCfgInputVal)
+        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="system logging SMS configure"
+        help="System SMS logging configuration mode"
+        view="system-logging-SMS-config" viewid="">
+        <ACTION>lua clishCfgObjNew ("smsEvents",smsEventsCfgInit,
+                 smsEventsCfgSave,smsEventsCfgInputVal)
+        </ACTION>
+   </COMMAND>
+   <!--=======================================================-->
+
+</CLISH_MODULE>
+

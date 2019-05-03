@@ -1,0 +1,1360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+<VIEW name="dot11-profile-config" prompt="dot11-config[profile]> "> 
+    <COMMAND name="save" help="Save profile configuration changes">
+	     <ACTION>lua clishCfgObjExec("dot11Profile")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save profile configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("dot11Profile")</ACTION>
+    </COMMAND>
+    <COMMAND name="ssid" help="Set the 802.11 profile SSID.">
+        <PARAM name="name" 
+	       help="SSID name." 
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.ssid", 
+		    "${name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="broadcast-ssid" help="Enable or disable SSID broadcast.">
+        <PARAM name="enable" 
+	       help="Enable or disable." 
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.broadcastSSID",
+		     "${enable}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="protect_management_frame" help="Enable or disable Protect Management Frame.">
+        <PARAM name="enable" 
+	       help="Enable or disable." 
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.mfpEnabled",
+		     "${enable}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="force_pmf" help="Enable or disable force to use PMF.">
+        <PARAM name="enable" 
+	       help="Enable or disable." 
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.forcePMF",
+		     "${enable}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="security_type" help="Set the profile security type.">
+	<PARAM name="security" 
+	       help="Profile security type." 
+	       ptype="DOT11_SECURITY_T"/>
+        <ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.security",
+		 "${security}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="radio_mode" help="Set the profile radio mode.">
+	<PARAM name="radio_mode" 
+	       help="access point mode type." 
+	       ptype="DOT11_RADIO_MODE"/>
+        <ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.radioMode",
+		 "${radio_mode}")
+        </ACTION>
+    </COMMAND>
+   <COMMAND name="wep" help="Set profile WEP options."/>
+   <COMMAND name="wep authentication" help="Set WEP authentication type.">
+	<PARAM name="authentication" 
+	       help="WEP authentication type." 
+	       ptype="WEP_AUTH"/>
+        <ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.wepAuth", 
+			"${authentication}")
+        </ACTION>
+   </COMMAND> 
+   <COMMAND name="wep encryption" help="Set WEP encryption type.">
+	<PARAM name="encryption" 
+	       help="WEP encryption type." 
+	       ptype="WEP_ENCR"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.groupCipher",
+			  "${encryption}")
+        </ACTION>
+   </COMMAND>   
+   <COMMAND name="wep key" help="Set WEP key. Not required if passphrase is set.">
+	<PARAM name="index"
+	       help="Index at which key is installed." 
+	       ptype="WEP_KEY_IDX_T"/>
+	<PARAM name="key" 
+	       help="WEP Key." 
+	       ptype="STRING"/>
+        <ACTION>lua local fld = nil
+		if "${index}" == "0" then fld = "dot11Profile.wepkey0" 
+		elseif "${index}" == "1" then fld = "dot11Profile.wepkey1"
+		elseif "${index}" == "2" then fld = "dot11Profile.wepkey2"
+		elseif "${index}" == "3" then fld = "dot11Profile.wepkey3"
+		end
+		clishCfgObjAdd ("dot11Profile", fld, "${key}")
+		clishCfgObjAdd ("dot11Profile", "dot11Profile.defWepkeyIdx",
+			  "${index}")
+        </ACTION>			  
+    </COMMAND>
+   <COMMAND name="wep passphrase" help="Set WEP passphrase to generate WEP key from.">
+	<PARAM name="index"
+	       help="Index at which key is installed." 
+	       ptype="WEP_KEY_IDX_T"/>
+	<PARAM name="passphrase" 
+	       help="Passphrase to use to generate WEP Key."
+	       ptype="STRING"/>
+        <ACTION>lua local wepEncr = clishCfgAttrGet ("dot11Profile", 
+			  "dot11Profile.groupCipher")
+	            local wepKeyLen = clishCmdExec (wepKeyLenGet, wepEncr)
+		    local wepPsk = "${passphrase}"
+		    local wepKey1 = clishCmdExec (wepKeyGenerate, wepPsk, wepKeyLen)
+		    wepPsk = wepPsk .. wepKey1
+		    local wepKey2 = clishCmdExec (wepKeyGenerate, wepPsk, wepKeyLen)
+		    wepPsk = wepPsk .. wepKey2
+		    local wepKey3 = clishCmdExec (wepKeyGenerate, wepPsk, wepKeyLen)
+		    wepPsk = wepPsk .. wepKey3
+		    local wepKey4 = clishCmdExec (wepKeyGenerate, wepPsk, wepKeyLen)
+
+		    clishCfgObjAdd ("dot11Profile", "dot11Profile.wepkey0", wepKey1)
+		    clishCfgObjAdd ("dot11Profile", "dot11Profile.wepkey1", wepKey2)
+		    clishCfgObjAdd ("dot11Profile", "dot11Profile.wepkey2", wepKey3)
+		    clishCfgObjAdd ("dot11Profile", "dot11Profile.wepkey3", wepKey4)
+		    clishCfgObjAdd ("dot11Profile", "dot11Profile.defWepkeyIdx", "${index}")
+		    clishCfgObjAdd ("dot11Profile", "dot11Profile.pskPassHex", "${passphrase}")
+        </ACTION>			  
+    </COMMAND>
+    <COMMAND name="wpa" help="Set the WPA options."/>
+    <COMMAND name="wpa authentication" help="Set WPA authentication type.">
+	<PARAM name="authentication" 
+	       help="WPA authentication type."
+	       ptype="WPA_AUTH"/>
+        <ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.authMethods",
+			  "${authentication}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wpa encryption" help="Set WPA encryption type.">    
+	<PARAM name="encryption" 
+	       help="WPA encryption type." 
+	       ptype="WPA_ENCR"/>
+        <ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.pairwiseCiphers",
+			  "${encryption}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wpa wpa-password" 
+	     help="WPA Password. Needed only if authentication is PSK and PSK+RADIUS">
+	<PARAM name="password" 
+	       help="WPA Password" 
+	       ptype="STRING63"/>
+        <ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.pskPassAscii",
+			  "${password}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="dot11-wmm-config" prompt="dot11-config[wmm]> "> 
+    <COMMAND name="save" help="Save wmm configuration changes">
+	     <ACTION>lua clishCfgObjExec("dot11Profile")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save wmm configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("dot11Profile")</ACTION>
+    </COMMAND>
+    <COMMAND name="enable" help="Enable/Disable the 802.11 profile wmm.">
+        <PARAM name="enable" 
+	       help="enable/disable wmm." 
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.qosEnable", 
+		    "${enable}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="default_class" help="Select default class of qos">
+        <PARAM name="defaultCos" 
+	       help="Select default class of qos" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.defaultCos",
+		     "${defaultCos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_0" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap0",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_1" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap1",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_2" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap2",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_3" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap3",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_4" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap4",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_5" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap5",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_6" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap6",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_7" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap7",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_8" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap8",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_9" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap9",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_10" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap10",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_11" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap11",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_12" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap12",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_13" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap13",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_14" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap14",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_15" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap15",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_16" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap16",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_17" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap17",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_18" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap18",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_19" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap19",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_20" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap20",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_21" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap21",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_22" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap22",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_23" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap23",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_24" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap24",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_25" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap25",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_26" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap26",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_27" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap27",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_28" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap28",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_29" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap29",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_30" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap30",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_31" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap31",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_32" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap32",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_33" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap33",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_34" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap34",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_35" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap35",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_36" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap36",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_37" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap37",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_38" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap38",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_39" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap39",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_40" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap40",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_41" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap41",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_42" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap42",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_43" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap43",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_44" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap44",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_45" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap45",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_46" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap46",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_47" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap47",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_48" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap48",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_49" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap49",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_50" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap50",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_51" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap51",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_52" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap52",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_53" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap53",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_54" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap54",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_55" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap55",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_56" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap56",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_57" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap57",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_58" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap58",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_59" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap59",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_60" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap60",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_61" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap61",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_62" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap62",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="dscp_63" help="Select class of ip dscp">
+        <PARAM name="qos" 
+	       help="Select class of ip dscp" 
+	       ptype="WMM_CLASS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Profile", "dot11Profile.dscpCosMap63",
+		     "${qos}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="dot11-ap-advanced-config" prompt="dot11-advanced-config[radio]> "> 
+    <COMMAND name="save" help="Save advanced AP configuration changes">
+	     <ACTION>lua clishCfgObjExec("dot11APadvanced")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back advanced AP configuration changes">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save advanced AP configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("dot11APadvanced")</ACTION>
+    </COMMAND>
+    <COMMAND name="beacon_interval" 
+	     help="Set the time between beacon transmissions (in milliseconds).">
+	<PARAM name="interval"
+	       help="Time between beacon transmissions (in milliseconds)."
+	       ptype="BEACON_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.beaconInterval",
+		    "${interval}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="dtim_interval" 
+	     help="Set the interval between delivery traffic indication message.">
+	<PARAM name="interval"
+	       help="Delivery traffic indication message interval (in milliseconds)."
+	       ptype="DTIM_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.dtimInterval",
+		    "${interval}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="enable_rts_threshold"
+        help="Enable/Disable rts_threshold .">
+    <PARAM name="choice" help="Enable or Disable rts_threshold "
+           ptype="CHOICE_INT"/>
+    <ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.rts", "${choice}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="rts_threshold"
+        help="Set the Request to Send (RTS) threshold.">
+	<PARAM name="threshold" help="Request to Send (RTS) threshold."
+	       ptype="RTS_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.rtsThreshold",
+		    "${threshold}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="fragmentation_threshold" 
+	     help="Set the maximum length of the frame.">    
+	<PARAM name="threshold" help="Maximum length of the frame."
+	       ptype="FRAG_INT"/>
+        <ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.fragThreshold",
+		    "${threshold}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="preamble_mode" 
+	     help="Set the 802.11b preamble type to be prepended to every frame">
+	<PARAM name="preamble"
+	       help="802.11b preamble type to be prepended to every frame"
+	       ptype="DOT11_PREAMBLE_T"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.preambleMode",
+		    "${preamble}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="protection_mode"
+	       help="Enable/disable RTS/CTS handshake before packet transmission.">
+	<PARAM name="enabled" help="Enable/Disable RTS/CTS handshake."
+	       ptype="RTS_PROTECTION"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.rtsCtsProtect",
+		    "${enabled}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="short_retry_limit"
+	       help="Set the retry limit for frame retransmission on transmission failure.">
+	<PARAM name="limit" help="Frame re-transmission limit."
+	       ptype="DOT11_RETRY_LIMIT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.shortRetry", 
+		    "${limit}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="long_retry_limit"
+        help="Set the retry limit for frame retransmission on transmission failure.">
+	<PARAM name="limit" help="Frame re-transmission limit."
+	       ptype="DOT11_RETRY_LIMIT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.longRetry", "${limit}")
+        </ACTION>
+    </COMMAND>
+  <COMMAND name="power_save_enable"
+        help="Enable/Disable power save mode .">
+	<PARAM name="choice" help="Enable or Disable power save mode."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio.uapsd", "${choice}")
+        </ACTION>
+    </COMMAND>
+  <COMMAND name="tx_antennas"
+        help="Set no of transmit antennas to use .">
+	<PARAM name="antenna" help="Set no of transmit antennas to use ."
+	       ptype="ANTENNA"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio11n.txAntennas", "${antenna}")
+        </ACTION>
+    </COMMAND>
+  <COMMAND name="rx_antennas"
+        help="Set no of receive antennas to use .">
+	<PARAM name="antenna" help="Set no of receive antennas to use .."
+	       ptype="ANTENNA"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio11n.rxAntennas", "${antenna}")
+        </ACTION>
+    </COMMAND>
+  <COMMAND name="ampdu_enable"
+        help="Enable/Disable ampdu .">
+	<PARAM name="choice" help="Enable or Disable wireless frame aggregation in hardware "
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio11n.ampdu", "${choice}")
+        </ACTION>
+    </COMMAND>
+<!--
+  <COMMAND name="beamforming_enable"
+        help="Enable/Disable beam forming .">
+	<PARAM name="choice" help="Enable or Disable wireless beam forming "
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio11n.beamforming", "${choice}")
+        </ACTION>
+    </COMMAND>
+  <COMMAND name="vow_enable"
+        help="Enable/Disable vow .">
+	<PARAM name="choice" help="Enable or Disable wireless vow support "
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio11n.VoW", "${choice}")
+        </ACTION>
+    </COMMAND>
+  <COMMAND name="pure_ac_enable"
+        help="Enable/Disable ampdu .">
+	<PARAM name="choice" help="Enable or Disable wireless pure ac mode"
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11APadvanced", "dot11Radio11n.pure11ac", "${choice}")
+        </ACTION>
+    </COMMAND>
+-->
+</VIEW>
+<!--=======================================================-->
+<VIEW name="dot11-ap-wps-config" prompt="dot11-wps-config[ap]> "> 
+    <COMMAND name="save" help="Save WPS configuration changes">
+	     <ACTION>lua clishCfgObjExec("dot11WPS")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back WPS configuration changes">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save WPS configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("dot11WPS")</ACTION>
+    </COMMAND>
+       <COMMAND name="access_point"
+        help="Acess point.">
+	<PARAM name="status" help="Acess point on which WPS is to be configured WPS status."
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("dot11WPS", "dot11WPS.vapName", "${status}")
+        </ACTION>
+    </COMMAND>
+
+       <COMMAND name="wps_status"
+        help="WPS status.">
+	<PARAM name="status" help="Set WPS status."
+	       ptype="WPS_STATUS"/>
+	<ACTION>lua clishCfgObjAdd ("dot11WPS", "dot11WPS.wpsEnabled", "${status}")
+        </ACTION>
+    </COMMAND>
+	<COMMAND name="configure_via_pin"
+        help="configure WPS via PIN.">
+	<PARAM name="via_pin" help="Configure WPS through PIN."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11WPS", "dot11WPS.pin", "${via_pin}")
+        </ACTION>
+    </COMMAND>
+	<COMMAND name="configure_via_pbc"
+        help="configure WPS via PBC.">
+	<PARAM name="via_pbc" help="Set WPS status."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11WPS", "dot11WPS.pbc", "${via_pbc}")
+        </ACTION>
+    </COMMAND>
+  	<COMMAND name="station_pin"
+        help="Set PIN for WPS config.">
+	<PARAM name="pin" help="Set WPS station PIN."
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("dot11WPS", "dot11WPS.stationPin", "${pin}")
+        </ACTION>
+    </COMMAND> 
+</VIEW>
+<!--=======================================================-->
+<VIEW name="dot11-ap-config" prompt="dot11-config[ap]> "> 
+    <COMMAND name="save" help="Save AP configuration changes">
+	     <ACTION>lua clishCfgObjExec("dot11AP")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back AP configuration changes">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save AP configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("dot11AP")</ACTION>
+    </COMMAND>
+    <COMMAND name="profile" help="Set the 802.11 profile the AP will use.">
+	<PARAM name="name" 
+	       help="Profile name." 
+	       ptype="STRING"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "dot11VAP.profileName",
+		    "${name}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="wlan_partition" help="Enable or Disable wlan_partition.">
+	<PARAM name="wlan" 
+	       help="Set WLAN partition." 
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "dot11VAP.apIsolation",
+		    "${wlan}")
+        </ACTION>
+    </COMMAND>
+
+   <COMMAND name="enable_active_time" help="Setting time.">
+	<PARAM name="time" 
+	       help="Setting Time."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "crontab.unit",
+		    "${time}")
+        </ACTION>
+    </COMMAND>
+   <COMMAND name="enable_schedule_control" help="Enable/disable Schedule Control.">
+	<PARAM name="schedule_control" 
+	       help="Enable/disable Schedule Control."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "crontab.scheduleControl",
+		    "${schedule_control}")
+        </ACTION>
+    </COMMAND>
+
+    <COMMAND name="start" help="Setting the time limits."/>
+    <COMMAND name="stop" help="Setting the time limits."/>
+   <COMMAND name="start hour" help="Setting the time limits. ">
+	<PARAM name="time" 
+	       help="Setting Time limits. "
+	       ptype="TIME_H"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "crontab.startHour",
+		    "${time}")
+        </ACTION>
+    </COMMAND>
+
+   <COMMAND name="stop hour" help="Setting the time limits. ">
+	<PARAM name="time" 
+	       help="Setting Time limits. "
+	       ptype="TIME_H"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "crontab.stopHour",
+		    "${time}")
+        </ACTION>
+    </COMMAND>
+  
+   <COMMAND name="start minute" help="Setting the time limits. ">
+	<PARAM name="time" 
+	       help="Setting Time limits. "
+	       ptype="TIME_MM"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "crontab.startMinute",
+		    "${time}")
+        </ACTION>
+    </COMMAND>
+  <COMMAND name="stop minute" help="Setting the time limits. ">
+	<PARAM name="time" 
+	       help="Setting Time limits. "
+	       ptype="TIME_MM"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "crontab.stopMinute",
+		    "${time}")
+        </ACTION>
+    </COMMAND>
+   <COMMAND name="start meridian" help="Setting the time limits. ">
+	<PARAM name="time" 
+	       help="Setting Time limits. "
+	       ptype="SCHED_MERIDIEM_T"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "crontab.startMeridian",
+		    "${time}")
+        </ACTION>
+    </COMMAND>
+
+   <COMMAND name="stop meridian" help="Setting the time limits. ">
+	<PARAM name="time" 
+	       help="Setting Time limits. "
+	       ptype="SCHED_MERIDIEM_T"/>
+	<ACTION>lua clishCfgObjAdd ("dot11AP", "crontab.stopMeridian",
+		    "${time}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="dot11-radio-config" prompt="dot11-config[radio]> "> 
+    <COMMAND name="save" help="Save radio configuration changes.">
+	     <ACTION>lua clishCfgObjExec("dot11Radio")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back radio configuration changes">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save radio configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("dot11Radio")</ACTION>
+    </COMMAND>
+    <COMMAND name="channel" help="Set the channel used by radio.">
+	<PARAM name="channel" 
+	       help="Channel number (or Auto to let system select)." 
+	       ptype="CHANNEL"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Radio", "dot11Radio.configuredChannel","${channel}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="default-transmit-power" 
+	     help="Set default trans power for APs using this radio.">
+	<PARAM name="transmit_power" 
+	       help="Transmitted power level (in dbm)." 
+	       ptype="DTP"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Radio", "dot11Radio.txPower", "${transmit_power}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="operating_freqency" 
+	     help="Set dot11 radio operating frequency.">
+	<PARAM name="operating_frequency" 
+	       help="Set Radio Operating frequency" 
+	       ptype="OP_FREQ"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Radio", "dot11Radio.band", "${operating_frequency}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="2.4mode" 
+	     help="Set dot11 radio mode.">
+	<PARAM name="mode" 
+	       help="Set Radio Mode" 
+	       ptype="2.4_MODE"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Radio", "dot11Radio.opMode", "${mode}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="5mode" 
+	     help="Set dot11 radio mode.">
+	<PARAM name="mode" 
+	       help="Set Radio Mode" 
+	       ptype="5_MODE"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Radio", "dot11Radio.opMode", "${mode}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="transmission_rate" 
+	     help="Set Transmission Rate for the radio.">
+	<PARAM name="transmission_rate" 
+	       help="Transmission Rate"
+	       ptype="TXRATE"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Radio", "dot11Radio.txRate", "${transmission_rate}")
+        </ACTION>
+    </COMMAND>
+    <COMMAND name="channel_spacing" 
+	     help="Set channel spacing for the radio.">
+	<PARAM name="channel_spacing" 
+	       help="Set Channel Spacing for the radio"
+	       ptype="CHANNEL_SPACING"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Radio", "dot11Radio11n.chanWidth", "${channel_spacing}")
+        </ACTION>
+    </COMMAND>
+	    <COMMAND name="control_side_band" 
+	     help="Set contol band for radio.">
+	<PARAM name="control_side_band" 
+	       help="Set contol band for radio."
+	       ptype="CONTROL_BAND"/>
+	<ACTION>lua clishCfgObjAdd ("dot11Radio", "dot11Radio11n.ctlSideBand", "${control_side_band}")
+        </ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="dot11-radius-config" prompt="dot11-config[radius]> ">
+   <COMMAND name="save" help="Save radius configuration changes.">
+	     <ACTION>lua clishCfgObjExec("dot11radiusconf")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back radius configuration changes">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save ACL configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("dot11radiusconf")</ACTION>
+    </COMMAND>
+   <COMMAND name="primary_server" help="Set Radius Primary authentication Server.">
+        <PARAM name="ipaddress"
+	       help="Set primary authentication server ip address."
+	       ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("dot11radiusconf","radiusClient.authserver", "${ipaddress}")
+	</ACTION>
+  </COMMAND>
+   <COMMAND name="secondary_server" help="Set Radius Seconadry authentication Server.">
+        <PARAM name="ipaddress"
+	       help="Set secondary authentication server ip address."
+	       ptype="IP_ADDR"/>
+        <ACTION>lua clishCfgObjAdd ("dot11radiusconf","radiusClient.authserver2", "${ipaddress}")
+	</ACTION>
+  </COMMAND>
+   <COMMAND name="port" help="Set port number.">
+        <PARAM name="port"
+	       help="Set Radius Port."
+	       ptype="PORT_RANGE"/>
+        <ACTION>lua clishCfgObjAdd ("dot11radiusconf","radiusClient.authport", "${port}")
+	</ACTION>
+  </COMMAND>
+   <COMMAND name="secret" help="Set secret key for radius .">
+        <PARAM name="secret"
+	       help="Set secret key for radius."
+	       ptype="STRING"/>
+        <ACTION>lua clishCfgObjAdd ("dot11radiusconf","radiusClient.authsecret", "${secret}")
+	</ACTION>
+  </COMMAND>
+   <COMMAND name="timeout" help="Set timeout for radius client.">
+        <PARAM name="timeout"
+	       help="Set timeout for radius client."
+	       ptype="AUTH_TIMEOUT"/>
+        <ACTION>lua clishCfgObjAdd ("dot11radiusconf","radiusClient.authtimeout", "${timeout}")
+	</ACTION>
+  </COMMAND>
+   <COMMAND name="retries" help="Authentication retries limit to radius server.">
+        <PARAM name="retries"
+	       help="Set retries limit to radius server."
+	       ptype="AUTH_TIMEOUT"/>
+        <ACTION>lua clishCfgObjAdd ("dot11radiusconf","radiusClient.authretries", "${retries}")
+	</ACTION>
+  </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="dot11-ap-acl-config" prompt="dot11-accesspoint-config[ACL]> ">
+   <COMMAND name="save" help="Save AP ACL configuration changes.">
+	     <ACTION>lua clishCfgObjExec("dot11ACL")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back AP ACL configuration changes">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save AP ACL configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("dot11ACL")</ACTION>
+    </COMMAND>
+   <COMMAND name="acl_policy" help="Set accesspoint ACL Policy.">
+        <PARAM name="acl_policy"
+	       help="Set accesspoint ACL policy."
+	       ptype="ACL_POLICY"/>
+        <ACTION>lua clishCfgObjAdd ("dot11ACL","dot11VAP.defACLPolicy", "${acl_policy}")
+	</ACTION>
+</COMMAND>
+
+  <COMMAND name="mac_address" help="Set accesspoint mac address.">
+        <PARAM name="mac_address"
+	       help="Set accesspoint ACL policy."
+	       ptype="MAC_ADDR_T"/>
+        <ACTION>lua clishCfgObjAdd ("dot11ACL","dot11ACL.macAddress", "${mac_address}")
+	</ACTION>
+  </COMMAND>
+</VIEW>
+ <!--=======================================================-->
+    <!--=======================================================-->
+    <COMMAND name="dot11 profile"
+             help="802.11 profile configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint"
+             help="802.11 access point configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="dot11 radio"
+             help="802.11 radio configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="dot11 wds"
+             help="802.11 wds configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="dot11 wmm"
+             help="802.11 wmm configuration."/>
+    <!--=======================================================-->
+    <COMMAND name="dot11 radius"
+             help="802.11 radius configuration mode."/>
+    <!--=======================================================-->
+    <COMMAND name="dot11 profile add"
+             help="802.11 profile configuration mode."
+             view="dot11-profile-config" viewid="">
+	     <PARAM name="profile_name"
+		    help="Profile to edit"
+		    ptype="STRING_ALPHA_NUM_64"/>
+            <ACTION>lua clishCfgObjNew ("dot11Profile", dot11PfrCfgInit, 
+		    dot11PfrCfgSave, dot11PfrInputVal, "${profile_name}","add")
+            </ACTION>		    
+    </COMMAND>
+   <!--=======================================================-->
+    <COMMAND name="dot11 profile edit"
+             help="802.11 profile configuration mode."
+             view="dot11-profile-config" viewid="">
+	     <PARAM name="profile_name"
+		    help="Profile to edit"
+		    ptype="STRING_ALPHA_NUM_64"/>
+            <ACTION>lua clishCfgObjNew ("dot11Profile", dot11PfrCfgInit, 
+		    dot11PfrCfgSave, dot11PfrInputVal, "${profile_name}","edit")
+            </ACTION>		    
+    </COMMAND>
+   <!--=======================================================-->
+    <COMMAND name="dot11 wmm edit"
+             help="802.11 wmm configuration mode."
+             view="dot11-wmm-config" viewid="">
+	     <PARAM name="profile_name"
+		    help="Profile to edit"
+		    ptype="STRING"/>
+            <ACTION>lua clishCfgObjNew ("dot11Profile", dot11WmmCfgInit, 
+		    dot11WmmCfgSave, dot11WmmInputVal, "${profile_name}")
+            </ACTION>		    
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 radius configure"
+             help="802.11 radius configuration mode."
+             view="dot11-radius-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("dot11radiusconf", dot11radiusCfgInit, 
+		    dot11radiusCfgSave, dot11radiusInputVal)
+            </ACTION>		    
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 profile delete"
+             help="Delete an 802.11 profile."
+	     view="root-view" viewid="">
+	     <PARAM name="profile_name"
+		    help="Profile to delete"
+		    ptype="STRING_ALPHA_NUM_64"/>
+            <ACTION>lua clishCmdExec(dot11PfrCfgDel,"${profile_name}")
+            </ACTION>		    
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint add"
+             help="802.11 access point configuration mode"
+             view="dot11-ap-config" viewid="">
+	     <PARAM name="ap_name"
+		    help="Access point to edit."
+		    ptype="STRING_ALPHA_NUM_16"/>
+            <ACTION>lua clishCfgObjNew ("dot11AP", dot11APCfgInit,
+		    dot11APCfgSave, dot11APInputVal, "${ap_name}","add")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint edit"
+             help="802.11 access point configuration mode"
+             view="dot11-ap-config" viewid="">
+	     <PARAM name="ap_name"
+		    help="Access point to edit."
+		    ptype="STRING_ALPHA_NUM_16"/>
+            <ACTION>lua clishCfgObjNew ("dot11AP", dot11APCfgInit,
+		    dot11APCfgSave, dot11APInputVal, "${ap_name}","edit")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint delete"
+             help="Delete an 802.11 access point.">
+	<PARAM name="ap_name" 
+	       help="Access point to delete"
+	       ptype="STRING_ALPHA_NUM_16"/>
+                   <ACTION>lua clishCmdExec(dot11APCfgDel,"${ap_name}")</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 wds enable"
+             help="enable wds.">
+	<PARAM name="radio_no" 
+	       help="Radio No to enable wds"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(dot11WDSCfgEnable,"${radio_no}")</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 wds disable"
+             help="disable wds.">
+	<PARAM name="radio_no" 
+	       help="Radio No to disable wds"
+	       ptype="UINT"/>
+                   <ACTION>lua clishCmdExec(dot11WDSCfgDisable,"${radio_no}")</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 wds add_peer"
+             help="add peer mac address wds.">
+	<PARAM name="radio_no" 
+	       help="Radio No to add peer mac"
+	       ptype="UINT"/>
+	<PARAM name="mac_addr" 
+	       help="peer mac address"
+	       ptype="MAC_ADDR_T"/>
+                   <ACTION>lua clishCmdExec(dot11WDSCfgPeerAdd,"${radio_no}", "${mac_addr}")</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 wds delete_peer"
+             help="add peer mac address wds.">
+	<PARAM name="radio_no" 
+	       help="Radio No to add peer mac"
+	       ptype="UINT"/>
+	<PARAM name="mac_addr" 
+	       help="peer mac address"
+	       ptype="MAC_ADDR_T"/>
+                   <ACTION>lua clishCmdExec(dot11WDSCfgPeerDelete,"${radio_no}", "${mac_addr}")</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint disable"
+             help="Disable an 802.11 access point.">
+	     <PARAM name="ap_name"
+		    help="Access point to disable"
+		    ptype="STRING_ALPHA_NUM_16"/>
+            <ACTION>lua clishCmdExec(dot11APCfgDisable, "${ap_name}")
+            </ACTION>		    
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint enable"
+             help="Enable an 802.11 access point.">
+	     <PARAM name="ap_name"
+		    help="Access point to enable"
+		    ptype="STRING_ALPHA_NUM_16"/>
+            <ACTION>lua clishCmdExec(dot11APCfgEnable,"${ap_name}")
+            </ACTION>		    
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 radio configure"
+             help="802.11 radio configuration mode."
+             view="dot11-radio-config" viewid="">
+      	<PARAM name="radio_no" 
+	       help=" radio number to configure"
+	       ptype="UINT"/>
+            <ACTION>lua clishCfgObjNew ("dot11Radio", dot11RadioCfgInit, 
+		    dot11RadioCfgSave, dot11RadioInputVal, "${radio_no}")
+            </ACTION>
+    </COMMAND>        
+    <!--=======================================================-->
+    <COMMAND name="dot11 radio advanced" help="Advanced radio configure"/>
+    <COMMAND name="dot11 radio advanced configure"
+             help="802.11 AP advanced configuration mode."
+             view="dot11-ap-advanced-config" viewid="">
+        <PARAM name="radio_no" 
+           help=" radio number to configure"
+           ptype="UINT"/>
+            <ACTION>lua clishCfgObjNew ("dot11APadvanced", 
+			dot11RadioAdvCfgInit, dot11RadioAdvCfgSave, 
+			dot11RadioAdvInputVal, "${radio_no}")
+            </ACTION>		    
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint wps" help="Advanced AP configure"/>
+    <COMMAND name="dot11 accesspoint wps configure"
+             help="802.11 AP wps configuration mode."
+             view="dot11-ap-wps-config" viewid="">
+            <ACTION>lua clishCfgObjNew ("dot11WPS", 
+			dot11WPSCfgInit, dot11WPSSave, 
+			dot11WPSInputVal)
+            </ACTION>		    
+    </COMMAND>
+   <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint acl" help="Accesspoint ACL configure"/>
+    <COMMAND name="dot11 accesspoint ACL configure"
+             help="802.11 AP ACL configuration mode."
+             view="dot11-ap-acl-config" viewid="">
+	     <PARAM name="ap_name"
+		    help="Access point to configure ACL"
+		    ptype="STRING"/>
+            <ACTION>lua clishCfgObjNew ("dot11ACL", 
+			dot11ACLCfgInit, dot11ACLSave, 
+			dot11ACLInputVal,"${ap_name}")
+            </ACTION>		    
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="dot11 accesspoint acl delete_mac_address"
+        help="Delete acl mac address entry.">
+      	<PARAM name="rowid" 
+	       help=" acl macaddress to delete"
+	       ptype="UINT"/>
+           <ACTION>lua clishCmdExec(dot11ACLcfgDel,"${rowid}")</ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+
+</CLISH_MODULE>

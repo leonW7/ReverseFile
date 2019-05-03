@@ -1,0 +1,216 @@
+<?lua
+require "teamf1lualib/bl_manualPowerAdjustment"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "manualPowerAdjustments"
+
+local guiPowerManagement = require("com.teamf1.bl.wlan.manualpower")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+ 
+local powerModeStatus, powerClientsInfo, errorCode
+errorCode, powerModeStatus, powerClientsInfo = guiPowerManagement.powerAdjustmentGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+
+if (ButtonType and ButtonType == "start") then
+
+    errorFlag = guiPowerManagement.powerPlanStart ()
+    	if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)
+        
+elseif (ButtonType and ButtonType == "apply") then
+
+    errorFlag = guiPowerManagement.powerPlanApply ()
+    	if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    	end
+        web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "clear") then
+
+    errorFlag = guiPowerManagement.powerPlanClear ()
+        if (errorFlag == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+        web.goToPage(NextPage, true, true)        
+
+else
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu2");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use
+                    "msgError" 2. for information use "msgInfo" 3. for sucess
+                    use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=powerAlgorithm.html">Power Setting</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=manualPowerAdjustment.html">Manual
+                                    Power Adjustments</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>Manual Power Adjustments</h1>
+                    <div class="midArea">
+                        <div align="left">
+                                <h2>Manual Power Adjustments</h2>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>Current Status </label>
+                                    <p>
+                                        $| powerModeStatus or '' |$
+                                    </p>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>Manual Power Adjustments List</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                            <thead>
+                                                <tr>
+                                                    <th>AP MAC Address </th>
+                                                    <th>Location</th>
+                                                    <th>Radio</th>
+                                                    <th>Current Power</th>
+                                                    <th>New Power</th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            if (powerClientsInfo ~= nil) then
+                                            for k, v in pairs (powerClientsInfo) do
+                                            local row = powerClientsInfo[k]
+                                            ?>
+                                            <tr class="gradeA">
+                                                <td>$| row.apMacAddress or '' |$</td>
+                                                <td>$| row.apLocation or '' |$</td>
+                                                <td>$| row.apRadio or '' |$</td>
+                                                <td>$| row.curPower or '' |$</td>
+                                                <td>$| row.planNewPower or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                            end
+                                            end
+                                            ?>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <form action="platform.cgi" method="post"
+                                    name="tf1_frmManualPowerAdjustment" id="tf1_frmManualPowerAdjustment">        
+                                <input type="hidden" name="thispage"
+                                id="thispage" value="manualPowerAdjustment.html">            
+
+                                <div class="buttonsRow">
+                                    <input type="submit" class="btnSubmit"
+                                    name="button.apply.manualPowerAdjustment" title="Apply" value="Apply" id="tf1_btApply" >
+                                    <input type="submit" class="btnSubmit"
+                                    name="button.clear.manualPowerAdjustment" title="Clear" value="Clear"  id="tf1_btClear" >
+                                    <input type="submit"
+                                    name="button.start.manualPowerAdjustment"
+                                    class="btnSubmit" title="Start"
+                                    value="Start" id="tf1_btStart" >                
+
+                                </div>
+                                        </form>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+
+</html>
+<?lua end ?>

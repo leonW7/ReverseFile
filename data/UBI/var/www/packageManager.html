@@ -1,0 +1,449 @@
+<?lua
+
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/packageManager_bl"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "packageManager"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local pkg_BL = require("com.teamf1.bl.pkg.driver")
+
+local firmwareFile = ""
+local firmwareVer  = ""
+firmwareFile = io.open("/pfrm2.0/var/releaseMilestone.txt", "r")
+if (firmwareFile ~= nil) then
+    firmwareVer = firmwareFile:read("*line")
+    firmwareFile:close()
+end
+
+if(ButtonType and ButtonType == "manual") then
+   local filename = cgilua.cookies.get("TeamF1Login")
+   os.execute ("mv /tmp/" .. filename .. " /tmp/" .. cgi["file.upload"]["filename"])
+   returnCode, cookie = pkg_BL.threegDriverInstallManuallySet ("/tmp/" .. cgi["file.upload"]["filename"])
+    if(returnCode ~= returnCodes.SUCCESS) then
+   		statusErrorMessage = errorMap.errorStringGet (returnCode)
+    else
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+	end
+   web.goToPage(NextPage, true, true)
+
+elseif(ButtonType and ButtonType ~= "") then
+	if((cgi["driverName"] == "option") or (cgi["driverName"] == "cdc-acm") or (cgi["driverName"] == "GobiNet")) then 
+	    if(UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then 
+		cgi["driverName"]=cgi["driverName"] .. "-150-" .. firmwareVer
+	    elseif(UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250") then 
+		cgi["driverName"]=cgi["driverName"] .. "-250-" .. firmwareVer
+        elseif(PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+        cgi["driverName"]=cgi["driverName"] .. "-1000AC-v1-" .. firmwareVer
+        elseif(PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then
+        cgi["driverName"]=cgi["driverName"] .. "-500AC-v1-" .. firmwareVer
+	    else
+		cgi["driverName"]=cgi["driverName"] .. "-v1-" .. firmwareVer
+	    end
+	end
+	if ((cgi["driverName"] ~= nil) and (cgi["VersionNumber"] ~= nil) and (cgi["VersionNumber"] ~= " "))then
+		returnCode, cookie = pkg_BL.threegSectionActionSet(ButtonType, cgi["driverName"], cgi["VersionNumber"])
+	else
+		returnCode, cookie = pkg_BL.threegSectionActionSet(ButtonType)
+	end
+    if(returnCode ~= returnCodes.SUCCESS) then
+   		statusErrorMessage = errorMap.errorStringGet (returnCode)
+    else
+        -- Read the content of the language file.
+        local langFile = io.open("/flash/tmp/lang.txt", "r")
+        -- Get the current language.
+        local curLangId = langFile:read("*line")
+        if (curLangId == nil or curLangId == "") then
+           -- By default we prefer ENGLISH over any.
+           curLangId = "en_US"
+        end
+        -- If we removed an already existing package.
+        if (curLangId == "en_US" and ButtonType == "remove") then
+           -- We detach the old language.
+           db.execute("DETACH langDB")
+           -- And attach the default language as english.
+           langId = "en_US"
+           -- Attach the new data base.
+           db.execute("ATTACH '/tmp/" .. curLangId .. ".db' as newLangDB") 
+        end
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+	end
+    web.goToPage(NextPage, true, true)
+else
+    local returnCode, drivers, installed = pkg_BL.threegDriverSectionGet ()
+    local fileM = io.open("/tmp/ab.txt", "w")
+    fileM:write(returnCode)
+    if(returnCode ~= returnCodes.SUCCESS) then
+   		statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+	cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "30332,13193,30333,10725,30401,10821,10702,11181,30334,30335,30336,30337,11679,12798,11179,12429,13474,13442,30414,13443,13441,13473"
+?>
+<!DOCTYPE html>
+
+<html>
+	<head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+	<form method="post" action="platform.cgi" name="tf1_frm_packageManager" id="tf1_frm_packageManager">
+ 	<input type="hidden" name="thispage" value="packageManager.html">
+ 	<input type="hidden" name="driverName" id="tf1_driverName" value="">
+	<input type="hidden" name="VersionNumber" value="" id="tf1_versionNumber">
+	<div class="configDialog" id="tf1_dialog">
+   	</div>
+	</form>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+          <!-- Right click Div Start -->
+	       <div class="contextMenu" id="contextMenu">
+		       <ul>
+			   <li id="install">
+				$| LANG_LOCALE['30332'] |$
+			   </li>
+			  <li id="launch">
+				$| LANG_LOCALE['13193'] |$
+			  </li>
+			  <li id="delete">
+				$| LANG_LOCALE['30333'] |$
+			  </li>
+		   </ul>
+	   </div>
+	<!-- Right click Div End -->
+            <tr>
+               <td valign="top" align="center">
+               <div class="midWidth">
+                   <script language="JavaScript">
+                       mmSel("mainMenu6");
+                   </script>
+                   <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			       <div class="msgSuccess">
+                       <p>$| statusSuccessMessage or '' |$</p>
+			       </div>
+		   	       <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			       <div class="msgError">
+                       <p>$| statusErrorMessage or '' |$</p>
+                   </div> 
+                   <?lua  end?>
+                   <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]                   
+                   -->
+                   <div class="FL2">
+                       <p class="hint">
+                       	$| helpHintText |$
+                       </p>
+                   </div>
+				<h1>$| LANG_LOCALE['10725'] |$</h1>
+				<div class="midArea">
+					<div align="left">
+						<?lua if (#drivers ~= 0 ) then ?>
+						<h2>$| LANG_LOCALE['30401'] |$</h2>
+						<div class="CLR">
+							<div class="demo_jui" id="tf1_devDriversList">
+								<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsDataDev">
+									<thead>
+										<tr>
+											<th>$| LANG_LOCALE['10821'] |$</th>
+											<th>$| LANG_LOCALE['10702'] |$</th>
+											<th>$| LANG_LOCALE['11181'] |$</th>
+										</tr>
+									</thead>
+									<?lua 
+										local description = ""
+										local nameStr = ""
+										for k,v in pairs (drivers) do
+									?>
+									 
+									<?lua
+										if(UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+											v.name = v.name:gsub("-150%-" .. firmwareVer,"")
+										elseif(UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250") then
+											v.name = v.name:gsub("-250%-" .. firmwareVer,"")
+                                        elseif (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+                                        v.name = v.name:gsub("-v1","")
+                                            v.name = v.name:gsub("-1000AC%-" .. firmwareVer,"")
+                                        elseif (PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then
+                                            v.name = v.name:gsub("-v1","")
+                                            v.name = v.name:gsub("-500AC%-" .. firmwareVer,"")
+                          				else
+						    				v.name = v.name:gsub("-v1%-" .. firmwareVer,"")
+                          				end    
+										nameStr = v.name
+										if((v.name ~= "option") and (v.name ~= "cdc-acm") and (v.name ~= "GobiNet"))then
+                                            nameStr = nameStr:gsub("-" .. firmwareVer,"") 
+											nameStr = string.upper(nameStr)                      
+                           					v.name = nameStr                      
+                          				end    
+										if(#(v.name)> 25) then
+											nameStr = string.sub(v.name, 1, 25) .. "..."
+										end
+                                        description = v.description
+                                        if (#(v.description) > 60) then
+                                            description = string.sub(v.description, 1, 60) .. "..."
+                                        end
+										if (v.buttons ~= nil and #v.buttons ~= 0) then
+											for m,n in pairs (v.buttons) do
+												local btLabel = n.label or ''
+												local btClassName = "button2"
+												if(#(btLabel) > 10) then
+													btClassName = "button"
+												end
+									?>
+									<tr driver-name="$| v.name or '' |$" version-number="$| v.Version or '' |$" class="gradeA" status="$| n.name |$" id="packageManager$| n.name or '' |$">
+									
+										<td title="$|v.name|$">$| nameStr or '' |$</td>
+										<td title="$| v.description |$">$| description or '' |$</td>
+										<?lua
+											if (n.name == "remove") then
+										?>
+										<td><img src="images/greenCircle.png" border="0" style="margin: 0px 6px; " align="absmiddle" />$| v.version |$</td>
+										<?lua
+                                                            else
+										?>
+										<td><img src="images/redCircle.png" border="0" style="margin: 0px 6px; " align="absmiddle" />$| v.version |$
+										</td>
+										<?lua
+											end
+											end
+										end
+										?>
+									</tr>
+									
+									<?lua end?>
+								</table>
+								<div class="break">&nbsp;</div>
+							</div>
+						</div>
+								<?lua end?>
+						<div class="break">&nbsp;</div>
+						<h2>$| LANG_LOCALE['30334'] |$</h2>
+						<div class="CLR">
+							<div class="demo_jui" id="tf1_defDriversList">
+								<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsDataDef">
+									<thead>
+										<tr>
+											<th>$| LANG_LOCALE['10821'] |$</th>
+											<th>$| LANG_LOCALE['10702'] |$</th>
+											<th>$| LANG_LOCALE['11181'] |$</th>
+										</tr>
+									</thead>
+									<?lua 
+										for k,v in pairs (installed) do ?>
+										 
+				<?lua
+											if(UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+												v.name = v.name:gsub("-150%-" .. firmwareVer,"")
+											elseif(UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250") then
+												v.name = v.name:gsub("-250%-" .. firmwareVer,"")
+                                            elseif (PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then
+                                                v.name = v.name:gsub("-v1","")
+                                                v.name = v.name:gsub("-1000AC%-" .. firmwareVer,"")
+                                            elseif (PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then
+                                                v.name = v.name:gsub("-v1","")
+                                                v.name = v.name:gsub("-500AC%-" .. firmwareVer,"")
+                          					else    
+						    					v.name = v.name:gsub("-v1%-" .. firmwareVer,"")
+                          					end    
+											nameStr = v.name
+											if((v.name ~= "option") and (v.name ~= "cdc-acm") and (v.name ~= "GobiNet"))then                    
+                                                nameStr = nameStr:gsub("-" .. firmwareVer,"") 
+                           						nameStr = string.upper(nameStr)                      
+                           						v.name = nameStr                      
+                          					end
+											if(#(v.name)> 25) then
+												nameStr = string.sub(v.name, 1, 25) .. "..."
+                                            end
+                                            description = v.description
+                                            if (#(v.description) > 60) then
+                                                description = string.sub(v.description, 1, 60) .. "..."
+                                            end
+											if (v.buttons ~= nil and #v.buttons ~= 0) then
+												for m,n in pairs (v.buttons) do
+													local btLabel = n.label or ''
+													local btClassName = "button2"
+													if(#(btLabel) > 10) then
+														btClassName = "button"
+													end
+											?>
+							<tr driver-name="$| v.name or '' |$" version-number="$| v.Version or '' |$" class="gradeA" status="$| n.name |$" id="packageManager$| n.name or '' |$">
+										
+                        					<td title="$| v.name |$">$| nameStr or '' |$</td>
+                        					<td title="$| v.description |$">$| description or '' |$</td>
+											<?lua
+												if
+                                                                        (n.name == "remove") then
+											?>
+											<td><img src="images/greenCircle.png" border="0" style="margin: 0px 6px; " align="absmiddle" />$| v.version |$</td>
+											<?lua
+                                                                  else
+											?>
+											<td><img src="images/redCircle.png" border="0" style="margin: 0px 6px; " align="absmiddle" />$| v.version |$
+											</td>
+											<?lua
+												end
+												end
+											end
+											?>
+											</tr>
+										 
+										<?lua end ?>								
+								</table>
+								<div class="break">&nbsp;</div>
+							</div>
+						</div>
+						<div class="break">&nbsp;</div>
+						<p>$| LANG_LOCALE['30335'] |$ <a href="platform.cgi?thispage=packageManager.html&button.update.packageManager=Update">$| LANG_LOCALE['30336'] |$</a> $| LANG_LOCALE['30337'] |$</p>
+						<div class="break">&nbsp;</div>
+						<h2>$| LANG_LOCALE['11679'] |$</h2>
+						<form method="post" enctype="multipart/form-data" action="platform.cgi">
+						<input type="hidden" name="thispage" id="thispage" value="packageManager.html">
+						<div class="configRow">
+							<label>$| LANG_LOCALE['12798'] |$</label>
+							<input type="file" name="file.upload" size="40" id="tf1_caFile">
+						</div>
+						<div class="break">&nbsp;</div>
+						<div class="submitRow">
+							<input type="submit" name="button.manual.packageManager" onclick="return fileUploadCheck ('tf1_caFile', 'enc', 2)" class="btnSubmit" title="$| LANG_LOCALE['30332'] |$" value="$| LANG_LOCALE['30332'] |$" id="btSave">	
+						</div>
+						<div class="break">&nbsp;</div>
+						<h2>$| LANG_LOCALE['11179'] |$</h2>
+						<div class="configRow">
+							<label>$| LANG_LOCALE['11179'] |$</label>
+							<textarea rows="15" cols="64" wrap="soft">
+							<?lua
+								local returnCode, table = pkg_BL.threegDriverHistorySectionGet ()
+								if (table ~= nil) then
+									for k,v in pairs(table) do
+						    			local s = v ["textMessage"]
+						    			if (s ~= nil) then
+						    				-- remove "\n" before displaying
+						        			if (string.find (s,"\n", -2)) then
+						            			s = string.sub (s, 1, -2)
+						        			end
+						        			print (s)
+						    			end
+									end
+								end
+							?>
+							</textarea>
+						</div>
+						<div class="break">&nbsp;</div>
+						</form>					
+					</div> <!-- div align left -->
+				</div> <!-- div  class midArea -->
+			</div> <!-- div class midWidth -->
+			</td>
+		</tr>
+		<tr>
+    		<td>
+        		<?lua web.includeMenu("footer.html")?>
+			</td>
+    	</tr>
+	</table>
+	<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+	<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+	<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+    <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="js/packageManager.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+			$('#tf1_devDriversList .gradeA').contextMenu('contextMenu', {
+				bindings : {
+					'installMenu' : function(t, e, rowId) {
+
+						$("#tf1_driverName").val($(t).attr("driver-name"));
+						$("#tf1_versionNumber").val($(t).attr("version-number"));
+	
+						changeRowStauts('install', 'tf1_frm_packageManager', rowId, 'tf1_dialog', 'packageManager', 'packageManager', 'packageManager.packageManager');
+					},
+					'launchMenu' : function(t, e, rowId) {
+						$("#tf1_driverName").val($(t).attr("driver-name"));
+						$("#tf1_versionNumber").val($(t).attr("version-number"));
+						changeRowStauts('upgrade', 'tf1_frm_packageManager', rowId, 'tf1_dialog', 'packageManager', 'packageManager', 'packageManager.packageManager');
+					},
+					/* form id, row Id, selectall Id, dialog id, config name,  */
+					'deleteMenu' : function(t, e, rowId) {
+						$("#tf1_driverName").val($(t).attr("driver-name"));
+						$("#tf1_versionNumber").val($(t).attr("version-number"));
+						deleteRows('button.remove.packageManager.packageManager', 'tf1_frm_packageManager', rowId, 'optionSelectAll', 'tf1_dialog', 'packageManager', 'packageManager');
+					}
+				},
+              onShowMenu: function(e,menu,rowId) {
+					//	alert($("#"+rowId).attr("status"));
+						if ($("#"+rowId).attr("status") == "remove"){
+                            $('#launchMenu', menu).remove();     
+                            $('#installMenu', menu).remove();                           
+						} else if ($("#"+rowId).attr("status") == "upgrade") {
+                            $('#deleteMenu', menu).remove();
+                            $('#installMenu', menu).remove();
+						} else {
+                            $('#deleteMenu', menu).remove();
+                            $('#launchMenu', menu).remove();
+						}
+						return menu;
+					}
+		});
+
+		$('#tf1_defDriversList .gradeA').contextMenu('contextMenu', {
+			bindings : {
+				'installMenu' : function(t, e, rowId) {
+					$("#tf1_driverName").val($(t).attr("driver-name"));
+					$("#tf1_versionNumber").val($(t).attr("version-number"));
+					changeRowStauts('install', 'tf1_frm_packageManager', rowId, 'tf1_dialog', 'packageManager', 'packageManager', 'packageManager.packageManager');
+				},
+				/* form id, row Id, selectall Id, dialog id, config name,  */
+				'deleteMenu' : function(t, e, rowId) {
+					$("#tf1_driverName").val($(t).attr("driver-name"));
+					$("#tf1_versionNumber").val($(t).attr("version-number"));
+					deleteRows('button.remove.packageManager.packageManager', 'tf1_frm_packageManager', rowId, 'optionSelectAll', 'tf1_dialog', 'packageManager', 'packageManager');
+				}
+			},
+            onShowMenu: function(e,menu,rowId) {
+					//alert($("#"+rowId).attr("status"));
+				if ($("#"+rowId).attr("status") == "remove"){
+                	$('#launchMenu', menu).remove();     
+                    $('#installMenu', menu).remove();                           
+				} else if ($("#"+rowId).attr("status") == "upgrade") {
+                    	$('#deleteMenu', menu).remove();
+                        $('#installMenu', menu).remove();
+				} else {
+                        $('#deleteMenu', menu).remove();
+                        $('#launchMenu', menu).remove();
+				}
+				return menu;
+			}
+		});
+
+        oTable = $('#recordsDataDev').dataTable({
+			"bJQueryUI" : true,
+			"sPaginationType" : "full_numbers"
+		});
+        oTable = $('#recordsDataDef').dataTable({
+			"bJQueryUI" : true,
+			"sPaginationType" : "full_numbers"
+		});
+    });
+    </script>
+</body>
+</html>
+<?lua end ?>

@@ -1,0 +1,388 @@
+<?lua 
+require "teamf1lualib/pop3Server_bl"
+require "teamf1lualib/errorMap"
+
+
+	PAGE_HELP = "security"
+	PAGE_HELP_SECTION = "pop3Server"
+    
+local errorMap         = require ("com.teamf1.core.errorMap")
+local gui_pop3Server = require("com.teamf1.bl.authentication.pop3")
+
+if (ButtonType and ButtonType == "config") then
+    local pop3Table = web.cgiToLuaTable(cgi)
+    errorFlag, cookie, statusCode = gui_pop3Server.pop3ServerSet (pop3Table)
+    if (errorFlag == 0) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+    
+elseif (ButtonType and ButtonType == "checkNow") then    	
+    errorFlag, statusCode = gui_pop3Server.serverStatusSet ('pop3', 'edit')
+    	web.goToPage(NextPage, true, true)
+else
+    returnCode, pop3Table = gui_pop3Server.pop3ServerGet ()
+    disableServerCheck = ""
+    if (pop3Table == nil) then
+        disableServerCheck = "disabled"
+        returnCode, pop3Table = gui_pop3Server.pop3ServerDefaultsGet ()
+    end
+ ret, popcaTable = gui_pop3Server.popCAfilesGetAll()
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+LANG_LOCALE = "12465,12826,12827,14205,10323,14206,30408,11221,13628,13629,13630,13631,12225,12222,12362,12407,11221,30406,12732,30407,30256,10683,12627,12927,11861,10442,30406,13100,12732,12697,30407,12697,12623,12464,12466,11560,10099,11802,12225,12222,12362,12407,11221,30406,12732,30407,30256,30575,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                               <li>
+                                    <a href="?page=radiusServer.html">$| LANG_LOCALE['12623'] |$</a>
+                                </li> 
+                                <li class="current">
+                                    <a href="?page=pop3Server.html">$| LANG_LOCALE['12464'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=pop3TrustedCa.html">$| LANG_LOCALE['12466'] |$</a> 
+                                </li>
+                                <li>
+                                    <a href="?page=ldapServer.html">$| LANG_LOCALE['11560'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=adServer.html">$| LANG_LOCALE['10099'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=ntDomain.html">$| LANG_LOCALE['11802'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                         $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['12465'] |$</h1>
+                    <?lua status, checkNowStatus = gui_pop3Server.getServerStatus('pop3')
+                          if(checkNowStatus == '1') then 
+        				    disableServerCheck = "disabled"
+                		  end
+                    ?>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmPop3Server" id="tf1_frmPop3Server" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="pop3Server.html">
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12826'] |$ </label>
+                                    <div class="submitRow">
+                                        <input type="submit" name="button.checkNow.pop3Server"  id="serverCheckBt" class="btnSubmit" title="$| LANG_LOCALE['12827'] |$ " value="$| LANG_LOCALE['12827'] |$ " id="btSave" $| disableServerCheck |$>
+                                    </div>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div id="authServerId1" class="hide">
+                                    <label> $| LANG_LOCALE['14205'] |$ : $| pop3Table["pop3Server.primaryServer"] or ''|$ </label>
+                                    <p id="serverId1"></p>
+                                </div>
+                                <div id="authServerBreak1" class="hide">
+                                    &nbsp;
+                                </div>
+                                <div id="authServerId2" class="hide">
+                                    <label> $| LANG_LOCALE['14206'] |$ : $| pop3Table["pop3Server.secondaryServer"] or '' |$ </label>
+                                    <p id="serverId2"></p>
+                                </div>
+                                <div id="authServerBreak2" class="hide">
+                                    &nbsp;
+                                </div>
+                                <div id="authServerId3" class="hide">
+                                    <label> $| LANG_LOCALE['30408'] |$ : $| pop3Table["pop3Server.tertiaryServer"] or '' |$</label>
+                                    <p id="serverId3"></p>
+                                </div>
+                                <div id="authServerBreak3" class="hide">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['14205'] |$ </label>
+                                    <input type="text"  name="pop3Server.primaryServer" value = "$|pop3Table["pop3Server.primaryServer"] or ''|$"  id="tf1_popAuthServer1" maxlength="15" onKeyPress="return alphaNumericCheck(event, '.')" >
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+     
+                                         </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10323'] |$ </label>
+                                    <input type="text" name="pop3Server.primaryPort" value = "$| pop3Table["pop3Server.primaryPort"] or '110'|$" class="one" id="tf1_popAuthPort1" maxlength="5" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11221']+':', '');}">
+                                    <dl>
+                                        [$| LANG_LOCALE['10683'] |$: 110, $| LANG_LOCALE['12627'] |$: 1 - 65535]
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12927'] |$ </label>
+                                    <?lua 
+                                      local statueStr
+                                     local statusVar
+                                     if (pop3Table["pop3Server.primarySSL"] == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar = "1" 
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar = "0"
+                                                                    end
+                                                                       ?>
+
+                                        <a class="$|statusStr|$" alt="" src="$| statusStr |$" id="tf1_popSSLEnable1"></a>
+                                        <input type="hidden"
+                                        name="pop3Server.primarySSL" value="$|
+                                        statusVar or ''|$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                  </div>
+                                <div class="configRow"  id="tf1_popCAFile1_div">
+                                    <label> $| LANG_LOCALE['10442'] |$ </label>
+                                    <select name="pop3Server.primaryCAFile" size="1" id="tf1_popCAFile1">
+                                        <?lua
+                                    local i = 0
+                                    if (ret == 0) then
+                                        for k, v in pairs (popcaTable) do
+                                            i = i + 1
+                                            local row = popcaTable[i]
+                                ?>
+                                <option $|web.dropdownSelected(pop3Table["pop3Server.primaryCAFile"] == row["CAFile"]) |$ value="$|row["CAFile"] |$">$|row["CAFile"] or '' |$</option>
+                                <?lua
+                                        end
+                                    end
+                                ?>
+                                    </select>
+                                </div>
+                                <div class="break"  id="break_popCAFile1_div">
+                                    &nbsp;
+                                </div>
+                            <div class="configRow">
+                                    <label> $| LANG_LOCALE['14206'] |$ </label>
+                                    <input type="text" name="pop3Server.secondaryServer" value = "$| pop3Table["pop3Server.secondaryServer"] or '' |$"  id="tf1_popAuthServer2" maxlength="15" onKeyPress="return alphaNumericCheck(event, '.')" ><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10323'] |$ </label>
+                                    <input type="text" name="pop3Server.secondaryPort" value = "$| pop3Table["pop3Server.secondaryPort"] or '110'|$"  class="one" id="tf1_popAuthPort2" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11221']+':', '');}">
+                                    <dl>
+                                        [$| LANG_LOCALE['10683'] |$: 110, $| LANG_LOCALE['12627'] |$ 1 - 65535]
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12927'] |$</label>
+                                    <?lua 
+                                      local statueStr
+                                     local statusVar
+                                     if (pop3Table["pop3Server.secondarySSL"] == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar = "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar = "0"
+                                                                    end
+                                                                       ?>
+
+
+                                        <a class="$|statusStr|$" alt="" src="$| statusStr |$"  id="tf1_popSSLEnable2"></a>
+                                        <input type="hidden"
+                                        name="pop3Server.secondarySSL"
+                                        value="$|statusVar or ''|$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow"  id="tf1_popCAFile2_div">
+                                    <label> $| LANG_LOCALE['10442'] |$ </label>
+                                    <select name="pop3Server.secondaryCAFile" size="1" id="tf1_popCAFile2">
+                                    <?lua
+                                    local i = 0
+                                    if (ret == 0) then
+                                        for k, v in pairs (popcaTable) do
+                                            i = i + 1
+                                            local row = popcaTable[i]
+                                ?>
+                                <option $|web.dropdownSelected(pop3Table["pop3Server.secondaryCAFile"] == row["CAFile"]) |$ value="$|row["CAFile"] |$">$|row["CAFile"] or ''|$</option>
+                                <?lua
+                                        end
+                                    end
+                                ?>
+                                </select>
+                                </div>
+                                <div class="break"  id="break_popCAFile2_div">
+                                    &nbsp;
+                                    </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['30408'] |$ </label>
+                                    <input type="text" name="pop3Server.tertiaryServer" value = "$| pop3Table["pop3Server.tertiaryServer"] or ''|$"  id="tf1_popAuthServer3" maxlength="15" onKeyPress="return alphaNumericCheck (event, '.')" ><dl>$| LANG_LOCALE['11861'] |$</dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['10323'] |$ </label>
+                                    <input type="text" name="pop3Server.tertiaryPort" value = "$| pop3Table["pop3Server.tertiaryPort"] or '110' |$" class="one" id="tf1_popAuthPort3" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 65535, true, LANG_LOCALE['11221']+':', '');}">
+                                    <dl>
+                                        [$| LANG_LOCALE['10683'] |$: 110, $| LANG_LOCALE['12627'] |$ 1 - 65535]
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12927'] |$ </label>
+                                    <?lua 
+                                      local statueStr
+                                     local statusVar
+                                     if (pop3Table["pop3Server.tertiarySSL"] == "1") then
+                                                                   statusStr="enable-disable-on"
+                                                                   statusVar = "1"
+                                                                   else
+                                                                   statusStr="enable-disable-off"
+                                                                   statusVar = "0"
+                                                                    end
+                                     ?>
+
+
+                               
+                                        <a class="$|statusStr|$" alt="" src="$| statusStr |$"  id="tf1_popSSLEnable3"></a>
+                                        <input type="hidden"
+                                        name="pop3Server.tertiarySSL"
+                                        value="$|statusVar or '' |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            <div class="configRow"  id="tf1_popCAFile3_div">
+                                    <label> $| LANG_LOCALE['10442'] |$ </label>
+                                    <select name="pop3Server.tertiaryCAFile" size="1" id="tf1_popCAFile3">
+                                    <?lua
+                                    local i = 0
+                                    if (ret == 0) then
+                                        for k, v in pairs (popcaTable) do
+                                            i = i + 1
+                                            local row = popcaTable[i]
+                                ?>
+                                <option
+                                $|web.dropdownSelected(pop3Table["pop3Server.tertiaryCAFile"]
+                                == row["CAFile"]) |$ value="$|row["CAFile"]
+                                |$">$|row["CAFile"] or '' |$</option>
+                                <?lua
+                                        end
+                                    end
+                                ?>
+                                    </select>
+                                </div>
+                                <div class="break" id="break_popCAFile3_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13100'] |$ </label>
+                                    <input type="text" name="pop3Server.timeout"value = "$| pop3Table["pop3Server.timeout"] or ''|$" maxlength="3" id="tf1_popTimeout" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck1 (document.getElementById ('tf1_popTimeout'), '', '', 1, true, LANG_LOCALE['30406']+':', LANG_LOCALE['12732']); }" class="one">
+                                    <dl>
+                                       ($| LANG_LOCALE['12732'] |$)
+                                    </dl>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['12697'] |$ </label>
+                                    <input type="text" name="pop3Server.maxRetries" value = "$| pop3Table["pop3Server.maxRetries"] or ''|$" maxlength="1" id="tf1_popRetries" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) { return numericValueRangeCheck1 (document.getElementById ('tf1_popRetries'), '', '', 5, true, LANG_LOCALE['30407']+':', ''); }" class="one">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit"class="btnSubmit"
+                                    name="button.config.pop3Server" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" onClick="return pop3ServerFormValidate('tf1_frmPop3Server')">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onClick="this.form.reset(); pop3ServerOnreset('tf1_frmPop3Server');">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <input type="hidden" id="checkNowId" value="$| checkNowStatus or '0' |$" />
+        <input type="hidden" id="serverObjId1" value="$| pop3Table["pop3Server.primaryServer"] or '' |$" />
+        <input type="hidden" id="serverObjId2" value="$| pop3Table["pop3Server.secondaryServer"] or '' |$" />
+        <input type="hidden" id="serverObjId3" value="$| pop3Table["pop3Server.tertiaryServer"] or '' |$" />
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/ecmascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/pop3Server.js"></script>
+        <script type="text/javascript" language="javascript" src="js/serverCheck.js"></script>
+    </body>
+</html>
+<?lua end ?>

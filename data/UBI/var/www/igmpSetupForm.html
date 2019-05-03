@@ -1,0 +1,43 @@
+<?lua 
+require "teamf1lualib/igmpSetup_bl"
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie, networkAddress, maskLength, interface
+        
+    if (ButtonType and ButtonType == "edit") then
+       returnCode, cookie, networkAddress, maskLength, interface =  igmpSectionGet (inputCookie) 
+    end    
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_igmpSetupDailogContent">
+    <div class="topBg">
+        <h1>IGMP Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>Network Address </label>
+            <input type="text" name="igmpSetup.networkAddress" value="$| networkAddress or ''  |$" id="tf1_networkIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'SN', false, true, 'Invalid IP address.', 'for octet ', true); }">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Mask Length </label>
+            <input type="text" name="igmpSetup.maskLength" value="$| maskLength or ''  |$" id="tf1_maskLen" class="one" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 32, true, '', '');}">
+            <dl>
+                [Range: 0 - 32]
+            </dl>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+                    <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                    <?lua if(cgi["configRowId"] == "-1") then?>
+        <input type="submit" name="button.add.igmpSetup" onclick="return pageValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua else?>
+        <input type="submit" name="button.edit.igmpSetup" onclick="return pageValidate()" class="btnSubmit" title="Save" value="Save" id="btSave">
+                    <?lua end?>
+    </div>
+</div>

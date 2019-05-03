@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# userdbInit - initialization script for userdb
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,11nov07,rks written
+
+
+if [ "$INCLUDE_USERDB" = "y" ]; then
+    if [ "$USERDB_SETUP_PASSWD" = "y" ]; then
+    touch /var/passwd
+    touch /var/group
+    echo root::0:0:root:/root:/bin/sh > /var/passwd 
+    echo root:x:0: > /var/group 
+    fi
+fi

@@ -1,0 +1,119 @@
+<?lua 
+require "teamf1lualib/easyVpnSetup_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "vpn"
+	PAGE_HELP_SECTION = "easyVpnSetup"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local easyVpn = require("com.teamf1.bl.ipsec.easyVpn")
+
+if (ButtonType and ButtonType == "upload") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local filename = cgilua.cookies.get("TeamF1Login")
+    inputTable["filename"] = filename
+    returnCode = easyVpn.importPolicy (inputTable)
+
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+        web.goToPage ("easyVpnSetup", true, true)
+
+else
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+
+LANG_LOCALE = "10858,10859,13194,13441,13473,13442,13474,12429,13443"
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<!--
+		Copyright (c) 2013 - 2014 TeamF1, Inc. (www.TeamF1.com)
+		All rights reserved.
+		-->
+
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu4");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+                    -->
+                    <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage or '' |$</p>
+                </div>
+                    <?lua end ?>
+					<div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$ 
+						</p>
+					</div>
+					<h1>$| LANG_LOCALE['10858'] |$</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmVpnSetup" id="tf1_frmVpnSetup" action="platform.cgi" enctype="multipart/form-data" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="easyVpnSetup.html">
+								<h2>$| LANG_LOCALE['10858'] |$</h2>
+								<div class="configRow">
+									<label>$| LANG_LOCALE['10859'] |$</label>
+									<input type="file" id="tf1_easyVpnSetup" name="tf1_easyVpnSetup" size="25">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit" onclick="return fileUploadCheck('tf1_easyVpnSetup', 'cfg', 1);" class="btnSubmit" name="button.upload.easyVpnSetup" id="btSave" title="$| LANG_LOCALE['13194'] |$" value="$| LANG_LOCALE['13194'] |$">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+        </table>
+        	<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/easyVpnSetup.js"></script>
+	</body>
+</html>
+<?lua end ?>

@@ -1,0 +1,308 @@
+<?lua
+require "teamf1lualib/sslVpnServer_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+local sslVpnServer = require("com.teamf1.bl.sslvpn.server_policy")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local policyOwnerName1, policyOwnerName2
+if(ButtonType == "add" or ButtonType == "edit") then
+print("abvadn")
+    if (cgi["configRowId"] ~= "-1") then
+
+
+        configRowId = cgi["configRowId"]
+          returnCode, cookie, policyName, policyType, policyOwnerName, 
+           policyDestinationType, permission, serviceType, destination, 
+           IPAddress, maskLength, resourceName, startPort, endPort, icmp  = sslVpnServer.sslVpnServerSectionGetCur(configRowId)
+			policyOwnerName1 = policyOwnerName
+			policyOwnerName2 = policyOwnerName 
+            returnCode1, groupRow = sslVpnServer.groupsGet()
+			returnCode2, userRow = sslVpnServer.usersGet()
+			returnCode3, resourceRow = sslVpnServer.resourcesGet()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    elseif(returnCode1 ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode1)
+    elseif(returnCode2 ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode2)
+    elseif(returnCode3 ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode3)
+    end
+		
+    else
+    
+        configRowId = "-1"
+
+        policyType,policyDestinationType,permission,serviceType, 
+        policyOwnerName1, policyOwnerName2 = sslVpnServer.sslVpnServerSectionDefaultsGet ()
+
+            returnCode1, groupRow = sslVpnServer.groupsGet()
+            returnCode2, userRow = sslVpnServer.usersGet()
+			returnCode3, resourceRow = sslVpnServer.resourcesGet()
+    if(returnCode1 ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode1)
+    elseif(returnCode2 ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode2)
+    elseif(returnCode3 ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode3)
+    end
+
+    end
+
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+
+<div id="tf1_sslVpnServerDailogContent">
+				<div class="topBg">
+					<h1 data-localize="12947">SSL VPN Server Policies Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+				 
+				<div class="dialogMidArea">
+
+			        <?lua if (cgi["configRowId"] == "-1") then ?>
+					<div class="configRow">
+						<label data-localize="12459"> Policy Type </label>
+					
+						<p>
+							<input type="radio" value="1" $| web.radioSelected(policyType == "1") |$ id="tf1_portalLayout1" onClick="policyTypeCheck('tf1_portalLayout1')" name="sslVpnServer.policyType">
+                            <span data-localize="11069">Global</span>
+						</p>
+						<p>
+							<input type="radio" value="2" $| web.radioSelected(policyType == "2") |$ id="tf1_portalLayout2" onClick="policyTypeCheck('tf1_portalLayout2')" name="sslVpnServer.policyType">
+                            <span data-localize="11082">Group</span>
+						</p>
+						<p>
+							<input type="radio" value="3" $| web.radioSelected(policyType == "3") |$ id="tf1_portalLayout3" onClick="policyTypeCheck('tf1_portalLayout3')" name="sslVpnServer.policyType">
+                            <span data-localize="13234">User</span>
+						</p>
+					                   </div>
+                    <div class="break" id="break1_div">
+                        &nbsp;
+                    </div>
+						<?lua else
+							local modpolicyType, modpolicyDestinationType 
+							if (policyType == "1") then
+                            modpolicyType = '<span data-localize="11069">Global</span>'
+							elseif (policyType == "2") then
+                                modpolicyType = '<span data-localize="11082">Group</span>'
+							elseif (policyType == "3") then
+                                modpolicyType = '<span data-localize="13234">User</span>'
+							end 
+                            if (policyDestinationType == "1") then
+                                modpolicyDestinationType = '<span data-localize="14098">Network Resource</span>'
+                            elseif (policyDestinationType == "2") then
+                                modpolicyDestinationType = '<span data-localize="11387">IP Address</span>'
+                            elseif (policyDestinationType == "3") then
+                                modpolicyDestinationType = '<span data-localize="14097">IP Network</span>'
+                            elseif (policyDestinationType == "4") then
+                                modpolicyDestinationType = '<span data-localize="14096">All Addresses</span>'
+                             end?>
+                       
+                    		<div class="configRow">
+                        		<label data-localize="14100"> Policy For </label>
+					<p>$| modpolicyType |$</p>
+                        		<input type="hidden" name="sslVpnServer.policyType" value="$| policyType or '' |$" >
+                    		</div>
+                    		<div class="break" id="break6_div">
+                        		&nbsp;
+                    		</div>
+							<div class="configRow">
+                            	<label data-localize="14099"> Policy Owner Name </label>
+								<p>$| policyOwnerName |$</p>
+                            	<input type="hidden" name="sslVpnServer.policyOwnerName" value="$| policyOwnerName or '' |$" >
+                        	</div>
+                        	<div class="break" id="break6_div">
+                            	&nbsp;
+                        	</div>
+                   	 		<div class="configRow" id="tf1_applyPolicy_div">
+                        		<label data-localize="10278"> Apply Policy to </label>
+								<p>$| modpolicyDestinationType |$</p>
+                        		<select style="display:none" size="1" id="tf1_applyPolicy" name="sslVpnServer.policyDestinationType" onChange="applyPolicyToType('tf1_applyPolicy')">
+                            		<option data-localize="14098" $| web.dropdownSelected(policyDestinationType == "1") |$ value="1">Network Resource</option>
+                            		<option data-localize="11387" $| web.dropdownSelected(policyDestinationType == "2") |$ value="2">IP Address</option>
+                            		<option data-localize="14097" $| web.dropdownSelected(policyDestinationType == "3") |$ value="3">IP Network</option>
+                            		<option data-localize="14096" $| web.dropdownSelected(policyDestinationType == "4") |$ value="4">All Addresses</option>
+                        		</select>
+                    		</div>
+                   
+                    		<div class="break" id="break4_div">
+                        		&nbsp;
+                    		</div>
+						<?lua end ?>
+					<?lua if (cgi["configRowId"] == "-1") then ?>
+					<div class="configRow" id="tf1_availableGroups_div">
+						<label data-localize="10341"> Available Groups </label>
+						<select name="sslVpnServer.policyOwnerName1">
+					 	<?lua
+                			for k, v in pairs(groupRow) do
+                			local outputTable = {}
+                			outputTable = groupRow[k]
+                			local groupName = outputTable["UserGroups.GroupName"]
+             			?>
+             			<option value="$|groupName|$" $| web.radioSelected(policyOwnerName1 == groupName) |$>$|groupName|$</option>
+
+						<!--<p><input type="radio" value="$|groupName|$" $| web.radioSelected(policyOwnerName1 == groupName) |$ name="sslVpnServer.policyOwnerName1">$|groupName|$</p>-->
+						<?lua end?>
+						</select>
+						</div>
+					<div class="break" id="break2_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_availableUsers_div">
+						<label data-localize="10344"> Available Users </label>
+						<select name="sslVpnServer.policyOwnerName2">
+						<?lua
+                            for k, v in pairs(userRow) do
+                            local outputTable1 = {}
+                            outputTable1 = userRow[k]
+                            local userName = outputTable1["Users.UserName"]
+                        ?>                        
+                        <option value="$|userName|$" $| web.radioSelected(policyOwnerName2 == userName) |$>$|userName|$</option>
+                        <!--<p><input type="radio" value="$|userName|$" $| web.radioSelected(policyOwnerName2 == userName) |$ name="sslVpnServer.policyOwnerName2">$|userName|$</p>-->
+						<?lua end?>
+						</select>
+						</div>
+					   
+						
+														
+					<div class="break" id="break3_div">
+						&nbsp;
+					</div>
+					<h2 data-localize="12937">SSL VPN Policy</h2>
+					<div class="configRow" id="tf1_applyPolicy_div">
+						<label data-localize="10278"> Apply Policy to </label>
+						<select size="1" id="tf1_applyPolicy" name="sslVpnServer.policyDestinationType" onChange="applyPolicyToType('tf1_applyPolicy')">
+							<option data-localize="14098" value="1" $| web.dropdownSelected(policyDestinationType == "1") |$ >Network Resource</option>
+							<option data-localize="11387" value="2" $| web.dropdownSelected(policyDestinationType == "2") |$>IP Address</option>
+							<option data-localize="14097" value="3" $| web.dropdownSelected(policyDestinationType == "3") |$>IP Network</option>
+							<option data-localize="14096" value="4" $| web.dropdownSelected(policyDestinationType == "4") |$>All Addresses</option>
+						</select>
+					</div>
+				
+					<div class="break" id="break4_div">
+						&nbsp;
+					</div>
+					<?lua end ?>
+					<div class="configRow" id="tf1_txtPolicyName_div">
+						<label data-localize="12458"> Policy Name </label>
+						<input type="text" id="tf1_txtPolicyName" name="sslVpnServer.policyName" value="$| policyName or '' |$" onkeypress="return alphaNumericCheck (event, '')" >
+
+					</div>
+					<div class="break" id="break5_div">
+						&nbsp;
+					</div>
+				
+					<div class="configRow" id="tf1_txtIPAddress_div">
+						<label data-localize="11387"> IP Address </label>
+						<input type="text" name="sslVpnServer.IPAddress" value="$| IPAddress or '' |$" id="tf1_txtIPAddress" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', true, true, LANG_LOCALE['11281'], LANG_LOCALE['11031'], true); }">
+					</div>
+					<div class="break" id="break6_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_txtMaskLen_div">
+						<label data-localize="11684"> Mask Length </label>
+						<input type="text" name="sslVpnServer.maskLength" value="$| maskLength or '' |$" class="one" maxlength="2" id="tf1_txtMaskLen" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 32, true, '', '');}">
+						<dl>
+                            [<span data-localize="12627">Range</span>: 0 - 32]
+						</dl>
+					</div>
+					<div class="break" id="break7_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_icmpCheck_div">
+						<label data-localize="11134"> ICMP </label>
+                        <?lua 
+                                                 
+                             if (icmp == "1") then
+                                statusStr="enable-disable-on"
+                                statusVar = "1"
+                             else
+                                statusStr="enable-disable-off"
+                                statusVar = "0"
+                              end
+                        ?>
+						<a class="$| statusStr |$" alt="" id="tf1_icmpCheck"></a>                                            
+                        <input type="hidden" name="sslVpnServer.icmp" value="$| statusVar |$">
+					</div>
+					<div class="break" id="break_icmpCheck_div">
+						&nbsp;
+					</div>
+					<h2 data-localize="12477">Port Range / Port Number</h2>
+					<div class="configRow" id="tf1_txtStrPort_div">
+						<label data-localize="10374"> Begin </label>
+						<input type="text" name="sslVpnServer.startPort" value="$| startPort or '' |$" class="one" maxlength="5" id="tf1_txtStrPort" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 65535, true, '', '');}">
+						<dl>
+							[<span data-localize="12627">Range</span>: 0 - 65535]
+						</dl>
+					</div>
+					<div class="break" id="break8_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_txtEndPort_div">
+						<label data-localize="10919"> End </label>
+						<input type="text" name="sslVpnServer.endPort" value="$| endPort or '' |$" class="one" maxlength="5" id="tf1_txtEndPort" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {if (numericValueRangeCheck (this, '', '', 0, 65535, true, '', '') == true) {return checkPortRange ('txtStrPort','txtEndPort');} else {return false;}}">
+						<dl>
+							[<span data-localize="12627">Range</span>: 0 - 65535]
+						</dl>
+					</div>
+					<div class="break" id="break9_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_service_div">
+						<label data-localize="12831"> Service </label>
+						<p>
+							<input type="radio" $| web.radioSelected(serviceType == "VPN Tunnel") |$ value="VPN Tunnel" name="sslVpnServer.serviceType" id="tf1_service">
+                            <span data-localize="13297">VPN Tunnel</span>
+						</p>
+						<p>
+							<input type="radio" $| web.radioSelected(serviceType == "Port Forwarding") |$ value="Port Forwarding" name="sslVpnServer.serviceType">
+                            <span data-localize="12468">Port Forwarding</span>
+						</p>
+						<p>
+							<input type="radio" $| web.radioSelected(serviceType == "All") |$ value="All" name="sslVpnServer.serviceType">
+                            <span data-localize="10207">All</span>
+						</p>
+					</div>
+					<div class="break" id="break10_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_definedResources_div">
+						<label data-localize="10694"> Defined Resources </label>
+						<select id="tf1_definedResources" name="sslVpnServer.resourceName">
+           				<?lua
+                			for k, v in pairs(resourceRow) do
+                			local outputTable2 = {}
+                			outputTable2 = resourceRow[k]
+                			local resource = outputTable2["ResourceName"]
+             			?>
+							<option $| web.dropdownSelected(resourceName == resource) |$ value="$|resource|$" >$|resource|$</option>
+						<?lua end?>
+						</select>
+					</div>
+					<div class="break" id="break11_div">
+						&nbsp;
+					</div>
+					<div class="configRow" id="tf1_permission_div">
+						<label data-localize="11933"> Permission </label>
+						<p>
+							<input type="radio" $| web.radioSelected(permission == "Permit") |$ value="Permit" name="sslVpnServer.permission">
+                            <span data-localize="11934">Permit</span>
+						</p>
+						<p>
+							<input type="radio" $| web.radioSelected(permission == "Deny") |$ value="Deny" name="sslVpnServer.permission" >
+                            <span data-localize="10699">Deny</span>
+						</p>
+					</div>
+					<div class="break">
+						&nbsp;
+					</div>
+				</div>
+				<div class="dialogSubmitRow">
+					<input data-localize="12758" type="submit" name="button.config.sslVpnServer.sslVpnServer.$| configRowId |$" onclick="return sslVpnPoliciesValidate('tf1_frmSslVpnServer')" class="btnSubmit" title="Save" value="Save" id="btSave">
+				</div>
+			</div>
+<?lua end?>

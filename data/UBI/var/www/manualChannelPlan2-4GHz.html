@@ -1,0 +1,232 @@
+<?lua
+require "teamf1lualib/manualChannelPlan2_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "manualChannel2.4GHz"
+
+local manualChannelPlan2Tbl = require("com.teamf1.bl.wlan.manualChannelPlan2GHz")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require("com.teamf1.core.returnCodes")
+
+MANUAL_CHANNEL_PLAN_INTERVAL = "The configured channel plan mode is Interval. Manual channel plan status is unavailable."
+MANUAL_CHANNEL_PLAN_TIME     = "The configured channel plan mode is Fixed Time. Manual channel plan status is unavailable."
+
+if (ButtonType and ButtonType == "apply") then
+    local returnCode = manualChannelPlan2Tbl.manualChannelPlan2Apply()
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    elseif(returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "clear") then
+    local returnCode = manualChannelPlan2Tbl.manualChannelPlan2Clear()
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    elseif(returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+elseif (ButtonType and ButtonType == "start") then
+    local returnCode = manualChannelPlan2Tbl.manualChannelPlan2Start()
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    elseif(returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local returnCode, channelMode, currentStatus, manualChannel2Tbl = manualChannelPlan2Tbl.manualchannelPlan2Get()
+    if (currentStatus == MANUAL_CHANNEL_PLAN_INTERVAL or currentStatus == MANUAL_CHANNEL_PLAN_TIME) then
+        statusErrorMessage = currentStatus
+    elseif (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu2");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+                                        <?lua if ( statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                           <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua else if(statusSuccessMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgSuccess">
+                           <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end end ?>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=channelAlgorithm5GHz.html">Channel Setting</a>
+								</li>
+								<li class="current">
+									<a href="?page=manualChannelPlan5GHz.html">Manual Channel Plan </a>
+								</li>
+								<li>
+									<a href="?page=channelPlanHistory5GHz.html">Channel Plan History</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$
+						</p>
+					</div>
+					<div align="left">
+						<nav class="nav-bg">
+							<ul class="menu">
+								<li>
+									<a href="?page=manualChannelPlan5GHz.html">5 GHz</a>
+								</li>
+								<li class="current">
+									<a href="?page=manualChannelPlan2-4GHz.html">2.4 GHz</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<h1>Manual Channel Plan 2.4 GHz</h1>
+					<div class="midArea">
+						<div align="left">
+							<h2>Channel Plan Algorithm</h2>
+                                                         <div class="configRow">
+                                                                
+								<label>Current Status</label>
+								<p>
+                                                                      <?lua
+                                                                      if (currentStatus == MANUAL_CHANNEL_PLAN_INTERVAL or currentStatus == MANUAL_CHANNEL_PLAN_TIME) then
+                                                                              currentStatus = ''
+                                                                      end
+                                                                      ?>
+
+									$| currentStatus or '' |$
+
+								</p>
+							</div>
+							<div class="break">
+								&nbsp;
+							</div>
+							<h2>Proposed Channel Assignments</h2>
+							<div class="CLR">
+								<div class="demo_jui">
+                                                                                                                             
+									<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+										<thead>
+											<tr>
+												<th>AP MAC Address</th>
+												<th>Location</th>
+												<th>Current Channel</th>
+												<th>New Channel</th>
+											</tr>
+										</thead>
+                                                                                   <?lua
+                                           
+                                          for k, v in pairs(manualChannel2Tbl) do
+                                             local row = {}
+                                             row = manualChannel2Tbl[k]
+                                        ?>
+                                        <tr class="gradeA" id="manualChannelPlan2-4GHz$|row.APMAC|$">
+                                            <td>$|row.APMAC|$</td>
+                                            <td>$|row.location|$</td>
+                                            <td>$|row.currentChannel|$</td>
+                                            <td>$|row.newChannel|$</td>
+                                        </tr>
+                                        <?lua end ?>
+
+									</table>
+								</div>
+							</div>
+							<div class="break">
+								&nbsp;
+							</div>
+                                                        <form name="tf1_frmManualChannelPlan2-4GHz" id="tf1_frmManualChannelPlan2-4GHz" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="manualChannelPlan2-4GHz.html">
+                            <?lua
+                             if (tonumber (channelMode) == 1)then 
+                            ?>
+                            <div class="buttonsRow">
+                                  <?lua
+                                  if (#manualChannel2Tbl ~= 0) then
+                                  ?>
+                                 <input type="submit" name="button.apply.manualChannelPlan2-4GHz" class="btnSubmit" title="Apply" value="Apply" id="btApply">            
+                                  <input type="submit" name="button.clear.manualChannelPlan2-4GHz" class="btnSubmit" title="Clear" value="Clear" id="btClear">
+                                   <?lua end ?>
+                                   <input type="submit" name="button.start.manualChannelPlan2-4GHz" class="btnSubmit" title="Start" value="Start" id="btStart">    
+                            </div>
+                            </form>
+                            <?lua end ?>
+							<div class="break">
+								&nbsp;
+							</div>
+							</form>
+
+						</div>
+					</div>
+
+				</div> </div>
+				</div> </td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(false);
+			});
+		</script>
+	</body>
+</html>
+<?lua end ?>

@@ -1,0 +1,215 @@
+<?lua
+require "teamf1lualib/ips_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+    PAGE_HELP = "security"
+if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-500" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500_Bx") then
+    PAGE_HELP_SECTION = "ips"
+else
+    PAGE_HELP_SECTION = "ips_single"
+end
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local ips_bl   = require("com.teamf1.bl.security.ips")
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable ["ips.cookie"] = ROWID
+    errorFlag, statusCode = ips_bl.ipsSectionSet (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage (NextPage, true, true)
+else
+    local returnCode, cookie, idsEnable, ipsEnable, ipsEnableLan, ipsEnableDmz, 
+          numRules, numAlerts, numDrops = ips_bl.ipsSectionGet () 
+
+    if (returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "11416,11201,10888,10889,11417,11521,10780,11418,11807,12758,10449,50212"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+        <!--
+        Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+        All rights reserved.
+        -->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body onLoad="onloadCall ();">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu5");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use
+                    "msgError" 2. for information use "msgInfo" 3. for sucess
+                    use "msgSuccess" CSS classes ]-->
+                    	<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	                <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			                <div class="msgError">
+                                <p>$| statusErrorMessage or '' |$</p>
+                            </div> 
+                        <?lua  end?>
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['11416'] |$</h1>
+                        <div class="midArea">
+                            <div align="left">
+                                <form name="tf1_frmIps" id="tf1_frmIps" action="platform.cgi" method="post">
+                                <input type="hidden" name="thispage" id="thispage" value="ips.html">
+                                <h2>$| LANG_LOCALE['11201'] |$</h2>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10888'] |$</label>
+                                    <?lua
+                                        if (idsEnable == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar= "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar= "0"
+                                        end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_idsStatus"></a>
+                                    <input type="hidden" value="$| statusVar |$" name="ips.idsEnable">
+                                    <input type="hidden" value="$| idsEnable |$" id="tf1_hdIdsStatus" />
+                                </div>
+                                <div class="break" >&nbsp;</div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10889'] |$</label>
+                                    <?lua
+                                        if (ipsEnable == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar= "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar= "0"
+                                        end
+                                    ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_ipsStatus"></a>
+                                    <input type="hidden" value="$| statusVar |$" name="ips.ipsEnable">
+                                    <input type="hidden" value="$| ipsEnable |$" id="tf1_hdIpsStatus" />
+                                </div>
+				<div class="break" >&nbsp;</div>
+                                <h2>$| LANG_LOCALE['11417'] |$</h2>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['11521'] |$</label>
+                                    <?lua
+                                        if (ipsEnableLan == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar= "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar= "0"
+                                        end
+                                    ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                    <input type="hidden" value="$| statusVar |$" name="ips.ipsEnableLan">
+                                </div>
+                                <div class="break" >&nbsp;</div>
+                                <?lua if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then ?>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10780'] |$</label>
+                                    <?lua
+                                        if (ipsEnableDmz == "1") then
+                                            statusStr="enable-disable-on"
+                                            statusVar= "1"
+                                        else
+                                            statusStr="enable-disable-off"
+                                            statusVar= "0"
+                                        end
+                                    ?>
+                                    <a class="$| statusStr |$" alt=""></a>
+                                    <input type="hidden" value="$| statusVar |$" name="ips.ipsEnableDmz">
+                                </div>
+                                <div class="break" >&nbsp;</div>
+                                <?lua end ?>
+                                <h2>$| LANG_LOCALE['11418'] |$</h2>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['11807'] |$</label>
+                                    <p>	$| numRules |$</p>
+                                </div>
+				<div class="break" >&nbsp;</div>
+                                <div class="submitRow">
+                                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave" name ="button.config.ips.ips.1" onclick="return pageValidate('tf1_frmIps')">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmIps');">
+                                </div>
+				<div class="break">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </td>
+            </tr>
+	    <tr>
+                <td>
+                    <?lua web.includeMenu("footer.html")?>
+                </td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript">
+            function pageValidate (frmId) {
+                
+                var idsValue = $('#tf1_hdIdsStatus').val();
+                var ipsValue = $('#tf1_hdIpsStatus').val();
+
+                var idsImgObj = document.getElementById('tf1_idsStatus');
+                var idsImgClass = $(idsImgObj).attr('class');
+
+                var ipsImgObj = document.getElementById('tf1_ipsStatus');
+                var ipsImgClass = $(ipsImgObj).attr('class');
+
+                if ((idsImgClass == ON_ANCHOR || ipsImgClass == ON_ANCHOR) && (idsValue == 0 && ipsValue == 0)) {
+                    var proceed = confirm(LANG_LOCALE['50212']);
+                    
+                    if (proceed == false) {
+                        resetImgOnOff(frmId);
+                        return false;
+                    }
+                }
+
+                setHiddenChks(frmId);
+                return true;
+            }
+        </script>
+    </body>
+</html>
+<?lua end ?>

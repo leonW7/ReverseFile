@@ -1,0 +1,444 @@
+<?lua
+require "teamf1lualib/bl_backupRestore"
+require "teamf1lualib/bl_softReboot"
+require "teamf1lualib/usb_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "backupRestore"
+
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local reboot = require("com.teamf1.bl.system.actions")
+local backupRestore = require("com.teamf1.bl.system.actionbackup")
+local usb = require("com.teamf1.bl.system.maintenance")
+
+connectionStatus1 = "Not Connected"
+connectionStatus2 = "Not Connected"
+fileList1 = ""
+fileList2 = ""
+
+if (ButtonType and ButtonType == "restore") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    util.appendDebugOut(util.tableToStringRec(inputTable))
+    local filename = cgilua.cookies.get("TeamF1Login")
+    inputTable["backupRestore.filename"] = filename
+    inputTable["backupRestore.restoreStatus"] = "pc"
+    errorFlag, cookie = backupRestore.restoreSet (inputTable)
+
+    if (errorFlag == 0) then
+        PROGRESS_BAR_MESSAGE = "Restoring configuration"
+        web.goToPage("progressBar", true, true)
+    elseif (errorFlag ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        web.goToPage("backupRestore", true, true)
+    end
+
+
+elseif (ButtonType and ButtonType == "restore1") then
+    local filename = cgi["upload.filename"]
+    local inputTable = {}
+    local fsize
+    inputTable["backupRestore.filename"] = filename
+    errorFlag, fsize = backupRestore.fileSizeCheck("/usb1/"..  inputTable["backupRestore.filename"])
+    if (errorFlag ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        web.goToPage("backupRestore", true, true)
+    else
+        inputTable["backupRestore.restoreStatus"] = "usb1"
+       errorFlag, cookie = backupRestore.restoreSet (inputTable)
+       if (errorFlag == 0) then
+           PROGRESS_BAR_MESSAGE = "Restoring configuration"
+           web.goToPage("progressBar", true, true)
+       elseif (errorFlag ~= returnCodes.SUCCESS) then
+           statusErrorMessage = errorMap.errorStringGet (errorFlag)
+           web.goToPage("backupRestore", true, true)
+        end
+    end
+
+
+elseif (ButtonType and ButtonType == "restore2") then
+    local filename = cgi["upload.filename"]
+    local inputTable = {}
+    local fsize
+    inputTable["backupRestore.filename"] = filename
+    errorFlag, fsize = backupRestore.fileSizeCheck("/usb2/"..  inputTable["backupRestore.filename"])
+    if (errorFlag ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        web.goToPage("backupRestore", true, true)
+    else
+        inputTable["backupRestore.restoreStatus"] = "usb2"
+        errorFlag, cookie = backupRestore.restoreSet (inputTable)
+        if (errorFlag == 0) then
+            PROGRESS_BAR_MESSAGE = "Restoring configuration"
+            web.goToPage("progressBar", true, true)
+        elseif (errorFlag ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+            web.goToPage("backupRestore", true, true)
+        end
+    end
+elseif (ButtonType and ButtonType == "guestUser") then
+    statusErrorMessage = errorMap.errorStringGet (returnCodes.UNAUTHORIZED)
+    web.goToPage("backupRestore", true, true)    
+else
+    errorFlag, cookie, usb1Status = usb.usb1StatusGet()
+    errorFlag, cookie, usb2Status = usb.usb2StatusGet()
+    local errorFlag, usbFileList1 = usb.usbFileList1Get()
+    if (usbFileList1 ~= nil and util.fileExists(usbFileList1)) then
+        fileList1 = util.fileToString(usbFileList1)
+        fileList1 = string.gsub (fileList1, "\n", "|")
+        fileList1 = string.sub(fileList1, 1, -2)
+        if (fileList1 == nil) then
+            fileList1 = ""
+            end
+   else
+          fileList1 = ""
+   end
+       
+   local errorFlag,usbFileList2 = usb.usbFileList2Get()
+    if (usbFileList2 ~= nil and util.fileExists(usbFileList2)) then
+        fileList2 = util.fileToString(usbFileList2)
+        fileList2 = string.gsub (fileList2, "\n", "|")
+        fileList2 = string.sub(fileList2, 1, -2)
+        if (fileList2 == nil) then
+            fileList2 = ""
+       end
+   else
+           fileList2 = ""
+   end       
+   cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+LANG_LOCALE = "10819,10817,30350,12759,13531,10348,30349,30351,10420,12690,30352,30353,13212,30354,12760,13441,13473,12429,13474,13442,30414,13443,12183,12530,30611,30612"
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu6");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+                    -->
+               <?lua 
+                    if (statusErrorMessage ~= nil) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= nil) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage or '' |$</p>
+                </div>
+                    <?lua end ?>
+                                        <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li class="current">
+                                 <a href="?page=backupRestore.html">$| LANG_LOCALE['10348'] |$</a>
+				               </li>
+				              <li >
+				                   <a href="?page=backupConfigurations.html">$| LANG_LOCALE['30349'] |$</a> 
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+					<div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$						</p>
+					</div>
+					<h1>$| LANG_LOCALE['10348'] |$</h1>
+					<div class="midArea">
+                            <div align="left">
+                                <?lua if (ACCESS_LEVEL ~= 0) then ?>
+                                <form name="tf1_frmDownLoad" id="tf1_frmDbg1" action="platform.cgi" method="post">
+                                    <input type="hidden" name="thispage" id="thispage" value="backupRestore.html">
+        							<h2>$| LANG_LOCALE['10819'] |$</h2>
+									<div class="break"> &nbsp;</div>
+								    <div class="submitRow">
+                                        <input type="submit" name="button.guestUser.backupRestore" class="btnSubmit" title="$| LANG_LOCALE['10817'] |$" value="$| LANG_LOCALE['10817'] |$" id="btSave">
+                                    </div>
+								    <div class="break">
+									    &nbsp;
+								    </div>
+								</form>
+                                <?lua else ?>               
+                                                <form name="tf1_frmDownLoad2" id="tf1_frmDbg" action="platform.cgi?action=dbglog" method="post">
+					  <input type="hidden" name="thispage" id="thispage" value="backupRestore.html">
+
+								<h2>$| LANG_LOCALE['10819'] |$</h2>
+								 
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+				 <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['10817'] |$" value="$| LANG_LOCALE['10817'] |$" id="btSave">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								</form>
+                                <?lua end ?>
+								<h2>$| LANG_LOCALE['30350'] |$</h2>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+         <form name="tf1_frmBackupRestore" id="tf1_frmBackupRestore"  action="platform.cgi?action=backup" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="backupRestore.html">
+									<input type="submit" class="btnSubmit" title="$| LANG_LOCALE['12759'] |$" value="$| LANG_LOCALE['12759'] |$"
+                                    id="btSave" onclick="return confirm(LANG_LOCALE['13531'])">
+                                    </form>
+                                    <?lua if (UNIT_NAME ~= "DSR-500AC" and PRODUCT_ID ~="DSR-500_Bx" ) then?>
+<form name="tf1_frmBackupUsb" id="tf1_frmBackupUsb"  action="platform.cgi?action=backupToUsb" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="backupRestore.html">
+                                    <input type="submit" <?lua
+                                    if(usb1Status=="disconnected") then ?> disabled <?lua end ?> class="btnSubmit" title="$| LANG_LOCALE['12760'] |$ 1" value="$| LANG_LOCALE['12760'] |$ 1" id="btSave" onclick="return confirm(LANG_LOCALE['13531'])">
+                                       </form>
+                                        <?lua end if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID =="DSR-500AC_Ax" or PRODUCT_ID=="DSR-500_Bx") then ?>
+  <form name="tf1_frmBackupUsb2" id="tf1_frmBackupUsb2"  action="platform.cgi?action=backupToUsb2" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="backupRestore.html">
+                                            <?lua if (PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID == "DSR-500_Bx") then?>
+                                            <input type="submit" <?lua if(usb2Status=="disconnected") then ?> disabled <?lua end ?> class="btnSubmit" title="$| LANG_LOCALE['12760'] |$" value="$| LANG_LOCALE['12760'] |$" id="btSave" onclick="return confirm(LANG_LOCALE['13531'])">
+                                            <?lua else?>
+                                            <input type="submit" <?lua if(usb2Status=="disconnected") then ?> disabled <?lua end ?> class="btnSubmit" title="$| LANG_LOCALE['12760'] |$ 2" value="$| LANG_LOCALE['12760'] |$ 2" id="btSave" onclick="return confirm(LANG_LOCALE['13531'])">
+                                            <?lua end?>
+
+                                        </form>
+                                        <?lua end ?>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<form name="tf1_frmBackupRestore2"
+                                    id="tf1_frmBackupRestore2" enctype="multipart/form-data" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="backupRestore.html">
+
+								<h2>$| LANG_LOCALE['30351'] |$</h2>
+								<div class="configRow">
+									<label> $| LANG_LOCALE['10420'] |$ </label>
+									<input type="file" id="tf1_txtUploadFile" size="25" name="file.restore">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit"
+                                    name="button.restore.backupRestore" class="btnSubmit" title="$| LANG_LOCALE['12690'] |$" value="$| LANG_LOCALE['12690'] |$" id="btRestoreCfg">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								</form>
+                                <?lua  if(UNIT_NAME ~= "DSR-500AC" and PRODUCT_ID ~="DSR-500_Bx") then ?>
+								<form name="tf1_frmBackupRestore3" id="tf1_frmBackupRestore3" enctype="multipart/form-data" action="platform.cgi" method="post">
+							    <input type="hidden" name="thispage" id="thispage" value="backupRestore.html">
+                                    <?lua if(UNIT_NAME == "DSR-1000" or
+                                    UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+								    <h2>$| LANG_LOCALE['30352'] |$ 1</h2>
+                                    <?lua else ?>
+                                    <h2>$| LANG_LOCALE['30353'] |$ </h2>
+                                    <?lua end ?>
+								<div class="configRow">
+									<label> $| LANG_LOCALE['13212'] |$ </label>
+									<p>
+									$| usb1Status |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> $| LANG_LOCALE['30354'] |$ </label>
+									<select class="one" size="5" name="upload.filename" id="tf1_usb1FileList">
+									</select>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit" name="button.restore1.backupRestore" class="btnSubmit" title="$| LANG_LOCALE['12690'] |$" value="$| LANG_LOCALE['12690'] |$" id="tf1_usb1Bt" onclick="return checkFile(1)">
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								</form>
+                                <?lua end if(UNIT_NAME == "DSR-1000" or
+                                UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx" or PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID =="DSR-500_Bx") then ?>
+								<form name="tf1_frmBackupRestore4" enctype="multipart/form-data" id="tf1_frmBackupRestore4" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="backupRestore.html">
+                                <?lua if (PRODUCT_ID == "DSR-500AC_Ax" or PRODUCT_ID=="DSR-500_Bx" ) then?>
+								    <h2>$| LANG_LOCALE['30352'] |$</h2>
+                                <?lua else ?>
+								    <h2>$| LANG_LOCALE['30352'] |$ 2</h2>
+                                <?lua end ?>
+								<div class="configRow">
+									<label> $| LANG_LOCALE['13212'] |$ </label>
+									<p>
+										$| usb2Status |$
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> $| LANG_LOCALE['30354'] |$ </label>
+									<select class="one" size="5" name="upload.filename" id="tf1_usb2FileList">
+									</select>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="submitRow">
+									<input type="submit"
+                                    name="button.restore2.backupRestore" class="btnSubmit" title="$| LANG_LOCALE['12690'] |$" value="$| LANG_LOCALE['12690'] |$" id="tf1_usb2Bt" onclick="return checkFile(2)">                                    
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+                            <?lua end ?>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+        </table>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/backupRestore.js"></script>
+        <script type="text/javascript" language="javascript" >
+            function checkFile(typeId){
+                if(typeId == 1) {
+                    if(document.getElementById('tf1_usb1FileList').selectedIndex == -1)
+                        {
+                            alert(LANG_LOCALE['30611']); 
+                            return false;
+                        }
+                    else
+                        {
+                        var fileName = $("#tf1_usb1FileList").val();
+                        var fileExt = fileName.split(".");
+                        if (fileExt.length > 1)
+                            {
+                                if (fileExt[1] != "cfg" && fileExt[1] != "ascii" && fileExt[1] != "enc")
+                                {
+                                    var errMsg = LANG_LOCALE['13442'] + '. ' + fileExt[1] + " " + LANG_LOCALE['30414'] + '.' + " cfg/ascii/enc " + LANG_LOCALE['13443'];
+                                    alert(errMsg);
+                                    return false;
+                                }
+                            }
+                        else
+                            {
+                                alert(LANG_LOCALE['30611']);
+                                return false;
+                            }
+                        }
+                }
+                 if(typeId == 2) {
+                     if(document.getElementById('tf1_usb2FileList').selectedIndex == -1)
+                         {
+                             alert(LANG_LOCALE['30611']);
+                             return false;
+                         }
+                    else
+                        {
+                        var fileName = $("#tf1_usb2FileList").val();
+                        var fileExt = fileName.split(".");
+                        if (fileExt.length > 1)
+                            {
+                                if (fileExt[1] != "cfg" && fileExt[1] != "ascii" && fileExt[1] != "enc")
+                                {
+                                    var errMsg = LANG_LOCALE['13442'] + '. ' + fileExt[1] + " " + LANG_LOCALE['30414'] + '.' + " cfg/ascii/enc " + LANG_LOCALE['13443'];
+                                    alert(errMsg);
+                                    return false;
+                                }
+                            }
+                        else
+                            {
+                                alert(LANG_LOCALE['30611']);
+                                return false;
+                            }
+                        }                     
+                }
+               return true; 
+            }
+
+            var fileList1 = "$| fileList1 |$";
+            var fileArray1 = fileList1.split("|");
+            var fileList2 = "$| fileList2 |$";
+            var fileArray2 = fileList2.split("|");
+           
+            var usb1BtObj = document.getElementById('tf1_usb1Bt');
+            if (fileList1 != '') 
+                {
+                    var fileListObj = document.getElementById('tf1_usb1FileList');
+                    if (usb1BtObj) {
+                        usb1BtObj.disabled = false;
+                    }
+             
+                    for (i=0; i< fileArray1.length; i++)
+                    {
+                        fileListObj.options[i] = new Option(fileArray1[i],fileArray1[i], false, false);
+                    }
+                }
+            else 
+                {                     
+                    if (usb1BtObj) {
+                        usb1BtObj.disabled = true;
+                    }
+                }
+          var usb2BtObj = document.getElementById('tf1_usb2Bt');
+          if (fileList2 != '') 
+              {
+                  var fileListObj = document.getElementById ('tf1_usb2FileList');
+                  if (usb2BtObj) {
+                      usb2BtObj.disabled = false;
+                  }
+                  for (i=0; i< fileArray2.length; i++)
+                  {
+                      fileListObj.options[i] = new Option(fileArray2[i],fileArray2[i], false, false);
+                  }
+              }
+          else 
+              {
+                  if (usb2BtObj) {
+                      usb2BtObj.disabled = true;
+                  }
+              }
+             
+             </script>
+	</body>
+</html>
+<?lua end ?>

@@ -1,0 +1,269 @@
+<?lua 
+require "teamf1lualib/upnp_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/vlanSettings_bl"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "upnp"
+
+local upnp = require("com.teamf1.bl.snmp.users")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+
+
+portMapList = {}
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["upnp.cookie"] = "1"
+    errorFlag, statusCode = upnp.upnpSectionSet (inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then 
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage (NextPage, true, true)
+else
+    errorFlag, cookie, active, interface, advertisementPeriod,
+    advertisementTimeToLive = upnp.upnpSectionGet()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    errorFlag, cookie, portMapList = upnp.upnpPortMapListSectionGet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    errorFlag, status = upnp.upnpRefreshSectionSet ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    local vlanInfoTable
+    errorFlag, vlanInfoTable = vlanSettingsGetAll ()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+    LANG_LOCALE =
+    "13202,13204,10066,11540,11515,13272,10190,11207,11167,12732,10195,11208,13499,11120,13203,10070,13455,11194,10987,12203,12204,12627,12732,12758,10449,11387"
+  ?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+copyright (c) 2008-2015, TeamF1 Networks Pvt. Ltd. 
+(Subsidiary of D-Link India)
+
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu3");
+                    </script>
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgError">
+                    <p>Error Message Place Holder.</p>
+                    </div>
+                    -->
+                    <div class="FL2">
+                        <p class="hint">
+                        $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['13202'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmUpnp" id="tf1_frmUpnp"
+                                method="post" action="platform.cgi">
+                            <input type="hidden" name="thispage" id="thispage" value="upnp.html">
+                                <h2>$| LANG_LOCALE['13204'] |$</h2>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['10066'] |$</label>
+                                     <?lua if (active == "1") then
+                                                  statusStr="enable-disable-on"
+                                                  statusVar="1"
+                                                  CheckedVar = "checked"
+                                              else
+                                                  statusStr="enable-disable-off"
+                                                  statusVar="0"
+                                                  checkedVar = ""
+                                              end
+                                        ?>
+                                    <a class="$| statusStr |$" alt="" id="tf1_image_OnOff"></a>
+                                        <input type="hidden" value="$| statusVar |$" name="upnp.active">
+                                </div>
+                                <div class="break" id="break10_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_vlanIdList_div">
+                                    <label>$| LANG_LOCALE['11540'] |$</label>
+                                    <select name ="upnp.interface" id="tf1_vlanIdList">
+                                    <?lua 
+                                    local i = 0
+                                     if (vlanInfoTable ~= nil or #vlanInfoTable ~= 0) then
+                                    for k, v in pairs (vlanInfoTable) do
+                                        i=i+1
+                                        local row = vlanInfoTable[i]
+                                        local vlanInt = "bdg".. row["lanSettings.vlanId"]
+									if (row["lanSettings.vlanId"] == "1") then
+                                ?>
+                                    <option $|web.dropdownSelected(interface == vlanInt) |$ value="bdg$|row["lanSettings.vlanId"] or ''|$">$| LANG_LOCALE['11515'] |$</option>
+									<?lua else ?>
+                                    <option $|web.dropdownSelected(interface == vlanInt) |$ value="bdg$|row["lanSettings.vlanId"] or ''|$">$| LANG_LOCALE['13272'] |$$|row["lanSettings.vlanId"]|$</option>
+                                    <?lua end end end ?>
+                            </select>
+                                </div>
+                                <div class="break" id="break11_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_advertPeriod_div">
+                                    <label>$| LANG_LOCALE['10190'] |$</label>
+                                    <input class="one" name = "upnp.advertisementPeriod" value = "$| advertisementPeriod or ''|$" type="text" maxlength="5" id="tf1_advertPeriod" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 86400, true, LANG_LOCALE['11207']+': ', LANG_LOCALE['11167']);}">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 1 - 86400] $| LANG_LOCALE['12732'] |$
+                                    </dl>
+                                </div>
+                                <div class="break" id="break12_div">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow" id="tf1_adverttime_div">
+                                    <label>$| LANG_LOCALE['10195'] |$</label>
+                                    <input class="one" name =  "upnp.advertisementTimeToLive" value = "$| advertisementTimeToLive or ''|$" type="text" maxlength="3" id="tf1_adverttime" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 255, true, LANG_LOCALE['11208']+': ', LANG_LOCALE['13499']);}">
+                                    <dl>
+                                        [$| LANG_LOCALE['12627'] |$: 1 - 255] $| LANG_LOCALE['11120'] |$
+                                    </dl>
+                                </div>
+                                <div class="break" id="break13_div">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name ="button.config.upnp" onclick="setHiddenChks('tf1_frmUpnp'); return upnpConfValidate()" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmUpnp'); return unpnOnreset();">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <h2>$| LANG_LOCALE['13203'] |$</h2>
+                                <div class="CLR">
+                                    <div class="demo_jui">
+                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                            <thead>
+                                                <tr>
+                                                    <th>$| LANG_LOCALE['10070'] |$</th>
+                                                    <th>$| LANG_LOCALE['11387'] |$</th>
+                                                    <th>$| LANG_LOCALE['13455'] |$</th>
+                                                    <th>$| LANG_LOCALE['11194'] |$</th>
+                                                    <th>$| LANG_LOCALE['10987'] |$</th>
+                                                </tr>
+                                            </thead>
+                                            <?lua
+                                            for k,v in pairs (portMapList) do
+                                                local portMapRow = portMapList[k]
+                                                ?>
+                                            <tr class="gradeA">
+                                                <td> $| portMapRow["upnpPortMap.active"] or '' |$  </td>
+                                                <td> $| portMapRow["upnpPortMap.ipAddr"] or '' |$ </td>
+                                                <td> $| portMapRow["upnpPortMap.protocol"] or '' |$ </td>
+                                                <td> $| portMapRow["upnpPortMap.intPort"] or '' |$ </td>
+                                                <td> $| portMapRow["upnpPortMap.extPort"] or '' |$ </td>
+                                            </tr>
+                                            <?lua
+                                            end
+                                            ?>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/upnp.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 1 }
+                    ]
+                });
+                /**
+                 * This function calls when user clicks on Activate UpnP
+                 * OnClick validation
+                 * @method onloadCall
+                 */
+                onloadCall(setOnclickFuncs, '');
+                /**
+                 * This function calls at the time of page loads
+                 * OnLoad validation
+                 * @method upnpOnload
+                 */
+                upnpOnload({
+                    imageId : 'tf1_image_OnOff',
+                    disableIndividual : 'tf1_vlanIdList tf1_advertPeriod tf1_adverttime',
+                    disableGrp : '',
+                    enableIndividual : '',
+                    enableGrp : '',
+                    hideClass : 'hide',
+                    showClass : 'configRow',
+                    breakDivs : 'break11 break12 break13',
+                    breakClass : 'break',
+                    imagesInfo : {
+                        disableImages : '',
+                        enableImages : '',
+                        disableClass : '',
+                        enableClass : ''
+                    }
+                });
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

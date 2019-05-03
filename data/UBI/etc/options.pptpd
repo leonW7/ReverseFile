@@ -1,0 +1,24 @@
+auth
+defaultroute
+lock
+mtu 1492
++chap
++pap
++mschap-v2
++mschap
+#allow-number nuber
+#debug dump       ##for debugging
+ipcp-accept-remote
+ipcp-accept-local
+ms-dns 192.168.1.16
+name 192.168.1.76
+proxyarp
+record /home/Kasyap/Desktop/ppp_conversations
+#require-chap
+require-pap
+require-mschap
+require-mppe
+require-mschap-v2
+novj
+novjccomp
+idle 0

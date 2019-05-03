@@ -1,0 +1,116 @@
+<?lua if(true) then
+require "teamf1lualib/dhcpClientInfoDmz_bl"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "dmzLeasedClients"
+
+local returnCode, dhcpClientDmzInfo = dhcpClientInfoDmzGetAll ()
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+    LANG_LOCALE = "11530,11456,10787,10788,11387,11636"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    <div class="msgInfo">
+                    <p>Status Message Place Holder.</p>
+                    </div>
+                    -->
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=dhcpClientInfoLan.html">$| LANG_LOCALE['11530'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=dhcpClientInfoV6.html">$| LANG_LOCALE['11456'] |$</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=dhcpClientInfoDmz.html">$| LANG_LOCALE['10787'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint"> $| helpHintText |$</p>                    </div>
+                    <h1>$| LANG_LOCALE['10788'] |$</h1>
+                    <div class="CLR">
+                        <div class="demo_jui">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['11387'] |$</th>
+                                        <th>$| LANG_LOCALE['11636'] |$</th>
+                                    </tr>
+                                </thead>
+                                        <?lua 
+                                        local i = 0
+                                            for k, v in pairs (dhcpClientDmzInfo) do
+                                            i=i+1
+                                        local row = dhcpClientDmzInfo[i]
+                                        ?>
+                                    <tr class="gradeA">
+                                        <td class="gradeA">$| row["DhcpLeasedClients.IPAddr"] or '' |$</td>
+                                        <td class="gradeA">$| row["DhcpLeasedClients.MacAddr"] or '' |$</td>
+                                    </tr>
+                                        <?lua 
+                                            end 
+                                         ?>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 0 }
+                    ]
+                });
+                dataRightClick(false);
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

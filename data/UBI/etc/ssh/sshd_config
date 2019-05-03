@@ -1,0 +1,16 @@
+# sshd configuration for SSHield
+Port 22
+Protocol 2
+ListenAddress 0.0.0.0
+ServerKeyBits 768
+PermitRootLogin yes
+RsaAuthentication no
+DsaAuthentication no
+PasswordAuthentication yes
+PermitEmptyPasswords no
+
+# Kerberos options
+#KerberosAuthentication no
+#KerberosOrLocalPasswd yes
+#KerberosTicketCleanup yes
+subsystem sftp sftp

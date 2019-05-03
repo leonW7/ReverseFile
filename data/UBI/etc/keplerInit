@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# keplerInit - initialization script for kepler
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_KEPLER" = "y" ]; then
+
+export KEPLER_INIT=$KEPLER_INSTALL_PATH/etc/kepler/1.1/kepler_init.lua
+
+fi

@@ -1,0 +1,163 @@
+<?lua
+    require "teamf1lualib/portalInfo_bl"
+    require "teamf1lualib/errorMap"
+    require "teamf1lualib/returnCodes"
+    local portalInfo = require ("com.teamf1.bl.portalInfo")
+    local cookiePortal = cgilua.cookies.get ("TeamF1PortalName")
+    local returnCode, isVPNEnabled, isPortFowrwardingEnabled = 
+                                portalInfo.portalInfoGet (cookiePortal)
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body onLoad="onloadCall ();">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+		<div align="center">
+			<div class="midWidth">
+				<div class="logo FL">
+					Unified Services Router - $| UNIT_NAME |$
+				</div>
+				  <div class="FR headerRight">
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td valign="top">&nbsp;</td>
+							<td rowspan="2" valign="top"><a class="btnLogout" href="?page=portalLogin.html&portal=$| cookiePortal |$">
+							<div>
+								<div>
+									<icon>
+										Logout
+									</icon>
+								</div>
+							</div> </a></td>
+						</tr>
+					</table>
+				</div>
+				  <div class="midWidth menuBg">
+					<div>
+						<div>
+							<div align="center">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td>
+										<ul id="menu">
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu1">
+												<a href="?page=portalInformation.html">Portal Information</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										<?lua if (isVPNEnabled == "1") then ?>
+											<li id="mainMenu2">
+							<a href="?page=vpnTunnels.html">VPN Tunnel</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										<?lua end ?>
+                                                                                <?lua if (isPortFowrwardingEnabled == "1") then ?>
+											<li id="mainMenu3">
+												<a href="?page=portForwarding.html">Port Forwarding</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+                                                                                 <?lua end?>
+											<li id="mainMenu4">
+												<a href="?page=changePassword.html">Change Password</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										</ul></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				 
+			</div>
+		</div>
+  </td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+										<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgError">
+					<p>Error Message Place Holder.</p>
+					</div>
+					-->
+					<div class="FL2">
+						<p class="hint">
+							 
+						</p>
+					</div>
+					<h1>PORTAL INFO</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name action="cgi-action.html" method="post">
+								<h2>Supported Features</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+								 <label>This client portal provides remote access to the corporate network through the following features.</label>
+								</div>
+								<div class="break">&nbsp;</div>
+								 
+								 <h2>SSL VPN Tunnel</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+										  <label><img src="images/iconSslVpnTunnelInstall.png" alt=""><br />
+                                          'SSL VPN Tunnel' facilitates in creating an encrypted tunnel to the corporate network.</label>
+								</div>
+								<div class="break">&nbsp;</div>
+                                
+                                 <h2>SSL Port Forwarding</h2>
+                                <div class="break">&nbsp;</div>
+                                <div class="configRow">
+										  <label><img src="images/iconSslPfInstall.png" alt=""><br />
+                                          'Port Forwarding' facilitates creating an encrypted tunnel for pre-defined applications on the corporate network.<br/><br />
+                                          <strong>Note:</strong><br />
+1. <strong>'Change Password'</strong> section is available ONLY for users belonging to local database.<br />
+2. Please contact your administrator in case any/all of the above mentioned features are NOT enabled.<br />
+3. <strong>Java, Javascript, Active-X</strong> controls MUST be <strong>Enabled/Allowed </strong>in your browser settings.<br />                                     
+                                          
+                                          </label>
+								</div>
+								<div class="break">&nbsp;</div>
+								                            
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td><!--webbot bot="Include" U-Include="footer.html" TAG="BODY" startspan -->
+		<div class="footer">
+			Copyright &#169; 2017 D-Link Corporation.
+		</div>
+	<!--webbot bot="Include" i-checksum="35774" endspan --></td>
+			</tr>
+		</table>
+                <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+
+	</body>
+</html>

@@ -1,0 +1,316 @@
+<?lua
+require "teamf1lualib/dateTime_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+local dateAndTime = require ("com.teamf1.bl.system.time")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local returnCode, cookie, currentTime, timezone, dayligtSavings, useNtp, 
+reSyncInterval, useDefaultNtpServers, primaryNtpServer, backupNtpServer = 
+                                                   dateAndTime.dateTimeSectionGet ()
+
+	cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+
+?>
+<!-- Date And Time Wizard -->
+
+<div id="tf1Wizard_dateTimeWizardDailogContent">
+
+	<input type="hidden" id="tf1Wizard_currentTimeZone" value="$|timezone|$">
+  <div class="topBgWizard">
+    <h1 data-localize="10667">Date and Time Wizard</h1>
+    <close><a title="Close" id="btnCloseWizard" href="#">X</a></close>
+  </div>
+  <div class="dialogMidAreaWizard">  
+    <form id="tf1Wizard_dateTimeForm" >    
+    <input type="hidden" name="thispage" id="tf1Wizard_thispage" value="wizard.html">
+
+	<input type="hidden" name="button.dateTime.wizard" id="tf1Wizard_btnConnect" value="testconnect">
+    <!-- Step 1 starts -->
+    <div id="tf1Wizard_divStep1" class="divStep">
+    
+    <div class="wizardMessage" id="tf1Wizard_Step1CurrentHeading">
+        <p><span data-localize="10642">Current Time Zone is GMT - 5.30</span></p>
+    </div>
+    <div class="wizardBlock">
+      <h1 data-localize="13099" id="tf1Wizard_headingTimeZone">Time Zone</h1>
+      <div class="break">&nbsp;</div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="map"> <a class="default" id="anchorImage">
+					<img src="images/_blank.gif" height="200px" width="350px" alt="" name="mainMap" border="0" usemap="#Map" class="defaultEmpty" id="mainMap"  />
+            <map name="Map" id="Map">
+              <area shape="poly" coords="98,110" href="#" />
+              <area shape="poly" coords="96,110,91,106,84,103,77,94,71,89,67,86,62,75,58,70,52,61,43,55,32,55,24,60,22,56,22,50,22,43,27,42,35,42,41,42,49,42,56,43,58,43,57,41,63,36,71,35,77,34,87,34,91,37,97,38,101,38,106,35,109,32,115,28,124,27,132,22,145,23,149,26,155,27,156,35,154,41,146,44,138,50,131,53,127,53,125,50,123,46,118,41,111,41,114,44,114,47,116,50,117,53,120,57,123,62,123,64,121,68,118,71,114,72,110,74,108,78,104,81,103,85,101,88,94,89,90,88,89,90,89,94,94,95,96,96,100,98" href="#" onClick="loadWizardDateTimeImage('North America')" region="North America" title="North America"/>
+              <area shape="poly" coords="113,178" href="#" />
+              <area shape="poly" coords="111,179,105,174,104,162,106,154,107,144,107,138,104,132,99,128,98,121,100,115,102,110,104,105,111,105,117,110,121,111,124,116,130,119,135,123,138,126,141,132,140,139,137,143,132,146,127,151,120,157,113,162,112,168,112,170,110,179,111,181,109,180,112,180" href="#"  id="southAmerica" onClick="loadWizardDateTimeImage('South America')" region="South America" title="South America"/>
+              <area shape="poly" coords="305,161,301,158,295,155,291,154,287,153,283,156,276,157,276,154,274,147,277,142,280,136,284,135,290,133,295,133,299,134,302,135,305,137,308,140,312,144,313,149,313,153,313,158,309,163,307,164" href="#" onClick="loadWizardDateTimeImage('Australia')" region="Australia" title="Australia" />
+              <area shape="poly" coords="220,110,214,117,210,121,210,127,210,132,211,136,215,136,218,141,214,148,211,145,207,141,205,147,203,152,198,156,193,156,188,154,186,148,183,141,184,137,184,132,183,124,183,120,180,114,179,108,176,108,173,111,170,114,165,115,162,113,159,111,158,108,158,103,158,98,160,94,163,90,166,85,173,82,178,80,185,84,186,87,189,87,195,87,197,84,202,84,203,89,206,92,207,96,208,99,213,103" href="#" onClick="loadWizardDateTimeImage('Africa')" region="Africa" title="Africa"/>
+              <area shape="poly" coords="209,73" href="#" />
+              <area shape="poly" coords="220,68,210,72,202,73,191,78,178,76,172,75,162,78,164,72,164,69,166,68,163,58,167,56,172,49,178,49,183,47,189,42,194,41,201,41,207,42,214,42,225,43,230,43,236,46,237,48,237,52,234,57,233,60,230,64,229,66,220,70,220,72,220,71" href="#" onClick="loadWizardDateTimeImage('Europe')" region="Europe" title="Europe" />
+              <area shape="poly" coords="263,116,259,106,257,101,254,96,251,96,248,100,248,106,247,110,242,108,241,104,239,102,237,98,231,94,223,90,222,98,218,102,212,100,209,93,207,89,206,80,205,76,205,73,213,73,220,72,227,69,233,62,238,54,237,47,234,44,226,41,241,38,255,39,262,36,280,37,287,40,301,40,310,40,321,42,327,43,334,44,337,47,333,52,317,52,307,56,304,61,304,67,305,74,297,80,288,81,284,87,279,94,273,98,273,103,278,106,283,111,289,116,287,121,275,126,268,124,263,116,264,115" href="#"   onClick="loadWizardDateTimeImage('Asia')" region="Asia" title="Asia" />
+            </map>
+            </a> </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+        <div class="rightBlock" style="width: 430px !important;">
+          <div class="configRowWizard">
+            <label data-localize="12648" style="width:160px;">Region</label>
+            <p id="tf1Wizard_regionSelected"><span data-localize="10295">Asia</span></p>						 
+						<input type="hidden" value="$| timezone |$" id="tf1Wizard_timezoneHidden">						 
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="10501" style="width:160px;">City</label>
+
+            <select name="dateTime.timezone" id="tf1Wizard_city" size="1" headingId="tf1Wizard_headingTimeZone" class="wizardField" field-type="select">
+               <option data-localize="13719" $| web.dropdownSelected(timezone == "0") |$  value="0">(GMT-12:00)   International Date Line West</option>
+                                        <option data-localize="13720" $| web.dropdownSelected(timezone == "1") |$  value="1">(GMT-11:00)   Midway Island Samoa</option>
+                                        <option data-localize="13721" $| web.dropdownSelected(timezone == "2") |$  value="2">(GMT-10:00)   Hawaii</option>
+                                        <option data-localize="13722" $| web.dropdownSelected(timezone == "3") |$  value="3">(GMT-09:00)   Alaska</option>
+                                        <option data-localize="13723" $| web.dropdownSelected(timezone == "4") |$  value="4">(GMT-08:00)   Tijuana Baja California</option>
+                                        <option data-localize="13724" $| web.dropdownSelected(timezone == "5") |$  value="5" selected>(GMT-08:00)   Pacific Time (US   and Canada) </option>
+                                        <option data-localize="13725" $| web.dropdownSelected(timezone == "6") |$  value="6">(GMT-07:00)   Mountain Time (US   and Canada) </option>
+                                        <option data-localize="13726" $| web.dropdownSelected(timezone == "7") |$  value="7">(GMT-07:00)   Chihuahua La Paz Mazatlan -   Old</option>
+                                        <option data-localize="13727" $| web.dropdownSelected(timezone == "8") |$  value="8">(GMT-07:00)   Chihuahua La Paz Mazatlan -   New</option>
+                                        <option data-localize="13728" $| web.dropdownSelected(timezone == "9") |$  value="9">(GMT-07:00)   Arizona</option>
+                                        <option data-localize="13729" $| web.dropdownSelected(timezone == "10") |$  value="10">(GMT-06:00)   Saskatchewan</option>
+                                        <option data-localize="13730" $| web.dropdownSelected(timezone == "11") |$  value="11">(GMT-06:00)   Guadalajara Mexico City Monterrey -   Old</option>
+                                        <option data-localize="13731" $| web.dropdownSelected(timezone == "12") |$  value="12">(GMT-06:00)   Guadalajara Mexico City Monterrey -   New</option>
+                                        <option data-localize="13732" $| web.dropdownSelected(timezone == "13") |$  value="13">(GMT-06:00)   Central Time (US   and Canada) </option>
+                                        <option data-localize="13733" $| web.dropdownSelected(timezone == "14") |$  value="14">(GMT-06:00)   Central America</option>
+                                        <option data-localize="13734" $| web.dropdownSelected(timezone == "15") |$  value="15">(GMT-05:00)   Indiana (East) </option>
+                                        <option data-localize="13735" $| web.dropdownSelected(timezone == "16") |$  value="16">(GMT-05:00)   Eastern Time (US   and Canada) </option>
+                                        <option data-localize="13736" $| web.dropdownSelected(timezone == "17") |$  value="17">(GMT-05:00)   Bogota Lima Quito Rio Branco</option>
+                                        <option data-localize="13737" $| web.dropdownSelected(timezone == "18") |$  value="18">(GMT-04:30)   Caracas</option>
+                                        <option data-localize="13738" $| web.dropdownSelected(timezone == "19") |$  value="19">(GMT-04:00)   Santiago</option>
+                                        <option data-localize="13739" $| web.dropdownSelected(timezone == "20") |$  value="20">(GMT-04:00)   Manaus</option>
+                                        <option data-localize="13740" $| web.dropdownSelected(timezone == "21") |$  value="21">(GMT-04:00)   La Paz</option>
+                                        <option data-localize="13741" $| web.dropdownSelected(timezone == "22") |$  value="22">(GMT-04:00)   Atlantic Time (Canada) </option>
+                                        <option data-localize="13742" $| web.dropdownSelected(timezone == "23") |$  value="23">(GMT-03:30)   Newfoundland</option>
+                                        <option data-localize="13743" $| web.dropdownSelected(timezone == "24") |$  value="24">(GMT-03:00)   Montevideo</option>
+                                        <option data-localize="13744" $| web.dropdownSelected(timezone == "25") |$  value="25">(GMT-03:00)   Greenland</option>
+                                        <option data-localize="13745" $| web.dropdownSelected(timezone == "26") |$  value="26">(GMT-03:00)   Georgetown</option>
+                                        <option data-localize="13746" $| web.dropdownSelected(timezone == "27") |$  value="27">(GMT-03:00)   Buenos Aires</option>
+                                        <option data-localize="13747" $| web.dropdownSelected(timezone == "28") |$  value="28">(GMT-03:00)   Brasilia</option>
+                                        <option data-localize="13748" $| web.dropdownSelected(timezone == "29") |$  value="29">(GMT-02:00)   Mid-Atlantic</option>
+                                        <option data-localize="13749" $| web.dropdownSelected(timezone == "30") |$  value="30">(GMT-01:00)   Cape Verde Is.</option>
+                                        <option data-localize="13750" $| web.dropdownSelected(timezone == "31") |$  value="31">(GMT-01:00)   Azores</option>
+                                        <option data-localize="13751" $| web.dropdownSelected(timezone == "32") |$  value="32">(GMT)   Casablanca</option>
+                                        <option data-localize="13752" $| web.dropdownSelected(timezone == "33") |$  value="33">(GMT)   Greenwich Mean Time : Dublin Edinburgh Lisbon London</option>
+                                        <option data-localize="13753" $| web.dropdownSelected(timezone == "34") |$  value="34">(GMT)   Monrovia Reykjavik</option>
+                                        <option data-localize="13754" $| web.dropdownSelected(timezone == "35") |$  value="35">(GMT+01:00)   Amsterdam Berlin Bern Rome Stockholm Vienna</option>
+                                        <option data-localize="13755" $| web.dropdownSelected(timezone == "36") |$  value="36">(GMT+01:00)   Belgrade Bratislava Budapest Ljubljana Prague</option>
+                                        <option data-localize="13756" $| web.dropdownSelected(timezone == "37") |$  value="37">(GMT+01:00)   Brussels Copenhagen Madrid Paris</option>
+                                        <option data-localize="13757" $| web.dropdownSelected(timezone == "38") |$  value="38">(GMT+01:00)   Sarajevo Skopje Warsaw Zagreb</option>
+                                        <option data-localize="13758" $| web.dropdownSelected(timezone == "39") |$  value="39">(GMT+01:00)   West Central Africa</option>
+                                        <option data-localize="13759" $| web.dropdownSelected(timezone == "40") |$  value="40">(GMT+02:00)   Amman</option>
+                                        <option data-localize="13760" $| web.dropdownSelected(timezone == "41") |$  value="41">(GMT+02:00)   Athens Bucharest Istanbul</option>
+                                        <option data-localize="13761" $| web.dropdownSelected(timezone == "42") |$  value="42">(GMT+02:00)   Beirut</option>
+                                        <option data-localize="13762" $| web.dropdownSelected(timezone == "43") |$  value="43">(GMT+02:00)   Cairo</option>
+                                        <option data-localize="13763" $| web.dropdownSelected(timezone == "44") |$  value="44">(GMT+02:00)   Harare Pretoria</option>
+                                        <option data-localize="13764" $| web.dropdownSelected(timezone == "45") |$  value="45">(GMT+02:00)   Helsinki Kyiv Riga Sofia Tallinn Vilnius</option>
+                                        <option data-localize="13765" $| web.dropdownSelected(timezone == "46") |$  value="46">(GMT+02:00)   Jerusalem</option>
+                                        <option data-localize="13766" $| web.dropdownSelected(timezone == "47") |$  value="47">(GMT+02:00)   Minsk</option>
+                                        <option data-localize="13767" $| web.dropdownSelected(timezone == "48") |$  value="48">(GMT+02:00)   Windhoek</option>
+                                        <option data-localize="13768" $| web.dropdownSelected(timezone == "49") |$  value="49">(GMT+03:00)   Baghdad</option>
+                                        <option data-localize="13769" $| web.dropdownSelected(timezone == "50") |$  value="50">(GMT+03:00)   Kuwait Riyadh</option>
+                                        <option data-localize="13770" $| web.dropdownSelected(timezone == "51") |$  value="51">(GMT+03:00)   Moscow St. Petersburg Volgograd</option>
+                                        <option data-localize="13771" $| web.dropdownSelected(timezone == "52") |$  value="52">(GMT+03:00)   Nairobi</option>
+                                        <option data-localize="13772" $| web.dropdownSelected(timezone == "53") |$  value="53">(GMT+03:00)   Tbilisi</option>
+                                        <option data-localize="13773" $| web.dropdownSelected(timezone == "54") |$  value="54">(GMT+03:30)   Tehran</option>
+                                        <option data-localize="13774" $| web.dropdownSelected(timezone == "55") |$  value="55">(GMT+04:00)   Abu Dhabi Muscat</option>
+                                        <option data-localize="13775" $| web.dropdownSelected(timezone == "56") |$  value="56">(GMT+04:00)   Baku</option>
+                                        <option data-localize="13776" $| web.dropdownSelected(timezone == "57") |$  value="57">(GMT+04:00)   Caucasus Standard Time</option>
+                                        <option data-localize="13777" $| web.dropdownSelected(timezone == "58") |$  value="58">(GMT+04:00)   Port Louis</option>
+                                        <option data-localize="13778" $| web.dropdownSelected(timezone == "59") |$  value="59">(GMT+04:00)   Yerevan</option>
+                                        <option data-localize="13779" $| web.dropdownSelected(timezone == "60") |$  value="60">(GMT+04:30)   Kabul</option>
+                                        <option data-localize="13780" $| web.dropdownSelected(timezone == "61") |$  value="61">(GMT+05:00)   Ekaterinburg</option>
+                                        <option data-localize="13781" $| web.dropdownSelected(timezone == "62") |$  value="62">(GMT+05:00)   Islamabad Karachi</option>
+                                        <option data-localize="13782" $| web.dropdownSelected(timezone == "63") |$  value="63">(GMT+05:00)   Tashkent</option>
+                                        <option data-localize="13783" $| web.dropdownSelected(timezone == "64") |$  value="64">(GMT+05:30)   Chennai Kolkata Mumbai New Delhi</option>
+                                        <option data-localize="13784" $| web.dropdownSelected(timezone == "65") |$  value="65">(GMT+05:30)   Sri Jayawardenepura</option>
+                                        <option data-localize="13785" $| web.dropdownSelected(timezone == "66") |$  value="66">(GMT+05:45)   Kathmandu</option>
+                                        <option data-localize="13786" $| web.dropdownSelected(timezone == "67") |$  value="67">(GMT+06:00)   Almaty Novosibirsk</option>
+                                        <option data-localize="13787" $| web.dropdownSelected(timezone == "68") |$  value="68">(GMT+06:00)   Astana Dhaka</option>
+                                        <option data-localize="13788" $| web.dropdownSelected(timezone == "69") |$  value="69">(GMT+06:30)   Yangon (Ran goon) </option>
+                                        <option data-localize="13789" $| web.dropdownSelected(timezone == "70") |$  value="70">(GMT+07:00)   Bangkok Hanoi Jakarta</option>
+                                        <option data-localize="13790" $| web.dropdownSelected(timezone == "71") |$  value="71">(GMT+07:00)   Krasnoyarsk</option>
+                                        <option data-localize="13791" $| web.dropdownSelected(timezone == "72") |$  value="72">(GMT+08:00)   Beijing Chongqing Hong Kong Urumqi</option>
+                                        <option data-localize="13792" $| web.dropdownSelected(timezone == "73") |$  value="73">(GMT+08:00)   Irkutsk Ulaan Bataar</option>
+                                        <option data-localize="13793" $| web.dropdownSelected(timezone == "74") |$  value="74">(GMT+08:00)   Kuala Lumpur Singapore</option>
+                                        <option data-localize="13794" $| web.dropdownSelected(timezone == "75") |$  value="75">(GMT+08:00)   Perth</option>
+                                        <option data-localize="13795" $| web.dropdownSelected(timezone == "76") |$  value="76">(GMT+08:00)   Taipei</option>
+                                        <option data-localize="13796" $| web.dropdownSelected(timezone == "77") |$  value="77">(GMT+09:00)   Osaka Sapporo Tokyo</option>
+                                        <option data-localize="13797" $| web.dropdownSelected(timezone == "78") |$  value="78">(GMT+09:00)   Seoul</option>
+                                        <option data-localize="13798" $| web.dropdownSelected(timezone == "79") |$  value="79">(GMT+09:00)   Yakutsk</option>
+                                        <option data-localize="13799" $| web.dropdownSelected(timezone == "80") |$  value="80">(GMT+09:30)   Adelaide</option>
+                                        <option data-localize="13800" $| web.dropdownSelected(timezone == "81") |$  value="81">(GMT+09:30)   Darwin</option>
+                                        <option data-localize="13801" $| web.dropdownSelected(timezone == "82") |$  value="82">(GMT+10:00)   Brisbane</option>
+                                        <option data-localize="13802" $| web.dropdownSelected(timezone == "83") |$  value="83">(GMT+10:00)   Canberra Melbourne Sydney</option>
+                                        <option data-localize="13803" $| web.dropdownSelected(timezone == "84") |$  value="84">(GMT+10:00)   Guam Port Moresby</option>
+                                        <option data-localize="13804" $| web.dropdownSelected(timezone == "85") |$  value="85">(GMT+10:00)   Hobart</option>
+                                        <option data-localize="13805" $| web.dropdownSelected(timezone == "86") |$  value="86">(GMT+10:00)   Vladivostok</option>
+                                        <option data-localize="13806" $| web.dropdownSelected(timezone == "87") |$  value="87">(GMT+11:00)   Magadan Solomon Is. New Caledonia</option>
+                                        <option data-localize="13807" $| web.dropdownSelected(timezone == "88") |$  value="88">(GMT+12:00)   Auckland Wellington</option>
+                                        <option data-localize="13809" $| web.dropdownSelected(timezone == "89") |$  value="89">(GMT+12:00)   Fiji Kamchatka Marshall Is</option>
+                                        <option data-localize="13810" $| web.dropdownSelected(timezone == "90") |$  value="90"> (GMT+13:00)  Nuku 'alofa</option>
+                                        <option data-localize="13811" $| web.dropdownSelected(timezone == "91") |$  value="91">(GMT+14:00)   Kiribati,Western   Samoa</option> 
+            </select>
+          </div>
+          <div class="break"> &nbsp; </div>
+          <div class="configRowWizard">
+            <label data-localize="10671" style="width:160px;">Daylight Saving</label>
+            <?lua              
+                if(dayligtSavings == "1") then
+                    statusStr = "enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr ="enable-disable-off"
+                    statusVar = "0"
+                end
+            ?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_dateTimeNetwork"></a>
+            <input type="hidden" name="dateTime.autoDaylight" value="$| statusVar |$" headingId="tf1Wizard_headingTimeZone" class="wizardField" field-type="on-off">
+          </div>
+          <div class="break"> &nbsp; </div>
+        </div>
+      </div>
+      <div class="pagination">
+          <div class="pageList"><span data-localize="13008">Step</span>: [1 <span data-localize="13836">of</span> 2] <span id="tf1Wizard_step1StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="openForm('button.add.wizard.wizard',-1,'tf1Wizard_dialogWizard','wizard','wizardForm.html', 'tf1Wizard_dashboardWizardDailogContent','');">
+          <input data-localize="11779" type="button" id="btSave" value="Next" title="Next" class="wizardBtnNext"  onClick="openDateTimeStep2()">
+        </div>
+      </div>
+    </div>
+    
+	</div>
+    
+    <!-- Step1 ends -->
+    
+     <!--Step2 start -->
+  <div id="tf1Wizard_divStep2" class="divStep" style="display:none">
+    <div class="wizardMessage">
+        <p><span data-localize="10633">Current NTP Server is</span> <?lua if (useNtp == "1") then ?><span data-localize="30475">ON</span><?lua else ?><span data-localize="30476">OFF</span> <?lua end ?></p>
+    </div>
+    <div class="wizardBlock">
+      <h1 data-localize="11810" id="tf1Wizard_headingGetTimeNetwork">Obtain Time from Network</h1>
+      <div class="break"> &nbsp; </div>
+      <div class="configRowBlocks">
+        <div class="leftBlock">
+          <div class="configRowWizard">
+            <label data-localize="14208">NTP Server</label>
+            <?lua              
+                if(useNtp == "1") then
+                    statusStr = "enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr ="enable-disable-off"
+                    statusVar = "0"
+                end
+            ?>
+            <a alt="" class="$| statusStr |$" id="tf1Wizard_ntpServer"></a>
+            <input type="hidden" name="dateTime.enabled" value="$| statusVar |$" id="tf1Wizard_hidNtpServer"  headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField" field-type="on-off">
+          </div>
+          <div class="break"> &nbsp; </div>
+					
+					<div class="configRowWizard" id="tf1Wizard_ntpServerType_div">
+            <label data-localize="11805"> NTP Server Type</label>
+            <select name="dateTime.useDefServers" id="tf1Wizard_ntpServerType" onchange="NtpSvrTypeWizardCheck()"  headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField" field-type="select">
+              <option data-localize="10683" $|  web.dropdownSelected(useDefaultNtpServers == "1") |$ value="1">Default</option>
+              <option data-localize="10648" $|  web.dropdownSelected(useDefaultNtpServers == "2") |$ value="2">Custom </option>
+            </select>
+          </div>
+          <div class="break" id="break_ntpServerType_div"> &nbsp; </div>
+
+					<div class="configRowWizard" id="tf1Wizard_timeSynchronize_div">
+            <label data-localize="13098">Time to Synchronize</label>
+            <input type="text" value="$| reSyncInterval or ''|$" maxlength="4" name="dateTime.reSyncNtpVal" id="tf1Wizard_timeSynchronize" headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField one" field-type="text" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 5, 1440, true, LANG_LOCALE['14052'], '');}">
+						<!--<dl>[Default: 120,  Range: 5 - 1440] Minutes</dl>-->
+          </div>
+          <div class="break" id="break_tf1Wizard_timeSynchronize_div"> &nbsp; </div>
+        </div>
+        <div class="rightBlock">				
+          
+          <div class="configRowWizard"  id="tf1Wizard_PrimaryNTPServer_div">
+            <label data-localize="30368">Primary NTPServer</label>
+            <input type="text" name="dateTime.server1" value="$| primaryNtpServer or '0.us.pool.ntp.org'|$" id="tf1Wizard_PrimaryNTPServer" headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField" field-type="text" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidateWizard (this.id) || validateFQDN(this.id)); }">
+          </div>
+          <div class="break" id="break_PrimaryNTPServer_div"> &nbsp; </div>
+          <div class="configRowWizard" id="tf1Wizard_SecondaryNTPServer_div">
+            <label data-localize="30369">Secondary NTP Server</label>
+            <input type="text" name="dateTime.server2" value="$|backupNtpServer or  '1.us.pool.ntp.org' |$" id="tf1Wizard_SecondaryNTPServer"  headingId="tf1Wizard_headingGetTimeNetwork" class="wizardField" field-type="text" onKeyDown="if (event.keyCode == 9) { return (ipaddrValidateWizard (this.id) || validateFQDN(this.id)); }">
+          </div>
+          <div class="break" id="break_SecondaryNTPServer_div"> &nbsp; </div>          
+			</div>
+      </div>
+			<div id="tf1Wizard_headingManualTimeSet_div">
+		    <h1 id="tf1Wizard_headingManualTimeSet">Manual Time</h1>
+		    <div class="break"> &nbsp; </div>
+		    <div class="configRowBlocks">
+		      <div class="leftBlock">   
+		        <div class="configRowWizard" id="tf1Wizard_dateTimePickerValue_div">
+		          <label data-localize="30370"> Set Date and Time </label>
+		          <input type="text" name="dateTime.currentTime" id="tf1Wizard_dateTimePickerValue" readonly headingId="tf1Wizard_headingManualTimeSet" class="wizardField dateTimePickerValue" field-type="text">
+		        </div>
+		        <div class="break" id="break_dateTimePickerValue_div"> &nbsp; </div>
+		        
+		        <div class="configRowWizard" id="tf1Wizard_dateTimePicker_div">
+		          <label> &nbsp; </label>
+		          <input type="hidden" id="tf1Wizard_dateTimePicker" onChange="onchangeWizardDateTimeValue()" readonly >
+		          <div id="dateTimePicker"></div>
+		        </div>
+		        <div class="break" id="break_dateTimePicker_div"> &nbsp; </div>
+		      </div>
+		      <div class="rightBlock">
+		        
+		      </div>
+		    </div>
+			</div>
+      <div class="pagination">
+          <div class="pageList"><span data-localize="13008">Step</span>: [2 <span data-localize="13836">of</span> 2] <span id="tf1Wizard_step2StatusMessage">&nbsp;</span></div>
+        <div class="prevNext">
+          <input data-localize="12533" type="button" id="btSave" value="Previous" title="Previous" class="wizardBtnNext" onClick="openDateTimeStep1()">
+          <input data-localize="12758" type="button" id="btSave" value="Save" title="Save" class="wizardBtnNext" onclick="dateAndTimeWizardSave()">
+        </div>
+      </div>
+    </div>
+    
+    </div>
+    <!--Step2 end -->   
+    
+    </form>
+    
+    <!-- Preview -->
+    
+    <div id="tf1Wizard_previewDiv" style="display:none;">
+    
+    	<div class="wizardMessage">
+            <p><span data-localize="14207">Date and Time Configuration Saved Successfully</span></p>
+    </div>
+    <div class="wizardBlock" id="tf1Wizard_previewBlock">
+    
+     
+    </div>
+    
+ 
+ 
+  <div class="pagination">
+    <div class="pageList"><span>&nbsp;</span></div>
+    <div class="prevNext">
+      <input data-localize="14066" type="button" id="btSave" value="Finish" title="Finish" class="wizardBtnNext" onclick="cancelWizard()" >
+    </div>
+  </div>
+</div>
+
+<!-- preview step ends -->
+    
+  </div>
+</div>
+
+ 
+  
+ 
+ 

@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# fResetInit - initialization script for fReset
+#
+# Copyright (c) 2007, TeamF1, Inc.
+# Copyright (c) 2015, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# modification history
+# -------------------- 
+# 01b,01dec15,abd  (AC Merge) added changes for DSR-AC devices
+# 01a,01jun07,rks  written
+
+
+if [ "$INCLUDE_FACTORY_RESET" = "y" ]; then
+
+MODULES_DIR=$FRESET_INSTALL_PATH/lib/modules/fReset/
+LIB_DIR=/lib/modules
+MOD_SUFFIX=ko
+
+echo -n "Loading Factory Defaults Modules"
+
+# Product ID is available from user.config
+if [ $PRODUCT_ID == "DSR-1000AC_Ax" ] || [ $PRODUCT_ID == "DSR-500AC_Ax" ] ||
+   [ $PRODUCT_ID == "DSR-1000_Bx" ] || [ $PRODUCT_ID == "DSR-500_Bx" ]; then
+    [ -f $MODULES_DIR/fReset.$MOD_SUFFIX ] && { insmod $MODULES_DIR/fReset.$MOD_SUFFIX;  }
+    mknod /dev/fac_dev c `awk '$ 2=="fac_dev" {print $ 1}' /proc/devices` 0
+else
+    [ -f $LIB_DIR/gpio-module.$MOD_SUFFIX ] && { rmmod gpio-module.$MOD_SUFFIX; }
+    [ -f $MODULES_DIR/fReset.$MOD_SUFFIX ] && { insmod $MODULES_DIR/fReset.$MOD_SUFFIX; }
+    [ -f $MODULES_DIR/fReset.$MOD_SUFFIX ] && { mknod /dev/fac_dev c 243 0; }
+fi
+
+$FRESET_INSTALL_PATH/bin/fReset &
+
+fi

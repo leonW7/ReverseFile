@@ -1,0 +1,36 @@
+<?lua
+require "teamf1lualib/dynamicDns_bl"
+local dnsConfig =  require("com.teamf1.bl.services.ddns")
+
+returnCode, cookie, optionMode, wanInfo, wanMode = dnsConfig.optionModeGet()
+
+local dynamicDnsStatus 
+if (cgi["dynaWan"] ~= nil and cgi["dynDNSService"] ~= nil) then
+    local dynaWAN = cgi["dynaWan"]
+    local dynDNSService = cgi["dynDNSService"]
+    local statusFile = "/var/run/ddnsStatus." .. dynaWAN
+   if((wanInfo ~= nil) and (wanInfo ~= dynaWAN)) then
+        dynamicDnsStatus = ""
+   elseif (dynDNSService == "1") then
+        dynamicDnsStatus = "DDNS is disabled"
+   else
+        local fp = io.open (statusFile, "r")
+        if (fp) then
+            dynamicDnsStatus = fp:read ("*all") 
+            fp:close ()
+        else 
+            local rowId 
+            if (dynaWAN == "WAN1") then
+                rowId = "1"
+            elseif(dynaWAN == "WAN2")then
+                rowId = "2"
+            else
+                rowId = "3"
+            end
+          dynamicDnsStatus =
+                db.getAttribute("ddnsStatus","_ROWID_",rowId,"Status")
+        end
+   end
+end
+?>
+$| dynamicDnsStatus or '' |$

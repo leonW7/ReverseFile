@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                          xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <COMMAND name="show security dynamic_filter" license_support="Y" wcf_support="Y" help="shows dynamic filtering configuration setup."/>
+<!--=======================================================-->
+     <COMMAND name="show security dynamic_filter configuration"
+             help="">
+                   <ACTION>lua clishCmdExec (dynamicfilterShow)
+                   </ACTION>
+    </COMMAND>
+ <!--=======================================================-->
+</CLISH_MODULE>

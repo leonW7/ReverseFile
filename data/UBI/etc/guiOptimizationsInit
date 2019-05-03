@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# guiOptimizationsInit - initialization script for guiOptimizations
+#
+# Copyright (c) 2015, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01a,02jul15,mnr  written
+
+#
+# What is the issue ?
+#    Issue is with the generating static html files in case of firmware
+#    upgrade/reboot/restore. We are generating static files for headerMenu, jsOnlyStrings,
+#    wizardOnlyStrings htmls, with the selected language. To handle this in
+#    firmware upgrade/reboot/restore we need to generate these files while device
+#    is booting.  
+#Solution : 
+#    Kind of a solution, we will get the country code of the current image and
+#    based on that we will run curl command to generate static html files.We are
+#    reading /etc/security_level.conf to get the country code of the device, if
+#    we get this value as "HIGH" then country code will be "WW" else "RU"
+
+mkdir -p /var/langFiles/
+sec=`cat /etc/security_level.conf`
+if [ $sec == "HIGH" ]; then
+    curl -k https://127.0.0.1/scgi-bin/platform.cgi?page=headerMenuDyn.html -o /var/langFiles/headerMenu.html
+    curl -k https://127.0.0.1/scgi-bin/platform.cgi?page=jsOnlyStringsDyn.html -o /var/langFiles/jsOnlyStrings.html
+    curl -k https://127.0.0.1/scgi-bin/platform.cgi?page=wizardLanguageStringsDyn.html -o /var/langFiles/wizardLanguageStrings.js 
+else
+    curl -k http://127.0.0.1/platform.cgi?page=headerMenuDyn.html -o /var/langFiles/headerMenu.html
+    curl -k http://127.0.0.1/platform.cgi?page=jsOnlyStringsDyn.html -o /var/langFiles/jsOnlyStrings.html
+    curl -k http://127.0.0.1/platform.cgi?page=wizardLanguageStringsDyn.html -o /var/langFiles/wizardLanguageStrings.js
+fi    
+    

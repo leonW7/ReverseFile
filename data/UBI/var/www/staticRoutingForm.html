@@ -1,0 +1,150 @@
+<?lua 
+require "teamf1lualib/staticRouting_bl"
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie, routeName, active, private, 
+           destinationIpAddress, subnetMask, interface, 
+           gatewayIpAddress, metric
+        
+    if (ButtonType and ButtonType == "edit") then
+       returnCode, cookie, routeName, active, private, 
+           destinationIpAddress, subnetMask, interface, 
+           gatewayIpAddress, metric =  staticRoutingSectionGet (inputCookie) 
+    end    
+	cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_staticRoutingDailogContent">
+    <div class="topBg">
+        <h1 data-localize="12995">Static Route Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div align="left">
+            <div class="configRow">
+                <label data-localize="12726">Route Name</label>
+	        <?lua if(cgi["configRowId"] ~= "-1") then?>
+		<p> $| routeName |$ </p>
+                <input type="hidden" name="staticRouting.routeName" value="$|routeName or '' |$" id="tf1_txtRouteName" maxlength="32" class="txt1" onkeypress="return alphaNumericCheck (event, '')"> </div>
+		<?lua else ?>
+		<input type="text" name="staticRouting.routeName" value="$| routeName or '' |$" id="tf1_txtRouteName" maxlength="32" class="txt1" onkeypress="return alphaNumericCheck (event, '')" > </div>
+		<?lua end?>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label data-localize="10070">Active</label>
+                <?lua if (active == "1") then
+                            statusStr="enable-disable-on"
+                            statusVar = "1"
+                else
+                            statusStr="enable-disable-off"
+                            statusVar = "0"
+                end
+                ?>
+                <a class="$| statusStr |$" alt=""></a>
+                <input type="hidden" value="$| statusVar |$" name="staticRouting.active">
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label data-localize="12549">Private</label>
+                <?lua if (private == "1") then
+                            statusStr="enable-disable-on"
+                            statusVar = "1"
+                else
+                            statusStr="enable-disable-off"
+                            statusVar = "0"
+                end
+                ?>
+                <a class="$| statusStr |$" alt=""></a>
+                <input type="hidden" value="$| statusVar |$" name="staticRouting.private">
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label data-localize="10712">Destination IP Address</label>
+                <input type="text" name="staticRouting.destinationIpAddress" value="$| destinationIpAddress or ''|$" id="tf1_txtDestIpAddr" onkeypress="return numericValueCheck (event, '.')" maxlength="15" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'SN', false, true, LANG_LOCALE['11281']+'. ', LANG_LOCALE['11031'], true); }">
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label data-localize="11413">IP Subnet Mask</label>
+                <input type="text" name="staticRouting.subnetMask" value="$| subnetMask or ''|$" id="tf1_txtDestSnetMask" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id) }">
+            </div>
+            <div class="break">
+&nbsp; </div>
+	    <?lua
+		local wanDisplayName 
+		local wan1DisplayName
+		local wan2DisplayName
+		local localizeWan1
+		local localizeWan2
+		wan1DisplayName =  "Dedicated WAN"
+        wan2DisplayName =  "Configurable WAN"
+        localizeWan1 = "data-localize='30014'"
+        localizeWan2 = "data-localize='30154'"
+	    ?>
+            <div class="configRow">
+                <label data-localize="11187">Interface</label>
+                <select size="1" name="staticRouting.interface" value="$| interface or '' |$" id="selInterface">
+		<?lua
+		    local optionalWan = db.getAttribute ("ConfigPort", "_ROWID_", "1", "LogicalIfName") or ''
+		?>
+                <option $| localizeWan1 |$ value="WAN1" $| web.dropdownSelected(interface == "WAN1") |$ >$| wan1DisplayName |$</option>
+		<?lua if (optionalWan == "WAN2") then
+		?>
+                <option $| localizeWan2 |$ value="WAN2" $| web.dropdownSelected(interface == "WAN2") |$ >$| wan2DisplayName |$</option>
+		<?lua end if(UNIT_NAME == "DSR-1000" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+                  <option data-localize="30018" value="WAN3" $| web.dropdownSelected(interface == "WAN3") |$ >WAN3</option>
+		<?lua end ?>
+                <option value="LAN" $| web.dropdownSelected(interface == "LAN") |$ >LAN </option>
+        <?lua 
+        local errorCode1, vlanIdInfo = getAllVlanId ()
+        for u,v in pairs(vlanIdInfo) do    
+            if (v["vlanId"]~="1") then
+               local errorCode2, vlanName   = vlanNameByIdGet (v["vlanId"])
+
+        ?>
+        <option value="LAN$| v["vlanId"] |$"  $| web.dropdownSelected(interface == "LAN"..v["vlanId"]) |$ >$| vlanName |$ </option>
+        <?lua end end?>
+        <?lua 
+        local wan1Name, wan2Name = staticRoutingGetExtraPhyName ()
+    
+        if (wan1Name == "Wan1Phy") then
+        ?>
+        <option data-localize="30463" value="Wan1Phy" $| web.dropdownSelected(interface == "Wan1Phy") |$ >WAN1 (Physical Port)</option>
+        <?lua end
+        if (wan2Name == "Wan2Phy") then
+        ?>
+        <option data-localize="30464" value="Wan2Phy" $| web.dropdownSelected(interface == "Wan2Phy") |$ >WAN2 (Physical Port)</option>
+        <?lua end?>
+                <option data-localize="10777" value="DMZ" $| web.dropdownSelected(interface == "DMZ") |$ >DMZ</option>
+                </select> </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label data-localize="11058">Gateway IP Address</label>
+                <input type="text" name="staticRouting.gatewayIpAddress" value="$| gatewayIpAddress or '' |$" id="tf1_txtGwIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, LANG_LOCALE['11281']+'. ', LANG_LOCALE['11031'], true); }">
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label data-localize="11709">Metric</label>
+                <input type="text" name="staticRouting.metric" value="$| metric or '' |$" id="tf1_txtMetric" maxlength="2" class="one" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 2, 15, true, LANG_LOCALE['11303']+'. ', ' ');}">
+                <dl>
+                    [<span data-localize="12627">Range</span>: 2 -15]
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+                <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+                <?lua if(cgi["configRowId"] == "-1") then?>
+        <input data-localize="12758" type="submit" name="button.add.staticRouting" onclick="return staticRoutingConfigValidate('tf1_frmStaticRouting')" class="btnSubmit" title="Save" value="Save" id="btSave">
+        <?lua else?>
+        <input data-localize="12758" type="submit" name="button.edit.staticRouting" onclick="return staticRoutingConfigValidate('tf1_frmStaticRouting')" class="btnSubmit" title="Save" value="Save" id="btSave">
+        <?lua end?>
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->

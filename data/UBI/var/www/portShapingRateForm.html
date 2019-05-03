@@ -1,0 +1,56 @@
+<?lua 
+require "teamf1lualib/portShapingRate_bl"
+    local inputCookie = cgi["configRowId"]
+    local returnCode, cookie, port, portshape
+         
+    if (ButtonType and ButtonType == "edit") then
+       returnCode, cookie, port, portshape =  portShapingRateGet (inputCookie) 
+    end    
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_portShapingRateDailogContent">
+    <div class="topBg">
+        <h1>Port Shaping Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>Port </label>
+            <p>$| port or ''|$</p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Percentage </label><select size="1" name="portShaping.shape" value="$| portshape or ''|$">
+            <option value="0" $| web.dropdownSelected(portshape == "0") |$ >0</option>
+            <option value="5" $| web.dropdownSelected(portshape == "5") |$>5</option>
+            <option value="10" $| web.dropdownSelected(portshape == "10") |$>10</option>
+            <option value="15" $| web.dropdownSelected(portshape == "15") |$>15</option>
+            <option value="20" $| web.dropdownSelected(portshape == "20") |$>20</option>
+            <option value="25" $| web.dropdownSelected(portshape == "25") |$>25</option>
+            <option value="30" $| web.dropdownSelected(portshape == "30") |$>30</option>
+            <option value="35" $| web.dropdownSelected(portshape == "35") |$>35</option>
+            <option value="40" $| web.dropdownSelected(portshape == "40") |$>40</option>
+            <option value="45" $| web.dropdownSelected(portshape == "45") |$>45</option>
+            <option value="50" $| web.dropdownSelected(portshape == "50") |$>50</option>
+            <option value="55" $| web.dropdownSelected(portshape == "55") |$>55</option>
+            <option value="60" $| web.dropdownSelected(portshape == "60") |$>60</option>
+            <option value="65" $| web.dropdownSelected(portshape == "65") |$>65</option>
+            <option value="70" $| web.dropdownSelected(portshape == "70") |$>70</option>
+            <option value="75" $| web.dropdownSelected(portshape == "75") |$>75</option>
+            <option value="80" $| web.dropdownSelected(portshape == "80") |$>80</option>
+            <option value="85" $| web.dropdownSelected(portshape == "85") |$>85</option>
+            <option value="90" $| web.dropdownSelected(portshape == "90") |$>90</option>
+            <option value="95" $| web.dropdownSelected(portshape == "95") |$>95</option>
+            <option value="100" $| web.dropdownSelected(portshape == "100") |$>100</option>
+            </select> </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="hidden" name="configRowId" value="$| cgi["configRowId"] |$">
+        <input type="submit" name="button.config.portShapingRate" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>

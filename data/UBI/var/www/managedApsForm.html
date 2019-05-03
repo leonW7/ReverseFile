@@ -1,0 +1,1331 @@
+<?lua
+cgilua.htmlheader ()
+require "teamf1lualib/bl_managedAps"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/bl_distributedTunnels"
+local gui_managedAps = require("com.teamf1.bl.wlan.managedaplist")
+local distributedTunnels = require("com.teamf1.bl.wlan.apDistributedTunnels")
+
+local guiManagedAps = require("com.teamf1.bl.wlan.managedaplist")
+local errorMap      = require ("com.teamf1.core.errorMap")
+local returnCodes   = require ("com.teamf1.core.returnCodes")
+
+local neighbourApsInfo = {}
+local neighbourClientsInfo = {}
+local vapDetailsRadio1 = {}
+local vapDetailsRadio2 = {}
+local vapRadioExtra1 = {}
+local vapRadioExtra2 = {}
+local radioDetail1 = {}
+local radioDetail2 = {}
+local radarStatus = {}
+local radioExtra1 ={}
+local radioExtra2 = {}
+local apDetails = {}
+local apStatistic = {}
+local radio1Stats = {}
+local radio2Stats = {}
+local radio1StatsExtra = {}
+local radio2StatsExtra = {}
+local errorFlag
+local errorCode
+
+if (ButtonType and ButtonType == "apdetail") then
+    errorCode , apDetails = guiManagedAps.managedApsDetailGet(cgi)
+    if (errorCode ~= returnCodes.SUCCESS) then
+     statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+  cgilua.header ("Content-Type","text/html; charset=UTF-8")  
+?>
+<!-- Section for AP Details starts -->
+<div id="tf1_managedApsDailogContent">
+    <div class="topBg">
+        <h1>Managed APs</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>MAC address </label>
+            <p>$| cgi.ModelName or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>IP Address</label>
+            <p>$| apDetails.ipAddress or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Managing Controller </label>
+            <p>$| apDetails.managingController or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>IP Subnet Mask </label>
+            <p>$| apDetails.ipSubnetMask or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Controller MAC Address</label>
+            <p>$| apDetails.controllerMacAddress or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Status </label>
+            <p>$| apDetails.status or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Controller IP Address </label>
+            <p>$| apDetails.controllerIPAddress or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Software Version </label>
+            <p>$| apDetails.softwareVersion or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Profile </label>
+            <p>$| apDetails.profile or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Code Download Status </label>
+            <p>$| apDetails.codeDownloadStatus or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Discovery Reason </label>
+            <p>$| apDetails.discoveryReason or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Configuration Status </label>
+            <p>$| apDetails.configurationStatus or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Protocol </label>
+            <p>$| apDetails.protocol or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Vendor ID </label>
+            <p>$| apDetails.vendorID or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Authenticated Clients</label>
+            <p>$| apDetails.authenticatedClients or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Part Number</label>
+            <p>$| apDetails.partNumber or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>System Up time</label>
+            <p>$| apDetails.systemUptime or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Serial Number </label>
+            <p>$| apDetails.serialNumber or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Age</label>
+            <p>$| apDetails.age or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Hardware Type</label>
+            <p>$| apDetails.hardwareType or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+</div>
+<!-- Section for AP Details ends -->
+<!-- Section for Managed Distributed Tunnels starts -->
+<?lua
+elseif (ButtonType and ButtonType == "distribute") then
+   local returnCode, distributedTunnelsTbl = distributedTunnels.apDistributionTunnelsGet(cgi["ModelName"])
+
+?>
+<div id="tf1_managedApsDistributedDailogContent">
+    <div class="topBg">
+        <h1>Managed Access Point Distributed Tunneling Status</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>Clients using AP as Home</label>
+            <p>$|distributedTunnelsTbl.apdistributedtunnelingstatusCLIENTSUSINGASHOMEAP|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Multicast Replications</label>
+            <p>$|distributedTunnelsTbl.apdistributedtunnelingstatusMULITCASTREPLICATIONS|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Clients using AP as Associate</label>
+            <p>$|distributedTunnelsTbl.apdistributedtunnelingstatusCLIENTSUSINGASASSOCIATEAP|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>VLAN with Max Multicast <br />
+            Replications</label>
+            <p>$|distributedTunnelsTbl.apdistributedtunnelingstatusVLANWITHMCASTREPLICATIONS|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Distributed tunnels </label>
+            <p>$|distributedTunnelsTbl.apdistributedtunnelingstatusDISTRIBUTEDTUNNELS|$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+    </div>
+</div>
+<!-- Section for Managed Distributed Tunnels ends -->
+<!-- Section for Neighbour APs starts -->
+<?lua
+        elseif (ButtonType and ButtonType == "neighbourap") then
+            local configRow = cgi
+            local cookieTbl = {}
+            errorCode, neighbourApsInfo = guiManagedAps.neighbourApsListGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+            ?>
+
+<div id="tf1_managedApsNeighbourapDailogContent">
+    <div class="topBg">
+        <h1>List of Managed Access Point's Neighbor APs</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="CLR">
+            <div class="demo_jui">
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData2">
+                    <thead>
+                        <tr>
+                            <th>Neighbor AP MAC</th>
+                            <th>SSID </th>
+                            <th>RSSI </th>
+                            <th>Status</th>
+                            <th>Age </th>
+                            <th>Radio</th>
+                        </tr>
+                    </thead>
+                        <?lua
+                             if (neighbourApsInfo ~= nil) then
+                                for k, v in pairs (neighbourApsInfo) do
+                                    local row = neighbourApsInfo[k]
+                                    ?>
+                                    <tr class="gradeB">
+                                        <td>$| row.apMacAddr or '' |$</td>
+                                        <td>$| row.ssid or '' |$</td>
+                                        <td>$| row.rssi or '' |$</td>
+                                        <td>$| row.status or '' |$</td>
+                                        <td>$| row.age or '' |$</td>
+                                        <td>$| row.radio or '' |$</td>
+                                    </tr>
+                                    <?lua
+                                  end
+                               end
+                          ?>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+		<input type="submit" name="button.clear.managedAps.managedAps.cgi["configRowId"]" id="btSave" value="Clear All" title="Clear All" class="btnSubmit">
+	</div>
+</div>
+<?lua
+        elseif (ButtonType and ButtonType == "neighbourclient") then
+            local configRow = cgi
+            local cookieTbl = {}
+            errorCode, neighbourClientsInfo = guiManagedAps.neighbourClientsListGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+            ?>
+<!-- Section for Neighbour APs ends -->
+<!-- Section for Neighbour Clients starts -->
+<div id="tf1_managedApsNeighbourClientDailogContent">
+    <div class="topBg">
+        <h1>List of Managed Access Point's Neighbor Clients</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="CLR">
+            <div class="demo_jui">
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData3">
+                    <thead>
+                        <tr>
+                            <th>Neighbor Client <br>
+                            MAC</th>
+                            <th>RSSI <br>
+&nbsp;</th>
+                            <th>Channel <br>
+&nbsp;</th>
+                            <th>Discovery <br>
+                            Reason</th>
+                            <th>Age <br>
+&nbsp;</th>
+                            <th>Radio <br>
+&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <?lua
+                             if (neighbourClientsInfo ~= nil) then
+                                for k, v in pairs (neighbourClientsInfo) do
+                                    local row = neighbourClientsInfo[k]
+                                    ?>
+                                    <tr class="gradeB">
+                                        <td>$| row.macAddress or '' |$</td>
+                                        <td>$| row.rssi or '' |$</td>
+                                        <td>$| row.channel or '' |$</td>
+                                        <td>$| row.discoveryReason or '' |$</td>
+                                        <td>$| row.age or '' |$</td>
+                                        <td>$| row.radio or '' |$</td>
+                                    </tr>
+                                    <?lua
+                                  end
+                               end
+                          ?>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+		<input type="submit" name="button.clear.managedAps.managedAps.cgi["configRowId"]" id="btSave" value="Clear All" title="Clear All" class="btnSubmit">
+	</div>
+</div>
+<?lua
+elseif (ButtonType and ButtonType == "manageapradio") then
+            local configRow = cgi
+            local cookieTbl = {}
+            cgi.radioIndex = 1
+            
+            errorCode, radioExtra1, radioDetail1, radarStatus = guiManagedAps.radiosDetailGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+           
+            cgi.radioIndex = 2
+            errorCode, radioExtra2, radioDetail2 = guiManagedAps.radiosDetailGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+
+?>
+<!-- Section for Neighbour Clients ends -->
+<!--Session for Radio Details starts -->
+<div id="tf1_managedApsRadio1DailogContent">
+    <div class="topBg">
+        <h1>Radio Details</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div align="left">
+            <div class="configRow">
+            <label>MAC Address</label>
+            <p>$| cgi.ModelName or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Radio Mode</label>
+            <?lua if (radioExtra2.hwType == 9 or radioExtra2.hwType == 11 or radioExtra2.hwType == 13) then
+
+            ?>
+            <p>
+            <input type="radio" name="tf1_apRadio" id="tf1_apRadio12" checked
+            value="1"
+            onchange="document.getElementById('tf1_radio12').style.display='block';document.getElementById('tf1_radio22').style.display='none';"> 
+            $|radioExtra2.radioMode1 or '' |$ </p>
+            <p>
+            <input type="radio" name="tf1_apRadio" id="tf1_apRadio22" value="2"
+            onchange="document.getElementById('tf1_radio22').style.display='block';document.getElementById('tf1_radio12').style.display='none'"> 
+            $|radioExtra2.radioMode2 or '' |$ </p>
+            <?lua else ?>
+            <p>
+            <input type="radio" name="tf1_apRadio" id="tf1_apRadio22" checked value="2"
+            onchange="document.getElementById('tf1_radio22').style.display='block';document.getElementById('tf1_radio12').style.display='none'"> 
+            $|radioExtra2.radioMode2 or '' |$ </p>
+            <?lua end ?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+            <?lua if (radioExtra2.hwType == 9 or radioExtra2.hwType == 11 or radioExtra2.hwType == 13) then
+
+            ?>
+            <div id="tf1_radio12">
+            <?lua else ?>
+            <div id="tf1_radio12" style="display:none">
+            <?lua end?>
+            <h2>List of APs</h2>
+            <div class="configRow">
+                <label>Channel </label>
+                <p>$| radioDetail1.channel or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Authenticated Clients </label>
+                <p>$| radioDetail1.authenticatedClients or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Channel Bandwidth</label>
+                <p>$| radioDetail1.channelBandwidth or '' |$MHz </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Transmit Power </label>
+                <p>$| radioDetail1.transmitPower or '' |$% </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Fixed Channel Indicator </label>
+                <p>$| radioDetail1.fixedChannelIndicator or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Fixed Power Indicator </label>
+                <p>$| radioDetail1.fixedPowerIndicator or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Manual Channel Adjustment <br />
+                Status </label>
+                <p>$| radioDetail1.manualChannelAdjustmentStatus or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Manual Power Adjustment <br />
+                Status</label>
+                <p>$| radioDetail1.manualPowerAdjustmentStatus or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>WLAN Utilization</label>
+                <p>$| radioDetail1.WLANUtilization or '' |$% </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Total Neighbors</label>
+                <p>$| radioDetail1.totalNeighbors or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Radio Resource Mgmt</label>
+                <p>$| radioDetail1.radioResourceMgmt or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <h2>Radar Status</h2>
+            <div class="CLR">
+                <div class="demo_jui">
+                    <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData4">
+                        <thead>
+                            <tr>
+                                <th>Supported Channel</th>
+                                <th>Radar Detection Enabled </th>
+                                <th>Radar Detected</th>
+                                <th>Last Radar Detected Time</th>
+                            </tr>
+                        </thead>
+                        <?lua
+                        if (radarStatus ~= nil) then
+                          for k, v in pairs (radarStatus) do
+                              local row = radarStatus[k]
+                              ?>
+                              <tr class="gradeB">
+                                  <td>$| row.supportedChannel or '' |$</td>
+                                  <td>$| row.detectionEnabled or '' |$</td>
+                                  <td>$| row.detectionStatus or '' |$</td>
+                                  <td>$| row.timeStamp or '' |$</td>
+                              </tr>
+                           <?lua
+                            end
+                        end
+                        ?>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?lua if (radioExtra2.hwType == 9 or radioExtra2.hwType == 11 or radioExtra2.hwType == 13) then
+
+            ?>
+            <div id="tf1_radio22" style="display:none">
+            <?lua else ?>
+            <div id="tf1_radio22">
+            <?lua end?>
+        
+            <h2>List of APs</h2>
+            <div class="configRow">
+                <label>Supported Channels </label>
+                <p>$| radioDetail2.supportedChannelsList or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Channel </label>
+                <p>$| radioDetail2.channel or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Authenticated Clients </label>
+                <p>$| radioDetail2.authenticatedClients or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Channel Bandwidth</label>
+                <p>$| radioDetail2.channelBandwidth or '' |$MHz </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Transmit Power </label>
+                <p>$| radioDetail2.transmitPower or '' |$% </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Fixed Channel Indicator </label>
+                <p>$| radioDetail2.fixedChannelIndicator or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Fixed Power Indicator </label>
+                <p>$| radioDetail2.fixedPowerIndicator or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Manual Channel Adjustment <br />
+                Status </label>
+                <p>$| radioDetail2.manualChannelAdjustmentStatus or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Manual Power Adjustment <br />
+                Status</label>
+                <p>$| radioDetail2.manualPowerAdjustmentStatus or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>WLAN Utilization</label>
+                <p>$| radioDetail2.WLANUtilization or '' |$% </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Total Neighbors</label>
+                <p>$| radioDetail2.totalNeighbors or '' |$ </p>
+            </div>
+            <div class="break">
+&nbsp; </div>
+            <div class="configRow">
+                <label>Radio Resource Mgmt</label>
+                <p>$| radioDetail2.radioResourceMgmt or '' |$ </p>
+            </div>
+            <div class="break">
+                &nbsp; </div>
+        </div>
+        </div>
+    </div>
+</div>
+<!-- Session for Radio Details ends-->
+<!-- Section for Managed Distributed Tunnels starts -->
+<?lua
+        elseif (ButtonType and ButtonType == "vapdetail") then
+            local configRow = cgi
+            local cookieTbl = {}
+            cgi.radioIndex = 1
+            errorCode, vapDetailsRadio1, vapRadioExtra1 = guiManagedAps.vapDetailsGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+            cgi.radioIndex = 2
+            errorCode, vapDetailsRadio2, vapRadioExtra2 = guiManagedAps.vapDetailsGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+            ?>
+<div id="tf1_managedApsDetailsDailogContent">
+    <div class="topBg">
+        <h1>Managed AP VAP Details</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>MAC Address</label>
+            <p>$| cgi.ModelName or '' |$ </p>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Radio Mode</label>
+            <?lua if (vapRadioExtra2.hwType == 9 or vapRadioExtra2.hwType == 11 or vapRadioExtra2.hwType == 13) then
+
+            ?>
+            <p>
+            <input type="radio" name="tf1_apRadio" id="tf1_apRadio1" checked
+            value="1"
+            onchange="document.getElementById('tf1_radio1').style.display='block';document.getElementById('tf1_radio2').style.display='none';"> 
+            $| vapRadioExtra2.radioMode1 |$ </p>
+            <p>
+            <input type="radio" name="tf1_apRadio" id="tf1_apRadio2" value="2"
+            onchange="document.getElementById('tf1_radio2').style.display='block';document.getElementById('tf1_radio1').style.display='none'"> 
+            $| vapRadioExtra2.radioMode2 |$ </p>
+            <?lua else ?>
+            <p>
+            <input type="radio" name="tf1_apRadio" id="tf1_apRadio2" checked value="2"
+            onchange="document.getElementById('tf1_radio2').style.display='block';document.getElementById('tf1_radio1').style.display='none'"> 
+            $| vapRadioExtra2.radioMode2 |$ </p>
+            <?lua end ?>
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <h1>List of Managed Access Point's VAPs</h1>
+        <div class="CLR">
+            <?lua if (vapRadioExtra2.hwType == 9 or vapRadioExtra2.hwType == 11 or vapRadioExtra2.hwType == 13) then
+
+            ?>
+            <div class="demo_jui" id="tf1_radio1">
+            <?lua else ?>    
+            <div class="demo_jui" id="tf1_radio1" style="display:none">
+            <?lua end?>    
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData5">
+                    <thead>
+                        <tr>
+                            <th>VAP ID</th>
+                            <th>VAP Mode </th>
+                            <th>BSSID </th>
+                            <th>SSID</th>
+                            <th>Client Authentications </th>
+                        </tr>
+                    </thead>
+                    <?lua
+                             if (vapDetailsRadio1 ~= nil) then
+                                for k, v in pairs (vapDetailsRadio1) do
+                                    local row = vapDetailsRadio1[k]
+                                    ?>
+                                    <tr class="gradeB">
+                                        <td>$| row.vapId or '' |$</td>
+                                        <td>$| row.vapMode or '' |$</td>
+                                        <td>$| row.bssid or '' |$</td>
+                                        <td>$| row.ssid or '' |$</td>
+                                        <td>$| row.clients or '' |$</td>
+                                    </tr>
+                                    <?lua
+                                  end
+                               end
+                          ?>
+                </table>
+            </div>
+            <?lua if (vapRadioExtra2.hwType == 9 or vapRadioExtra2.hwType == 11 or vapRadioExtra2.hwType == 13) then
+
+            ?>
+            <div class="demo_jui" id="tf1_radio2" style="display:none">
+            <?lua else ?>    
+            <div class="demo_jui" id="tf1_radio2">
+            <?lua end?>   
+                <table cellpadding="0" cellspacing="0" border="0"
+                    class="display" id="recordsData6">
+                    <thead>
+                        <tr>
+                            <th>VAP ID</th>
+                            <th>VAP Mode </th>
+                            <th>BSSID </th>
+                            <th>SSID</th>
+                            <th>Client Authentications </th>
+                        </tr>
+                    </thead>
+                    <?lua
+                             if (vapDetailsRadio2 ~= nil) then
+                                for k, v in pairs (vapDetailsRadio2) do
+                                    local row = vapDetailsRadio2[k]
+                                    ?>
+                                    <tr class="gradeB">
+                                        <td>$| row.vapId or '' |$</td>
+                                        <td>$| row.vapMode or '' |$</td>
+                                        <td>$| row.bssid or '' |$</td>
+                                        <td>$| row.ssid or '' |$</td>
+                                        <td>$| row.clients or '' |$</td>
+                                    </tr>
+                                    <?lua
+                                  end
+                               end
+                          ?>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+&nbsp; </div>
+</div>
+<?lua
+elseif (ButtonType and ButtonType == "statistic") then
+    errorCode , apStatistic = guiManagedAps.managedApStatistic (cgi)
+    if (errorCode ~= returnCodes.SUCCESS) then
+     statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+
+?>
+<!-- Section for Managed Distributed Tunnels ends -->
+<!-- Section for Managed Access Point Statistics starts -->
+<div id="tf1_apsStatisticsDetailsDailogContent">
+    <div class="topBg">
+        <h1>Managed Access Point Statistics Details</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>MAC Address </label>
+            <p> $| cgi.ModelName or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Received</label>
+            <p>	$| apStatistic.WLANPKTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Received</label>
+            <p>	$| apStatistic.WLANBYTESRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmitted</label>
+            <p>	$| apStatistic.WLANPKTSSENT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmitted</label>
+            <p>		$| apStatistic.WLANBYTESSENT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Receive<br>Dropped</label>
+            <p>	$| apStatistic.WLANPKTSRCVDDROP or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Receive Dropped</label>
+            <p>	$| apStatistic.WLANBYTESRCVDDROP or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmit<br>Dropped</label>
+            <p>	$| apStatistic.WLANPKTSSENTDROP or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmit Dropped</label>
+            <p>	$| apStatistic.WLANBYTESSENTDROP or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>      
+      
+        <div class="configRow">
+            <label>Ethernet Packets Received</label>
+            <p>	$| apStatistic.ETHERNETPKTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Ethernet Bytes Received</label>
+            <p>		$| apStatistic.ETHERNETBYTESRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Ethernet Packets Transmitted</label>
+            <p>	$| apStatistic.ETHERNETPKTSSENT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Ethernet Bytes Transmitted</label>
+            <p>	$| apStatistic.ETHERNETBYTESSENT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Multicast Packets Received</label>
+            <p>	$| apStatistic.MULTICASTPKTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Total Receive Errors	</label>
+            <p>	$| apStatistic.TOTALRCVDERRORS or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Total Transmit Errors</label>
+            <p>		$| apStatistic.TOTALSENTERRORS or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>ARP Reqs Converted form<br>Bcast to Ucast</label>
+            <p>	$| apStatistic.ARPRQSTSCONVERTED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Filtered ARP Requests</label>
+            <p>		$| apStatistic.FILTEREDARPREQ or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Broadcasted ARP Requests</label>
+            <p>	$| apStatistic.BROADCASEARPREQ or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>      
+    </div>
+    <div class="dialogSubmitRow">
+&nbsp; </div>
+</div>
+<!-- Section for Managed Access Point Statistics ends -->
+<!-- Section for Radio Statistics starts -->
+<?lua
+    elseif (ButtonType and ButtonType == "radiostatistic") then
+            local configRow = cgi
+            local cookieTbl = {}
+            cgi.radioIndex = 1
+            errorCode, radio1StatsExtra, radio1Stats = guiManagedAps.radioStatsGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+            cgi.radioIndex = 2
+            errorCode, radio2StatsExtra, radio2Stats = guiManagedAps.radioStatsGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+            
+
+?>
+<div id="tf1_radioStatisticsDetailsDailogContent">
+    <div class="topBg">
+        <h1>Manage Radio Statistics Details</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>MAC Address </label>
+            <p>$| cgi.ModelName or '' |$ </p> 
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Radio</label>
+            <?lua if (radio2StatsExtra.hwType == 9 or radio2StatsExtra.hwType == 11 or radio2StatsExtra.hwType == 13) then
+
+            ?>
+            <p><input type="radio" name="radio1" value="1" checked
+            onchange="document.getElementById('tf1_radioStats1').style.display='block';document.getElementById('tf1_radioStats2').style.display='none';">
+            $| radio1StatsExtra.radioIndex .. "-" .. radio1StatsExtra.radio1 |$ </p>
+            <p><input type="radio" name="radio1" value="2"
+            onchange="document.getElementById('tf1_radioStats2').style.display='block';document.getElementById('tf1_radioStats1').style.display='none'">
+            $| radio2StatsExtra.radioIndex .. "-" .. radio2StatsExtra.radio2 |$ </p>
+            <?lua else ?>
+            <p><input type="radio" name="radio1" value="2" checked
+            onchange="document.getElementById('tf1_radioStats2').style.display='block';document.getElementById('tf1_radioStats1').style.display='none'">
+            $| radio2StatsExtra.radioIndex .. "-" .. radio2StatsExtra.radio2 |$ </p>
+            <?lua end?>
+        
+        </div>
+        <div class="break">&nbsp;</div>
+        <?lua if (radio2StatsExtra.hwType == 9 or radio2StatsExtra.hwType == 11 or radio2StatsExtra.hwType == 13) then
+        ?>
+        <div id="tf1_radioStats1">
+        <?lua else ?>    
+        <div id="tf1_radioStats1" style="display:none">
+        <?lua end?>    
+        <div class="configRow">
+            <label>WLAN Packets Received</label>
+            <p>	$| radio1Stats.PKTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Received</label>
+            <p>	$| radio1Stats.BYTESRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmitted</label>
+            <p>	$| radio1Stats.PKTSTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmitted</label>
+            <p>		$| radio1Stats.BYTESTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Receive<br>Dropped</label>
+            <p>	$| radio1Stats.PKTSRCVDDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Receive Dropped</label>
+            <p>	$| radio1Stats.BYTESRCVDDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmit<br>Dropped</label>
+            <p>	$| radio1Stats.PKTSTXDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmit Dropped</label>
+            <p>	$| radio1Stats.BYTESTXDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Fragments Received</label>
+            <p>		$| radio1Stats.FRAGMENTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Fragments Transmitted</label>
+            <p>		$| radio1Stats.FRAGMENTSTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Multicast Frames Received</label>
+            <p>	$| radio1Stats.MULTICASTFRAMESRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Multicast Frames<br>Transmitted</label>
+            <p>	$| radio1Stats.MULTICASTFRAMESTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Duplicate Frame Count</label>
+            <p>		$| radio1Stats.DUPLICATEFRAMECOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Failed Transmit Count</label>
+            <p>		$| radio1Stats.FAILEDTRANSMITCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Transmit Retry Count</label>
+            <p>		$| radio1Stats.TRANSMITRETRYCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Multiple Retry Count</label>
+            <p>		$| radio1Stats.MULTIPLERETRYCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>RTS Success Count</label>
+            <p>		$| radio1Stats.RTSSUCCESSCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>RTS Failure Count</label>
+            <p>		$| radio1Stats.RTSFAILURECOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>ACK Failure Count</label>
+            <p>		$| radio1Stats.ACKFAILURECOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>FCS Error Count</label>
+            <p>			$| radio1Stats.FCSERRORCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Frames Transmitted</label>
+            <p>		$| radio1Stats.FRAMESTRANSMITTED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WEP Undecryptable Count</label>
+            <p>		$| radio1Stats.WEPUNDECRYPTABLECOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+    </div>
+
+        <?lua if (radio2StatsExtra.hwType == 9 or radio2StatsExtra.hwType == 11 or radio2StatsExtra.hwType == 13) then
+
+        ?>
+        <div id="tf1_radioStats2" style="display:none">
+        <?lua else ?>    
+        <div id="tf1_radioStats2">
+        <?lua end?>
+        <div class="configRow">
+            <label>WLAN Packets Received</label>
+            <p>	$| radio2Stats.PKTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Received</label>
+            <p>	$| radio2Stats.BYTESRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmitted</label>
+            <p>	$| radio2Stats.PKTSTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmitted</label>
+            <p>		$| radio2Stats.BYTESTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Receive<br>Dropped</label>
+            <p>	$| radio2Stats.PKTSRCVDDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Receive Dropped</label>
+            <p>	$| radio2Stats.BYTESRCVDDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmit<br>Dropped</label>
+            <p>	$| radio2Stats.PKTSTXDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmit Dropped</label>
+            <p>	$| radio2Stats.BYTESTXDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Fragments Received</label>
+            <p>		$| radio2Stats.FRAGMENTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Fragments Transmitted</label>
+            <p>		$| radio2Stats.FRAGMENTSTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Multicast Frames Received</label>
+            <p>	$| radio2Stats.MULTICASTFRAMESRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Multicast Frames<br>Transmitted</label>
+            <p>	$| radio2Stats.MULTICASTFRAMESTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Duplicate Frame Count</label>
+            <p>		$| radio2Stats.DUPLICATEFRAMECOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Failed Transmit Count</label>
+            <p>		$| radio2Stats.FAILEDTRANSMITCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Transmit Retry Count</label>
+            <p>		$| radio2Stats.TRANSMITRETRYCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Multiple Retry Count</label>
+            <p>		$| radio2Stats.MULTIPLERETRYCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>RTS Success Count</label>
+            <p>		$| radio2Stats.RTSSUCCESSCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>RTS Failure Count</label>
+            <p>		$| radio2Stats.RTSFAILURECOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>ACK Failure Count</label>
+            <p>		$| radio2Stats.ACKFAILURECOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>FCS Error Count</label>
+            <p>			$| radio2Stats.FCSERRORCOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Frames Transmitted</label>
+            <p>		$| radio2Stats.FRAMESTRANSMITTED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WEP Undecryptable Count</label>
+            <p>		$| radio2Stats.WEPUNDECRYPTABLECOUNT or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+&nbsp; </div>
+</div>
+<!-- Section for Manage Radio Statistics ends -->
+
+<!-- Section for Manage VAP Statistics starts -->
+<?lua
+    elseif (ButtonType and ButtonType == "vapstatistic") then
+            cgi.radioIndex = 1
+            cgi.vapId = 0
+            local vap1StatsExtra = {}
+            local vapRadio1Stats = {}
+            local vapDetails1 = {}
+            local vap2StatsExtra = {}
+            local vapRadio2Stats = {}
+            local vapDetails2 = {}
+            errorCode, vap1StatsExtra, vapRadio1Stats, vapDetails1 = guiManagedAps.apVapStatsGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+            cgi.radioIndex = 2
+            cgi.vapId = 0
+            errorCode, vap2StatsExtra, vapRadio2Stats, vapDetails2 = guiManagedAps.apVapStatsGet (cgi)
+            if (errorCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (errorCode)
+            end
+
+?>
+<div id="tf1_vapStatisticsDetailsDailogContent">
+    <div class="topBg">
+        <h1>Manage VAP Statistics Details</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea dialogMidAreaGray">
+        <div class="configRow">
+            <label>MAC Address </label>
+            <p> $| cgi.ModelName or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Radio</label>
+            <?lua if (vap2StatsExtra.hwType == 9 or vap2StatsExtra.hwType == 11 or vap2StatsExtra.hwType == 13) then
+
+            ?>
+            <p><input type="radio" name="radio1" value="1" checked
+            onchange="document.getElementById('tf1_vapStats1').style.display='block';document.getElementById('tf1_vapStats2').style.display='none';">
+            $| vap1StatsExtra.radioIndex .. "-" .. vap1StatsExtra.radio1 |$ </p>
+            <p><input type="radio" name="radio1" value="2"
+            onchange="document.getElementById('tf1_vapStats2').style.display='block';document.getElementById('tf1_vapStats1').style.display='none'">
+            $| vap2StatsExtra.radioIndex .. "-" .. vap2StatsExtra.radio2 |$ </p>
+            <?lua else ?>
+            <p><input type="radio" name="radio1" value="2" checked
+            onchange="document.getElementById('tf1_vapStats2').style.display='block';document.getElementById('tf1_vapStats1').style.display='none'">
+            $| vap2StatsExtra.radioIndex .. "-" .. vap2StatsExtra.radio2 |$ </p>
+            <?lua end?>
+        </div>
+        <div class="break">&nbsp;</div>
+        <?lua if (vap2StatsExtra.hwType == 9 or vap2StatsExtra.hwType == 11 or vap2StatsExtra.hwType == 13) then
+
+        ?>
+        <div id="tf1_vapStats1">
+        <?lua else ?>    
+        <div id="tf1_vapStats1" style="display:none">
+        <?lua end?>
+        <div class="configRow">
+            <label>VAP </label>
+            <select>
+                <?lua for k, v in pairs (vapDetails1) do ?>
+                <option>$| v |$</option>
+                <?lua end?>
+            </select>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Received</label>
+            <p>	$| vapRadio1Stats.PKTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Received</label>
+            <p>	$| vapRadio1Stats.BYTESRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmitted</label>
+            <p>	$| vapRadio1Stats.PKTSTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmitted</label>
+            <p>		$| vapRadio1Stats.BYTESTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Receive<br>Dropped</label>
+            <p>	$| vapRadio1Stats.PKTSRCVDDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Receive Dropped</label>
+            <p>	$| vapRadio1Stats.BYTESRCVDDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmit<br>Dropped</label>
+            <p>	$| vapRadio1Stats.PKTSTXDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmit Dropped</label>
+            <p>	$| vapRadio1Stats.BYTESTXDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Client Association Failures</label>
+            <p>	$| vapRadio1Stats.ASSOCIATIONFAILURES or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Client Authentication Failures</label>
+            <p>	$| vapRadio1Stats.AUTHENTICATIONFAILURES or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+    </div>
+    <?lua if (vap2StatsExtra.hwType == 9 or vap2StatsExtra.hwType == 11 or vap2StatsExtra.hwType == 13) then
+
+        ?>
+        <div id="tf1_vapStats2" style="display:none">
+        <?lua else ?>    
+        <div id="tf1_vapStats2">
+        <?lua end?>
+        <div class="configRow">
+            <label>VAP </label>
+            <select>
+                <?lua for k, v in pairs (vapDetails2) do ?>
+                <option>$| v |$</option>
+                <?lua end?>
+            </select>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Received</label>
+            <p>	$| vapRadio2Stats.PKTSRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Received</label>
+            <p>	$| vapRadio2Stats.BYTESRCVD or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmitted</label>
+            <p>	$| vapRadio2Stats.PKTSTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmitted</label>
+            <p>		$| vapRadio2Stats.BYTESTX or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Receive<br>Dropped</label>
+            <p>	$| vapRadio2Stats.PKTSRCVDDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Receive Dropped</label>
+            <p>	$| vapRadio2Stats.BYTESRCVDDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Packets Transmit<br>Dropped</label>
+            <p>	$| vapRadio2Stats.PKTSTXDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>WLAN Bytes Transmit Dropped</label>
+            <p>	$| vapRadio2Stats.BYTESTXDROPPED or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Client Association Failures</label>
+            <p>	$| vapRadio2Stats.ASSOCIATIONFAILURES or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        <div class="configRow">
+            <label>Client Authentication Failures</label>
+            <p>	$| vapRadio2Stats.AUTHENTICATIONFAILURES or '' |$ </p>
+        </div>
+        <div class="break">&nbsp;</div>
+        </div>
+        
+    </div>
+    <div class="dialogSubmitRow">
+&nbsp; </div>
+</div>
+<!-- Section for Manage VAP Statistics ends -->
+
+<?lua end ?>

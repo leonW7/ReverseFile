@@ -1,0 +1,283 @@
+<?lua
+require "teamf1lualib/bl_dettectedClients"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "status"
+	PAGE_HELP_SECTION = "detectedClients"
+
+local guiDetectedClients = require("com.teamf1.bl.wlan.detectedclients")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local detectedClients, errorCode
+errorCode, detectedClients = guiDetectedClients.detectedClientsGet ()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "purgeRoam") then
+    errorCode = guiDetectedClients.wlanRoamDelete (cgi["detectedClients.checkbox"])
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    end   
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "purgeAuth") then
+    errorCode = guiDetectedClients.wlanPreAuthDelete (cgi["detectedClients.checkbox"])
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    else
+        statusSuccessMessage = errorMap.errorStringGet (errorCode)
+    end   
+    web.goToPage(NextPage, true, true)
+
+else
+  cgilua.header ("Content-Type","text/html; charset=UTF-8")  
+?>
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+
+    <body>
+        <!-- Section for Pop up dialog starts -->
+        <div id="tf1_overlay" class="configDialogMask"></div>                
+        <form name action="platform.cgi" method="post" name="tf1_frmDettectedClients" id="tf1_frmDettectedClients">        
+            <input type="hidden" name="thispage" id="thispage" value="detectedClients.html">            
+            <div id="tf1_dialog" class="configDialog"></div>        
+        </form>        
+        <!-- Section for Pop up dialog ends -->    
+
+        
+        <!-- Right click Div Start -->
+        <div class="contextMenu" id="contextMenu">
+            <ul>
+                <li id="details">Details</li>
+                <li id="preAuthDetails">Pre-Auth History</li>
+                <li id="romaHistoryDetails">Roam History Details</li>
+                <li id="purgeHistory">Purge Roam History</li>
+                <li id="traiangulationDetails">Triangulation Details</li>
+                <li id="rogueClassification">Rogue Classification</li>
+                <li id="purgePreAuthHistory">Purge Pre-Auth History</li>
+            </ul>
+        </div>
+        <!-- Right click Div End -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use
+                    "msgError" 2. for information use "msgInfo" 3. for sucess
+                    use "msgSuccess" CSS classes ]-->
+                    <?lua if (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then ?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                <a href="?page=associatedClientsGlobalStatus.html">Global 
+                                Status</a></li>
+                                <li><a href="?page=associatedClients.html">Associated 
+                                Client</a> </li>
+                                <li><a href="?page=adHocClients.html">Ad Hoc Clients</a>
+                                </li>
+                                <li class="current"><a href="?page=detectedClients.html">Detected Clients</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>WLAN Associated Detected Clients List</h1>
+                    <div class="CLR">
+                        <div class="demo_jui" id="tf1_dettectedClients">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>MAC Address </th>
+                                        <th>Client Name </th>
+                                        <th>Client Status </th>
+                                        <th>Age </th>
+                                        <th>Create Time </th>
+                                    </tr>
+                                </thead>
+                                <?lua
+                                            if (detectedClients ~= nil) then
+                                            for k, v in pairs (detectedClients) do
+                                            local row = detectedClients[k]
+                                            ?>
+                                            <tr class="gradeA"
+                                                id="dettectedClients$| row.macAddress |$">
+                                                <td>$| row.macAddress or '' |$</td>
+                                                <td>$| row.name or '' |$</td>
+                                                <td>$| row.status or '' |$</td>
+                                                <td>$| row.age or '' |$</td>
+                                                <td>$| row.createTime or '' |$</td>
+                                            </tr>
+                                            <?lua
+                                            end
+                                            end
+                                            ?>
+                            </table>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                $('#tf1_dettectedClients .gradeA').contextMenu('contextMenu', {
+                    bindings : {
+                        'detailsMenu' : function(t, e, rowId) {
+                            openPreviewForm('button.details.dettectedClients.detectedClients', 'VAPID', rowId,'tf1_dialog','dettectedClients','detectedClientsForm.html', 'tf1_dettectedClientsDailogContent','onloadDettectedClientsFn');
+                        },
+                        'preAuthDetailsMenu' : function(t, e, rowId) {
+                        openPreviewForm('button.preAuthDetails.dettectedClients.detectedClients','VAPID',rowId,'tf1_dialog','dettectedClients','detectedClientsForm.html','tf1_preAuthDailogContent','onloadPreauthFun');
+                        },
+                        'romaHistoryDetailsMenu' : function(t, e, rowId) {
+                        openPreviewForm('button.roam.dettectedClients.detectedClients', 'VAPID', rowId,'tf1_dialog','dettectedClients','detectedClientsForm.html', 'tf1_roamHistoryDailogContent','onloadRoamHistoryFn');
+                        },
+                        'purgeHistoryMenu' : function(t, e, rowId) {
+                            changeRowStauts('purgeRoam',
+                                            'tf1_frmDettectedClients',
+                                            rowId, 'tf1_dialog',
+                                            'dettectedClients',
+                                            'detectedClients',
+                                            'detectedClients');
+                        },
+                        'purgePreAuthHistoryMenu' : function(t, e, rowId) {
+                            changeRowStauts('purgeAuth',
+                                            'tf1_frmDettectedClients',
+                                            rowId, 'tf1_dialog',
+                                            'dettectedClients',
+                                            'detectedClients',
+                                            'detectedClients');
+                        },
+                        'traiangulationDetailsMenu' : function(t, e, rowId) {
+                        openPreviewForm('button.traiangulationDetails.dettectedClients.detectedClients', 'VAPID', rowId,'tf1_dialog','dettectedClients','detectedClientsForm.html', 'tf1_triangulationDailogContent','onloadTraingulationFn');
+                        },
+                        'rogueClassificationMenu' : function(t, e, rowId) {
+                        openPreviewForm('button.rogueClassification.dettectedClients.detectedClients', 'VAPID', rowId,'tf1_dialog','dettectedClients','detectedClientsForm.html', 'tf1_rogueClassificationDailogContent','onloadRogueClassificationFn');
+                        }
+                    }
+                });
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "sPaginationType" : "full_numbers"
+                });
+                
+                dataRightClick(true);
+                $("#btnClose").live("click",function(e){
+                    HideDialog('tf1_dialog', 'tf1_overlay');
+                    e.preventDefault();
+                   });
+
+
+            });
+            function onloadDettectedClientsFn(){
+                oTable = $('#recordsData2').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+            }
+            function onloadRoamHistoryFn(){
+                oTable = $('#recordsData3').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+            }
+            function onloadRogueClassificationFn(){
+                oTable = $('#recordsData4').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });                
+              
+            }
+			  function onloadTraingulationFn(){
+                oTable = $('#recordsData5').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+			 }
+ function onloadPreauthFun(){
+                oTable = $('#recordsData8').dataTable({
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+			 }
+
+        </script>
+    </body>
+
+</html>
+<?lua end ?>

@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# nimfInit - initialization script for nimf.
+#
+# Copyright (c) 2008, TeamF1, Inc.# Copyright (c) 2015, TeamF1 Networks Pvt. Ltd.
+# (Subsidiary of D-Link India)
+#
+# modification history
+# --------------------
+# 01b,02dec15,abd  (AC Merge) porting changes from AC to super.
+# 01a,06feb08,anp  written.
+#
+# DESCRIPTION
+# This script is the initialization script for nimf component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_NIMF" = "y" ]; then
+    echo -n "Starting NIMF daemon... "
+    $NIMF_INSTALL_PATH/bin/nimfd  $DB_FILENAME &
+    echo "Done"
+fi
+MODEL_ID=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+DB_FILENAME=/tmp/system.db
+if [ $MODEL_ID == "DWC-1000" ] || [ $MODEL_ID == "DSR-1000N" ] || [ $MODEL_ID == "DSR-1000AC" ] || [ $MODEL_ID == "DSR-1000" ]; then
+/pfrm2.0/bin/linkStatusDetect  $DB_FILENAME WAN3 5 &
+elif [ $MODEL_ID == "DSR-250" ] || [ $MODEL_ID == "DSR-150" ] || [ $MODEL_ID == "DSR-250N" ] || [ $MODEL_ID == "DSR-150N" ]; then
+/pfrm2.0/bin/linkStatusDetect  $DB_FILENAME WAN2 5 &
+fi

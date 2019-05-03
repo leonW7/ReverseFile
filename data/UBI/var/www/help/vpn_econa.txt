@@ -1,0 +1,1475 @@
+:|noHelpSet|:
+No Help Set configured or not available.
+:|noHelpSetEnd|:
+
+:|policies|:
+         <p><b>IPSec Policies List:<br>
+                      </b>Both Manual and Auto IPsec policies are configured here. Policy 
+				identifiers and source/destination details are required for both 
+				types. You can use the VPN wizard to quickly create both Manual 
+				or Auto policies. Once the policy is created, you can modify it 
+				to meet your tunnel requirements.<br>
+				If setting up a Manual policy, only the Phase 2 (Manual Policy) 
+				parameters are required to define the encryption and authentication 
+				key details. These must be the same as on the remote peer. An Auto 
+				IPsec policy uses IKE to to automatically exchange keys between 
+				two IPsec hosts. The Phase 1 (IKE) and Phase 2 (Auto Policy) details 
+				will determine the security of the tunnel. <br>
+				The IPsec policy can be in Tunnel or Transport mode. Choose tunnel 
+				mode to pass traffic between two trusted networks through an untrusted 
+				network. Transport mode (the default) is used for end-to-end communication.<br>
+				<br>
+				<b>Status:</b> The status of the policy can be enabled (i.e. in 
+				use) or disabled (configured but not in use).<br>
+				<br>
+				<b>Name:</b> A unique name assigned to the policy. The name is not 
+				used to identify the tunnel to the remote Wan/client, but for managing 
+				the tunnel properties. <br>
+				<br>
+				<b>Type:</b> The IPsec policy type can be Manual or Auto <br>
+				<br>
+				<b>IPSec Mode:</b> The IPsec mode can be Tunnel or Transport. IPsec 
+				tunnel mode is useful for protecting traffic between different networks, 
+				when traffic must pass through an intermediate, untrusted network. 
+				Tunnel mode is primarily used for interoperability with gateways, 
+				or end-systems that do not support L2TP/IPsec or PPTP connections. 
+				Transport mode is the default mode for IPsec, and it is used for 
+				end-to-end communications (for example, for communications between 
+				a client and a server).<br>
+				<br>
+				<b>Local:</b> The IP address or address range on the LAN that is 
+				covered by this policy. <br>
+				<br>
+				<b>Remote:</b> The IP address or address range on the remote network 
+				that is covered by this policy. <br>
+				<br>
+				<b>Auth:</b> Authentication Header displays the data integrity algorithm 
+				used by the tunnel. <br>
+				<br>
+				<b>Encr:</b> Encapsulating Security Payload displays the encryption 
+				algorithm used by this tunnel.<br>
+				<br>
+				The actions that can be taken on IPSec Policies are: <br>
+				<br>
+                                <b>Select All :</b> Selects all the IPSec Policies in the table. <br>
+                                <br>
+                                <b>Edit:</b> The Edit button will link to the IPSec Policy Configuration page, 
+allowing you to make changes to the selected Policy.
+                                <br>
+                                <br>
+                                <b>Delete:</b> Deletes the selected IPSec Policy
+                                <br><br>
+                                <b>Delete All (after selecting Select All option):</b> Deletes the all IPSec Policies.
+                                <br>
+                                <br>
+                                <b>Export:</b> The Export button will link to the IPSec Policy Configuration To Export age, 
+allowing you to make changes to the selected Policy and export.
+                                <br>
+                                <br>				
+				<b>Add (by clicking Add New IPSec Policy):</b> Clicking this button will link to the IPSec Policy Configuration page.<b><br>
+                                <br><br>
+                                <b>IPSec Policy Configuration</b> <br>
+				General</b><br>
+				<br>
+				These settings are required for both Manual and Auto policies.
+				<br>
+				<br>
+				<b>Policy Name:</b> Enter a unique name to identify the policy.
+				<br>
+				<br>
+				<b>Policy Type:</b> Select one of the following options: <br>
+				<br>
+				<b>Manual policy:</b> All settings (including the keys) for the 
+				VPN tunnel are manually input for each end point. No third-party 
+				server or organization is involved.<br>
+				<br>
+				<b>Auto Policy:</b> Some parameters for the VPN tunnel are generated 
+				automatically. This requires using the IKE (Internet Key Exchange) 
+				protocol to perform negotiations between the two VPN Endpoints.<br>
+               <br>
+				<b>IP Protocol Version:</b> Select the Internet Protocol version to be used (IPv4/IPv6).
+				<br>
+                <br>
+				<b>IKE Version:</b> Select the IKE version to be used.
+				<br>
+				<br>
+				<b>IPSec Mode:</b> This can be either Tunnel mode or Transport mode.<br>
+				<b><br>
+				Transport Mode:</b> This mode can be used when we want to secure 
+				communication only between two gateways (The communication between 
+				only those 2 gateways is secured and you cannot specify subnet/range 
+				etc. options for this mode.)<br>
+				<b><br>
+				Tunnel Mode:</b> This mode is to be used if you require IPsec communication 
+				to happen not just between 2 gateways, but also LAN hosts of the 
+				gateways (you can specify subnet, range etc. for this option.)<br>
+				<br>
+				<b>Select Local Gateway:</b> In the event two WAN ports are configured 
+				to connect to an ISP, select the gateway that will be used as the 
+				local endpoint for this IPsec tunnel. <br>
+				<br>
+				<b>Remote Endpoint:</b> Select the type of identifier that you want 
+				to provide for the gateway at the remote endpoint: IP Address or 
+				FQDN (Fully Qualified Domain Name) <br>
+                <br>
+                <b>Enable Mode Config:</b> Enables Mode Config feature. Mode Config is
+                similar to DHCP and is used to assign IP addresses to remote VPN clients,  
+                like iPhone VPN Client. <br>
+                <br>
+				<b>Enable NetBIOS:</b> Enable this to allow NetBIOS broadcasts 
+				to travel over the VPN tunnel, or uncheck this box to disable NetBIOS 
+				broadcasts over the VPN tunnel. For client policies, the NetBIOS 
+				feature is available by default. <br>
+                <br>
+                <b>Enable RollOver</b>: Enable this to allow the VPN to rollover 
+                when WAN Mode is set to Auto Rollover on the WAN Mode page. <br>
+                <br>
+				<b>Enable DHCP:</b> Enable this to allow VPN clients to connect 
+				to your router over IPsec and get an assigned IP using DHCP.<br>
+				<br>
+				Tunnel mode IPsec policies require local and remote traffic selection 
+				to be defined. For both local and remote endpoints configure the 
+				following settings:<br>
+				<br>
+				<b>Local/Remote IP:</b> Select the type of identifier that you want 
+				to provide for the endpoint: <br>
+				<br>
+				<b>Any:</b> Specifies that the policy is for traffic from the given 
+				end point (local or remote). Note that selecting Any for both local 
+				and remote end points is not valid. <br>
+				<b><br>
+				Single:</b> Limits the policy to one host. Enter the IP address 
+				of the host that will be part of the VPN in Start IP Address field.<br>
+				<b><br>
+				Range:</b> Allows computers within an IP address range to connect 
+				to the VPN. Enter the Start IP Address and End IP Address in the 
+				provided fields.<br>
+				<b><br>
+				Subnet:</b> Allows an entire subnet to connect to the VPN. Enter 
+				the network address in the Start IP Address field, and enter the 
+				Subnet Mask in the Subnet Mask field. <br>
+				<br>
+				<b>Start Address:</b> Enter the first IP address in the range. If 
+				you selected Single, simply enter the single IP address in this 
+				field and leave the End IP Address field blank.<br>
+				<b><br>
+				End Address:</b> Enter the last IP address in the range.<br>
+				<b><br>
+				Subnet Mask:</b> If you chose Subnet as the type, enter the Subnet 
+				Mask of the network.<br>
+                <br>
+                Note: Please make sure that you avoid using overlapping 
+                subnets for remote or local traffic selectors. Using these subnets would
+                require adding static routes on the router and the hosts to be used.
+                Example of one such combination to avoid:
+                
+                Local Traffic Selector - 192.168.75.0/24
+                Remote Traffic Selector - 192.168.0.0./16.<br>
+                <br>
+				<b>Prefix Length:</b> If you chose Subnet as the type and Protocol as IPv6, enter the Prefix Length of the network.<br>
+                <br>
+                <b>Enable Keepalive:</b> It periodically sends ping packets to the host on the peer side of the network to keep the tunnel alive. Check the option to enable Keepalive.<br>
+                <br>
+				<b>Source IP Address:</b> Enter the IP Address from which ping packet needs to be sent.<br>
+                <br>
+				<b>Destination IP Address:</b> Enter the IP Address to which ping packet needs to be sent.<br>
+                <br>
+				<b>Detection Period:</b> Router sends ping packets periodically at regular intervals of time which is specified by the user.<br>
+                <br>
+				<b>Reconnect After Failure Count:</b> Fresh negotiation starts when no acknowledgement is received for the specified number of consecutive packets.<br>
+                <br>
+				<b>Phase 1 - IKE SA Parameters</b><br>
+				<br>
+				These settings are applicable for Auto IPsec policies that use IKE 
+				to perform negotiations between the two VPN Endpoints. <br>
+				Exchange Mode: Choose one of the following options:<br>
+				<br>
+				<b>Main mode:</b> This mode negotiates the tunnel with higher security, 
+				but is slower.<br>
+				<br>
+				<b>Aggressive mode:</b> This mode establishes a faster connection 
+				but with lowered security.<br>
+				<br>
+				<b>Direction/Type:</b> Choose one of the following connection methods:
+				<br>
+				<br>
+				<b>Initiator:</b> The router will initiate the connection to the 
+				remote end.<br>
+				<b><br>
+				Responder:</b> The router will wait passively and respond to remote 
+				IKE requests.<br>
+				<b><br>
+				Both:</b> The router will work in either Initiator or Responder 
+				mode.<br>
+				<br>
+				<b>Nat Traversal:</b> Set NAT traversal to On, if you expect any 
+				Network Address Translation (NAT) to occur during IPsec communication. 
+				If not set this option to Off.<br>
+				<br>
+				<b>NAT Keep Alive Frequency (in seconds):</b> When NAT traversal 
+				is set to On, use this option to control the keep-alive-frequency 
+				value. Keep-alive packets are sent at the mentioned time interval 
+				and these are used to keep the NAT mappings alive on the NAT device. 
+				Setting this value to 0 disables this feature.<br>
+				<br>
+				<b>Local Identifier Type:</b> Choose the ISAKMP identifier for this 
+				router. It can be one of the following:<br>
+				Local WAN IP<br>
+				Internet Address/FQDN<br>
+				User FQDN<br>
+				DER ASN1 DN<br>
+				<br>
+				<b>Local Identifier:</b> Enter the value of the respective option 
+				chosen in the Identifier Type drop-down list. <br>
+				<br>
+				<b>Remote Identifier Type:</b> The ISAKMP identifier for the remote 
+				device. It can be one of the following:<br>
+				Remote WAN IP<br>
+				Internet Address/FQDN<br>
+				User FQDN<br>
+				DER ASN1 DN<br>
+				<br>
+				<b>Remote Identifier:</b> The value of the respective option chosen 
+				in the Identifier Type drop down list for the remote host. <br>
+				<br>
+				Note: If either the Local or Remote identifier type is not an IP 
+				address, then negotiation is only possible in Aggressive Mode. If 
+				FQDN, User FQDN or DER ASN1 DN is selected, the router will disable 
+				Main mode and set the default to Aggressive mode.<br>
+				<br>
+				The Security Association (SA) parameters define the strength and 
+				the mode for negotiating the SA. The fields in the SA are: <br>
+				<b>Encryption Algorithm:</b> The algorithm used to negotiate the 
+				SA. There are five algorithms supported by this router: DES, 3DES, 
+				AES-128, AES-192, and AES-256.<br>
+				<br>
+				<b>Authentication Algorithm:</b> Specify the authentication algorithm 
+				for the VPN header. There are five algorithms supported by this 
+				router: MD5, SHA-1, SHA2-256, SHA2-384 and SHA2-512. <br>
+				<br>
+				Note: Ensure that the authentication algorithm is configured identically 
+				on both sides. <br>
+				<br>
+				<b>Authentication Method:</b> Select Pre-Shared Key for a simple 
+				password based key. Selecting RSA-Signature will disable the pre-shared 
+				key text box and uses the Active Self Certificate uploaded in the 
+				Certificates page. In that case, a certificate must be configured 
+				in order for RSA-Signature to work. <br>
+				<br>
+				Please Note: Following character is not supported for pre-shared 
+				key: &quot; (Double Quote character).<br>
+				<b><br>
+				Pre-Shared Key:</b> alpha-numeric key to be shared with IKE peer<br>
+				<br>
+				<b>Diffie-Hellman (DH) Group:</b> The Diffie-Hellman algorithm is 
+				used when exchanging keys. The DH Group sets the strength of the 
+				algorithm in bits.<br>
+				<br>
+				Note: Ensure that the DH Group is configured identically on both 
+				sides of the IKE policy.<br>
+				<br>
+				<b>SA-Lifetime (sec):</b> the interval after which the Security 
+				Association becomes invalid.<br>
+				<br>
+				<b>Enable Dead Peer Detection:</b> Dead Peer Detection is used to 
+				detect whether the Peer is alive or not. If peer is detected as 
+				Dead, it deletes the IPsec and IKE Security Association.<br>
+				<br>
+				<b>Detection Period (sec):</b> Detection Period is the interval 
+				between consecutive DPD R-U-THERE messages. DPD R-U-THERE messages 
+				are sent only when the IPsec traffic is idle.<br>
+				<br>
+				<b>Reconnect after failure count:</b> Maximum number of DPD failures 
+				allowed before tearing down the connection.<br>
+				<br>
+				<b>Extended Authentication:</b> Ticking this check-box enables 
+				Extended Authentication (XAUTH). Rather than configuring a unique 
+				VPN policy for each user, you can enable the VPN gateway router 
+				to authenticate users from a stored list of user accounts or with 
+				an external authentication server such as a RADIUS server. When 
+				connecting many VPN clients to a VPN gateway router, XAUTH allows 
+				authentication of users with methods in addition to the authentication 
+				method mentioned in the IKE SA parameters.<br>
+				<br>
+				<b>Username:</b> This is the unique identifier for the user, and 
+				can contain any alphanumeric characters.<br>
+				<br>
+				<b>Password:</b> The password can contain alphanumeric characters.<br>
+				<br>
+				<b>Phase2-(Manual Policy Parameters)</b> <br>
+				<br>
+				This section is used when a Manual IPsec policy is in use. The Manual 
+				Policy creates an SA (Security Association) based on the following 
+				static inputs:<br>
+				<br>
+				<b>SPI-Incoming, SPI-Outgoing:</b> Enter a hexadecimal value between 
+				3 and 8 characters. For example: 0x1234 <br>
+				<br>
+				<b>Encryption Algorithm:</b> Select the algorithm used to encrypt 
+				the data. <br>
+				<br>
+				<b>Key Length:</b> BLOWFISH and CAST128 are variable length algorithms, 
+				and so the key length field is required when using either of these 
+				encryption types. For BLOWFISH, the Key Length must be between 40 
+				and 448 and it must be a multiple of 8. For CAST128, the Key Length 
+				must be between 40 and 128 and it must be a multiple of 8.<br>
+				<b><br>
+				Key-In:</b> Enter the encryption key of the inbound policy. The 
+				length of the key depends on the algorithm chosen: <br>
+				<br>
+				 DES - 8 characters <br>
+				 3DES - 24 characters <br>
+				 AES-128 - 16 characters <br>
+				 AES-192 - 24 characters <br>
+				 AES-256 - 32 characters<br>
+				 AES-CCM - 16 characters <br>
+				 AES-GCM - 20 characters<br>
+				 TWOFISH (128) - 16 characters<br>
+				 TWOFISH (192) - 24 characters<br>
+				 TWOFISH (256) - 32 characters<br>
+				 BLOWFISH and CAST128 are variable length algorithms<br>
+				<br>
+				<b>Key-Out:</b> Enter the encryption key of the outbound policy. 
+				The length of the key depends on the algorithm chosen, as shown 
+				above. <br>
+				<br>
+				<b>Integrity Algorithm:</b> Select the algorithm used to verify 
+				the integrity of the data. <br>				
+				<b>Key-In:</b> Enter the integrity key (for ESP with Integrity-mode) 
+				for the inbound policy. The length of the key depends on the algorithm 
+				chosen: 
+				<br>
+				 MD5 - 16 characters <br>
+				 SHA-1 - 20 characters <br>
+				 SHA2-224 - 28 characters<br>
+				 SHA2-256 - 32 characters <br>
+				 SHA2-384 - 48 characters <br>
+				 SHA2-512 - 64 characters <br>		
+				<b><br>Key-Out:</b> Enter the integrity key (for ESP with Integrity-mode) 
+				for the outbound policy. The length of the key depends on the algorithm 
+				chosen, as shown above.<br>
+				<br>
+				<b>Manual Policy Example:</b> <br>
+				Creating a VPN tunnel between two routers: <br>
+				<br>
+				Router 1: WAN1=10.0.0.1 LAN=192.168.10.1 Subnet=255.255.255.0
+				<br>
+				<br>
+				Policy Name: manualVPN <br>
+				<br>
+				Policy Type: Manual Policy <br>
+				<br>
+				Local Gateway: WAN <br>
+				<br>
+				Remote Endpoint: 10.0.0.2 <br>
+				<br>
+				Local IP: Subnet 192.168.10.0 255.255.255.0 <br>
+				<br>
+				Remote IP: Subnet 192.168.20.0 255.255.255.0 <br>
+				<br>
+				SPI-Incoming: 0x1111 <br>
+				<br>
+				Encryption Algorithm: DES <br>
+				<br>
+				Key-In: 11112222 <br>
+				<br>
+				Key-Out: 33334444 <br>
+				<br>
+				SPI-Outgoing: 0x2222 <br>
+				<br>
+				Integrity Algorithm: MD5 <br>
+				<br>
+				Key-In: 1122334444332211 <br>
+				<br>
+				Key-Out: 5566778888776655 <br>
+				<br>
+				Router 2: WAN1=10.0.0.2 LAN=192.168.20.1 Subnet=255.255.255.0
+				<br>
+				<br>
+				Policy Name: manualVPN <br>
+				<br>
+				Policy Type: Manual Policy <br>
+				<br>
+				Local Gateway: WAN1 <br>
+				<br>
+				Remote Endpoint: 10.0.0.1<br>
+				<br>
+				Local IP: Subnet 192.168.20.0 255.255.255.0 <br>
+				<br>
+				Remote IP: Subnet 192.168.20.0 255.255.255.0 <br>
+				<br>
+				SPI-Incoming: 0x2222 <br>
+				<br>
+				Encryption Algorithm: DES <br>
+				<br>
+				Key-In: 33334444 <br>
+				<br>
+				Key-Out: 11112222 <br>
+				<br>
+				SPI-Outgoing: 0x1111 <br>
+				<br>
+				Integrity Algorithm: MD5 <br>
+				<br>
+				Key-In: 5566778888776655 <br>
+				<br>
+				Key-Out: 1122334444332211 <br>
+				<br>
+				<b>Phase2-(Auto Policy Parameters)</b><br>
+				When an Auto IPsec policy is used, the phase 2 negotiations require 
+				the following parameters. Note that this should match the phase 
+				2 settings on the remote tunnel endpoint. <br>
+				<br>
+				<b>SA Lifetime:</b> Enter the duration of the Security Association 
+				and choose the unit from the drop-down list:<br>
+				<br>
+				<b>Seconds:</b> Choose this option to measure the SA Lifetime in 
+				seconds. After the specified number of seconds passes, the Security 
+				Association is renegotiated. The default value is 3600 seconds. 
+				The minimum value is 300 seconds.<br>
+				<b><br>
+				Kbytes:</b> Choose this option to measure the SA Lifetime in kilobytes. 
+				After the specified number of kilobytes of data is transferred, 
+				the SA is renegotiated. The minimum value is 1920000 KB.<br>
+				<br>
+				Note: When configuring a Lifetime in kilobytes (also known as lifebytes), 
+				be aware that two SAs are created for each policy. One SA applies 
+				to inbound traffic, and one SA applies to outbound traffic. Due 
+				to differences in the upstream and downstream traffic flows, the 
+				SA may expire asymmetrically. For example, if the downstream traffic 
+				is very high, the lifebyte for a download stream may expire frequently. 
+				The lifebyte of the upload stream may not expire as frequently. 
+				It is recommended that the values be reasonably set, to reduce the 
+				difference in expiry frequencies of the SAs; otherwise the system 
+				may eventually run out of resources as a result of this asymmetry. 
+				The lifebyte specifications are generally recommended for advanced 
+				users only. <br>
+				<br>
+				<b>Encryption Algorithm:</b> Select the algorithm used to encrypt 
+				the data. <br>
+				<br>
+				<b>Integrity Algorithm:</b> Select the algorithm used to verify 
+				the integrity of the data. <br>
+				<br>
+				<b>PFS Key Group:</b> Check this box to enable Perfect Forward Secrecy 
+				(PFS) to improve security. While slower, this protocol helps to 
+				prevent eavesdroppers by ensuring that a Diffie-Hellman exchange 
+                is performed for every phase-2 negotiation. <br>
+                <p><b>Redundant VPN Gateway Parameters</b></p>
+                <p><b>Enable Redundant Gateway:</b>To enable Redundant VPN Gateway click the Enable button.
+                If you enable Redundant VPN then you need to choose backup tunnel from the drop down list.
+                When primary tunnel is down backup tunnel will be up. <br>
+                <b>Select Back- up Policy:</b>Choose a policy as a backup of this policy. This lists only those policies
+                 which can be configured as backup policies. A backup policy
+                 should meet the following conditions.<br>
+                1) The Type of the Policy should be Auto <br>
+                2) The DPD of the policy should be enable. <br>
+                3) The Direction of the policy should be either initiator or both. <br>
+                4) The XAuth configuration of the policy should be NONE or Edge Device. <br>
+                5) The policy should be Gateway only not client.<br><br>
+                <b>Failback time to switch from back-up to primary:</b>
+                Enter the time in seconds to confirm that primary tunnel is up and running from failure,
+                when the backup policy is active. If the primary tunnel is up for the specified number of seconds,
+                the backup tunnel is disabled and the primary tunnel becomesactive
+				<br>
+				Click<b> Save</b> to save the settings.<br>
+				<br>                              
+		IPSec Policy Configuration To Export<br>
+				</b>
+                <br>
+                Here we can edit the editable parameters. Following fileds are editable
+                <b>Enable Editable Parameters:</b> Enable editing of export parameters.<br>
+                <br>
+                <b>Select Local Gateway:</b> In the event two WAN ports are configured 
+				to connect to an ISP, select the gateway that will be used as the 
+				local endpoint for this IPsec tunnel. <br>
+				<br>
+                <b>Remote Endpoint:</b> Select the type of identifier that you want 
+				to provide for the gateway at the remote endpoint: IP Address or 
+				FQDN (Fully Qualified Domain Name). <br>
+                <br>
+                <b>Local/Remote IP:</b> Select the type of identifier that you
+                want to provide for the endpoint: <br>
+                <br>
+                <b>Any:</b> Specifies that the policy is for traffic from the given end point
+                (local or remote). Note that selecting Any for both local and remote end points 
+                is not valid. <br>
+                <br>
+                <b>Single:</b> Limits the policy to one host. Enter the IP address of the host 
+                that will be part of the VPN in Start IP Address field. <br>
+                <br>
+                <b>Range:</b> Allows computers within an IP address range to connect to the VPN.
+                Enter the Start IP Address and End IP Address in the provided
+                fields. <br>
+                <br>
+                <b>Subnet:</b> Allows an entire subnet to connect to the VPN. 
+                Enter the network address in the Start IP Address field, and enter
+                the Subnet Mask in the Subnet Mask field.<br>
+                <br>
+                <b>Start IP Address:</b> Enter the first IP address in the range. If you selected
+                Single, simply enter the single IP address in this field and leave the End IP Address field blank. <br>
+                <br>
+                <b>End IP Address:</b> Enter the last IP address in the range. <br>
+                <br>
+                <b>Subnet Mask:</b> If you chose Subnet as the type, enter the Subnet Mask of the network . <br>
+                <br>
+                <b>Local Identifier Type:</b> Choose the ISAKMP identifier for this 
+				router. It can be one of the following:<br>
+				Local WAN IP<br>
+				Internet Address/FQDN<br>
+				User FQDN<br>
+				DER ASN1 DN<br>
+				<br>
+				<b>Local Identifier:</b> Enter the value of the respective option 
+				chosen in the Identifier Type drop-down list. <br>
+				<br>
+				<b>Remote Identifier Type:</b> The ISAKMP identifier for the remote 
+				device. It can be one of the following:<br>
+				Remote WAN IP<br>
+				Internet Address/FQDN<br>
+				User FQDN<br>
+				DER ASN1 DN<br>
+				<br>
+				<b>Remote Identifier:</b> The value of the respective option chosen 
+				in the Identifier Type drop down list for the remote host. <br>
+				<br>
+				Note: If either the Local or Remote identifier type is not an IP 
+				address, then negotiation is only possible in Aggressive Mode. If 
+				FQDN, User FQDN or DER ASN1 DN is selected, the router will disable 
+				Main mode and set the default to Aggressive mode.<br>
+				<br>
+                <b>SPI-Incoming, SPI-Outgoing:</b> Enter a hexadecimal value between 3 and 8 characters.
+                 For example: 0x1234 . <br>
+                <br>
+				Encryption Key-In:</b> Enter the encryption key of the inbound policy. The 
+				length of the key depends on the algorithm chosen: <br>
+				DES - 8 characters <br>
+				 3DES - 24 characters <br>
+				 AES-128 - 16 characters <br>
+				 AES-192 - 24 characters <br>
+				 AES-256 - 32 characters<br>
+				 AES-CCM - 16 characters <br>
+				 AES-GCM - 20 characters<br>
+				 TWOFISH (128) - 16 characters<br>
+				 TWOFISH (192) - 24 characters<br>
+				 TWOFISH (256) - 32 characters<br>
+				 BLOWFISH and CAST128 are variable length algorithms<br>
+				<br>
+				<b>Encryption Key-Out:</b> Enter the encryption key of the outbound policy. 
+				The length of the key depends on the algorithm chosen, as shown 
+				above. <br>
+				<br>
+				<b>Integrity Key-In:</b> Enter the integrity key (for ESP with Integrity-mode) 
+				for the inbound policy. The length of the key depends on the algorithm 
+				chosen: 
+				<br>
+				 MD5 - 16 characters <br>
+				 SHA-1 - 20 characters <br>
+				 SHA2-224 - 28 characters<br>
+				 SHA2-256 - 32 characters <br>
+				 SHA2-384 - 48 characters <br>
+				 SHA2-512 - 64 characters <br>				
+				<b><br>Integrity Key-Out:</b> Enter the integrity key (for ESP with Integrity-mode) 
+				for the outbound policy. The length of the key depends on the algorithm 
+				chosen, as shown above.<br>
+                <br>  
+                 Click<b> Export</b> to export the policy configuration.<br>
+				<br></p> 
+                                           
+:|policiesEnd|:
+
+:|tunnelMode|:
+        <p><b>Mode Config:<br>
+                </b>VPN clients connecting using Mode Config will be assigned IP address from 
+                the pools specified in the Ipsec Mode Config Configuration. <br>
+                <br>
+                <b>Tunnel Mode:</b> Either full tunnel or split tunnel. In full 
+                tunnel every packet (destined to internet or remote server) go through 
+                the tunnel where as in split tunnel traffic destined to internet will not 
+                pass through the tunnel.  <br>
+                <br>
+                <b>Start IP Address:</b> The first address to be allocated in this pool. <br>
+                <br>
+                <b>End IP Address:</b> The last address to be allocated in this pool.  <br>
+                <br> 
+                <b>Primary DNS:</b>Primary DNS Server is used by clients connected to this 
+                router to resolve domain names.If Tunnel Mode is Split tunnel then DNS server 
+                should be internal domain name server.  <br>
+                <br> 
+                <br>
+                <b>Secondary DNS:</b> Secondary DNS Server is used by clients connected to 
+                this router to resolve domain names.If Tunnel Mode is Split tunnel then DNS 
+                server should be internal domain name server. <br>
+                <br>  
+                <b>Primary WINServer:</b> Primary Windows NetBIOS Name Server used by clients
+                to resolve NetBIOS names.  <br>
+                <br>   
+                <b>Secondary WINServer:</b>Secondary Windows NetBIOS Name Server used by clients 
+                to resolve NetBIOS names.  <br>
+                <br>   
+                Click <b>Save</b> to save the settings.<br>
+		<br>
+		Click <b>Cancel</b> to revert to previous settings.<b><br>
+		<br></p>
+
+:|tunnelModeEnd|:
+
+:|splitDnsNames|:
+             <p><b>Split DNS Names List:</b> <br><br>
+                   <b>Domain Names:</b> In a split DNS infrastructure, you create two zones for 
+                the same domain, one to be used by the internal network, the other used by the
+                external network. Split DNS directs internal hosts to an internal domain name 
+                serverfor name resolution and external hosts are directed to an external domain
+                name server for name resolution.<br><br>
+                                The actions that can be taken by right click on Split DNS Names are: <br>
+                                <br>
+                                <b>Select All :</b> Selects all the Split DNS Names in the table. <br>
+                                <br>
+                                <b>Edit:</b> The Edit button will link to the Split DNS Names Configuration
+                                page, allowing you to make changes to the selected Domain.
+                                <br>
+                                <br>
+                                <b>Delete:</b> Deletes the selected Domain.
+                                <br><br>
+                                <b>Delete All (after selecting Select All option):</b> Deletes the all Split DNS Names.
+                                <br>
+                                <br>				
+				<b>Add (by clicking Add New Split DNS Name):</b> Clicking this button will link to the Split DNS Names Configuration page.<b><br>
+                                <br><br>
+                                <b>Split DNS Names Configuration:</b><br>
+                                Domain Name:</b> Enter the name of the domain.<br><br>
+                                Click <b>Save</b> to save the settings.<br>
+				<br></p> 
+:|splitDnsNamesEnd|:
+
+:|dhcpRange|:
+            <p><b>DHCP Range:</b><br>
+                </b>This page displays the IP range to be assigned to clients connecting using 
+                DHCP over IPsec. By default the range is in 192.168.12.0 subnet. You can change
+                it to any other subnet in this page. <br>
+                <br>
+                <b>Starting IP Address:</b> The starting IP address of the range. <br>
+                <br>
+                <b>Ending IP Address:</b> The ending IP address of the range. <br>
+                <br> 
+                <b>Subnet Mask:</b> Subnet Mask for the mentioned range. <br>
+                <br>
+                Click <b>Save</b> to save the settings.<br><br>
+		Click <b>Cancel</b> to revert to previous settings.<b><br><br></p>
+:|dhcpRangeEnd|:
+
+:|trustedCertificates|:
+              <p><b>Trusted Certificates (CA Certificate) List:</b> <br><br>
+                   <b>CA Identity (Subject Name):</b> The organization or person to 
+				whom the certificate is issued.<br><br>
+                    <b>Issuer Name:</b> The name of the CA that issued the certificate.<br><br>
+                    <b>Expiry Date & Time:</b> The date after which the certificate becomes 
+				invalid.<br><br>
+                                The actions that can be taken by right click on Trusted Certificates are: <br>
+                                <br>
+                                <b>Select All :</b> Selects all the Trusted Certificates in the table. <br>
+                                <br>
+                                <b>Delete:</b> Deletes the selected Trusted Certificate.
+                                <br><br>
+                                <b>Delete All (after selecting Select All option):</b> Deletes the all Trusted Certificates.
+                                <br>
+                                <br>				
+				<b>Upload (by clicking Upload New CA Certificate):</b> Clicking this button will link to the Trusted Certificates (CA Certificate) Configuration.<b><br>
+                                <br><br>
+                                <b>Trusted Certificates (CA Certificate) Configuration:</b><br>
+                                Certificate File:</b> New certificates can be uploaded to the router with 
+				the Upload Trusted Certificate option.<br><br>
+                                Click <b>Upload</b> to Upload the CA certificate.<br>
+				<br></p> 
+:|trustedCertificatesEnd|:
+
+:|activeSelfCertificates|:
+                   <p><b>Active Self Certificates List:</b> <br><br>
+                   <b>Name:</b> A unique name used to identify a certificate.<br><br>
+                    <b>Subject Name:</b> This is the name which other organizations will see as the Certificate Holder (owner). This is usually your registered business or company name.<br><br>
+                    <b>Serial Number:</b> The serial number is used by the CA to identify the certificate itself in their records.<br><br>
+                    <b>Issuer Name:</b> The name of the CA which issued the certificate.<br><br>
+                                The actions that can be taken by right click on Active Self Certificates are: <br>
+                                <br>
+                                <b>Select All :</b> Selects all the Active Self Certificates in the table. <br>
+                                <br>
+                                <b>Delete:</b> Deletes the selected Active Self Certificates.
+                                <br><br>
+                                <b>Delete All (after selecting Select All option):</b> Deletes the all Active Self Certificates.
+                                <br>
+                                <br>				
+				<b>Upload (by clicking Upload New Self Certificate):</b> Clicking this button will link to the Upload Active Self Certificate.<b><br>
+                                <br><br>
+                                <b>Upload Active Self Certificate.:</b><br>
+                                Certificate File:</b> New certificates can be uploaded to the router with 
+				the Upload Active Self Certificate option.<br><br>
+                                Click <b>Upload</b> New certificates can be uploaded to the router with 
+				the Upload Active Self Certificate option<br>
+				<br></p>
+:|activeSelfCertificatesEnd|:
+
+:|selfCertificateRequest|:
+                     <p><b>Self Certificate Requests List:</b> <br><br>
+                   <b>Name:</b> A unique name used to identify a certificate.<br><br>
+                   <b>Status:</b> Will indicate if the self certificate is uploaded or not uploaded to this router.<br><br>
+                                The actions that can be taken by right click on Self Certificate Requests are: <br>
+                                <br>
+                                <b>Select All :</b> Selects all the Self Certificate Requests in the table. <br>
+                                <br>
+                                <b>View:</b> The View button will link to the Certificate Details
+                                page, Display the details of Self Certificate 
+				are shown, such as the System Name, Hash Algorithm, Signature Algorithm, 
+				and Key Length.And Data to supply to CA.
+                                <br>
+                                <br>
+                                <b>Delete:</b> Deletes the selected Self Certificate.
+                                <br><br>
+                                <b>Delete All (after selecting Select All option):</b> Deletes the all Self Certificates.
+                                <br>
+                                <br>				
+				<b>Add (by clicking New Self Certificate):</b> Clicking this button will link to the Generate Self Certificate Request.<b><br>
+                                <br><br>
+                                <b>Generate Self Certificate Request:</b><br>
+                                Name:</b> this is the identifier used to manage this self certificate 
+				request and will appear in the list of Self Certificate Requests.<br><br>
+                                <b>Subject:</b> This field will populate the CN (Common Name) entry 
+				of the generated certificate. Subject names are usually defined 
+				in the following format: CN=&lt;device name&gt;, OU=&lt;department&gt;, O=&lt;organization&gt;, L=&lt;city&gt;, ST=&lt;state&gt;, C=&lt;country&gt;. For example: CN=router1, OU=my_company, O=mydept, L=SFO, C=US.<br><br>
+                                <b>Hash Algorithm:</b> choose between MD5 and SHA&#45;1 for the Hash 
+				algorithm used by the certificate<br><br>
+                                <b>Signature Key Length:</b> the length of the signature, either 
+				512 or 1024 or 2048<br><br>
+                                <b>IP Address:</b> optional fields 
+				to further customize the certificate request<br><br>
+                                <b>Domain Name:</b> optional fields 
+				to further customize the certificate request<br><br>
+                                <b>Email Address:</b> optional fields 
+				to further customize the certificate request<br><br>
+                                Click <b>Save</b> to save the settings.<br>
+				<br></p> 
+:|selfCertificateRequestEnd|:
+
+:|easyVpnSetup|:
+		<p><b>Easy Site to Site VPN Tunnel:</b><br>
+			<b>Easy VPN Setup:</b>Upload easy VPN setup file.<br>
+		Click <b>Upload</b> New policy can be uploaded to the VPN tunnel.<br>
+			<br></p>
+:|easyVpnSetupEnd|:
+
+:|pptpServer|:
+                <p><b>PPTP Sever:<br>
+				</b>This page displays PPTP server options.<br>
+				<br>
+				<b>Enable PPTP Server:</b>  On-Off button for  enable/disable PPTP server.<br>
+				<br>
+				<b>PPTP Routing Mode :</b> Chose routing mode between  Nat or Classical
+                for PPTP server.<br>
+				<br>
+                <b>Range of IP Addresses (Allocated to PPTP Clients)</b><br>
+				<b>Starting IP Address:</b> The starting IP address of the range 
+				of IP addresses to assign to connecting users.This IP address
+                is taken as the server IP address and rest of the addresses in 
+                the range are assigned to clients. <br>
+				<br>
+				<b>Ending IP Address:</b> The ending IP address of the range of 
+				IP addresses to assign to connecting users.<br>
+				<br>				
+				<b>Authentication Supported:</b><br>
+				<b>PAP:</b> Enables support for PAP authentication method.<br>
+				<br><b>CHAP:</b> Enables support for CHAP authentication method.<br>
+				<br><b>MS-CHAP:</b> Enables support for MS-CHAP authentication method.<br>
+				<br><b>MS-CHAPv2:</b> Enables support for MS-CHAPv2 authentication method.<br>
+				<br>
+                <b>Encryption Supported: </b><br>
+                <b>Mppe 40 bit :</b> Enables Mppe 40 bit encryption (available only for MS-CHAP
+                and MS-CHAPv2 authentication methods).<br>
+                <br><b>Mppe 128 bit :</b> Enables Mppe 128 bit encryption (available only for 
+                MS-CHAP and MS-CHAPv2 authentication methods).<br>
+                <br><b>Stateful Mppe :</b> Enables Stateful Mppe encryption (available only for 
+                MS-CHAP and MS-CHAPv2 authentication methods).This mode
+				of mppe encryption is less secure and can be used for
+                compatibility.<br>
+				<br>
+				<b>User Time-Out: </b><br>				
+				<b>Idle Timeout:</b> If there is no traffic from a user for more than the specified time out, the connection is disconnected.<br>			
+				<br>
+                <b>Netbios Setup</b><br>
+                <b>Netbios :</b> Enable-Disable Netbious functionality by On-Off button.<br>
+                <b>Primary WINS Server :</b> Enter Primary Windows Server address for Netbios<br>
+                <b>Secondary WINS Server :</b> Enter Secondary Windows Server address for Netbios<br>
+                <br>
+                Click <b>Save </b> to save the settings.<br>
+				<br>
+				Click <b>Cancel </b> to revert to previous settings.<b><br>
+				<br></p>
+:|pptpServerEnd|:
+
+:|pptpClient|:
+                <p><b>PPTP Client:<br>
+				</b>This page displays all fields necessary to configure PPTP Client that 
+				is connected to the PPTP server.<br>
+				<br>
+				<b>Enable PPTP Client</b> On-Off button for  enable/disable PPTP Client.<br>
+				<br>
+				<b>Server IP:</b> IP Address of PPTP Server<br>
+				<br>
+				<b>Remote Network:</b> Network Address of remote network which is local to PPTP Server<br>
+				<br>	
+				<b>Remote Netmask:</b> Subnet Mask of remote network which is local to PPTP Server<br>
+				<br>				
+				<b>Username:</b> Username which PPTP Client needs to connect to PPTP Server<br>
+				<br>
+				<b>Password:</b> Password which PPTP Client needs to connect to PPTP Server<br>
+				<br>
+				<b>Mppe Encryption</b> On-Off button for enable Encryption<br>
+				<br>
+				<b>Idle Time Out:</b> If there is no traffic from a user for more than the specified time out, the connection is disconnected.	<br>
+				<br>Click <b>Save </b> to save the settings.<br>
+				<br>
+				Click <b>Cancel </b> to revert to previous settings.<br>
+				<br></p>
+:|pptpClientEnd|:
+
+:|pptpActiveUsers|:
+                <p><b>PPTP Active Users List :</b> <br>
+				The List of PPTP Active Users table displays the following:<br>
+				<br>
+				<b>User Name:</b> &#39;User name&#39; of the user(s) currently connected. Note that '*' symbol indicates that user has connected with no authentication.<br>
+				<br>
+				<b>Remote IP:</b> The IP that has been assigned to this particular 
+				user by PPTP server.<br>
+				<br>
+				<b>PPTP IP:</b> Local IP of the server.</p>
+:|pptpActiveUsersEnd|:
+
+:|l2tpServer|:
+                <p><b>L2TP Server:</b> <br>
+				This page displays L2TP server options.<br>
+				<br>
+				<b>Enable L2TP Server:</b> On-Off button for enable/disable L2TP server.<br>
+				<br>
+				<b>L2TP Routing Mode :</b> Chose routing mode between  Nat or Classical
+                for L2TP server.<br>
+				<br>
+                <b>Range of IP Addresses (Allocated to L2TP Clients) </b><br>
+				<b>Starting IP Address:</b> The starting IP address of the range 
+				of IP addresses to assign to connecting users.This IP address is
+                taken as the server IP address and rest of the IP addresses in the
+                range are assigned to clients. <br>
+				<br>
+				<b>Ending IP Addresses:</b> The ending IP address of the range of 
+				IP addresses to assign to connecting users.<br>
+				<br>				
+				<b>Authentication Supported:</b>
+				<br>
+				<b>PAP:</b> Enables support for PAP authentication method.<br>
+				<br><b>CHAP:</b> Enables support for CHAP authentication method.<br>
+				<br><b>MS-CHAP:</b> Enables support for MS-CHAP authentication method.<br>
+				<br><b>MS-CHAPv2:</b> Enables support for MS-CHAPv2 authentication method.<br>				
+				<br><b>Secret Key:</b> Enables/Disable support for Secret Key and enter 
+                Secret Key if support is enabled.<br>				
+				<br>
+				<b>User Time-Out: </b><br>				
+				<b>Idle Timeout:</b> If there is no traffic from a user for more than the specified time out, the connection is disconnected.<br>			
+				<br>
+                <b>Netbios Setup</b><br>
+                <b>Netbios :</b> Enable-Disable Netbious functionality by On-Off button.<br>
+                <b>Primary WINS Server :</b> Enter Primary Windows Server address for Netbios<br>
+                <b>Secondary WINS Server :</b> Enter Secondary Windows Server address for Netbios<br>
+                <br>
+                Click <b>Save </b> to save the settings.<br>
+				<br>
+				Click <b>Cancel </b> to revert to previous settings.<b><br>
+				<br></p>
+:|l2tpServerEnd|:
+
+:|l2tpClient|:
+                <p><b>L2TP Client:<br>
+				</b>This page displays all fields necessary to configure L2TP Client that 
+				is connected to the L2TP server.<br>
+				<br>
+				<b>Enable L2TP Client</b> On-Off button for  enable/disable L2TP Client.<br>
+				<br>
+				<b>Server IP:</b> IP Address of L2TP Server<br>
+				<br>
+				<b>Remote Network:</b> Network Address of remote network which is local to L2TP Server<br>
+				<br>	
+				<b>Remote Netmask:</b> Subnet Mask of remote network which is local to L2TP Server<br>
+				<br>				
+				<b>Username:</b> Username which L2TP Client needs to connect to L2TP Server<br>
+				<br>
+				<b>Password:</b> Password which L2TP Client needs to connect to PPTP Server<br>
+				<br>
+				<b>Mppe Encryption</b> On-Off button for enable Encryption<br>
+				<br>
+				<b>Idle Time Out:</b> If there is no traffic from a user for more than the specified time out, the connection is disconnected.	<br>
+				<br>Click <b>Save </b> to save the settings.<br>
+				<br>
+				Click <b>Cancel </b> to revert to previous settings.<br>
+				<br></p>
+:|l2tpClientEnd|:
+
+:|l2tpActiveUsers|:
+                <p><b>L2TP Active Users List:</b> <br>
+				The List of L2TP Active Users table displays the following:<br>
+				<br>
+				<b>User Name:</b> &#39;User name&#39; of the user(s) currently connected. Note that '*' symbol indicates that user has connected with no authentication.<br>
+				<br>
+				<b>Remote IP:</b> The IP that has been assigned to this particular 
+				user by L2TP server.<br>
+				<br>
+				<b>L2TP IP:</b> Local IP of the server.</p>
+:|l2tpActiveUsersEnd|:
+
+:|sslVpnServer|:
+                <p><b>SSL VPN Server Policy</b><br>
+                <b>Server Setup </b><br>
+                <b>SSL VPN Server Policy  :</b>
+				<br> On/Off button  to enable/disable SSLVPN portal access for Option users. <br><br>
+                Click <b>Save </b> to save the settings.<br>
+				<br>
+				Click <b>Cancel </b> to revert to previous settings.<br>
+				<br>
+                <br>
+                <b>SSL VPN Server Policies List </b><br>
+                Displaying fields are..<br>
+                <b>Name:</b> This is a unique name assigned to the policy. The name 
+				is not used to identify the tunnel to the remote Option/client, but 
+				for managing the tunnel properties.<br>
+				<br>
+                <b>Policy Type:</b> This field show Policy type <br><br>
+                <b>Group Name:</b> This field show Group Name associate with Policy <br><br>
+                <b>Service:</b> Shows Serive is  VPN Tunnel, Port Forwarding, or All 
+				Services.<br>
+				<br>
+				<b>Destination:</b> The IP address to which the policy routes the 
+				selected service(s) <br>
+				<br>
+				<b>Permission:</b> This can be either Permit or Deny.<br>
+				<br>
+				The actions that can be taken by right click on SSL VPN policies are: <br>
+				<br>                 
+				<b>Select All :</b> Selects all the SSL VPN 
+				policies in the table. <br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the SSL VPN Policy Configuration 
+				page, allowing you to make changes to the selected SSL VPN policy.
+				<br>
+				<br>
+				<b>Delete:</b> Deletes the selected SSL VPN policy .
+				<br><br>
+				<b>Delete All (after selecting Select All option):</b> Deletes the all SSL VPN policies.
+				<br>
+				<br>
+				<b>Add (by clicking Add New SSL VPN Server Policy):</b> Clicking this button will link to the SSL VPN Server Policies Configuration page.<b><br>
+				<br>
+                <br>
+                <b>SSL VPN Server Policies Configuration:</b><br>
+				Policy Type:</b><br>
+				Add a policy to a particular user, group or global level by making 
+				the appropriate radio dial selection.<br>
+				<br>
+				Global: Select this option to add a policy applicable to 
+				all users of the device.<br>
+				<br>
+				Group: Select this option to add a policy applicable to a group 
+				of users of the device. <br>
+				<br>
+				User: Select this option to add a policy applicable to a particular 
+				user of the device.<br>
+				<br>
+				<b>Available Groups:</b> The group dropdown menu is a filter that 
+				allows you to add a group-level policy for the selected group.<br>
+				<br>
+				<b>Available Users:</b> The user dropdown menu is a filter that 
+				allows you to add a user-level policy for a particular user.<br>
+				<br>
+				<b>SSL VPN Policy</b><br>
+				All policies must have a policy name, service and permission setting.
+				<br>
+				<br>
+				<br>
+				<b>Apply Policy to:</b> Select the appropriate option for the policy 
+				you are adding. Select from a Network Resource, an IP address, an 
+				IP network, or All Addresses managed by the device.<br>
+				<br>
+				<br>
+				<b>Policy Name:</b> A unique name for identifying of the policy.<br>
+				<br>
+                <b>ICMP:</b> Select this option to include ICMP traffic
+                <br>
+
+				If applying the SSL VPN policy to a specific IP address, you must 
+				set the IP address in the appropriate field below. If applying the 
+				SSL VPN policy to an IP network, you must also set in the Mask length.<br>
+				<br>
+				<b>IP Address:</b> Enter the IP Address to which the SSL VPN Policy 
+				needs to be applied.<br>
+				<br>
+				<b>Mask Length:</b> Enter the subnet mask for the above IP address.<br>
+				<br>
+                <br>
+				<b>Port Range / Port Number</b><br>
+				<b>Begin &amp; End:</b> Specify a port or a range of ports to apply 
+				the policy to all TCP and UDP traffic with those ports. Leave the 
+				fields empty to apply the policy to all traffic.<br>
+				<br>
+				<b>Service:</b> Choose between VPN Tunnel, Port Forwarding, or All 
+				Services<br>
+				<br>
+				<b>Defined Resources:</b> A dropdown list of pre-defined services 
+				that can be chosen for a particular policy. This is only available 
+				when applying the policy to a Network Resource, in the "Resources" 
+				tab under the SSL VPN menu.<br>
+				<br>
+				<b>Permission:</b> Choose either Permit or Deny for this policy<br>
+				<br>
+				Click <b>Save </b> to save the settings.<br>
+				<br></p>
+:|sslVpnServerEnd|:
+
+:|sslVpnPortalLayouts|:
+                <p><b>SSL VPN Portal Layouts List:</b> <br>				
+				<b>Layout Name:</b> The unique identifier of the portal layout. 
+				The default layout is indicated by a "*".<br>
+				<br>
+				<b>Use Count:</b> Use Count of the portal layout<br>
+				<br>
+				<b>Portal URL:</b> URL of the portal layout<br>
+				<br>
+				The actions that can be taken by right click  on portal layouts are: <br>
+				<br>
+				<b>Select All :</b> Selects all the portal 
+				layouts in the table. <br>
+				<br>
+				<b>Edit:</b> The Edit button will link to the Portal Layout Configuration 
+				page, allowing you to make changes to the selected Portal Layout.
+				<br>
+				<br>
+				<b>Delete:</b> Deletes the selected portal layout.
+				<br>
+				<br>
+				<b>Delete All (after selecting Select All option):</b> Deletes all portal layout.
+				<br>
+				<br>
+				<b>Add (by clicking on Add New SSL VPN Portal Layout:</b> Clicking this button will link to the Portal Layout 
+				Configuration page.<br>
+				<br>
+				<b>SSL VPN Portal Layout Configuration:</b> <br><br>
+				<b>Portal Layout and Theme Name</b><br><br>
+				<b>Portal Layout Name:</b> The portal layout name should have a 
+				descriptive name for the portal that is being configured. It will 
+				be used as part of the path for the SSL portal URL. Only alphanumeric 
+				characters, hyphens ('-'), and underscore ('_') characters are allowed 
+				for this field. <br>
+				<br>
+				<b>Login Profile Name:</b> Select Dropdown for login profile's <br>
+				<br>
+				<b>Portal Site Title:</b> It is the web browser window title for 
+				the portal. <br>
+				<br>
+				<b>Banner Title:</b> It is the banner title to display to users 
+				before logging into the portal.<br>
+				<br>
+				<b>Banner Message:</b> It is the message text that would be displayed 
+				along with the banner title.<br>
+				<br>
+				<b>Display banner message on login page:</b> On button  
+				to show the banner title and banner message. <br>
+				<br>
+				<b>HTTP meta tags for cache control (recommended):</b> It is a security 
+				feature that should be enabled to ensure that client's browsers 
+				do not cache SSL VPN portal pages and other web content. The HTTP 
+				meta tags cache control directives prevent out-of-date web pages 
+				and data from being stored on the client's web browser cache.
+				<br>
+				<br>
+				<b>ActiveX web cache cleaner:</b> On button  to load an 
+				ActiveX cache control whenever users login to this SSL VPN portal.
+				<br>
+				<br>
+				<b>SSL VPN Portal Authentication</b><br>
+				<br>
+				<b>Authentication Type :</b>Select an authentication type as Local 				   User Database, Radius-PAP, Radius-CHAP,Radius-MSCHAP,
+				Radius-MSCHAPv2, NT Domain, Active Directory, LDAP, POP3 from drop
+				down list in order to authenticate SSL VPN Portal User.<br>
+				<br>
+				<b>Group :</b>Select a group from drop down list. This field can be               		   configured only if Authentication Type is Local User Database.<br>
+				<br>     
+				<b>SSL VPN Portal Pages to Display </b><br>
+				<br>
+				Select the SSL VPN Portal pages that users can access in this portal 
+				by enabling one or more of the following pages: <br>
+				<br>
+				 VPN Tunnel page --  On button to Enable.<br>
+				 Port Forwarding -- On button to Enable.<br>
+				<br>
+				Any page that is not selected will not be visible from the SSL VPN 
+				portal navigation menu. However users can still access the hidden 
+				pages unless SSL VPN access policies are created to prevent access 
+				to these pages.<br>
+				<br>
+				Click <b>Save </b> to save the settings.<br>
+				<br></p>
+:|sslVpnPortalLayoutsEnd|:
+
+:|sslVpnResources|:
+                <p><b>Resources:</b> <br>
+                <b>SSL VPN Resources List </b><br>
+				<b>Name :</b> The resource identifier<br>
+				<br>
+				<b>Service :</b> The type of service assigned to a particular resource 
+				on the LAN<br>
+				<br>
+				<b>Type :</b>IP Address or an IP Network.<br>
+				<br>				<b>Resource Object:</b> The object address of the resource object<br>
+				<br>
+				<b>Port:</b> The port range of the resource object <br>
+				<br>
+				<b>Mask Length:</b> The Mask length of the network<br>
+				<br>
+				The actions that can be taken by right click on resources are: <br>
+				<br>
+				<b>Select All :</b> Selects all the resources 
+				in the table. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected resource. <br>
+				<br>
+				<b>Delete All (after selecting Select All option):</b> Deletes all resources. <br>
+				<br>
+				<b>Configure Object:</b> The Configure button will link to the Resource 
+				Configuration page, allowing you to make changes to the selected 
+				resource. <br>
+				<br>
+				<b>Add (by clicking on Add New Resources):</b> Clicking this button will link to the Resource Configuration 
+				page.<br>
+                <br>
+                <b>Resource Object Config</b><br>
+                <b>SSL VPN Resources </b><br>
+				<b>Resource Name:</b> The unique identifier of the resource.<br>
+				<br>
+				<b>Service:</b> SSL VPN service of the resource, 
+				like VPN Tunnel, Port Forwarding, or All Services.<br>
+				<br>
+                <b>Resource Object Configuration</b><br>
+				<b>ICMP:</b> Enable this option to include ICMP traffic.<br>
+				<br>
+				<b>Object Type:</b> Choose one IP Address or an IP Network.<br>
+				<br>
+				<b>Object Address:</b> IP Address or Network address depending<br>
+				on object type.<br>
+				<br>
+				<b>Mask Length:</b> Mask length of the network<br>
+				<br>
+				<b>Port Range/Port Number:</b> Specify the port range of the resource object<br>
+				<br>
+				<b>Begin:</b> Starting port number of the resource object<br>
+				<br>
+				<b>End:</b> Ending port number of the resource object<br>
+				<br>
+				
+				Click <b>Save </b> to save the settings.<br>
+				<br>
+                <br><br>
+
+                <b>Port Forwarding List for Configured Applications </b><br>
+				<br>
+				The table lists the applications configured for port forwarding 
+				for this device and allows several operations on the applications.
+				<br>
+				<br>
+				<b>Local Server IP Address:</b> IP Address of the local server<br>
+				<br>
+				<b>TCP Port Number:</b> TCP Port Number of the local server<br>
+				<br>
+				The actions that can be taken by right click  on configured applications are:
+				<br>
+				<br>
+				<b>Select All :</b> Selects all the rule 
+				in the table. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected rules.
+				<br><br>
+				<b>Delete All (after selecting Select All option):</b> Deletes all rules.
+				<br>
+				<br>
+				<b>Add (by clicking on Add New Rule button):</b> Clicking this button will link to the Port Forwarding List for Configured Applications page. <br>
+				<br>
+				Note: Active connections can persist even when browser is closed 
+				without uninstalling the SSL client. Java, Java Script, Active-X 
+				controls must be enabled / permitted in your browser settings in 
+				order to use SSL VPN port forwarding.<br>
+				<br>
+                <b>Port Forwarding List for Configured Applications:</b> <br>
+				<b>Local Server IP Address:</b> Enter IP Address of the internal 
+				host machine or local server<br>
+				<br>
+				<b>TCP Port Number:</b> Enter port number of the TCP application 
+				that would enable port forwarding<br>
+				<br>
+				Click<b> Save </b> to save the settings.<br>
+				<br><br><br>
+
+
+
+                <b>Port Forwarding List for Configured Host Names </b><br>
+				<br>
+				The table lists the Host Names configured for port forwarding for 
+				this device and allows several operations on the host names.<br>
+				<br>
+				<b>Local Server IP Address:</b> IP Address of the local server<br>
+				<br>
+				<b>Fully Qualified Domain Name:</b> Name which will enable 
+				users to access the private network servers by using a hostname 
+				instead of an IP address.<br>
+				<br>
+				The actions that can be taken by right click on Port Forwarding List for Configured Host Names:
+				<br>
+				<br>
+				<b>Select All :</b> Selects all the Rules 
+				in the table. <br>
+				<br>
+				<b>Delete:</b> Deletes the selected Rule.
+				<br><br>
+				<b>Delete All (after selecting Select All option):</b> Deletes all Rules.
+				<br>
+				<br>
+				<b>Add (by clicking on Add New Rule button):</b> Clicking this button will link to the Port Forwarding List for Host Configuration page. <br>
+				<br>
+                <b>Port Forwarding List for Host Configuration:</b> <br>
+				<b>Local Server IP Address:</b> Enter IP Address of the internal 
+				host machine or local server. Note: This address should already 
+				be in the List of Configured Applications for Port Forwarding table 
+				on Port Forwarding page.<br>
+				<br>
+				<b>Fully Qualified Domain Name:</b> Enter domain name of the internal 
+				FQDN server<br>
+				<br>
+				Click<b> Save </b> to save the settings.<br>
+				<br>
+                </p>
+:|sslVpnResourcesEnd|:
+
+:|sslVpnClients|:
+                <p><b>SSLVPN Client:</b> <br>
+				<b>Full Tunnel Support :</b> ON/OFF the button  to enable full
+                tunnel/split tunnel support; default is full tunnel and appropriate 
+				client routes must be added.<br>
+				<br>
+				<b>DNS Suffix:</b> Set the DNS Suffix for this client.<br>
+				<br>
+				<b>Primary DNS Server:</b> Set the primary DNS Server for this client.<br>
+				<br>
+				<b>Secondary DNS Server:</b> Set the secondary DNS Server for this 
+				client.<br>
+				<br>
+				<b>Client Address Range Begin:</b> Set the first IP address of the 
+				IP address range.<br>
+				<br>
+				<b>Client Address Range End:</b> Set the last IP address of the 
+				IP address range.<br>
+				<br>
+				<b>LCP Timeout:</b> this advanced setting is to determine the wait 
+				time for a SSL VPN tunnel negotiation attempts. <br>
+				<br>
+				Click<b> Save </b> to save the settings.<br>
+				<br>
+				Click <b>Cancel </b> to revert to previous settings.<b><br>
+				<br></p>
+:|sslVpnClientsEnd|:
+
+:|sslVpnClientsRoutes|:
+                <p><b>SSL VPN Client Routes List :</b> <br>
+				This feature is presently supported on Microsoft Windows, Linux 
+				and Apple MAC operating systems. The List of Configured Client Routes 
+				display the destination networks and corresponding subnet masks 
+				for the routes belonging to VPN Tunnel client. <br>
+				<br>
+                Showing Information about..
+                <br>
+                <b>Destination Network : </b>The IP address on the LAN that the SSL 
+				VPN user can access<br><br>
+                <b>Subnet Mask </b>The destination network's corresponding subnet 
+				mask.<br><br>
+				The actions that can be taken by right click on client routes are: <br>
+				<br>
+				<b>Select All :</b> Selects all client routes 
+				in the table. <br>
+				<br>
+				<b>Delete :</b> Deletes the selected client route from being available 
+				to SSL VPN users. <br>
+				<br>
+				<b>Delete All (after selecting Select All option):</b> Deletes all client route from being available 
+				to SSL VPN users. <br>
+				<br>
+				<b>Add (by click Add New Client Route) :</b> Clicking this button will link to the SSL VPN Client 
+				Route Configuration page.<br>
+				<br>
+				<b>Configured Client Routes Config:</b> <br>
+				To configure a client route for split tunnel SSL VPN support, set 
+				the following:<br>
+				<br>
+				<b>Destination Network:</b> the IP address on the LAN that the SSL 
+				VPN user can access.<br>
+				<br>
+				<b>Subnet Mask:</b> the destination network's corresponding subnet 
+				mask. <br>
+				<br>
+				Click <b>Save </b> to save the settings.<br>
+				<br>
+                </p>
+:|sslVpnClientsRoutesEnd|:
+
+:|openVpnSettings|:
+                    <p><b>OpenVPN Settings:</b> <br>
+			       <b>OpenVPN:</b> On-Off button to start/stop openvpn server.<br>
+				<br>
+				<b>Mode:</b> OpenVPN daemon mode. It can run in server mode, client mode or access server client mode. In access server client mode, the user has to download the auto login profile from the Openvpn Access Server and upload the same to connect.<br>
+				<br>
+				<b>Server IP:</b> OpenVPN server IP address to which the client connects(Applicable in client mode).<br>
+				<br>
+				<b>VPN Network:</b> Address of the Virtual Network.<br>
+				<br>
+				<b>VPN Netmask:</b> Netmask of the Virtual Network.<br>
+				<br>
+				<b>Port:</b> The port number on which openvpn server(or Access Server) runs.<br>
+				<br>
+				<b>Tunnel Protocol:</b> The protocol used to communicate with the remote host.
+				Ex: Tcp, Udp. Udp is the default.<br>
+				<br>
+				<b>Encryption Algorithm:</b> The cipher with which the packets are encrypted.
+				Ex: BF-CBC, AES-128,AES-192 and AES-256. BF-CBC is the default<br>
+				<br>
+				<b>Hash Algorithm:</b> Message digest algorithm used to authenticate packets. 
+				Ex: SHA1, SHA256 and SHA512. SHA1 is the default.<br>
+				<br>
+				<b>Tunnel Type:</b> Select Full Tunnel to redirect all the traffic through the tunnel. 
+				Select Split Tunnel to redirect traffic to only specified resources (added from openVpnClient Routes) through the tunnel. Full Tunnel is the default.<br>
+				<br>
+				<b>Client to Client Communication:</b> Enable this to allow openvpn clients to 
+				communicate with each other in split tunnel case. Disabled by default.<br>
+				<br>
+				<b>Upload Access Server Client Configuration:</b> The user has to download the auto login profile and upload here to connect this router to the OpenVPN Access Server.<br>
+				<br>
+				<b>Certificates:</b> Select the set of certificates openvpn server uses. 
+				First Row: Set of certificates and keys the server uses. 
+				Second Row: Set of certificates and keys newly uploaded.<br>
+				<br>
+				<b>Enable Tls Authentication Key:</b> Enabling this adds Tls authentication which adds 
+				an additional layer of  authentication. Can be checked only when the tls key is uploaded. 
+				Disabled by default.<br>
+				<br>				
+				Click<b> Save</b> to save the settings.<br>
+				<br>
+				Click <b>Cancel</b> to revert to previous settings.<b><br>
+				<br></P>
+
+:|openVpnSettingsEnd|:
+
+:|openVpnLocalNetworks|:
+                   <p><b>OpenVPN Local Networks List:</b> <br><br>
+                   <b>Local Network:</b> Network address of the local resource.<br><br>
+		   <b>Subnet Mask:</b> Netmask of the local resource.<br><br>
+                                The actions that can be taken by right click on OpenVPN Local Networks are: <br>
+                                <br>
+                                <b>Select All :</b> Selects all the OpenVPN Local Networks in the table. <br>
+                                <br>
+                                <b>Edit:</b> The Edit button will link to the OpenVPN Local Networks Configuration
+                                page, allowing you to make changes to the selected Local network.
+                                <br>
+                                <br>
+                                <b>Delete:</b> Deletes the selected Local network.
+                                <br><br>
+                                <b>Delete All (after selecting Select All option):</b> Deletes the all Local networks.
+                                <br>
+                                <br>				
+				<b>Add (by clicking Add New OpenVPN Local Network):</b> Clicking this button will link to the OpenVPN Local Network Configuration page.<b><br>
+                                <br><br>
+                                <b>OpenVPN Local Network Configuration:</b><br>
+                                Local Network:</b> Network address of the local resource.<br><br>
+		                <b>Subnet Mask:</b> Netmask of the local resource.<br><br>
+                                Click <b>Save</b> to save the settings.<br>
+				<br></p>				
+:|openVpnLocalNetworksEnd|:
+
+:|openVpnRemoteNetworks|:
+                  <p><b>OpenVPN Remote Networks List:</b> <br><br>
+                   <b>Common Name:</b> Common Name of the OpenVPN client certificate.<br><br>
+		   <b>Remote Network:</b> Network address of the remote resource.<br><br>
+                   <b>Subnet Mask:</b> Netmask of the remote resource.<br><br>
+                                The actions that can be taken by right click on OpenVPN Remote Networks are: <br>
+                                <br>
+                                <b>Select All :</b> Selects all the OpenVPN Remote Networks in the table. <br>
+                                <br>
+                                <b>Edit:</b> The Edit button will link to the OpenVPN Remote Networks Configuration
+                                page, allowing you to make changes to the selected remote network.
+                                <br>
+                                <br>
+                                <b>Delete:</b> Deletes the selected remote network.
+                                <br><br>
+                                <b>Delete All (after selecting Select All option):</b> Deletes the all Remote Networks.
+                                <br>
+                                <br>				
+				<b>Add (by clicking Add New OpenVPN Remote Network):</b> Clicking this button will link to the OpenVPN Remote Network Configuration page.<b><br>
+                                <br><br>
+                                <b>OpenVPN Remote Network Configuration:</b><br>
+                                Common Name:</b> Common Name of the OpenVPN client certificate.<br><br>
+		                <b>Remote Network:</b> Network address of the remote resource.<br><br>
+                                <b>Subnet Mask:</b> Netmask of the remote resource.<br><br>
+                                Click <b>Save</b> to save the settings.<br>
+				<br></p>
+:|openVpnRemoteNetworksEnd|:
+
+:|openVpnAuthentication|:
+                 <p><b>OpenVPN Authentication:</b> <br><br>
+                                <b>Trusted Certificate (CA Certificate):</b> Browse and upload the pem formatted CA Certificate.<br><br>
+				<b>Server / Client Certificate:</b> Browse and upload the pem formatted Server/Client Certificate.<br>
+				<br>
+				<b>Server / Client Key:</b> Browse and upload the pem formatted Server/Client Key.<br>
+				<br>
+				<b>DH Key:</b> Browse and upload the pem formatted Diffie Hellman Key.<br>
+				<br>
+				<b>Tls Authentication Key:</b> Browse and upload the pem formatted Tls Authentication Key.<br><br></p>
+:|openVpnAuthenticationEnd|:
+
+:|greTunnels|:
+<p> <b>GRE Tunnels </b><br><br>
+	<b> GRE Tunnels List</b><br>
+	This page diplays configured GRE tunnels allows the user to add new GRE tunnels in the router,edit configuration of existing GRE Tunnel and delete selected GRE Tunnels.<br><br>
+
+	<b>Add New GRE Tunnel:</b> Click this button to add a new GRE Tunnel.<br><br>
+	<b>Edit:</b> Check any GRE Tunnel and click this to edit an existing configuration.<br><br>
+	<b>Delete:</b> Check the GRE Tunnels you want to delete and click this to delete those.<br><br>
+
+<b>GRE Tunnels Configuration</b><br>
+	This page displays the required parameters to configure a GRE Tunnel.<br><br>
+
+	<b>Tunnel Name:</b> Name of the configured tunnel.<br><br>
+	<b>IP Address:</b> IP Address assigned to the GRE tunnel.<br><br>
+	<b>Subnet Mask:</b> Subnet mask assigned to the GRE tunnel.<br><br>
+	<b>Interface:</b>Interface whose IP is used to configure GRE tunnel.<br><br>
+	<b>Remote End Address:</b> IP Address of the remote end of GRE tunnel.<br><br>
+	<b>Enable DDP Broadcast:</b> Enables forwarding of DDP packets from one end of GRE tunnel to the other.<br><br>
+
+	<b>Static Route Configuration</b><br>
+	<b>IP Address:</b> Destination host or network of the other end of GRE tunnel<br><br>
+	<b>Subnet Mask:</b> Subnet mask of the destination IP address.<br><br>
+	<b>Gateway IP Address:</b> IP Address of the gateway through which the destination host or network can be reached.<br><br>
+	Click <b>Save</b> to save the settings.<br>
+	<br></p>
+:|greTunnelsEnd|:
+
+:|ips|:
+		<p><b>IPS:</b><br><br>
+		<b>Intrusion Detection/Prevention Enable</b><br><br>
+This gateway has an intrusion detection system (IDS) that allows you to detect, log, and block malicious attacks that can potentially impact security and usability of the device. This is a passive detection tool used to log and alert the user of potential threats. This page has the basic configuration settings used to enable IDS.<br><br>
+		<b>Enable Intrusion Detection:</b> select to allow intrusion events to be detected and logged. Each incoming packet to the gateway is reviewed for potential malicious attacks, based on the settings configured in this page.<br><br>
+		<b>Enable Intrusion Prevention:</b> select to allow the devices intrusion prevention system to monitoring inline traffic from the WAN. This can affect system performance.<br><br> 
+		<b>IPS Checks Active Between</b><br><br>
+		<b>LAN and WAN:</b> select this to enable IPS between the secure LAN and public WAN.<br><br> 
+		<b>IPS Status</b><br><br>
+		<b>Number of Signatures Loaded:</b> This is a static number of intrusion signatures that are stored in the router and are used for detecting IPS events.<br><br>
+		Click <b>Save</b> to save your changes. <br>
+				<br>
+                Click <b>Cancel</b> to revert to the previous
+                settings.</p>
+:|ipsEnd|:

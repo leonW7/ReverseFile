@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# iptablesInit - initialization script for iptables
+# 
+# Copyright (c) 2010, TeamF1, Inc.
+#
+# modification history
+# ------------------------
+# 01b,12aug11,drk inserting conntrack modules for PPTP, RSTP, H323, TFTP
+# 01a,08dec10,sen written
+
+
+if [ "$INCLUDE_IPTABLES" = "y" ]; then
+
+[ -f $IPTABLES_MODULES_DIR/nf_conntrack_proto_gre.$MOD_SUFFIX ] && { insmod $IPTABLES_MODULES_DIR/nf_conntrack_proto_gre.$MOD_SUFFIX; }
+[ -f $IPTABLES_MODULES_DIR/nf_nat_proto_gre.$MOD_SUFFIX ] && { insmod $IPTABLES_MODULES_DIR/nf_nat_proto_gre.$MOD_SUFFIX; }
+
+[ -f $IPTABLES_MODULES_DIR/nf_conntrack_pptp.$MOD_SUFFIX ] && { insmod $IPTABLES_MODULES_DIR/nf_conntrack_pptp.$MOD_SUFFIX; }
+
+[ -f $IPTABLES_MODULES_DIR/nf_nat_pptp.$MOD_SUFFIX ] && { insmod $IPTABLES_MODULES_DIR/nf_nat_pptp.$MOD_SUFFIX; }
+
+[ -f $IPTABLES_MODULES_DIR/nf_conntrack_sip.$MOD_SUFFIX ] && { insmod $IPTABLES_MODULES_DIR/nf_conntrack_sip.$MOD_SUFFIX; }
+
+[ -f $IPTABLES_MODULES_DIR/nf_conntrack_rtsp.$MOD_SUFFIX ] && { insmod $IPTABLES_MODULES_DIR/nf_conntrack_rtsp.$MOD_SUFFIX; }
+
+[ -f $IPTABLES_MODULES_DIR/nf_conntrack_h323.$MOD_SUFFIX ] && { insmod $IPTABLES_MODULES_DIR/nf_conntrack_h323.$MOD_SUFFIX; }
+
+[ -f $IPTABLES_MODULES_DIR/nf_conntrack_tftp.$MOD_SUFFIX ] && { insmod $IPTABLES_MODULES_DIR/nf_conntrack_tftp.$MOD_SUFFIX; }
+
+fi
+echo "inserting default firewall rules"
+/pfrm2.0/bin/iptables-restore -v --noflush /pfrm2.0/etc/fwDefaultRules.txt
+
+echo "inserting default firewall6 rules"
+/pfrm2.0/bin/ip6tables-restore -v --noflush /pfrm2.0/etc/fw6DefaultRules.txt

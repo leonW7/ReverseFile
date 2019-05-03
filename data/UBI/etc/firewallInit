@@ -1,0 +1,237 @@
+#!/bin/sh
+#
+# firewallInit - initialization script for firewall
+# 
+# Copyright (c) 2009, TeamF1, Inc.
+#
+# modification history
+# ------------------------
+# 01r,27sep11,adi added fwUsbStorage and fwUsbPrinter chains.
+# 01q,19aug11,nis added fwInterVlanRules chain
+# 01p,04aug11,lnv added fwIcmpNotification chain (SPR#25263) 
+# 01o,03jun11,drk added fwSmtpAlg chain
+# 01n,15sep10,kt  added fwRunTimeAuth chain
+# 01m,03nov09,ift added fwPPTPIn chain.
+# 01l,16jul09,grj added fwInterVlanRouting chain
+# 01k,10mar09,jay added INSECURE_HTTPS_DROP for SPR#11006
+# 01j,23jan09,jay fixed SPR#10399.
+# 01i,22jan09,jay added fwInputDnsAndDhcp chain.
+# 01i,20jan09,jay added fwEchoFlood chain.
+# 01h,22oct08,chd renamed URL_FILTER to REDIRECT_RULE.
+# 01g,04oct08,nrj added LB-static routing rule chain
+# 01f,26sep08,chd added fwFltrIb chain for filter table.
+# 01e,20sep08,chd added DEFAULT_WEB_SERVICE chain for nat table.
+# 01d,05aug08,chd added URL_FILTER chain for nat table.
+# 01c,27jun08,sam enable ipv6 forwarding
+# 01b,27jun08,rks added IPS_QUEUE chain
+# 01a,02feb08,jay written
+
+if [ "$INCLUDE_FIREWALL" = "y" ]; then
+   
+#user-defined chains in filter table
+#$IPTABLES -N fwWebGrp
+#$IPTABLES -N fwKeyword
+#$IPTABLES -N fwWebHost
+#$IPTABLES -N fwWebCbox
+#$IPTABLES -N fwTrigger
+#$IPTABLES -N fwFlood
+#$IPTABLES -N fwSynFlood
+#$IPTABLES -N fwInSynFlood
+#$IPTABLES -N fwInBypass
+#$IPTABLES -N fwInFlood
+#$IPTABLES -N fwEchoFlood
+#$IPTABLES -N fwIcmpFlood
+#$IPTABLES -N fwStealth
+#$IPTABLES -N fwPPTPIn
+#$IPTABLES -N fwPPTPBox
+#$IPTABLES -N fwPPTPDrop
+#$IPTABLES -N fwL2TPBox
+#$IPTABLES -N fwL2TPDrop
+#$IPTABLES -N fwVpnCheck
+#$IPTABLES -N fwIds
+#$IPTABLES -N fwSrcMacFltr 
+#$IPTABLES -N fwSrcMacFltrChain
+#$IPTABLES -N fwSrcMacFltrSet
+#$IPTABLES -N fwSrcMacFltrLog
+#$IPTABLES -N fwBindIpToMac
+#$IPTABLES -N fwBindIpToMac_LnD
+#$IPTABLES -N fwBindMacToIp
+#$IPTABLES -N fwBindMacToIp_LnD
+#$IPTABLES -N fwConnLimitMatch
+#$IPTABLES -N fwInputLnA
+#$IPTABLES -N fwIgmpIn
+#$IPTABLES -N fwWanIbLog
+#$IPTABLES -N INSECURE_SECURE_LnA
+#$IPTABLES -N INSECURE_SECURE_LnD
+#$IPTABLES -N SECURE_INSECURE_LnD
+#$IPTABLES -N SECURE_INSECURE_LnA
+#$IPTABLES -N SECURE_PUBLIC_LnA
+#$IPTABLES -N SECURE_PUBLIC_LnD
+#$IPTABLES -N INSECURE_PUBLIC_LnA
+#$IPTABLES -N INSECURE_PUBLIC_LnD
+#$IPTABLES -N PUBLIC_SECURE_LnA
+#$IPTABLES -N PUBLIC_SECURE_LnD
+#$IPTABLES -N PUBLIC_INSECURE_LnA
+#$IPTABLES -N PUBLIC_INSECURE_LnD
+#$IPTABLES -N SECURE_SECURE_LnA
+#$IPTABLES -N SECURE_SECURE_LnD
+#$IPTABLES -N fwInFltrEnd
+#$IPTABLES -N fwFwdFltrEnd
+#$IPTABLES -N IPS_QUEUE
+#$IPTABLES -N CONFIGFORWARD
+#$IPTABLES -N fwFltrIb
+#$IPTABLES -N fwRipInput
+#$IPTABLES -N fwdAccept
+#$IPTABLES -N fwInputDnsAndDhcp
+#$IPTABLES -N fwdOneToOneNat
+#$IPTABLES -N fwInterVlanRules
+#$IPTABLES -N fwInterVlanRouting
+#$IPTABLES -N fwInDhcpRelay
+#$IPTABLES -N fwPPTPServer
+#$IPTABLES -N fwL2TPServer
+#$IPTABLES -N fwRunTimeAuth
+#$IPTABLES -N fwRunTimeBlock
+#$IPTABLES -N fwRunTimeCheck
+#$IPTABLES -N fwRunTimePort
+#$IPTABLES -N fwIntelAmtIn
+#$IPTABLES -N fwIntelAmtOut
+#$IPTABLES -N fwSmtpAlg
+#$IPTABLES -N fwIcmpNotification
+#$IPTABLES -N fwLanToBox
+#$IPTABLES -N fwInTcpFilter
+#$IPTABLES -N fwAntiSpoof
+#$IPTABLES -N fwUsbStorage
+#$IPTABLES -N fwUsbPrinter
+#$IPTABLES -N fwCPRedirectAccept
+
+#$IPTABLES -t filter -N SECURE_INSECURE
+#$IPTABLES -t filter -N SECURE_PUBLIC
+#$IPTABLES -t filter -N INSECURE_SECURE
+#$IPTABLES -t filter -N INSECURE_PUBLIC
+#$IPTABLES -t filter -N PUBLIC_SECURE
+#$IPTABLES -t filter -N PUBLIC_INSECURE
+#$IPTABLES -t filter -N DEFAULT_POLICY
+
+#user-defined chains in nat table
+#$IPTABLES -t nat -N fwIntelAmtIn
+#$IPTABLES -t nat -N fwIntelAmtOut
+#$IPTABLES -t nat -N SECURE_INSECURE
+#$IPTABLES -t nat -N SECURE_PUBLIC
+#$IPTABLES -t nat -N INSECURE_SECURE
+#$IPTABLES -t nat -N INSECURE_PUBLIC
+#$IPTABLES -t nat -N PUBLIC_SECURE
+#$IPTABLES -t nat -N PUBLIC_INSECURE
+#$IPTABLES -t nat -N REDIRECT_RULE
+#$IPTABLES -t nat -N DEFAULT_WEB_SERVICE
+#$IPTABLES -t nat -N INSECURE_HTTPS_DROP
+#$IPTABLES -t nat -N preOneToOneNat
+#$IPTABLES -t nat -N postOneToOneNat
+#$IPTABLES -t nat -N fwDhcpRelay
+#$IPTABLES -t nat -N fwPPTPClientIP
+#$IPTABLES -t nat -N fwPPTPSourceIP
+#$IPTABLES -t nat -N fwL2TPClientIP
+#$IPTABLES -t nat -N fwL2TPSourceIP
+#$IPTABLES -t nat -N fwPPTPSnatRule
+#$IPTABLES -t nat -N fwL2TPSnatRule
+#$IPTABLES -t nat -N fwCPRedirect
+#$IPTABLES -t nat -N fwDefSNATRules
+
+#user-defined chains in mangle table
+#$IPTABLES -t mangle -N fwIntelAmtOut
+#$IPTABLES -t mangle -N SECURE_INSECURE
+#$IPTABLES -t mangle -N SECURE_PUBLIC
+#$IPTABLES -t mangle -N qosForwardClassify
+#$IPTABLES -t mangle -N qosPreRoutingClassify
+#$IPTABLES -t mangle -N qosForwardBWLimitLogs
+#$IPTABLES -t mangle -N qosPreRoutingBWLimitLogs
+#$IPTABLES -t mangle -N INSECURE_SECURE
+#$IPTABLES -t mangle -N INSECURE_PUBLIC
+#$IPTABLES -t mangle -N PUBLIC_SECURE
+#$IPTABLES -t mangle -N PUBLIC_INSECURE
+#$IPTABLES -t mangle -N fwLBStatic
+#$IPTABLES -t mangle -N fwWan1PB
+#$IPTABLES -t mangle -N fwWan2PB
+#$IPTABLES -t mangle -N fwWan3PB
+
+#$IPTABLES -t mangle -N fwAccntIn
+#$IPTABLES -t mangle -N fwAccntOut
+#$IPTABLES -t mangle -N fwWan1AccntIn
+#$IPTABLES -t mangle -N fwWan2AccntIn
+#$IPTABLES -t mangle -N fwWan3AccntIn
+#$IPTABLES -t mangle -N fwWan1AccntOut
+#$IPTABLES -t mangle -N fwWan2AccntOut
+#$IPTABLES -t mangle -N fwWan3AccntOut
+#$IPTABLES -t mangle -N fwWanEmail
+#$IPTABLES -t mangle -N fwInterVlanRules
+#$IPTABLES -t mangle -N fwAFMark
+$IPTABLES -t mangle -N fwWebClassFilter
+
+#bwMon chains
+/pfrm2.0/bin/fwBwMon /tmp/system.db start
+
+#default policies in filter table
+$IPTABLES -P INPUT DROP
+$IPTABLES -P FORWARD DROP
+$IPTABLES -P OUTPUT ACCEPT
+
+#proc entry
+echo "1">/proc/sys/net/ipv4/ip_forward
+
+# if ipv6 is enabled in the system, enable ipv6 forwarding
+if [ "$INCLUDE_FIREWALL6" = "y" ]; then
+if [ -e /proc/net/if_inet6 ]
+then
+#$IP6TABLES  -N  fwWanInFilter
+#$IP6TABLES  -N  fwWanInFilter2
+#$IP6TABLES  -N  icmpv6WanInputFilter
+#$IP6TABLES  -N  ipv6HdrFilter
+#$IP6TABLES  -N  fwLanInFilter
+#$IP6TABLES  -N  fwLanMulticastFilter
+#$IP6TABLES  -N  fwForwardFilter
+#$IP6TABLES  -N  fwForwardIn
+#$IP6TABLES  -N  fwForwardOut
+#$IP6TABLES  -N  icmpv6ForwardFilter
+#$IP6TABLES  -N  fwSysInputDrop   
+#$IP6TABLES  -N  ipv6BadAddrs
+#$IP6TABLES  -N  fwForwardDrop 
+#$IP6TABLES  -N  fwForwardAccept
+#$IP6TABLES  -N  fwdAccept
+#$IP6TABLES  -N  ipv6FragFilter
+#$IP6TABLES  -N  fwVpnCheck
+
+# Chains for user configured rules
+#$IP6TABLES  -N  INSECURE_SECURE
+#$IP6TABLES  -N  INSECURE_SECURE_LnA
+#$IP6TABLES  -N  INSECURE_SECURE_LnD
+
+#$IP6TABLES  -N  SECURE_INSECURE
+#$IP6TABLES  -N  SECURE_INSECURE_LnD
+#$IP6TABLES  -N  SECURE_INSECURE_LnA
+
+#$IP6TABLES -N DEFAULT_POLICY
+
+#default policies in filter table
+$IP6TABLES -P INPUT DROP
+$IP6TABLES -P FORWARD DROP
+$IP6TABLES -P OUTPUT ACCEPT    
+fi    
+fi    
+
+echo "creating smtpAlg device"
+FILE=/dev/smtpAlg
+if [ -e $FILE ];
+then
+    echo "File $FILE exists"
+else
+    echo "Creating $FILE"
+    mknod /dev/smtpAlg c `awk '$ 2=="smtpAlg" {print $ 1}' /proc/devices` 0
+fi
+
+cp /pfrm2.0/etc/ethertypes /etc/ethertypes
+sh /pfrm2.0/etc/ruleSet.sh
+
+echo -n "starting firewalld Daemon..."
+$FIREWALL_INSTALL_PATH/bin/firewalld $DB_FILENAME &
+echo "Done"
+fi
+

@@ -1,0 +1,481 @@
+<?lua
+require "teamf1lualib/billingDesk_bl"
+require "teamf1lualib/billingsUsers_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/captivePortal"
+
+local billingDesk = require ("com.teamf1.bl.billingDesk")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local billingUser = require ("com.teamf1.bl.billingUser")
+
+local configRowId
+if(ButtonType and ButtonType == "configExtend") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable["billingUsers.cookie"] = RowId
+    local returnCode = billingUser.extendSessionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+    elseif (ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable(cgi)
+        if (type(cgi["billingsUsers.checkbox"]) == "table") then
+        errorFlag = billingUser.billingUsersDeleteAll (cgi["billing.profileId"])
+        else
+            inputTable["billingsUsers.cookie"] = cgi["billingsUsers.checkbox"]
+            errorFlag = billingUser.billingUsersDelete (inputTable)
+            end
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+            end
+        web.goToPage(NextPage, true, true)
+    else
+    local returnCode
+    local configRow = {}
+    returnCode, configRow = billingDesk.billingProfilesGetAll ()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    
+    local billingProfileId
+    
+    if(#configRow ~= 0) then
+     	if (cgi["billing.profileId"] ~= nil and cgi["billing.profileId"] ~= "") then
+         	billingProfileId = cgi["billing.profileId"]
+     	else
+	 	billingProfileId =  configRow[1]["tempCPUserProfiles.ProfileId"]
+    	 end
+    end
+
+
+     local dateAndTime = util.date ()
+    local month = dateAndTime.month;
+    local date = dateAndTime.date;
+    local year = dateAndTime.year;
+    local hours = dateAndTime.hours;
+    local minutes = dateAndTime.minutes;
+    local seconds = dateAndTime.seconds;
+    cgilua.htmlheader()
+	
+    ?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+		<link rel="stylesheet" type="text/css" href="css/dateTimePicker.css" />
+		<script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+		<script language="JavaScript" type="text/javascript">			
+			/* Help default variable */
+			var helpSection = "viewAccounts";
+			var helpConfigFile = "status.txt";
+		</script>
+<?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body onLoad="onloadCall ();">
+    		<!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>                
+		<form name action="platform.cgi" method="post" name="tf1_billingsUsers" id ="tf1_billingsUsers">
+			<input type="hidden" name="thispage" value="billingsUsers.html">
+			    <?lua 
+				if(#configRow ~= 0) then ?>
+				<input type="hidden" name="billing.profileId" value="$| billingProfileId |$">
+			    <?lua end ?>
+			<div id="tf1_dialog" class="configDialog">
+				
+			</div>
+		</form>
+		<!-- Section for Pop up dialog ends -->
+       
+    		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+            <ul>
+                <li>
+                    <input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit apdetails');"/> &nbsp;Select All
+                </li>
+				<li id="edit">
+					Extend Session
+				</li>
+				<li id="apdetails">
+					View Details
+                    </li>
+                     <li id="delete">
+                    Delete
+                </li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+		<div align="center">
+			<div class="midWidth">
+				<div class="logo FL">
+					Unified Services Router - $| UNIT_NAME |$
+				</div>
+				 <div class="FR headerRight">
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td valign="top">&nbsp;</td>
+							<td rowspan="2" valign="top">
+						<a class="btnLogout" href="?page=billingDeskLogin.html">
+							<div>
+								<div>
+									<icon>
+										Logout
+									</icon>
+								</div>
+							</div> </a></td>
+						</tr>
+						<tr>
+							<td valign="top">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2" valign="top">&nbsp;
+							 
+							 </td>
+						</tr>
+					</table>
+				</div>
+				  <div class="midWidth menuBg">
+					<div>
+						<div>
+							<div align="left">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td>
+										<ul id="menu">
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li>
+												
+										<a href="?page=billingDesk.html">Home</a>
+											</li>
+	<div class="menuDiv">
+												&nbsp;
+											</div>
+											 
+
+										</ul></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="breadCrumb">
+			<div id="breadCrumb">
+			</div>
+			<div class="helpRefresh">
+				<div class="topRightLinks refresh">
+					<input type="button" value class="refreshButton" title="Refresh" onclick="window.location='platform.cgi?page=billingsUsers.html'">
+				</div>
+				<div class="topRightLinks help">
+					<input type="button" value class="helpButton" title="Help">
+				</div>
+			</div>
+		</div>
+				 
+			</div>
+		</div>
+  </td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+										
+                   <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                        <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                    <p>$| statusErrorMessage or '' |$</p>
+            </div> 
+            <?lua  end?> 
+
+					<div class="FL2">
+                        <p class="hint">
+                        This page shows information about generated frontDesk users.
+						</p>
+					</div>
+                        <?lua 
+				if(#configRow ~= 0) then
+					currentUserDetails = billingUser.getViewDetails(billingProfileId)
+				end
+
+				?>
+					<h1>Billing Users</h1>
+					<div class="midArea">
+						<div align="left">
+				<?lua 
+                                     local i = 0
+                                     if (#configRow ~= 0) then ?>
+					<form method="post" name="tf1_selectBillingProfileFrm" name="tf1_selectBillingProfileFrm" action="?page=billingsUsers.html">
+				  
+					<div class="configRow">
+			        <label>Select Billing Profile</label>
+				
+			         <select name="billing.profileId" onchange="document.tf1_selectBillingProfileFrm.submit()">
+
+					<?lua 
+                                         for k,v in pairs(configRow) do
+                                             i= i + 1
+                                             util.appendDebugOut("printing profile name " .. v["tempCPUserProfiles.ProfileName"])
+                                ?>
+					<option $| web.dropdownSelected(v["tempCPUserProfiles.ProfileId"] == billingProfileId) |$ value="$| v["tempCPUserProfiles.ProfileId"] |$">$| v["tempCPUserProfiles.ProfileName"] |$</option>
+				<?lua 
+
+					end 
+					?>
+
+				</select>	 
+
+								</div>
+								<div class="break">&nbsp;</div>
+								<div class="break">&nbsp;</div>
+</form>
+               <nav class="nav-bg">
+							<ul class="menu">
+								<li>
+						<a href="?page=billingDesk.html&billing.profileId=$| billingProfileId or '' |$">Billing Form</a>
+								</li>
+								<li class="current">
+									<a href="?page=billingsUsers.html&billing.profileId=$| billingProfileId or ''|$">View Accounts</a>
+								</li>
+								 
+							</ul>
+						</nav>
+					 <div class="CLR">
+						<div class="demo_jui">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+                                        <th>User Name</th>
+                                        <th>Latest Login</th>
+                                        <th>IP Address</th>
+										<th> Expiration Date </th>
+										<th> Usage Time Left(in Seconds) </th>
+										<th> Bandwidth Usage Left(in MB)</th>
+									</tr>
+								</thead>
+                                                                <?lua for k,v in pairs(currentUserDetails) do
+                                                                local rowId = currentUserDetails[k]["_ROWID_"]
+                                                                local tempUserName =v["UserName"]
+
+                                 
+								if(v["ExpirationDate"]=="0" or
+                                v["ExpirationDate"] == "NA") then
+                        				expDate="NA"
+						else
+							expDate=captivePortal.dateToGUI(v["ExpirationDate"])
+
+							local dayLightSaveCheck=db.getAttribute("ntp","_ROWID_", "1","autoDaylight")
+							if (dayLightSaveCheck == "1") then
+							if ((v["DayLightSaving"]) == "0") then
+							expDate=captivePortal.dateToGuiAdd(v["ExpirationDate"])
+							end
+							elseif (dayLightSaveCheck == "0") then
+							if (v["DayLightSaving"] == "1") then
+							expDate=captivePortal.dateToGuiSubtract(v["ExpirationDate"])
+							end
+							end
+							
+                            end
+                                                                local multiCheck=billingUser.getTempMultiloginRow(tempUserName)
+
+                                                                if(multiCheck ~= nil and #multiCheck ~= 0) then  
+                                                                for key,value in pairs (multiCheck) do
+                                                                if (value["CaptivePortalSession.swType"] == "1") then
+                                                                value["CaptivePortalSession.currentLoginTime"] = string.gsub (value["CaptivePortalSession.currentLoginTime"], '"', '')
+                                                                clientIPAddr = value["CaptivePortalSession.ipAddr"]
+                                                                end
+                                ?> 
+								<tr class="gradeA" id="billingsUsers$| rowId |$"
+                                    username="$|currentUserDetails[k]["UserName"]|$">
+                                    <td>$|currentUserDetails[k]["UserName"] or ''|$</td>
+									<td> $|value["CaptivePortalSession.currentLoginTime"] or ''|$ </td>
+									<td> $|value["CaptivePortalSession.ipAddr"] or 'NA'|$ </td>
+									<td>$| expDate or '' |$ </td>
+									<td> $|currentUserDetails[k]["usageTimeLeft"] or ''|$ </td>
+									<td> $|currentUserDetails[k]["usageTraficLeft"] or ''|$ </td>
+                                </tr>
+                                <?lua 
+                                end
+                                else
+				local latestLogin = billingUser.latestLoginPart2 (tempUserName)          
+                           	if (latestLogin ~= nil and latestLogin ~='') then
+                           	    latestLogin = string.gsub(latestLogin,'"','')
+                           	else
+                           	    latestLogin = "NA"
+                           	end 
+                                ?>
+                                <tr class="gradeA" id="billingsUsers$| rowId |$"
+                                    username="$|currentUserDetails[k]["UserName"]|$">
+                                    <td>$|currentUserDetails[k]["UserName"] or ''|$</td>
+									<td> $|latestLogin|$ </td>
+									<td> NA </td>
+									<td> $| expDate or '' |$ </td>
+									<td> $|currentUserDetails[k]["usageTimeLeft"] or ''|$ </td>
+									<td> $|currentUserDetails[k]["usageTraficLeft"] or ''|$ </td>
+                                </tr>
+                                <?lua end end?>
+                                
+							</table>
+ 						</div>
+					</div>
+
+					<?lua else ?>
+					 No records
+					<?lua end ?>
+					</div>
+					</div>
+				</div>
+
+</td>
+			</tr>
+			<tr>
+				<td>
+					<?lua web.includeMenu("footer.html")?>
+				</td>
+			</tr>
+		</table>
+	<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script language="JavaScript" src="js/textValidations.js" type="text/javascript"></script>
+		<script type="text/javascript" language="javascript" src="js/billingDeskCommon.js"></script>
+		<script type="text/javascript" language="javascript" src="js/extendSession.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script language="JavaScript" src="js/extendSession.js" type="text/javascript"></script>
+		<script language="JavaScript" src="js/dateTime.js" type="text/javascript"></script>
+        <script language="JavaScript" src="js/dateTimePicker.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+	function helpPop (helpSection,helpConfigFile){
+	/* For all browsers */	
+	var url = "platform.cgi?page=showFrontDeskHelp.html&help="+helpSection+"&helpfile="+helpConfigFile;	
+	/*Overwrite if it is Opera browser */	
+	if ( navigator.appName.indexOf ('Opera') != -1 ) {	
+			url = "platform.cgi?page=showFrontDeskHelp.html&help="+helpSection+"&helpfile="+helpConfigFile;			
+		}	
+	helpwindow=window.open(url,'name','height=398,width=560,left=200,top=150,resizable=no,scrollbars=yes,toolbar=no,status=no');	
+	
+	if (window.focus) {helpwindow.focus()}
+	
+	
+}
+	
+		function onloadExtendSessionFn() {
+			var curr = new Date().getFullYear();
+			var opt = {}			
+			opt.datetime = {preset: 'datetime',minDate: new Date(2000,3,10,9,22),maxDate: new Date(2099,7,30,15,44),stepMinute: 1};
+			$('#tf1_setDateTime').val($('#txtbeginFrom').val());
+			$('#tf1_setDateTime').scroller('destroy').scroller(
+				$.extend(
+					opt["datetime"], { 					
+						mode: "scroller", 
+						display: "inline" 
+					}
+				)			
+			);			
+		}
+		function onchangeValue(){
+			$('#txtbeginFrom').val($('#tf1_setDateTime').val());
+		}		
+	</script>
+
+        <script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				 $('.gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'editMenu' : function(t, e, rowId) {
+				// Call the open form
+openForm('button.extend.billingsUsers.billingsUsers',rowId,'tf1_dialog','billingsUsers','billingsUsersForm.html', 'tf1_extendSessionDailogContent','onloadExtendSessionFn');
+						},
+						'apdetailsMenu' : function(t, e, rowId) {
+	// Call the open form
+openForm('button.viewDetails.billingsUsers.billingsUsers',rowId,'tf1_dialog','billingsUsers','billingsUsersForm.html', 'tf1_viewDetailsDailogContent','');
+},
+'deleteMenu' : function(t, e, rowId) {
+                                      if($("#optionSelectAllMenu").is(':checked')== false || $(".gradeA").length ==1) 
+                                      {
+
+                                      var username = $("#"+rowId).attr("username");
+                                      $("#"+rowId).attr("id",username);
+                                      rowId = username;
+                                       }
+                                    deleteRows('button.delete.billingsUsers.billingsUsers','tf1_billingsUsers', rowId, 'optionSelectAll', 'tf1_dialog', 'billingsUsers', 'billingsUsers');
+                                        }
+					}
+				});
+				
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+				onloadCall();
+				$("#btnClose").live("click",function(e){
+				    HideDialog('tf1_dialog', 'tf1_overlay');
+				    e.preventDefault();
+				   });
+
+				/* Activate the click event for help Button */	
+				$(".helpButton").live("click", function(e){			
+		/*Prevent the anchor action or donot append the # to URL */						
+					e.preventDefault();						
+					/*Open the help file */
+					helpPop (helpSection,helpConfigFile);	
+				});	
+			});
+		function PrintMe(DivID) {
+		    var disp_setting="toolbar=yes,location=no,";
+		    disp_setting+="directories=yes,menubar=yes,";
+		    disp_setting+="scrollbars=yes,width=650, height=600, left=100, top=25";
+		    var content_vlue = document.getElementById(DivID).innerHTML;
+		    var docprint=window.open("","",disp_setting);
+		    docprint.document.open();
+		    docprint.document.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"');
+		    docprint.document.write('"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
+		    docprint.document.write('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">');
+		    docprint.document.write('<head><title>My Title</title><link rel="stylesheet" type="text/css" href="css/style.css" />');
+		    docprint.document.write('<style type="text/css">body{ margin:0px;');
+		    docprint.document.write('font-family:verdana,Arial;color:#000;');
+		    docprint.document.write('font-family:Verdana, Geneva, sans-serif; font-size:12px;}');
+		    docprint.document.write('a{color:#000;text-decoration:none;} </style>');
+		    docprint.document.write('</head><body onLoad="self.print()"><center>');
+		    docprint.document.write(content_vlue);
+		    docprint.document.write('</center></body></html>');
+		    docprint.document.close();
+		    docprint.focus();
+		}	
+		</script>
+<input type="hidden" value="$| year |$" id="hdYear" />
+<input type="hidden" value="$| month |$" id="hdMonth" />
+<input type="hidden" value="$| date |$" id="hdDay" />
+<input type="hidden" value="$| hours |$" id="hdHours" />
+<input type="hidden" value="$| minutes |$" id="hdMinutes" />
+<input type="hidden" value="$| seconds |$" id="hdSeconds" />
+<input type="hidden" id="hdUpTime" value="0" />
+	</body>
+</html>
+
+
+
+<?lua end?>

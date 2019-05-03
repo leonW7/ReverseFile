@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# greInit - initialization script
+#
+# Copyright (c) 2012, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,15Jun12,avr written
+
+#MODEL_ID=`/pfrm2.0/bin/printProductData /etc/mtdDevice ModelId |  awk '{print $1}'`
+
+if [ "$INCLUDE_GRE" = "y" ]; then
+    MODULES_DIR=$GRE_INSTALL_PATH/lib/modules/
+#    if [ $MODEL_ID == "DSR-1000AC" ] || [ $MODEL_ID == "DSR-500AC" ]; then
+#       insmod $MODULES_DIR/ip_tunnel.$MOD_SUFFIX
+#    fi
+    insmod $MODULES_DIR/ip_gre.$MOD_SUFFIX
+fi
+

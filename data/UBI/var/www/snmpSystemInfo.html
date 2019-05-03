@@ -1,0 +1,156 @@
+<?lua
+require "teamf1lualib/snmpSystemInfo_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "maintenance"
+	PAGE_HELP_SECTION = "snmpSystemInfo"
+
+local sysInfo = require("com.teamf1.bl.snmp.sysinfo")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local ROW_ID = "1"
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["snmpSystemInfo.cookie"] = ROW_ID
+    local returnCode, cookie = 
+            sysInfo.systemInfoSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local returnCode, cookie, contact, location, sysName
+    returnCode, cookie, contact, location, sysName = 
+                            sysInfo.systemInfoSectionGet()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+        statusErrorMessage = statusErrorMessage .. returnCode
+    end
+    cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+LANG_LOCALE =
+"12880,13030,13031,12879,30402,10032,12880,13035,12190,12191,12192,12758,10449"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu6");
+                    </script>
+                    <!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+                    -->
+                    <?lua if(statusErrorMessage ~= returnCodes.NIL) then
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                    <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <div align="left">
+                        <nav class="nav-bg">
+                            <ul class="menu">
+                                <li>
+                                    <a href="?page=snmp.html">$| LANG_LOCALE['12879'] |$</a>
+                                </li>
+                                <!--li>
+                                    <a href="?page=wirelessControllerSnmpTrap.html">SNMP Trap</a>
+                                </li-->
+                                <li>
+                                    <a href="?page=snmpTrapList.html">$| LANG_LOCALE['30402'] |$</a>
+                                </li>
+                                <li>
+                                    <a href="?page=snmpAccessControllList.html">$| LANG_LOCALE['10032'] |$</a>
+                                </li>
+                                <li class="current">
+                                    <a href="?page=snmpSystemInfo.html">$| LANG_LOCALE['12880'] |$</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="FL2">
+                        <p class="hint">
+                         $| helpHintText |$ 
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['12880'] |$</h1>
+                    <div class="midArea">
+                        <div align="left">
+                            <form name="tf1_frmSnmpSystemInfo"
+                                id="tf1_frmSnmpSystemInfo" action="platform.cgi" method="post">
+                            <input type="hidden" name="thispage" id="thispage" value="snmpSystemInfo.html">
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13030'] |$ </label>
+                                    <input name="snmpSystemInfo.sysContact"
+                                    type="text" value="$| contact or '' |$" id="tf1_sysContact" maxlength="32">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13031'] |$ </label>
+                                    <input type="text" name="snmpSystemInfo.sysLoc" value="$| location or '' |$" id="tf1_sysLocation" maxlength="32">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> $| LANG_LOCALE['13035'] |$ </label>
+                                    <input type="text" name="snmpSystemInfo.name" value="$| sysName or '' |$" id="tf1_sysName" maxlength="32" onkeypress="return alphaNumericCheck (event, '-')">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="submitRow">
+                                    <input type="submit" name="button.config.snmpSystemInfo" onclick="return pageValidate()" class="btnSubmit" title="$| LANG_LOCALE['12758'] |$" value="$| LANG_LOCALE['12758'] |$" id="btSave">
+                                    <input type="reset" class="btnReset" title="$| LANG_LOCALE['10449'] |$" value="$| LANG_LOCALE['10449'] |$" id="btSave">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div></td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/snmpSystemInfo.js"></script>
+    </body>
+</html>
+<?lua end ?>

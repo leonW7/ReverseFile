@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# ifgroupInit - initialization script for ifgroup
+#
+# Copyright (c) 2009, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,29Jun09 gpr written
+
+
+if [ "$INCLUDE_IFGROUP" = "y" ]; then
+
+MODULES_DIR=$IFGROUP_INSTALL_PATH/lib/modules/ifgroup
+
+
+[ -f $MODULES_DIR/ifgroup.$MOD_SUFFIX ] && { insmod $MODULES_DIR/ifgroup.$MOD_SUFFIX; }
+
+fi
+

@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+              
+<!--=======================================================-->
+<VIEW name="net-ddns-config" prompt="net-config[ddns]> "> 
+    <COMMAND name="save" help="Save DDNS configuration changes.">
+	     <ACTION>lua clishCfgObjExec("ddns")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save DDNS configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("ddns")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back DDNS configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+    <COMMAND name="ddnsService" help="Enable or disable Dyndns to provide Dynamic DNS services available">
+	<PARAM name="ddns_service" 
+        help="Select DDNS services available"
+	       ptype="DDNSSERVICE"/>
+	<ACTION>lua clishCfgObjAdd ("ddns", "ddns.ddnsService","${ddns_service}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="server" help="Set Dynamic DNS Server.">
+	<PARAM name="server" 
+	       help="ServerName."
+	       ptype="STRING64"/>
+	<ACTION>lua clishCfgObjAdd ("ddns", "ddns.server", "${server}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="username" help="Set username.">
+	<PARAM name="user_name" 
+	       help="Username."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns", "ddns.username", "${user_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="password" help="Set Password.">
+	<PARAM name="password" 
+	       help="Password."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns", "ddns.password", "${password}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="hostname" help="Set Hostname.">
+	<PARAM name="host_name" 
+	       help="Hostname."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns", "ddns.hostname", "${host_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="zonename" help="Set Zonename.">
+	<PARAM name="zone_name" 
+	       help="Zonename."
+	       ptype="STRING64"/>
+	<ACTION>lua clishCfgObjAdd ("ddns", "ddns.zonename", "${zone_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="type" help="Set DDNS Type.">
+	<PARAM name="type" 
+        help="DDNS Service Type."
+	       ptype="DDNSTYPE"/>
+       <ACTION>lua clishCfgObjAdd ("ddns", "ddns.type", "${type}")
+       </ACTION>
+   </COMMAND>
+    <COMMAND name="wild_flag_enable" help="Enable / Disable using wild cards.">
+	<PARAM name="wild_flag" 
+        help="Wildcard flag."
+	       ptype="CHOICE_INT"/>
+       <ACTION>lua clishCfgObjAdd ("ddns", "ddns.wildflag", "${wild_flag}")
+       </ACTION>
+   </COMMAND>
+   <COMMAND name="force_update_interval" help="Set ForceUpdate Interval.">
+	<PARAM name="time_period" 
+	       help="Force Update for every interval configured."
+	       ptype="DDNSTIME"/>
+       <ACTION>lua clishCfgObjAdd ("ddns", "ddns.timePeriod", "${time_period}")
+	</ACTION>
+    </COMMAND>
+   <COMMAND name="use_external_nat_ip" help="Enable / Disable this for using external (NAT router's) IP address or not.">
+	<PARAM name="external_ipcheck" 
+        help="External IpCheck."
+	       ptype="CHOICE_INT"/>
+       <ACTION>lua clishCfgObjAdd ("ddns", "ddns.externalIpCheck", "${external_ipcheck}")
+       </ACTION>
+   </COMMAND>
+   <COMMAND name="url" help="Set Custom DDNS Service Url.">
+	<PARAM name="url" 
+	       help="Custom DDNS Service Url Update.Enter between double quotes to type special symbols if any"
+	       ptype="STRING128"/>
+	<ACTION>lua clishCfgObjAdd ("ddns", "ddns.url", "${url}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="add_option" help="Set Custom Service additonal options.">
+	<PARAM name="add_option" 
+	       help="Custom DDNS Service additional options.Enter between double quotes to type special symbols if any"
+	       ptype="STRING64_ACCEPT_SPACE"/>
+	<ACTION>lua clishCfgObjAdd ("ddns", "ddns.additionalDDNS", "${add_option}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="key" help="Upload key for Dynamic Update DDNS Service Authentication.">
+	<PARAM name="fileName" 
+               help="file name of key located in tftp server root directory"
+           ptype="STRING"/>
+    <PARAM name="ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua ddnsUploadKeySet ("${fileName}","${ipAddr}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-ddns2-config" prompt="net-config[ddns2]> "> 
+    <COMMAND name="save" help="Save DDNS configuration changes.">
+	     <ACTION>lua clishCfgObjExec("ddns2")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save DDNS configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("ddns2")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back DDNS configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+   
+    <COMMAND name="ddnsService" help="Enable or disable Dyndns to provide Dynamic DNS services available">
+	<PARAM name="ddns_service" 
+        help="Select DDNS services available"
+	       ptype="DDNSSERVICE"/>
+	<ACTION>lua clishCfgObjAdd ("ddns2", "ddns.ddnsService","${ddns_service}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="server" help="Set Dynamic DNS Server.">
+	<PARAM name="server" 
+	       help="ServerName."
+	       ptype="STRING64"/>
+	<ACTION>lua clishCfgObjAdd ("ddns2", "ddns.server", "${server}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="username" help="Set username.">
+	<PARAM name="user_name" 
+	       help="Username."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns2", "ddns.username", "${user_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="password" help="Set Password.">
+	<PARAM name="password" 
+	       help="Password."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns2", "ddns.password", "${password}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="hostname" help="Set Hostname.">
+	<PARAM name="host_name" 
+	       help="Hostname."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns2", "ddns.hostname", "${host_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="zonename" help="Set Zonename.">
+	<PARAM name="zone_name" 
+	       help="Zonename."
+	       ptype="STRING64"/>
+	<ACTION>lua clishCfgObjAdd ("ddns2", "ddns.zonename", "${zone_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="type" help="Set DDNS Type.">
+	<PARAM name="type" 
+        help="DDNS Service Type."
+	       ptype="DDNSTYPE"/>
+       <ACTION>lua clishCfgObjAdd ("ddns2", "ddns.type", "${type}")
+       </ACTION>
+   </COMMAND>
+    <COMMAND name="wild_flag_enable" help="Enable / Disable using wild cards.">
+	<PARAM name="wild_flag" 
+        help="Wildcard flag."
+	       ptype="CHOICE_INT"/>
+       <ACTION>lua clishCfgObjAdd ("ddns2", "ddns.wildflag", "${wild_flag}")
+       </ACTION>
+   </COMMAND>
+   <COMMAND name="force_update_interval" help="Set ForceUpdate Interval.">
+	<PARAM name="time_period" 
+	       help="Force Update for every interval configured."
+	       ptype="DDNSTIME"/>
+       <ACTION>lua clishCfgObjAdd ("ddns2", "ddns.timePeriod", "${time_period}")
+	</ACTION>
+    </COMMAND>
+   <COMMAND name="use_external_nat_ip" help="Enable / Disable this for using external (NAT router's) IP address or not.">
+	<PARAM name="external_ipcheck" 
+        help="External IpCheck."
+	       ptype="CHOICE_INT"/>
+       <ACTION>lua clishCfgObjAdd ("ddns2", "ddns.externalIpCheck", "${external_ipcheck}")
+       </ACTION>
+   </COMMAND>
+   <COMMAND name="url" help="Set Custom DDNS Service Url.">
+	<PARAM name="url" 
+	       help="Custom DDNS Service Url Update."
+	       ptype="STRING128"/>
+	<ACTION>lua clishCfgObjAdd ("ddns2", "ddns.url", "${url}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="add_option" help="Set Custom Service additonal options.">
+	<PARAM name="add_option" 
+	       help="Custom DDNS Service additional options."
+	       ptype="STRING64_ACCEPT_SPACE"/>
+	<ACTION>lua clishCfgObjAdd ("ddns2", "ddns.additionalDDNS", "${add_option}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="key" help="Upload key for Dynamic Update DDNS Service Authentication.">
+	<PARAM name="fileName" 
+               help="file name of key located in tftp server root directory"
+           ptype="STRING"/>
+    <PARAM name="ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua ddnsUploadKeySet ("${fileName}","${ipAddr}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+<VIEW name="net-ddns3-config" prompt="net-config[ddns3]> "> 
+    <COMMAND name="save" help="Save DDNS configuration changes.">
+	     <ACTION>lua clishCfgObjExec("ddns3")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save DDNS configuration changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("ddns3")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back DDNS configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+     </COMMAND>
+   
+    <COMMAND name="ddnsService" help="Enable or disable Dyndns to provide Dynamic DNS services available">
+	<PARAM name="ddns_service" 
+        help="Select DDNS services available"
+	       ptype="DDNSSERVICE"/>
+	<ACTION>lua clishCfgObjAdd ("ddns3", "ddns.ddnsService","${ddns_service}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="server" help="Set Dynamic DNS Server.">
+	<PARAM name="server" 
+	       help="ServerName."
+	       ptype="STRING64"/>
+	<ACTION>lua clishCfgObjAdd ("ddns3", "ddns.server", "${server}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="username" help="Set username.">
+	<PARAM name="user_name" 
+	       help="Username."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns3", "ddns.username", "${user_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="password" help="Set Password.">
+	<PARAM name="password" 
+	       help="Password."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns3", "ddns.password", "${password}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="hostname" help="Set Hostname.">
+	<PARAM name="host_name" 
+	       help="Hostname."
+	       ptype="STRING64_RESTRICT_HASH"/>
+	<ACTION>lua clishCfgObjAdd ("ddns3", "ddns.hostname", "${host_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="zonename" help="Set Zonename.">
+	<PARAM name="zone_name" 
+	       help="Zonename."
+	       ptype="STRING64"/>
+	<ACTION>lua clishCfgObjAdd ("ddns3", "ddns.zonename", "${zone_name}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="type" help="Set DDNS Type.">
+	<PARAM name="type" 
+        help="DDNS Service Type."
+	       ptype="DDNSTYPE"/>
+       <ACTION>lua clishCfgObjAdd ("ddns3", "ddns.type", "${type}")
+       </ACTION>
+   </COMMAND>
+    <COMMAND name="wild_flag_enable" help="Enable / Disable using wild cards.">
+	<PARAM name="wild_flag" 
+        help="Wildcard flag."
+	       ptype="CHOICE_INT"/>
+       <ACTION>lua clishCfgObjAdd ("ddns3", "ddns.wildflag", "${wild_flag}")
+       </ACTION>
+   </COMMAND>
+   <COMMAND name="force_update_interval" help="Set ForceUpdate Interval.">
+	<PARAM name="time_period" 
+	       help="Force Update for every interval configured."
+	       ptype="DDNSTIME"/>
+       <ACTION>lua clishCfgObjAdd ("ddns3", "ddns.timePeriod", "${time_period}")
+	</ACTION>
+    </COMMAND>
+   <COMMAND name="use_external_nat_ip" help="Enable / Disable this for using external (NAT router's) IP address or not.">
+	<PARAM name="external_ipcheck" 
+        help="External IpCheck."
+	       ptype="CHOICE_INT"/>
+       <ACTION>lua clishCfgObjAdd ("ddns3", "ddns.externalIpCheck", "${external_ipcheck}")
+       </ACTION>
+   </COMMAND>
+   <COMMAND name="url" help="Set Custom DDNS Service Url.">
+	<PARAM name="url" 
+	       help="Custom DDNS Service Url Update."
+	       ptype="STRING128"/>
+	<ACTION>lua clishCfgObjAdd ("ddns3", "ddns.url", "${url}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="add_option" help="Set Custom Service additonal options.">
+	<PARAM name="add_option" 
+	       help="Custom DDNS Service additional options."
+	       ptype="STRING64_ACCEPT_SPACE"/>
+	<ACTION>lua clishCfgObjAdd ("ddns3", "ddns.additionalDDNS", "${add_option}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="key" help="Upload key for Dynamic Update DDNS Service Authentication.">
+	<PARAM name="fileName" 
+               help="file name of key located in tftp server root directory"
+           ptype="STRING"/>
+    <PARAM name="ipAddr" 
+               help="ip address of tftp server"
+               ptype="IP_ADDR"/>
+	<ACTION>lua ddnsUploadKeySet ("${fileName}","${ipAddr}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+<!--=======================================================-->
+    <COMMAND name="net ddns" license_support="Y" help="DDNS setup."/>
+    <!--=======================================================-->
+    <COMMAND name="net ddns wan1" help="DDNS setup."/>
+    <!--=======================================================-->
+    <COMMAND name="net ddns wan2" help="DDNS setup." check_supported="Y"/>
+    <!--=======================================================-->
+    <COMMAND name="net ddns wan3" help="DDNS setup." check_supported="Y"/>
+    <!--=======================================================--> 
+    <COMMAND name="net ddns wan1 configure"
+             help="DDNS configuration mode."
+             view="net-ddns-config" viewid="">
+                      <ACTION>lua clishCfgObjNew ("ddns", ddnsCfgInit, ddnsCfgSave, 
+				       ddnsCfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+     <COMMAND name="net ddns wan2 configure"
+             help="DDNS configuration mode."
+             view="net-ddns2-config" viewid="">
+                      <ACTION>lua clishCfgObjNew ("ddns2", ddns2CfgInit, ddns2CfgSave, 
+				       ddns2CfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+     <COMMAND name="net ddns wan3 configure"
+             help="DDNS configuration mode."
+             view="net-ddns3-config" viewid="">
+                      <ACTION>lua clishCfgObjNew ("ddns3", ddns3CfgInit, ddns3CfgSave, 
+				       ddns3CfgInputVal)
+                   </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+
+
+
+</CLISH_MODULE>

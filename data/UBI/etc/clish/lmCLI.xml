@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+
+<VIEW name="license-config" prompt="license-config> ">
+    <COMMAND name="list" help="List all licenses configured on the device">
+        <ACTION>lua clishLicenseList()</ACTION>
+    </COMMAND>
+    <COMMAND name="activate" help="Activate a license on the device">
+        <ACTION>lua clishLicenseActivate()</ACTION>
+    </COMMAND>
+    <COMMAND name="trial_activate" help="Activate trial period of 90 days to use WCF.">
+          <ACTION>lua clishTrialLicenseActivate()</ACTION>
+    </COMMAND>
+    <COMMAND name="trial_activate_status" help="displays the details of free trial expiry in days.">
+          <ACTION>lua clishiFreeTrialStatusGet()</ACTION>
+    </COMMAND>
+</VIEW>
+    <COMMAND name="license list"
+          help="List license on the device"
+          view="license-config" viewid="">
+          <ACTION>lua clishLicenseList()</ACTION>
+    </COMMAND>
+
+    <COMMAND name="license activate" help="activate a license on the device."
+             view="license-config" viewid="">
+          <PARAM name="activationKey"
+             help="Enter Activation Key"
+             ptype="ACTIVATION_KEY"/>
+  <ACTION>lua clishLicenseActivate ("${activationKey}")</ACTION>
+    </COMMAND>
+    
+    <COMMAND name="license trial_activate" 
+          help="Activate trial period of 90 days to use WCF."
+          view="license-config" viewid="">
+          <ACTION>lua clishTrialLicenseActivate()</ACTION>
+    </COMMAND>
+
+    <COMMAND name="license trial_activate_status" 
+          help="displays the details of free trial expiry in days."
+          view="license-config" viewid="">
+          <ACTION>lua clishFreeTrialStatusGet()</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

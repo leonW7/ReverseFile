@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# cronInit - initialization script for cron
+#
+# Copyright (c) 2007, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,01jun07,rks written
+
+
+if [ "$INCLUDE_CRON" = "y" ]; then
+
+echo -n "Starting the cron deamon..."
+$CRON_INSTALL_PATH/bin/crond  $DB_FILENAME &
+echo "Done"
+
+fi

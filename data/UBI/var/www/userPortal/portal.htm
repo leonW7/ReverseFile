@@ -1,0 +1,153 @@
+<!--
+Copyright (c) 2009 TeamF1, Inc.
+All rights reserved.
+-->
+
+<link rel="stylesheet" type="text/css" href="../css/style.css" />
+<link rel="stylesheet" type="text/css" href="../css/buttons.css" />
+<link rel="stylesheet" type="text/css" href="../css/menu.css" />
+<script type="text/javascript" language="javascript" src="../js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" language="javascript" src="../js/mis.js"></script>
+
+<script language="JavaScript" src="../js/menu.js" type="text/javascript"></script>
+</head>
+
+<script>
+function LinkToProductHome ()
+    {
+    window.open("http://"+getWebAddress ());
+    }
+function getHelpFile ()
+    {
+    var helpPath = "/scgi-bin/userPortal/"
+    var portalMatch = "/userPortal/"
+    var strHref = window.location.href;
+    var helpFile = "#" 
+    if (strHref.indexOf(portalMatch) > -1 )
+        {
+        var portalItemIndex = strHref.indexOf(portalMatch) + portalMatch.length;
+        var portalItem = strHref.substr(portalItemIndex).toLowerCase();
+        if (portalItem == "portal") helpFile = "portalHelp";
+        else if (portalItem == "sslvpnclient" || portalItem == "clientlinux") helpFile = "portalHelp#Help_VPNTUN";
+        else if (portalItem == "portforwarding") helpFile = "portalHelp#Help_PTForward";
+        else if (portalItem == "changepassword") helpFile = "portalHelp#Help_ChngPW";
+        else helpFile = "portalHelp#";
+        }
+
+    var helpLinkObj = document.getElementById('helpLink');
+    if (helpLinkObj)
+        helpLinkObj.href = helpPath + helpFile;
+    else
+        return false;
+
+    return true;
+    }
+
+</script>
+
+<body >
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+	<td class="header" valign="top" align="center">
+		<div align="center">
+			<div class="midWidth">
+				<div class="logo FL">
+					Unified Services Router
+				</div>
+				  <div class="FR headerRight">
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td valign="top">
+							  <h4 class="FR">Welcome to the :
+                                  <script language="JavaScript" type="text/javascript">
+                                               <!--
+                                              document.write (getPortalName());
+                                                 //-->
+                                            </script>
+                                       ' client portal. </h4>
+
+							</td>
+							<td rowspan="2" valign="top"> 
+								<a class="btnLogout" href="userLogout" title="Logout">
+					<div>
+						<div>
+									<icon>
+										Logout
+									</icon>
+								</div>
+					</div>
+					</a>							
+							</td>
+						</tr>
+						<tr>
+							<td valign="top"><h5 class="FR">English [US]</h5><h4 class="FR divider">Language:</h4>
+                               <h5 class="FR">
+                                <script language="JavaScript" type="text/javascript">
+                             //<!--
+                                       document.write (getFirmwareVersion());
+                               //-->
+                             </script>
+                                </h5><h4 class="FR">Firmware Version:</h4></td>
+						</tr>
+					</table>
+				</div>
+				  <div class="midWidth menuBg">
+					<div>
+						<div>
+							<div align="center">
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td>
+										<ul id="menu">
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+											<li id="mainMenu1" class="mMenu">
+				<a href="portal" title="Portal Information"  class="subMenu1" >Portal Information</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										
+											<li id="mainMenu2">
+                                 <a href="sslvpnclient" title="VPN Tunnel" class="subMenu2">VPN Tunnel</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										
+		                                                                  <li id="mainMenu3">
+                                  <a href="portforwarding" title="Port Forwarding" class="subMenu3">Port Forwarding</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+                                                                                
+											<li id="mainMenu4">
+		                  <a href="changepassword" title="Change Password" class="subMenu4">Change Password</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+                                                                                        <li id="mainMenu5">
+		           <a href="#" id="helpLink" onclick="return getHelpFile()" title="Help" class="subMenu5">HELP</a>
+											</li>
+											<div class="menuDiv">
+												&nbsp;
+											</div>
+										</ul></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+                                     
+				 
+			</div>
+		</div>		
+				
+	</td>
+
+</tr>
+

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+<!--=======================================================-->
+<VIEW name="net-static-routing-ipv4-config" prompt="net-config[static-routing-ipv4]> "> 
+    <COMMAND name="save" help="Save static route changes.">
+	     <ACTION>lua clishCfgObjExec("route")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save static routes changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("route")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back route configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address" help="Set the destination IP.">
+	<PARAM name="destIp" 
+	       help="Destination IP Address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("route", "route.dstIpAddr","${destIp}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="subnet_mask" help="Set the subnet for this rule.">
+	<PARAM name="subNet" 
+	       help="Subnet Mask."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("route", "route.ipSNetMask","${subNet}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="gateway_address" help="Set the gateway IP.">
+	<PARAM name="gwIpAddr" 
+	       help="Gateway Ip Address."
+	       ptype="IP_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("route", "route.gwIpAddr","${gwIpAddr}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="interface" help="Set the interface for which the rule applies.">
+	<PARAM name="interface" 
+	       help="Use <show net routing static interface_list> to see list of interface"
+	       ptype="ROUTE4_STATIC_INTERFACE_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("route", "route.interfaceName","${interface}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="metric" help="Set the metric for this route.">
+	<PARAM name="metric" 
+	       help="Integer between 2 and 15."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("route", "route.metric","${metric}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="private_flag" help="Defines whether the route can be shared with other gateways when RIP is enabled">
+	<PARAM name="privateFlag" 
+        help="set/unset the private flag."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("route", "route.private","${privateFlag}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="active_flag" help="Defines whether its an active route">
+	<PARAM name="activeFlag" 
+        help="set/unset the active flag."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("route", "route.active","${activeFlag}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+
+<!--=======================================================-->
+<VIEW name="net-static-routing-ipv6-config" prompt="net-config[static-routing-ipv6]> "> 
+    <COMMAND name="save" help="Save IPV6 static route changes.">
+	     <ACTION>lua clishCfgObjExec("routeV6")
+	     </ACTION>
+    </COMMAND>
+    <COMMAND name="exit" 
+	     help="Save IPV6 static routes changes and exit current mode." 
+	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("routeV6")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back IPV6 route configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="destination_address" help="Set the IPV6 destination IP.">
+	<PARAM name="destIpv6" 
+	       help="Destination IP Address."
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("routeV6", "route6.dstIpAddr","${destIpv6}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="prefix" help="Set the prefix length for this rule.">
+	<PARAM name="prefixLength" 
+	       help="Prefix Length"
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("routeV6", "route6.prefix","${prefixLength}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="gateway_address" help="Set the gateway IPV6.">
+	<PARAM name="gwIpAddr" 
+	       help="Gateway Ipv6 Address."
+	       ptype="IPV6_ADDR"/>
+	<ACTION>lua clishCfgObjAdd ("routeV6", "route6.gwIpAddr","${gwIpAddr}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="interface" help="Set the interface for which the rule applies.">
+	<PARAM name="interface" 
+	       help="Select LAN, Dedicated-WAN or 6to4-WAN."
+	       ptype="ROUTE6_INTERFACE_TYPE"/>
+	<ACTION>lua clishCfgObjAdd ("routeV6", "route6.interfaceName","${interface}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="metric" help="Set the metric for this route.">
+	<PARAM name="metric" 
+	       help="Integer between 2 and 15."
+	       ptype="UINT"/>
+	<ACTION>lua clishCfgObjAdd ("routeV6", "route6.metric","${metric}")
+	</ACTION>
+    </COMMAND>
+    <COMMAND name="active_flag" help="Defines whether its an active IPV6 route">
+	<PARAM name="activeFlag" 
+        help="set/unset the active flag."
+	       ptype="CHOICE_INT"/>
+	<ACTION>lua clishCfgObjAdd ("routeV6", "route6.active","${activeFlag}")
+	</ACTION>
+    </COMMAND>
+</VIEW>
+
+    <!--=======================================================-->
+    <COMMAND name="net routing" help="configure routing mode, static & dynamic route(s)."/>
+    <COMMAND name="net routing static" help="Configure the routes."/>
+    <COMMAND name="net routing static ipv4" help="Configure the routes."/>
+    <!--=======================================================-->
+    <COMMAND name="net routing static ipv6" help="Configure the IPV6 routes."/>
+    <!--=======================================================-->
+    <COMMAND name="net routing static ipv4 configure"
+             help="Add new static routes."
+             view="net-static-routing-ipv4-config" viewid="">
+             <PARAM name="name"
+                 help="Name of the route you want to add/edit."
+                 ptype="STRING_ALPHA_NUM_32"/>
+            <ACTION>lua clishCfgObjNew("route", routeCfgInit, routeCfgSave, 
+                routeCfgInputVal,"${name}")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net routing static ipv6 configure"
+             help="Add new IPV6 static routes."
+             view="net-static-routing-ipv6-config" viewid="">
+             <PARAM name="name"
+                 help="Name of the IPV6 route you want to add/edit."
+                 ptype="STRING_ALPHA_NUM_32"/>
+            <ACTION>lua clishCfgObjNew("routeV6", routeV6CfgInit, routeV6CfgSave, 
+                routeCfgV6InputVal,"${name}")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net routing static ipv4 delete"
+             help="Delete a specific route.">
+	<PARAM name="name" 
+	       help="Name of the route to be deleted."
+           ptype="STRING_ALPHA_NUM_32"/>
+       <ACTION>lua clishCfgObjNew("routeDel", routeCfgInit, routeCfgDel,
+                                        nil,"${name}") 
+                        clishCfgObjExec("routeDel")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net routing static ipv6 delete"
+             help="Delete a specific IPV6 route.">
+	<PARAM name="name" 
+	       help="Name of the IPV6 route to be deleted."
+           ptype="STRING_ALPHA_NUM_32"/>
+       <ACTION>lua clishCfgObjNew("routeV6Del", routeV6CfgInit, routeV6CfgDel,
+                                        nil,"${name}") 
+                        clishCfgObjExec("routeV6Del")
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net routing static ipv4 deleteAll"
+        help="Delete all the configured routes.">
+        <ACTION>lua clishCmdExec(routeDelAll)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="net routing static ipv6 deleteAll"
+        help="Delete all the configured IPV6 routes.">
+        <ACTION>lua clishCmdExec(routeV6DelAll)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show net routing" help="Displays routing setup"/>
+    <COMMAND name="show net routing static" help="."/>
+    <COMMAND name="show net routing static ipv4" help="."/>
+    <COMMAND name="show net routing static ipv4 setup"
+        help="Show all the configured IPV4 routes.">
+        <ACTION>lua clishCmdExec(routingGet)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+	<COMMAND name="show net routing static interface_list"
+	        help="Show all the interfaces on which static route can be configured">
+	       <ACTION>lua clishCmdExec(routingGetInterface)
+	        </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+    <COMMAND name="show net routing static ipv6" help="."/>
+    <COMMAND name="show net routing static ipv6 setup"
+        help="Show all the configured IPV6 routes.">
+        <ACTION>lua clishCmdExec(routingV6Get)
+	    </ACTION>
+    </COMMAND>
+    <!--=======================================================-->
+</CLISH_MODULE>

@@ -1,0 +1,95 @@
+<?lua
+require "teamf1lualib/billingDesk_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local billingDesk = require ("com.teamf1.bl.billingDesk")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local profileId = cgi["configRowId"]
+local currentProfile, tmpUsers = billingDesk.billingDeskPreviewGet (profileId)
+
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_billingDeskDailogContent">
+    <div class="topBg">
+        <h1>Billing Profiles Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea" id="tf1_printPreview">
+        <?lua
+              for k,v in pairs(tmpUsers) do
+                        ?>	
+	<h2>$| currentProfile["tempCPUserProfiles.ProfileName"] |$'s User Accounts</h2>
+          <div class="break">&nbsp;</div>
+           <?lua 
+             if(v["tempUsers.CstmAccName"] and v["tempUsers.CstmAccName"]~=' ') then ?>
+                  <div class="configRow">
+	           <label>Account Name</label>
+		     <p>$| v["tempUsers.CstmAccName"] |$</p>
+	     </div>
+								<div class="break">&nbsp;</div>
+             <?lua end ?>
+	      <div class="configRow">
+	      <label>Username </label>
+	          <p>$| v["tempUsers.UserName"] |$</p>
+	       </div>
+	        <div class="break">&nbsp;</div>
+                 <div class="configRow">
+		<label>Password </label>
+		<p>$| v["tempUsers.Password"] |$</p>
+		</div>
+								<div class="break">&nbsp;</div>
+                   <?lua 
+                                if(v["tempUsers.BeginDate"]~= "0") then 
+                                        beginDate = billingDesk.covertDateInGUi(v["tempUsers.BeginDate"]) 
+                                        if( currentProfile["tempCPUserProfiles.DurationType"]== "0") then ?>
+                                <div class="configRow">
+									<label>Account Created Date/Time:</label>
+                                         <?lua else ?>
+                                                 <div class="configRow">
+						<label>Begin Date/Time:</label>
+                                         <?lua end?>
+                                         
+										 <p>$| beginDate |$</p>
+								</div>
+								<div class="break">&nbsp;</div>
+                                  <?lua end?>
+                               <?lua if(v["tempUsers.ExpirationDate"]~="0") then
+                                local expDate = billingDesk.covertDateInGUi(v["tempUsers.ExpirationDate"]) 
+                     ?>
+
+                               <div class="configRow">
+									<label>Expiration Date/Time</label>
+										 <p>$| expDate or ' ' |$</p>
+								</div>
+								<div class="break">&nbsp;</div>
+                                     <?lua end?>
+                                      <?lua if(v["tempUsers.MaxUsageTimeInfo"]~= "0") then 
+                                        timeType,timeVal=billingDesk.convertTime(v["tempUsers.MaxUsageTimeInfo"])
+                                ?>
+								 <div class="configRow">
+									<label>Maximum Usage Time</label>
+					 <p>$| timeVal |$ $| web.getArgsFromIndex (timeType, "Hours","Days") |$</p>
+								</div>
+								<div class="break">&nbsp;</div>
+                                <?lua end?>
+                                <?lua if(v["tempUsers.MaxUsageTrafficInfo"]~= "0") then 
+                                        trafficType,trafficVal=billingDesk.convertTraffic(v["tempUsers.MaxUsageTrafficInfo"])
+                                ?>
+                                <div class="configRow">
+			       <label>Maximum Usage Traffic:</label>
+				<p>$| trafficVal |$ $| web.getArgsFromIndex (trafficType," "," ", "MB","GB") |$</p>
+								</div>
+								<div class="break">&nbsp;</div>
+                               <?lua end?>
+                                <div class="break">&nbsp;</div>
+                                 <?lua end?>
+	
+   </div>
+	<div class="dialogSubmitRow">
+                 
+  

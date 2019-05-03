@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# sendSms_wrapper - wrapper for sending Sms
+#
+# Copyright (c) 2012, TeamF1, Inc.
+#
+# Copyright (c) 2016, TeamF1 Networks Pvt. Ltd. 
+# (Subsidiary of D-Link India)
+#
+#
+# modification history
+# --------------------
+# 01b,29dec16,avr  added changes for SPR#58381
+# 01a,24aug12,sr   written.
+#
+# DESCRIPTION
+# This script is a wrapper for the sending Sms. This is generally forked from
+# sms Library.
+#
+CHAT_SCRIPT=/pfrm2.0/bin/chat
+echo "Executing chat commands to send SMS";
+$CHAT_SCRIPT TIMEOUT 1 "" "AT+CFUN=1" "OK" > "$1"
+$CHAT_SCRIPT TIMEOUT 1 "" "ATZ" "OK" > "$1" 
+$CHAT_SCRIPT TIMEOUT 1 "" "AT+CMGF=0" "OK" > "$1" 
+$CHAT_SCRIPT TIMEOUT 1 "" "AT+CMGS=$2" "OK" > "$1" 
+$CHAT_SCRIPT TIMEOUT "$3" "" "$4" "OK" > "$1" 
+$CHAT_SCRIPT TIMEOUT 1 "" "^Z"  "OK" >"$1"
+echo "done"

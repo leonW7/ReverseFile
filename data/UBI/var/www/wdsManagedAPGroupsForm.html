@@ -1,0 +1,91 @@
+<?lua
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local configRow = cgi
+local wdsGroupInfo = {}
+if (ButtonType and ButtonType == "edit") then
+    require "teamf1lualib/bl_wdsManagedAPGroups"
+    require "teamf1lualib/util"
+    local guiWdsManagedAps = require("com.teamf1.bl.wlan.wdsgroup")
+    local wdsManagedApsGroups, errorCode
+    errorCode, wdsManagedApsGroups = guiWdsManagedAps.wdsMangedGroupGet ()
+    if (errorCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (errorCode)
+    end
+    local groupId = configRow.configRowId
+    for k, v in pairs (wdsManagedApsGroups) do
+        if (v.wdsgroupsGROUPID == tonumber(groupId)) then
+            wdsGroupInfo = v
+        end
+    end
+    
+    
+end
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+<div id="tf1_wdsManagedAPGroupsDailogContent">
+    <div class="topBg">
+        <h1>WDS Managed AP Group Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+    <div class="dialogMidArea">
+        <div class="configRow">
+            <label>WDS Group Name </label>
+            <input type="text" id="tf1_groupName" maxlength="32" name="wdsManagedAPGroups.wdsgroupsNAME"
+            value="$| wdsGroupInfo.wdsgroupsNAME or '' |$"> </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Spanning Tree </label>
+            <?lua if (wdsGroupInfo.wdsgroupsSTPENABLE == "Enabled") then
+                       statusStr="enable-disable-on"
+                       statusVar = "1"
+			      else
+				       statusStr="enable-disable-off"
+                       statusVar = "0"
+				  end
+			?>
+            <a class="$| statusStr |$" alt="" id="tf1_snappingTree"></a>
+            <input type="hidden" value="$| statusVar |$"
+            name="wdsManagedAPGroups.wdsgroupsSTPENABLE">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>Edit Password </label>
+            <?lua if (wdsGroupInfo.wdsgroupsConfigPassword == 1) then
+                       statusStr="enable-disable-on"
+                       statusVar = "1"
+			      else
+				       statusStr="enable-disable-off"
+                       statusVar = "0"
+				  end
+			?>
+            <a class="$| statusStr |$" alt="" id="tf1_enableDisablePassord"></a>
+            <input type="hidden" value="$| statusVar |$"
+            name="wdsManagedAPGroups.wdsgroupsConfigPassword">
+        </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow" id="tf1_groupPassword_div">
+            <label>WDS Group Password </label>
+            <input type="password" id="tf1_groupPassword"
+            name="wdsManagedAPGroups.wdsgroupsWDSPASSWORD" value="$|
+            wdsGroupInfo.wdsgroupsWDSPASSWORD or '' |$" onkeydown="if (event.keyCode == 9) {return fieldLengthCheck('tf1_groupPassword', 8, 63, 'Invalid Password: Please enter WDS Group Password length between 8 - 63 characters');}">
+        </div>
+        <div class="break" id="break_groupPassword_div">
+&nbsp; </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input type="submit"
+        name=button.config.wdsManagedAPGroups.wdsManagedAPGroups.$|cgi.configRowId|$ onclick="return wdsGroupConfigValidate('tf1_frmWdsManagedAPGroups')" class="btnSubmit" title="Save" value="Save" id="btSave">
+    </div>
+</div>
+<!-- Section for Pop up dialog ends -->

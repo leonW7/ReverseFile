@@ -1,0 +1,2372 @@
+<?lua
+require "teamf1lualib/ipv4Option2settings_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/nimf_returnCodes"
+
+	PAGE_HELP = "network"
+	PAGE_HELP_SECTION = "option2DmzSetting"
+
+local ipv4_option2 = require("com.teamf1.bl.wan.ipv4_option1")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local nimf_returnCodes = require ("com.teamf1.core.nimf_returnCodes")
+
+local errorCode = ipv4_option2.ipv4Option2settingsSectionWanmodeCheck()
+if (errorCode ~= returnCodes.SUCCESS) then
+    statusInfoMessage = errorMap.errorStringGet (errorCode)
+end
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    local rowId = "1"
+    inputTable["ipv4Option2.cookie"] = rowId
+
+    local returnCode, cookie = ipv4_option2.ipv4Option2settingsSectionSet (inputTable) 
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    elseif(returnCode == nimf_returnCodes.PORT_IN_USE) then
+        statusErrorMessage = cookie
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end    
+    web.goToPage(NextPage, true, true)   
+
+  
+else
+    local defaultIP, defaultUseDhcp, defaultUseIspDns, defaultTimeoutFlag, 
+    defaultTimeout, defaultSplitTunnel, defaultDualAccess, defaultAuth, defaultUserName,
+    defaultPassword, defaultDmzIP, defaultDmzSubnet = ipv4_option2.ipv4Option2settingsSectionDefaultsGet ()
+    local returnCode, outputTable ,outputTable1, modconfigPortUsage = ipv4_option2.ipv4Option2settingsSectionGet ()
+    if (returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu3");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]-->
+                   <?lua if (statusInfoMessage ~= returnCodes.NIL) then
+                        if (statusErrorMessage == returnCodes.NIL) then
+                    ?>
+
+                    <div class="msgInfo">
+                    <p>$| statusInfoMessage |$</p>
+                    </div>
+                    <?lua else
+                    ?>
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                    </div>
+                    <?lua end ?>
+                    <?lua 
+                    elseif (statusErrorMessage ~= returnCodes.NIL) then
+                    ?>    
+                    <div class="msgError">
+                    <p>$| statusErrorMessage |$</p>
+                </div>
+                <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then
+                ?>
+                <div class="msgSuccess">
+                    <p>$| statusSuccessMessage |$</p>
+                </div>
+                    <?lua end ?>
+					<div class="FL2">
+						<p class="hint">
+							            $| helpHintText |$						</p>
+					</div>
+					<h1>IPv4 WAN2 / DMZ Setting</h1>
+					<div class="midArea">
+						<div align="left">
+							<form name="tf1_frmIpv4Option2DmzSetting" id="tf1_frmIpv4Option2DmzSetting" action="platform.cgi" method="post">
+							<input type="hidden" name="thispage" id="thispage" value="ipv4Option2DmzSetting.html">
+								<h2>Configurable Port Setup</h2>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div class="configRow">
+									<label> Configurable Port </label>
+									<p>
+										<input $| web.radioSelected(modconfigPortUsage == "1") |$ type="radio" value="1"  name="ipv4Option2.configPortUsage" id="tf1_configurablePortOption" onClick="changeConfigurablePort('tf1_configurablePortOption')">
+										WAN
+									</p>
+									<p>
+										<input $| web.radioSelected(modconfigPortUsage == "2") |$ type="radio" value="2" name="ipv4Option2.configPortUsage" id="tf1_configurablePortOption" onClick="changeConfigurablePort('tf1_configurablePortOption')">
+										DMZ
+									</p>
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+								<div id="tf1_Option2SettingsBlock_div">
+									<h2>Option 2 Setup</h2>
+									<div class="break">
+										&nbsp;
+									</div>
+									<div class="configRow">
+										<label> Connection Type </label>
+										<select size="1" id="tf1_connectionType" name="ipv4Option2.clientType" onchange="changeConnectionType('tf1_connectionType')">
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "1") |$ value="1" id="tf1_staticIpL">Static IP</option>
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "2") |$ value="2" id="tf1_dynamicIpL" >Dynamic IP</option>
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "3") |$ value="3" id="tf1_pppoeIpL">PPPoE</option>
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "4") |$ value="4" id="tf1_pptpIpL">PPTP</option>
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "5") |$ value="5" id="tf1_l2tpIpL">L2TP</option>
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "6") |$ value="6" id="tf1_jpppoeIpL">Japanese PPPoE</option>
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "7") |$ value="7" id="tf1_rpppoeIpL">Russian PPPoE</option>
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "8") |$ value="8" id="tf1_rpptpIpL">Russian Dual Access PPTP</option>
+											<option $| web.dropdownSelected(outputTable["ipv4Option2.modClientType"] == "9") |$ value="9" id="tf1_rl2tpIpL">Russian Dual Access L2TP</option>
+										</select>
+									</div>
+									<div class="break">
+										&nbsp;
+									</div>
+									<!-- DHCP div -->
+									<div id="tf1_dhcpIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Dynamic IP (DHCP)</h2>
+										<div class="configRow">
+											<label> Host Name </label>
+											<input type="text" name="ipv4Option2.hostName" value="$| outputTable["ipv4Option2.dhcp_hostName"] or '' |$"id="tf1_hostName"><dl>Optional</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>DNS Servers (Domain Name System)</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                        <?lua 
+                                            if (outputTable["ipv4Option2.dhcp_useIspDns"] == nil) then
+                                                outputTable["ipv4Option2.dhcp_useIspDns"] = defaultUseIspDns
+                                            end
+                                        ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dhcp_useIspDns"] == "1") |$ name="ipv4Option2.dhcp_useIspDns" class="sameDnsRadio" value="1" id="tf1_channelISP" onClick="changeOptions ('tf1_channelISP', '', 'tf1_dhcpDns_div', 'tf1_dhcpDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dhcp_useIspDns"] == "2") |$ name="ipv4Option2.dhcp_useIspDns" class="sameDnsRadio" value="2" id="tf1_channelStatic" onClick="changeOptions ('tf1_channelStatic', '', 'tf1_dhcpDns_div', 'tf1_dhcpDns', 2);">
+												Use These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_dhcpDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDNS" value="$| outputTable["ipv4Option2.dhcp_primaryDNS"] or defaultIP |$" id="tf1_DhcpPriDns" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow" id="tf1_dhcpSecDns_div">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDNS" value="$| outputTable["ipv4Option2.dhcp_secondaryDNS"] or defaultIP |$" id="tf1_DhcpSecDns" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ name="ipv4Option2.dhcp_macAddressType" class="sameMacRadio" value="1" id="tf1_channe2DefaultMac" onClick="changeOptions ('tf1_channe2DefaultMac', '', 'tf1_dhcpMac_div', 'tf1_dhcpMac', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ name="ipv4Option2.dhcp_macAddressType" class="sameMacRadio" value="2" id="tf1_channe2CloneMac" onClick="changeOptions ('tf1_channe2CloneMac', '', 'tf1_dhcpMac_div', 'tf1_dhcpMac', 3);">
+												Clone your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ name="ipv4Option2.dhcp_macAddressType" class="sameMacRadio" value="3" id="tf1_channe2UseMac" onClick="changeOptions ('tf1_channe2UseMac', '', 'tf1_dhcpMac_div', 'tf1_dhcpMac', 3);">
+												Use this MAC
+											</p>
+										</div>
+										<div id="tf1_dhcpMac_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$" id="tf1_DhcpMac" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.dhcp_mtuType" class="sameMtuRadio" id="tf1_dynamicPortSetupDefault" value="1" onClick="portSetupChangeMode('tf1_dynamicPortSetupDefault','','tf1_dynamicCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.dhcp_mtuType" class="sameMtuRadio" id="tf1_dynamicPortSetupCustom" value="2" onClick="portSetupChangeMode('tf1_dynamicPortSetupCustom','tf1_dynamicCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_dynamicCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_dynamicCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow"   id="tf1_dynamicPortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" id="tf1_dynamicPortSpeed" name="ipv4Option2.speed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$ value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<!-- ======= Static IP Start Here ======= -->
+									<div id="tf1_staticIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Static IP </h2>
+										<div class="configRow">
+											<label> IP Address </label>
+											<input type="text" name="ipv4Option2.ipAddress" value="$| outputTable["ipv4Option2.static_ipAddress"] or defaultIP |$" id="tf1_StaticIp" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> IP Subnet Mask </label>
+											<input type="text" name="ipv4Option2.networkMask" value="$| outputTable["ipv4Option2.static_networkMask"] or defaultIP |$" id="tf1_StaticSubnet" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Gateway IP Address </label>
+											<input type="text" name="ipv4Option2.gateway" value="$| outputTable["ipv4Option2.static_gateway"] or defaultIP |$" id="tf1_StaticGateway" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> Primary DNS Server </label>
+											<input type="text" name="ipv4Option2.primaryDNS" value="$| outputTable["ipv4Option2.static_primaryDNS"] or defaultIP |$"  id="tf1_StaticPriDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Secondary DNS Server </label>
+											<input type="text" name="ipv4Option2.secondaryDNS" value="$| outputTable["ipv4Option2.static_secondaryDNS"] or defaultIP |$" id="tf1_StaticPiSecDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ name="ipv4Option2.static_macAddressType" class="sameMacRadio" value="1" id="tf1_channe3DefaultMAC" onClick="changeOptions ('tf1_channe3DefaultMAC', '', 'tf1_staticMac_div', 'tf1_staticMac', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ name="ipv4Option2.static_macAddressType" class="sameMacRadio" value="2" id="tf1_channe3CloneMAC" onClick="changeOptions ('tf1_channe3CloneMAC', '', 'tf1_staticMac_div', 'tf1_staticMac', 3);">
+												Clone your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ name="ipv4Option2.static_macAddressType" class="sameMacRadio" value="3" id="tf1_channe3UseMAC" onClick="changeOptions ('tf1_channe3UseMAC', '', 'tf1_staticMac_div', 'tf1_staticMac', 3);">
+												Use this MAC
+											</p>
+										</div>
+										<div id="tf1_staticMac_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$"  id="tf1_StaticMac" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow" id="tf1_CustomMTU_div">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.static_mtuType" class="sameMtuRadio" id="tf1_staticPortSetupDefault" value="1" onClick="portSetupChangeMode('tf1_staticPortSetupDefault','','tf1_staticCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.static_mtuType" class="sameMtuRadio" id="tf1_staticPortSetupCustom" value="2" onClick="portSetupChangeMode('tf1_staticPortSetupCustom','tf1_staticCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_staticCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_staticCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_staticPortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" name="ipv4Option2.speed" id="tf1_staticPortSpeed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$ value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<!-- ======= Static IP Ends Here ======= --><!-- ======= PPPOE Start Here ======= -->
+									<div id="tf1_pppoeIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>PPPoE Profile Configuration</h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                       <?lua 
+                                            if (outputTable["ipv4Option2.pppoe_useDhcp"] == nil) then
+                                                outputTable["ipv4Option2.pppoe_useDhcp"] = defaultUseDhcp
+                                            end
+                                        ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useDhcp"] == "1") |$ name="ipv4Option2.pppoe_useDhcp" class="sameDhcpRadio" value="1" id="tf1_channe4Dynamic" onClick="changeOptions ('tf1_channe4Dynamic', '', 'tf1_addrModeIppppoe_div tf1_addrModeSnpppoe_div', 'tf1_addrModeIppppoe tf1_addrModeSnpppoe', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useDhcp"] == "2") |$ name="ipv4Option2.pppoe_useDhcp" class="sameDhcpRadio" value="2" id="tf1_channe4Static" onClick="changeOptions ('tf1_channe4Static', '', 'tf1_addrModeIppppoe_div tf1_addrModeSnpppoe_div', 'tf1_addrModeIppppoe tf1_addrModeSnpppoe', 2);">
+												Static IP
+											</p>
+										</div>
+										<div id="tf1_addrModeIppppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.ipAddress" value="$| outputTable["ipv4Option2.pppoe_ipAddress"] or defaultIP |$" id="tf1_PppoeIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.networkMask" value="$| outputTable["ipv4Option2.pppoe_networkMask"] or defaultIP |$" id="tf1_PppoeSubnet" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> User Name </label>
+											<input type="text" name="ipv4Option2.userName" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_userName"] or defaultUserName |$" id="tf1_PppoeUserName">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Password </label>
+											<input type="password" name="ipv4Option2.password" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_password"] or defaultPassword |$" id="tf1_PppoePassword">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Service </label>
+											<input type="text" name="ipv4Option2.service" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_service"] or '' |$" id="tf1_PppoeService">
+											<dl>Optional</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Authentication Type </label>
+											<select size="1" name="ipv4Option2.authenticationOptions"  id="tf1_PppoeAuthType">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "1") |$ value="1">Auto-negotiate</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "2") |$ value="2">PAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "3") |$ value="3">CHAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "4") |$ value="4">MS-CHAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "5") |$ value="5">MS-CHAPv2</option>
+											</select>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Reconnect Mode </label>
+											<p>
+                                       <?lua 
+                                            if (outputTable["ipv4Option2.pppoe_reconnectMode"] == nil) then
+                                                outputTable["ipv4Option2.pppoe_reconnectMode"] = defaultTimeoutFlag
+                                            end
+                                        ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_reconnectMode"] == "1") |$ name="ipv4Option2.pppoe_reconnectMode" class="sameReconnectModeRadio" value="1" id="tf1_channe5AlwaysOn" onClick="changeOptions ('tf1_channe5AlwaysOn', '', 'tf1_reconnectModePppoe_div', 'tf1_reconnectModePppoe', 2);">
+												Always On
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_reconnectMode"] == "2") |$ name="ipv4Option2.pppoe_reconnectMode" class="sameReconnectModeRadio" value="2" id="tf1_channe5OnDemand" onClick="changeOptions ('tf1_channe5OnDemand', '', 'tf1_reconnectModePppoe_div', 'tf1_reconnectModePppoe', 2);">
+												On Demand
+											</p>
+										</div>
+										<div id="tf1_reconnectModePppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Maximum Idle Time </label>
+												<input type="text" name="ipv4Option2.idleTimeout" value="$| outputTable["ipv4Option2.pppoe_idleTimeOutVal"] or defaultTimeout |$" id="tf1_MaxIdleTime" class="one" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Maximum Idle Time.', '');}">
+												<dl>
+													[Range:
+													1 - 10]
+												</dl>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                       		<?lua 
+                                            	if (outputTable["ipv4Option2.pppoe_useIspDns"] == nil) then
+                                                	outputTable["ipv4Option2.pppoe_useIspDns"] = defaultUseIspDns
+                                            	end
+                                        	?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useIspDns"] == "1") |$ name="ipv4Option2.pppoe_useIspDns" class="sameDnsRadio" value="1" id="tf1_channe021ISP" onClick="changeOptions ('tf1_channe021ISP', '', 'tf1_pppoeDns_div', 'tf1_pppoeDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useIspDns"] == "2") |$ name="ipv4Option2.pppoe_useIspDns" class="sameDnsRadio" value="2" id="tf1_channe021Static" onClick="changeOptions ('tf1_channe021Static', '', 'tf1_pppoeDns_div', 'tf1_pppoeDns', 2);">
+												Use These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_pppoeDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDns" value="$| outputTable["ipv4Option2.pppoe_primaryDns"] or defaultIP |$" id="tf1_PppoePriDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDns" value="$| outputTable["ipv4Option2.pppoe_secondaryDns"] or defaultIP |$" id="tf1_PppoeSecDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ name="ipv4Option2.pppoe_macAddressType" class="sameMacRadio" value="1" id="tf1_channe6DefaultMAC" onClick="changeOptions ('tf1_channe6DefaultMAC', '', 'tf1_pppoeMac_div', 'tf1_pppoeMac', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ name="ipv4Option2.pppoe_macAddressType" class="sameMacRadio" value="2" id="tf1_channe6CloneMAC" onClick="changeOptions ('tf1_channe6CloneMAC', '', 'tf1_pppoeMac_div', 'tf1_pppoeMac', 3);">
+												Clone your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ name="ipv4Option2.pppoe_macAddressType" class="sameMacRadio" value="3" id="tf1_channe6UseMAC" onClick="changeOptions ('tf1_channe6UseMAC', '', 'tf1_pppoeMac_div', 'tf1_pppoeMac', 3);">
+												Use this MAC
+											</p>
+										</div>
+										<div id="tf1_pppoeMac_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$"  id="tf1_PppoeMac" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.pppoe_mtuType" class="sameMtuRadio" id="tf1_pppoePortSetupDefault" value="1" onClick="portSetupChangeMode('tf1_pppoePortSetupDefault','','tf1_pppoeCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.pppoe_mtuType" class="sameMtuRadio" id="tf1_pppoePortSetupCustom" value="2" onClick="portSetupChangeMode('tf1_pppoePortSetupCustom','tf1_pppoeCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_pppoeCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_pppoeCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_pppoePortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" name="ipv4Option2.speed" id="tf1_pppoePortSpeed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$ value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<!-- ======= PPPOE Ends Here ======= --><!-- ======= PPTP Starts Here ======= -->
+									<div id="tf1_pptpIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>PPTP</h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pptp_useDhcp"] == nil) then
+                                                    outputTable["ipv4Option2.pptp_useDhcp"] = defaultUseDhcp
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_useDhcp"] == "1") |$ name="ipv4Option2.pptp_useDhcp" class="sameDhcpRadio" value="1" id="tf1_channe7DynamicIP" onClick="changeOptions ('tf1_channe7DynamicIP', '', 'tf1_addrModeIpPptp_div tf1_addrModeSnPptp_div tf1_addrModeGatewayPptp_div', 'tf1_addrModeIpPptp tf1_addrModeSnPptp tf1_addrModeGatewayPptp', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_useDhcp"] == "2") |$ name="ipv4Option2.pptp_useDhcp" class="sameDhcpRadio" value="2" id="tf1_channe7StaticIP" onClick="changeOptions ('tf1_channe7StaticIP', '', 'tf1_addrModeIpPptp_div tf1_addrModeSnPptp_div tf1_addrModeGatewayPptp_div', 'tf1_addrModeIpPptp tf1_addrModeSnPptp tf1_addrModeGatewayPptp', 2);">
+												Static IP
+											</p>
+										</div>
+										<div id="tf1_addrModeIpPptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.staticIPAddress" value="$| outputTable["ipv4Option2.pptp_staticIPAddress"] or defaultIP |$" id="tf1_PptpIpAddress" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnPptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.netmask" value="$| outputTable["ipv4Option2.pptp_netmask"] or defaultIP |$" id="tf1_PptpSubnet" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										<div id="tf1_addrModeGatewayPptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Gateway </label>
+												<input type="text" name="ipv4Option2.gateway" value="$| outputTable["ipv4Option2.pptp_gateway"] or defaultIP |$" id="tf1_PptpGateway" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Server Address </label>
+											<input type="text" name="ipv4Option2.serverIPAddress" value="$| outputTable["ipv4Option2.pptp_serverIPAddress"] or defaultIP |$" id="tf1_PptpServerAddr" maxlength="64">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> User Name </label>
+											<input type="text" name="ipv4Option2.userName" maxlength="16" value="$| outputTable["ipv4Option2.pptp_userName"] or defaultUserName |$" id="tf1_PptpUsername">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Password </label>
+											<input type="password" name="ipv4Option2.password" maxlength="16" value="$| outputTable["ipv4Option2.pptp_password"] or defaultPassword |$" id="tf1_PptpPassword">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> MPPE Encryption </label>
+                                        	<?lua 
+                                                 
+                                        	if (outputTable["ipv4Option2.pptp_mppeEncryption"] == "1") then
+                                            	statusStr="enable-disable-on"
+                                            	statusVar = "1"
+                                        	else
+                                            	statusStr="enable-disable-off"
+                                            	statusVar = "0"
+                                       		end
+                                        	?>
+												<a class="$| statusStr |$" alt=""></a>
+												<input type="hidden" name="ipv4Option2.mppeEncryption" value="$|statusVar|$">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Split Tunnel </label>
+                                            <?lua 
+                                                 
+                                            if (outputTable["ipv4Option2.pptp_splitTunnel"] == "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar = "1"
+                                            else
+                                                statusStr="enable-disable-off"
+                                                statusVar = "0"
+                                            end
+                                            ?>
+												<a class="$| statusStr |$" alt=""></a>
+												<input type="hidden" name="ipv4Option2.splitTunnel" value="$|statusVar|$">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Reconnect Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pptp_reconnectMode"] == nil) then
+                                                    outputTable["ipv4Option2.pptp_reconnectMode"] = defaultTimeoutFlag
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_reconnectMode"] == "1") |$ value="1" name="ipv4Option2.pptp_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe03AlwaysOn" onClick="changeOptions ('tf1_channe03AlwaysOn', '', 'tf1_reconnectModePptp_div', 'tf1_reconnectModePptp', 2);">
+												Always On
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_reconnectMode"] == "2") |$ value="2" name="ipv4Option2.pptp_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe03OnDemand" onClick="changeOptions ('tf1_channe03OnDemand', '', 'tf1_reconnectModePptp_div', 'tf1_reconnectModePptp', 2);">
+												On
+												Demand
+											</p>
+										</div>
+										<div id="tf1_reconnectModePptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Maximum Idle Time </label>
+												<input type="text" name="ipv4Option2.maxIdleTime" value="$| outputTable["ipv4Option2.pptp_maxIdleTime"] or defaultTimeout |$" id="tf1_PptpMaxIdleTime" class="one" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Maximum Idle Time.', '');}">
+												<dl>
+													[Range:
+													1 - 10]
+												</dl>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pptp_useIspDns"] == nil) then
+                                                    outputTable["ipv4Option2.pptp_useIspDns"] = defaultUseIspDns
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_useIspDns"] == "1") |$ value="1" name="ipv4Option2.pptp_useIspDns" class="sameDnsRadio" id="tf1_channe04ISP" onClick="changeOptions ('tf1_channe04ISP', '', 'tf1_pptpDns_div', 'tf1_pptpDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_useIspDns"] == "2") |$ value="2" name="ipv4Option2.pptp_useIspDns" class="sameDnsRadio" id="tf1_channe04Static" onClick="changeOptions ('tf1_channe04Static', '', 'tf1_pptpDns_div', 'tf1_pptpDns', 2);">
+												Use
+												These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_pptpDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDNS" value="$| outputTable["ipv4Option2.pptp_primaryDNS"] or defaultIP |$" id="tf1_PptpPriDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDNS" value="$| outputTable["ipv4Option2.pptp_secondaryDNS"] or defaultIP |$" id="tf1_PptpSecAddress" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ value="1" name="ipv4Option2.pptp_macAddressType" class="sameMacRadio" id="tf1_channe8DefaultMAC" onClick="changeOptions ('tf1_channe8DefaultMAC', '', 'tf1_pptpMac_div', 'tf1_pptpMac', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ value="2" name="ipv4Option2.pptp_macAddressType" class="sameMacRadio" id="tf1_channe8CloneMAC" onClick="changeOptions ('tf1_channe8CloneMAC', '', 'tf1_pptpMac_div', 'tf1_pptpMac', 3);">
+												Clone your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ value="3" name="ipv4Option2.pptp_macAddressType" class="sameMacRadio" id="tf1_channe8UseMAC" onClick="changeOptions ('tf1_channe8UseMAC', '', 'tf1_pptpMac_div', 'tf1_pptpMac', 3);">
+												Use this MAC
+											</p>
+										</div>
+										<div id="tf1_pptpMac_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$"  id="tf1_PptpMac" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.pptp_mtuType" class="sameMtuRadio" id="tf1_pptpPortSetupDefault" value="1" onClick="portSetupChangeMode('tf1_pptpPortSetupDefault','','tf1_pptpCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.pptp_mtuType" class="sameMtuRadio" id="tf1_pptpPortSetupCustom" value="2" onClick="portSetupChangeMode('tf1_pptpPortSetupCustom','tf1_pptpCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_pptpCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_pptpCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_pptpPortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" id="tf1_pptpPortSpeed" name="ipv4Option2.speed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$ value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<!-- ======= PPTP Ends Here ======= --><!-- ======= L2TP Starts Here ======= -->
+									<div id="tf1_l2tpIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>L2TP</h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.l2tp_useDhcp"] == nil) then
+                                                    outputTable["ipv4Option2.l2tp_useDhcp"] = defaultUseDhcp
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_useDhcp"] == "1") |$ value="1" name="ipv4Option2.l2tp_useDhcp" class="sameDhcpRadio" id="tf1_channe9Dynamic" onClick="changeOptions ('tf1_channe9Dynamic', '', 'tf1_addrModeIpL2tp_div tf1_addrModeSnL2tp_div tf1_addrModeGatewayL2tp_div', 'tf1_addrModeIpL2tp tf1_addrModeSnL2tp tf1_addrModeGatewayL2tp', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_useDhcp"] == "2") |$ value="2" name="ipv4Option2.l2tp_useDhcp" class="sameDhcpRadio" id="tf1_channe9Static" onClick="changeOptions ('tf1_channe9Static', '', 'tf1_addrModeIpL2tp_div tf1_addrModeSnL2tp_div tf1_addrModeGatewayL2tp_div', 'tf1_addrModeIpL2tp tf1_addrModeSnL2tp tf1_addrModeGatewayL2tp', 2);">
+												Static IP
+											</p>
+										</div>
+										<div id="tf1_addrModeIpL2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.staticIPAddress" value="$| outputTable["ipv4Option2.l2tp_staticIPAddress"] or defaultIP |$" id="tf1_L2tpIpAddress" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnL2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.netmask" value="$| outputTable["ipv4Option2.l2tp_netmask"] or defaultIP |$" id="tf1_L2tpSubnetMask" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										<div id="tf1_addrModeGatewayL2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Gateway </label>
+												<input type="text" name="ipv4Option2.gateway" value="$| outputTable["ipv4Option2.l2tp_gateway"] or defaultIP |$" id="tf1_L2tpGateway" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Server Address </label>
+											<input type="text" name="ipv4Option2.serverIPAddress" value="$| outputTable["ipv4Option2.l2tp_serverIPAddress"] or defaultIP |$" id="tf1_L2tpServer" maxlength="64">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> User Name </label>
+											<input type="text" name="ipv4Option2.userName" maxlength="16" value="$| outputTable["ipv4Option2.l2tp_userName"] or defaultUserName |$" id="tf1_L2tpUserName">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Password </label>
+											<input type="Password" name="ipv4Option2.password" maxlength="16" value="$| outputTable["ipv4Option2.l2tp_password"] or defaultPassword |$" id="tf1_L2tpPassword">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Secret </label>
+											<input type="password" name="ipv4Option2.secret" maxlength="16" value="$| outputTable["ipv4Option2.l2tp_secret"] or '' |$" id="tf1_L2tpSecret"><dl>Optional</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Split Tunnel </label>
+                                            <?lua 
+                                                 
+                                            if (outputTable["ipv4Option2.l2tp_splitTunnel"] == "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar = "1"
+                                            else
+                                                statusStr="enable-disable-off"
+                                                statusVar = "0"
+                                            end
+                                            ?>
+												<a class="$| statusStr |$" alt=""></a>
+												<input type="hidden" name="ipv4Option2.splitTunnel" value="$|statusVar|$">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Reconnect Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.l2tp_reconnectMode"] == nil) then
+                                                    outputTable["ipv4Option2.l2tp_reconnectMode"] = defaultTimeoutFlag
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_reconnectMode"] == "1") |$ value="1" name="ipv4Option2.l2tp_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe10AlwaysOn" onClick="changeOptions ('tf1_channe10AlwaysOn', '', 'tf1_reconnectModeL2tp_div', 'tf1_reconnectModeL2tp', 2);">
+												Always On
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_reconnectMode"] == "2") |$ value="2" name="ipv4Option2.l2tp_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe10OnDemand" onClick="changeOptions ('tf1_channe10OnDemand', '', 'tf1_reconnectModeL2tp_div', 'tf1_reconnectModeL2tp', 2);">
+												On Demand
+											</p>
+										</div>
+										<div id="tf1_reconnectModeL2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Maximum Idle Time </label>
+												<input type="text" name="ipv4Option2.maxIdleTime" value="$| outputTable["ipv4Option2.l2tp_maxIdleTime"] or defaultTimeout |$" id="tf1_L2tpMaxIdleTime" class="one" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Maximum Idle Time.', '');}">
+												<dl>
+													[Range:
+													1 - 10]
+												</dl>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.l2tp_useIspDns"] == nil) then
+                                                    outputTable["ipv4Option2.l2tp_useIspDns"] = defaultUseIspDns
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_useIspDns"] == "1") |$ value="1" name="ipv4Option2.l2tp_useIspDns" class="sameDnsRadio" id="tf1_channel01ISP" onClick="changeOptions ('tf1_channel01ISP', '', 'tf1_l2tpDns_div', 'tf1_l2tpDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_useIspDns"] == "2") |$ value="2" name="ipv4Option2.l2tp_useIspDns" class="sameDnsRadio" id="tf1_channel01Static" onClick="changeOptions ('tf1_channel01Static', '', 'tf1_l2tpDns_div', 'tf1_l2tpDns', 2);">
+												Use These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_l2tpDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDNS" value="$| outputTable["ipv4Option2.l2tp_primaryDNS"] or defaultIP |$"  id="tf1_L2tpPriDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDNS" value="$| outputTable["ipv4Option2.l2tp_secondaryDNS"] or defaultIP |$"  id="tf1_L2tpSecDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ value="1" name="ipv4Option2.l2tp_macAddressType" class="sameMacRadio" id="tf1_channe11DefaultMAC" onClick="changeOptions ('tf1_channe11DefaultMAC', '', 'tf1_l2tp_div', 'tf1_l2tp', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ value="2" name="ipv4Option2.l2tp_macAddressType" class="sameMacRadio" id="tf1_channe11CloneMAC" onClick="changeOptions ('tf1_channe11CloneMAC', '', 'tf1_l2tp_div', 'tf1_l2tp', 3);">
+												Clone
+												your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ value="3" name="ipv4Option2.l2tp_macAddressType" class="sameMacRadio" id="tf1_channe11ThisMAC" onClick="changeOptions ('tf1_channe11ThisMAC', '', 'tf1_l2tp_div', 'tf1_l2tp', 3);">
+												Use
+												this MAC
+											</p>
+										</div>
+										<div id="tf1_l2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$"  id="tf1_L2tpMac" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.l2tp_mtuType" class="sameMtuRadio" id="tf1_l2tpPortSetupDefault" value="1" onClick="portSetupChangeMode('tf1_l2tpPortSetupDefault','','tf1_l2tpCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.l2tp_mtuType" class="sameMtuRadio" id="tf1_l2tpPortSetupCustom" value="2" onClick="portSetupChangeMode('tf1_l2tpPortSetupCustom','tf1_l2tpCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_l2tpCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_l2tpCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_l2tpPortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" id="tf1_l2tpPortSpeed" name="ipv4Option2.speed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$ value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<!-- ======= L2TP Ends Here ======= --><!-- ======= Japanese PPPoE Starts Here ======= -->
+									<div id="tf1_jpppoeIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Japanese PPPoE</h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pppoe_useDhcp"] == nil) then
+                                                    outputTable["ipv4Option2.pppoe_useDhcp"] = defaultUseDhcp
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useDhcp"] == "1") |$ value="1" name="ipv4Option2.pppoeJap_useDhcp" class="sameDhcpRadio" id="tf1_channe12Dynamic" onClick="changeOptions ('tf1_channe12Dynamic', '', 'tf1_addrModeIpJpppoe_div tf1_addrModeSnJpppoe_div', 'tf1_addrModeIpJpppoe tf1_addrModeSnJpppoe', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useDhcp"] == "2") |$ value="2" name="ipv4Option2.pppoeJap_useDhcp" class="sameDhcpRadio" id="tf1_channe12Static" onClick="changeOptions ('tf1_channe12Static', '', 'tf1_addrModeIpJpppoe_div tf1_addrModeSnJpppoe_div', 'tf1_addrModeIpJpppoe tf1_addrModeSnJpppoe', 2);">
+												Static
+												IP
+											</p>
+										</div>
+										<div id="tf1_addrModeIpJpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.ipAddress" value="$| outputTable["ipv4Option2.pppoe_ipAddress"] or defaultIP |$" id="tf1_JpppoeIpAddr" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnJpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.networkMask" value="$| outputTable["ipv4Option2.pppoe_networkMask"] or defaultIP |$" id="tf1_JpppoeSubnet" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> User Name </label>
+											<input type="text" name="ipv4Option2.userName" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_userName"] or defaultUserName |$" id="tf1_JpppoeUser">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Password </label>
+											<input type="Password" name="ipv4Option2.password" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_password"] or defaultPassword |$" id="tf1_JpppoePassword">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Service </label>
+											<input type="text" name="ipv4Option2.service" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_service"] or '' |$" id="tf1_JpppoeService"><dl>Optional</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Authentication Type </label>
+											<select size="1" name="ipv4Option2.authenticationOptions" id="tf1_JpppoeAuthType">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "1") |$ value="1">Auto-negotiate</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "2") |$ value="2">PAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "3") |$ value="3">CHAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "4") |$ value="4">MS-CHAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt"] == "5") |$ value="5">MS-CHAPv2</option>
+											</select>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Reconnect Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pppoe_reconnectMode"] == nil) then
+                                                    outputTable["ipv4Option2.pppoe_reconnectMode"] = defaultTimeoutFlag
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_reconnectMode"] == "1") |$ value="1" name="ipv4Option2.pppoeJap_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe13AlwaysOn" onClick="changeOptions ('tf1_channe13AlwaysOn', '', 'tf1_reconnectModeJpppoe_div', 'tf1_reconnectModeJpppoe', 2);">
+												Always On
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_reconnectMode"] == "2") |$ value="2" name="ipv4Option2.pppoeJap_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe13OnDemand" onClick="changeOptions ('tf1_channe13OnDemand', '', 'tf1_reconnectModeJpppoe_div', 'tf1_reconnectModeJpppoe', 2);">
+												On
+												Demand
+											</p>
+										</div>
+										<div id="tf1_reconnectModeJpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Maximum Idle Time </label>
+												<input type="text" name="ipv4Option2.idleTimeout" value="$| outputTable["ipv4Option2.pppoe_idleTimeOutVal"] or defaultTimeout |$" id="tf1_JpppoeMaxIdleTime" class="one" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Maximum Idle Time.', '');}">
+												<dl>
+													[Range:
+													1 - 10]
+												</dl>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Primary PPPoE Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pppoe_useIspDns"] == nil) then
+                                                    outputTable["ipv4Option2.pppoe_useIspDns"] = defaultUseIspDns
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useIspDns"] == "1") |$ value="1" name="ipv4Option2.pppoeJap_useIspDns" class="sameDnsRadio" id="tf1_channe14ISP" onClick="changeOptions ('tf1_channe14ISP', '', 'tf1_jpppoeDns_div', 'tf1_jpppoeDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useIspDns"] == "2") |$ value="2" name="ipv4Option2.pppoeJap_useIspDns" class="sameDnsRadio" id="tf1_channe14DNS" onClick="changeOptions ('tf1_channe14DNS', '', 'tf1_jpppoeDns_div', 'tf1_jpppoeDns', 2);">
+												Use
+												These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_jpppoeDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDns" value="$| outputTable["ipv4Option2.pppoe_primaryDns"] or defaultIP |$"  id="tf1_JpppoePriDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDns" value="$| outputTable["ipv4Option2.pppoe_primaryDns"] or defaultIP |$"  id="tf1_JpppoeSecDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Secondary PPPoE Profile Configuration</h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pppoe_useDhcp1"] == nil) then
+                                                    outputTable["ipv4Option2.pppoe_useDhcp1"] = defaultUseDhcp
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useDhcp1"] == "1") |$ value="1" name="ipv4Option2.useDhcp1" id="tf1_channe15Dynamic" onClick="changeOptions ('tf1_channe15Dynamic', '', 'tf1_addrModeIpSecJpppoe_div tf1_addrModeSnSecJpppoe_div', 'tf1_addrModeIpSecJpppoe tf1_addrModeSnSecJpppoe', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useDhcp1"] == "2") |$ value="2" name="ipv4Option2.useDhcp1" id="tf1_channe15Static" onClick="changeOptions ('tf1_channe15Static', '', 'tf1_addrModeIpSecJpppoe_div tf1_addrModeSnSecJpppoe_div', 'tf1_addrModeIpSecJpppoe tf1_addrModeSnSecJpppoe', 2);">
+												Static
+												IP
+											</p>
+										</div>
+										<div id="tf1_addrModeIpSecJpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.ipAddress1" value="$| outputTable["ipv4Option2.pppoe_ipAddress1"] or defaultIP |$" id="tf1_JpppoeSecIpAddr" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnSecJpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.networkMask1" value="$| outputTable["ipv4Option2.pppoe_networkMask1"] or defaultIP |$" id="tf1_JpppoeSecSubnet" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> User Name </label>
+											<input type="text" name="ipv4Option2.userName1" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_userName1"] or defaultUserName |$" id="tf1_JpppoeSecUser">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Password </label>
+											<input type="password" name="ipv4Option2.password1" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_password1"] or defaultPassword |$" id="tf1_JpppoeSecPass">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Service </label>
+											<input type="text" name="ipv4Option2.service1" maxlength="16" value="$| outputTable["ipv4Option2.pppoe_service1"] or '' |$" id="tf1_JpppoeSecService">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Authentication Type </label>
+											<select size="1" id="tf1_JpppoeSecAuthType" name="ipv4Option2.authenticationOptions1">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt1"] == "1") |$ value="1">Auto-negotiate</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt1"] == "2") |$ value="2">PAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt1"] == "3") |$ value="3">CHAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt1"] == "4") |$ value="4">MS-CHAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.pppoe_authOpt1"] == "5") |$ value="5">MS-CHAPv2</option>
+											</select>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Reconnect Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pppoe_reconnectMode1"] == nil) then
+                                                    outputTable["ipv4Option2.pppoe_reconnectMode1"] = defaultTimeoutFlag
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_reconnectMode1"] == "1") |$ value="1"  name="ipv4Option2.reconnectMode1" id="tf1_channe16AlwaysOn" onClick="changeOptions ('tf1_channe16AlwaysOn', '', 'tf1_reconnectModeSecJpppoe_div', 'tf1_reconnectModeSecJpppoe', 2);">
+												Always On
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_reconnectMode1"] == "2") |$ value="2"  name="ipv4Option2.reconnectMode1" id="tf1_channe16OnDemand" onClick="changeOptions ('tf1_channe16OnDemand', '', 'tf1_reconnectModeSecJpppoe_div', 'tf1_reconnectModeSecJpppoe', 2);">
+												On
+												Demand
+											</p>
+										</div>
+										<div id="tf1_reconnectModeSecJpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Maximum Idle Time </label>
+												<input type="text" name="ipv4Option2.idleTimeout1" value="$| outputTable["ipv4Option2.pppoe_idleTimeOutVal1"] or defaultTimeout |$" id="tf1_JpppoeSecMaxIdleTime" class="one" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Maximum Idle Time.', '');}">
+												<dl>
+													[Range:
+													1 - 10]
+												</dl>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Secondary PPPoE Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pppoe_useIspDns1"] == nil) then
+                                                    outputTable["ipv4Option2.pppoe_useIspDns1"] = defaultUseIspDns
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useIspDns1"] == "1") |$ value="1"  name="ipv4Option2.useIspDns1" id="tf1_channe17ISP" onClick="changeOptions ('tf1_channe17ISP', '', 'tf1_secondpppoeDns_div', 'tf1_secondpppoeDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pppoe_useIspDns1"] == "2") |$ value="2"  name="ipv4Option2.useIspDns1" id="tf1_channe17DNS" onClick="changeOptions ('tf1_channe17DNS', '', 'tf1_secondpppoeDns_div', 'tf1_secondpppoeDns', 2);">
+												Use
+												These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_secondpppoeDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDns1" value="$| outputTable["ipv4Option2.pppoe_primaryDns1"] or defaultIP |$" id="tf1_JpppoeSecPriDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDns1" value="$| outputTable["ipv4Option2.pppoe_secondaryDns1"] or defaultIP |$" id="tf1_JpppoeSecSecDns" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ value="1"  name="ipv4Option2.pppoeJap_macAddressType" class="sameMacRadio" id="tf1_channe18DefaultMAC" onClick="changeOptions ('tf1_channe18DefaultMAC', '', 'tf1_jpppoe_div', 'tf1_jpppoe', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ value="2"  name="ipv4Option2.pppoeJap_macAddressType" class="sameMacRadio" id="tf1_channe18CloneMAC" onClick="changeOptions ('tf1_channe18CloneMAC', '', 'tf1_jpppoe_div', 'tf1_jpppoe', 3);">
+												Clone
+												your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ value="3"  name="ipv4Option2.pppoeJap_macAddressType" class="sameMacRadio" id="tf1_channe18ThisMAC" onClick="changeOptions ('tf1_channe18ThisMAC', '', 'tf1_jpppoe_div', 'tf1_jpppoe', 3);">
+												Use
+												this MAC
+											</p>
+										</div>
+										<div id="tf1_jpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$"  id="tf1_jpppoeSecMacAddr" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.pppoeJap_mtuType" class="sameMtuRadio" id="tf1_jpppoePortSetup1" value="1" onClick="portSetupChangeMode('tf1_jpppoePortSetup1','','tf1_jpppoeCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.pppoeJap_mtuType" class="sameMtuRadio" id="tf1_jpppoePortSetup2" value="2" onClick="portSetupChangeMode('tf1_jpppoePortSetup2','tf1_jpppoeCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_jpppoeCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_jpppoeCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_jpppoePortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" id="tf1_jpppoePortSpeed" name="ipv4Option2.speed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$ value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<!-- ======= Japanese PPPoE Ends Here ======= --><!-- ======= Russian PPPoE Starts Here ======= -->
+									<div id="tf1_rpppoeIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Russian PPPoE </h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.dual_useDhcp"] == nil) then
+                                                    outputTable["ipv4Option2.dual_useDhcp"] = defaultUseDhcp
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_useDhcp"] == "1") |$ value="1"  name="ipv4Option2.dual_useDhcp" class="sameDhcpRadio" id="tf1_channe19Dynamic" onClick="changeOptions ('tf1_channe19Dynamic', '', 'tf1_addrModeIpRpppoe_div tf1_addrModeSnRpppoe_div', 'tf1_addrModeIpRpppoe tf1_addrModeSnRpppoe', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_useDhcp"] == "2") |$ value="2" name="ipv4Option2.dual_useDhcp" class="sameDhcpRadio" id="tf1_channe19Static" onClick="changeOptions ('tf1_channe19Static', '', 'tf1_addrModeIpRpppoe_div tf1_addrModeSnRpppoe_div', 'tf1_addrModeIpRpppoe tf1_addrModeSnRpppoe', 2);">
+												Static
+												IP
+											</p>
+										</div>
+										<div id="tf1_addrModeIpRpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.ipAddress" value="$| outputTable["ipv4Option2.dual_ipAddress"] or defaultIP |$" id="tf1_RpppoeIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnRpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.networkMask" value="$| outputTable["ipv4Option2.dual_networkMask"] or defaultIP |$" id="tf1_RpppoeSubnetMask" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> User Name </label>
+											<input type="text" name="ipv4Option2.userName" maxlength="16" value="$| outputTable["ipv4Option2.dual_userName"] or defaultUserName |$" id="tf1_RpppoeUserName">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Password </label>
+											<input type="password" name="ipv4Option2.password" maxlength="16" value="$| outputTable["ipv4Option2.dual_password"] or defaultPassword |$" id="tf1_RpppoePassword">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Service </label>
+											<input type="text" name="ipv4Option2.service" maxlength="16" value="$| outputTable["ipv4Option2.dual_service"] or '' |$" id="tf1_RpppoeService"><dl>Optional</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Authentication Type </label>
+											<select size="1" name="ipv4Option2.authenticationOptions" id="tf1_RpppoeAuthType">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.dual_authOpt"] == "1") |$ value="1">Auto-negotiate</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.dual_authOpt"] == "2") |$ value="2">PAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.dual_authOpt"] == "3") |$ value="3">CHAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.dual_authOpt"] == "4") |$ value="4">MS-CHAP</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.dual_authOpt"] == "5") |$ value="5">MS-CHAPv2</option>
+											</select>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Reconnect Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.dual_reconnectMode"] == nil) then
+                                                    outputTable["ipv4Option2.dual_reconnectMode"] = defaultTimeoutFlag
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_reconnectMode"] == "1") |$ value="1"  name="ipv4Option2.dual_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe20AlwaysOn" onClick="changeOptions ('tf1_channe20AlwaysOn', '', 'tf1_reconnectModeRpppoe_div', 'tf1_reconnectModeRpppoe', 2);">
+												Always On
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_reconnectMode"] == "2") |$ value="2"  name="ipv4Option2.dual_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe20OnDemand" onClick="changeOptions ('tf1_channe20OnDemand', '', 'tf1_reconnectModeRpppoe_div', 'tf1_reconnectModeRpppoe', 2);">
+												On
+												Demand
+											</p>
+										</div>
+										<div id="tf1_reconnectModeRpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Maximum Idle Time </label>
+												<input type="text" name="ipv4Option2.idleTimeout" value="$| outputTable["ipv4Option2.dual_idleTimeOut"] or defaultTimeout |$" id="tf1_RpppoeMaxIdleTime" maxlength="2" class="one" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Maximum Idle Time.', '');}">
+												<dl>
+													[Range:
+													1 - 10]
+												</dl>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.dual_useIspDns"] == nil) then
+                                                    outputTable["ipv4Option2.dual_useIspDns"] = defaultUseIspDns
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_useIspDns"] == "1") |$ value="1" name="ipv4Option2.dual_useIspDns" class="sameDnsRadio" id="tf1_channe30ISP" onClick="changeOptions ('tf1_channe30ISP', '', 'tf1_rpppoeDns_div', 'tf1_rpppoeDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_useIspDns"] == "2") |$ value="2" name="ipv4Option2.dual_useIspDns" class="sameDnsRadio" id="tf1_channe30DNS" onClick="changeOptions ('tf1_channe30DNS', '', 'tf1_rpppoeDns_div', 'tf1_rpppoeDns', 2);">
+												Use
+												These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_rpppoeDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDns" value="$| outputTable["ipv4Option2.dual_primaryDns"] or defaultIP |$" id="tf1_RpppoePriDns" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDns" value="$| outputTable["ipv4Option2.dual_secondaryDns"] or defaultIP |$" id="tf1_RpppoeSecDns" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ value="1" name="ipv4Option2.dual_macAddressType" class="sameMacRadio" id="tf1_channe22DefaultMAC" onClick="changeOptions ('tf1_channe22DefaultMAC', '', 'tf1_rpppoe_div', 'tf1_rpppoe', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ value="2" name="ipv4Option2.dual_macAddressType" class="sameMacRadio" id="tf1_channe22CloneMAC" onClick="changeOptions ('tf1_channe22CloneMAC', '', 'tf1_rpppoe_div', 'tf1_rpppoe', 3);">
+												Clone
+												your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ value="3" name="ipv4Option2.dual_macAddressType" class="sameMacRadio" id="tf1_channe22ThisMAC" onClick="changeOptions ('tf1_channe22ThisMAC', '', 'tf1_rpppoe_div', 'tf1_rpppoe', 3);">
+												Use
+												this MAC
+											</p>
+										</div>
+										<div id="tf1_rpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$"  id="tf1_RpppoeMac" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Option2 Physical Setting</h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.dual_useDhcp2"] == nil) then
+                                                    outputTable["ipv4Option2.dual_useDhcp2"] = defaultUseDhcp
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_useDhcp2"] == "1") |$ value="1" name="ipv4Option2.useDhcp2" id="tf1_channe23Dynamic" onClick="changeOptions ('tf1_channe23Dynamic', '', 'tf1_addrModeIpOpt2Rpppoe_div tf1_addrModeSnOpt2Rpppoe_div tf1_RpppoeOp2IpDefGw_div', 'tf1_addrModeIpOpt2Rpppoe tf1_addrModeSnOpt2Rpppoe tf1_RpppoeOp2IpDefGw', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_useDhcp2"] == "2") |$ value="2" name="ipv4Option2.useDhcp2" id="tf1_channe23Static" onClick="changeOptions ('tf1_channe23Static', '', 'tf1_addrModeIpOpt2Rpppoe_div tf1_addrModeSnOpt2Rpppoe_div tf1_RpppoeOp2IpDefGw_div', 'tf1_addrModeIpOpt2Rpppoe tf1_addrModeSnOpt2Rpppoe tf1_RpppoeOp2IpDefGw', 2);">
+												Static
+												IP
+											</p>
+										</div>
+										<div id="tf1_addrModeIpOpt2Rpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.ipAddress2" value="$| outputTable["ipv4Option2.dual_ipAddress2"] or defaultIP |$" id="tf1_RpppoeDnsPriIpSrc" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnOpt2Rpppoe_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.networkMask2" value="$| outputTable["ipv4Option2.dual_networkMask2"] or defaultIP |$" id="tf1_RpppoeIpSnet" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										
+										<div id="tf1_RpppoeOp2IpDefGw_div">
+                                           <div class="configRow">
+
+                                                <div class="break">
+											    &nbsp;
+										        </div>
+											<label> Default Gateway </label>
+											<input type="text" name="ipv4Option2.gateway2" value="$| outputTable["ipv4Option2.dual_gateway2"] or defaultIP |$" id="tf1_RpppoeOp2IpDefGw" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+										</div>
+										
+                                    </div>
+                                    <div class="break">
+											&nbsp;
+										</div>
+    
+										<h2>Option2 Physical Setting Domain Name System</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.dual_useIspDns2"] == nil) then
+                                                    outputTable["ipv4Option2.dual_useIspDns2"] = defaultUseIspDns
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_useIspDns2"] == "1") |$ value="1" name="ipv4Option2.useIspDns2" id="tf1_channe24ISP" onClick="changeOptions ('tf1_channe24ISP', '', 'tf1_rpppoeOption2Dns_div', 'tf1_rpppoeOption2Dns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.dual_useIspDns2"] == "2") |$ value="2" name="ipv4Option2.useIspDns2" id="tf1_channe24DNS" onClick="changeOptions ('tf1_channe24DNS', '', 'tf1_rpppoeOption2Dns_div', 'tf1_rpppoeOption2Dns', 2);">
+												Use
+												These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_rpppoeOption2Dns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDns2" value="$| outputTable["ipv4Option2.dual_primaryDns2"] or defaultIP |$" id="tf1_RpppoeOp2PriDns" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDns2" value="$| outputTable["ipv4Option2.dual_secondaryDns2"] or defaultIP |$" id="tf1_RpppoeOp2SecDns" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.dual_mtuType" class="sameMtuRadio" id="tf1_rpppoePortSetup1" value="1" onClick="portSetupChangeMode('tf1_rpppoePortSetup1','','tf1_rpppoeCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.dual_mtuType" class="sameMtuRadio" id="tf1_rpppoePortSetup2" value="2" onClick="portSetupChangeMode('tf1_rpppoePortSetup2','tf1_rpppoeCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_rpppoeCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_rpppoeCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_rpppoePortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" id="tf1_rpppoePortSpeed" name="ipv4Option2.speed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$  value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<!-- ======= Russian PPPoE Ends Here ======= --><!-- ======= Russian PPTP Starts Here ======= -->
+									<div id="tf1_rpptpIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Russian PPTP</h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pptp_useDhcp"] == nil) then
+                                                    outputTable["ipv4Option2.pptp_useDhcp"] = defaultUseDhcp
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_useDhcp"] == "1") |$ value="1"  name="ipv4Option2.pptpRus_useDhcp" class="sameDhcpRadio" id="tf1_channel019Dynamic" onClick="changeOptions ('tf1_channel019Dynamic', '', 'tf1_addrModeIpRpptp_div tf1_addrModeSnRpptp_div tf1_addrModeIpGatewayRpptp_div', 'tf1_addrModeIpRpptp tf1_addrModeSnRpptp tf1_addrModeIpGatewayRpptp', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_useDhcp"] == "2") |$ value="2"  name="ipv4Option2.pptpRus_useDhcp" class="sameDhcpRadio" id="tf1_channel019Static" onClick="changeOptions ('tf1_channel019Static', '', 'tf1_addrModeIpRpptp_div tf1_addrModeSnRpptp_div tf1_addrModeIpGatewayRpptp_div', 'tf1_addrModeIpRpptp tf1_addrModeSnRpptp tf1_addrModeIpGatewayRpptp', 2);">
+												Static IP
+											</p>
+										</div>
+										<div id="tf1_addrModeIpRpptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.staticIPAddress" value="$| outputTable["ipv4Option2.pptp_staticIPAddress"] or defaultIP |$" id="tf1_RpptpIpaddr" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnRpptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.netmask" value="$| outputTable["ipv4Option2.pptp_netmask"] or defaultIP |$" id="tf1_RpptpSnet" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										<div id="tf1_addrModeIpGatewayRpptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Gateway </label>
+												<input type="text" name="ipv4Option2.gateway" value="$| outputTable["ipv4Option2.pptp_gateway"] or defaultIP |$" id="tf1_RpptpIpGw" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Server Address </label>
+											<input type="text" name="ipv4Option2.serverIPAddress" value="$| outputTable["ipv4Option2.pptp_serverIPAddress"] or defaultIP |$" id="tf1_RpptpServAddr" maxlength="64">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> User Name </label>
+											<input type="text" name="ipv4Option2.userName" maxlength="16" value="$| outputTable["ipv4Option2.pptp_userName"] or defaultUserName |$" id="tf1_RpptpUserName">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Password </label>
+											<input type="password" name="ipv4Option2.password" maxlength="16" value="$| outputTable["ipv4Option2.pptp_password"] or defaultPassword |$" id="tf1_RpptpPass">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> MPPE Encryption </label>
+                                            <?lua 
+                                                 
+                                            if (outputTable["ipv4Option2.pptp_mppeEncryption"] == "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar = "1"
+                                            else
+                                                statusStr="enable-disable-off"
+                                                statusVar = "0"
+                                            end
+                                            ?>
+												<a class="$| statusStr |$" alt=""></a>
+												<input type="hidden" name="ipv4Option2.mppeEncryption" value="$|statusVar|$">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Split Tunnel </label>
+                                            <?lua 
+                                                 
+                                            if (outputTable["ipv4Option2.pptp_splitTunnel"] == "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar = "1"
+                                            else
+                                                statusStr="enable-disable-off"
+                                                statusVar = "0"
+                                            end
+                                            ?>
+												<a class="$| statusStr |$" alt=""></a>
+												<input type="hidden" name="ipv4Option2.splitTunnel" value="$|statusVar|$">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Reconnect Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pptp_reconnectMode"] == nil) then
+                                                    outputTable["ipv4Option2.pptp_reconnectMode"] = defaultTimeoutFlag
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_reconnectMode"] == "1") |$ value="1" name="ipv4Option2.pptpRus_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe25AlwaysOn" onClick="changeOptions ('tf1_channe25AlwaysOn', '', 'tf1_reconnectModeRpptp_div', 'tf1_reconnectModeRpptp', 2);">
+												Always On
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_reconnectMode"] == "2") |$ value="2" name="ipv4Option2.pptpRus_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe25OnDemand" onClick="changeOptions ('tf1_channe25OnDemand', '', 'tf1_reconnectModeRpptp_div', 'tf1_reconnectModeRpptp', 2);">
+												On
+												Demand
+											</p>
+										</div>
+										<div id="tf1_reconnectModeRpptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Maximum Idle Time </label>
+												<input type="text" name="ipv4Option2.maxIdleTime" value="$| outputTable["ipv4Option2.pptp_maxIdleTime"] or defaultTimeout |$" id="tf1_RpptpMaxIdleTime" class="one" maxlength="2" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Maximum Idle Time.', '');}">
+												<dl>
+													[Range:
+													1 - 10]
+												</dl>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.pptp_useIspDns"] == nil) then
+                                                    outputTable["ipv4Option2.pptp_useIspDns"] = defaultUseIspDns
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_useIspDns"] == "1") |$ value="1" name="ipv4Option2.pptpRus_useIspDns" class="sameDnsRadio" id="tf1_channe26ISP" onClick="changeOptions ('tf1_channe26ISP', '', 'tf1_rpptpDns_div', 'tf1_rpptpDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.pptp_useIspDns"] == "2") |$ value="2" name="ipv4Option2.pptpRus_useIspDns" class="sameDnsRadio" id="tf1_channe26DNS" onClick="changeOptions ('tf1_channe26DNS', '', 'tf1_rpptpDns_div', 'tf1_rpptpDns', 2);">
+												Use
+												These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_rpptpDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDNS" value="$| outputTable["ipv4Option2.pptp_primaryDNS"] or defaultIP |$" id="tf1_RpptpPriDns" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDNS" value="$| outputTable["ipv4Option2.pptp_secondaryDNS"] or defaultIP |$" id="tf1_RpptpSecDns" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ value="1" name="ipv4Option2.pptpRus_macAddressType" class="sameMacRadio" id="tf1_channe27DefaultMAC" onClick="changeOptions ('tf1_channe27DefaultMAC', '', 'tf1_rpptp_div', 'tf1_rpptp', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ value="2" name="ipv4Option2.pptpRus_macAddressType" class="sameMacRadio" id="tf1_channe27CloneMAC" onClick="changeOptions ('tf1_channe27CloneMAC', '', 'tf1_rpptp_div', 'tf1_rpptp', 3);">
+												Clone
+												your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ value="3" name="ipv4Option2.pptpRus_macAddressType" class="sameMacRadio" id="tf1_channe27ThisMAC" onClick="changeOptions ('tf1_channe27ThisMAC', '', 'tf1_rpptp_div', 'tf1_rpptp', 3);">
+												Use
+												this MAC
+											</p>
+										</div>
+										<div id="tf1_rpptp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$"  id="tf1_RpptpMacAddr" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.pptpRus_mtuType" class="sameMtuRadio" id="tf1_rpptpPortSetup1" value="1" onClick="portSetupChangeMode('tf1_rpptpPortSetup1','','tf1_rpptpCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.pptpRus_mtuType" class="sameMtuRadio" id="tf1_rpptpPortSetup2" value="2" onClick="portSetupChangeMode('tf1_rpptpPortSetup2','tf1_rpptpCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_rpptpCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_rpptpCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_rpptpPortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" id="tf1_rpptpPortSpeed" name="ipv4Option2.speed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$ value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<!-- ======= Russian PPTP Ends Here ======= --><!-- ======= Russian L2TP Starts Here ======= -->
+									<div id="tf1_rl2tpIsp_div">
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Russian L2TP </h2>
+										<div class="configRow">
+											<label> Address Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.l2tp_useDhcp"] == nil) then
+                                                    outputTable["ipv4Option2.l2tp_useDhcp"] = defaultUseDhcp
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_useDhcp"] == "1") |$ value="1" name="ipv4Option2.l2tpRus_useDhcp" class="sameDhcpRadio" id="tf1_channe019Dynamic" onClick="changeOptions ('tf1_channe019Dynamic', '', 'tf1_addrModeIpRL2tp_div tf1_addrModeSnRL2tp_div tf1_addrModeIpGatewayRL2tp_div', 'tf1_addrModeIpRL2tp tf1_addrModeSnRL2tp tf1_addrModeIpGatewayRL2tp', 2);">
+												Dynamic IP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_useDhcp"] == "2") |$ value="2"  name="ipv4Option2.l2tpRus_useDhcp" class="sameDhcpRadio" id="tf1_channe019Static" onClick="changeOptions ('tf1_channe019Static', '', 'tf1_addrModeIpRL2tp_div tf1_addrModeSnRL2tp_div tf1_addrModeIpGatewayRL2tp_div', 'tf1_addrModeIpRL2tp tf1_addrModeSnRL2tp tf1_addrModeIpGatewayRL2tp', 2);">
+												Static IP
+											</p>
+										</div>
+
+										<div id="tf1_addrModeIpRL2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Address </label>
+												<input type="text" name="ipv4Option2.staticIPAddress" value="$| outputTable["ipv4Option2.l2tp_staticIPAddress"] or defaultIP |$" id="tf1_RL2tpIpAddr" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div id="tf1_addrModeSnRL2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Subnet Mask </label>
+												<input type="text" name="ipv4Option2.netmask" value="$| outputTable["ipv4Option2.l2tp_netmask"] or defaultIP |$" id="tf1_RL2tpSnet" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return validNetMask (this.id); }"/>
+											</div>
+										</div>
+										<div id="tf1_addrModeIpGatewayRL2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> IP Gateway </label>
+												<input type="text" name="ipv4Option2.gateway" value="$| outputTable["ipv4Option2.l2tp_gateway"] or defaultIP |$" id="tf1_RL2tpIpGw" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Server Address </label>
+											<input type="text" name="ipv4Option2.serverIPAddress" value="$| outputTable["ipv4Option2.l2tp_serverIPAddress"] or defaultIP |$" id="tf1_RL2tpServerAddr" maxlength="64">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> User Name </label>
+											<input type="text" name="ipv4Option2.userName" maxlength="16" value="$| outputTable["ipv4Option2.l2tp_userName"] or defaultUserName |$" id="tf1_RL2tpUsername">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Password </label>
+											<input type="password" name="ipv4Option2.password" maxlength="16" value="$| outputTable["ipv4Option2.l2tp_password"] or defaultPassword |$" id="tf1_RL2tpPassword">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Secret </label>
+											<input type="password" name="ipv4Option2.secret" maxlength="16" value="$| outputTable["ipv4Option2.l2tp_secret"] or '' |$" id="tf1_RL2tpSecret">
+											<dl>Optional</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Split Tunnel </label>
+                                            <?lua 
+                                                 
+                                            if (outputTable["ipv4Option2.l2tp_splitTunnel"] == "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar = "1"
+                                            else
+                                                statusStr="enable-disable-off"
+                                                statusVar = "0"
+                                            end
+                                            ?>
+												<a class="$| statusStr |$" alt=""></a>
+												<input type="hidden"  name="ipv4Option2.splitTunnel" value="$|statusVar|$">
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow">
+											<label> Reconnect Mode </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.l2tp_reconnectMode"] == nil) then
+                                                    outputTable["ipv4Option2.l2tp_reconnectMode"] = defaultTimeoutFlag
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_reconnectMode"] == "1") |$ value="1"  name="ipv4Option2.l2tpRus_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe28AlwaysOn" onClick="changeOptions ('tf1_channe28AlwaysOn', '', 'tf1_reconnectModeRL2tp_div', 'tf1_reconnectModeRL2tp', 2);">
+												Always On
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_reconnectMode"] == "2") |$ value="2"  name="ipv4Option2.l2tpRus_reconnectMode" class="sameReconnectModeRadio" id="tf1_channe28OnDemand" onClick="changeOptions ('tf1_channe28OnDemand', '', 'tf1_reconnectModeRL2tp_div', 'tf1_reconnectModeRL2tp', 2);">
+												On
+												Demand
+											</p>
+										</div>
+										<div id="tf1_reconnectModeRL2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Maximum Idle Time </label>
+												<input type="text" name="ipv4Option2.maxIdleTime" value="$| outputTable["ipv4Option2.l2tp_maxIdleTime"] or defaultTimeout |$" id="tf1_RL2tpMaxIdleTime" maxlength="2" class="one" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 10, true, 'Invalid Maximum Idle Time.', '');}">
+												<dl>
+													[Range:
+													1 - 10]
+												</dl>
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Domain Name System (DNS) Servers</h2>
+										<div class="configRow">
+											<label> DNS Server Source </label>
+											<p>
+                                            <?lua 
+                                                if (outputTable["ipv4Option2.l2tp_useIspDns"] == nil) then
+                                                    outputTable["ipv4Option2.l2tp_useIspDns"] = defaultUseIspDns
+                                                end
+                                            ?>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_useIspDns"] == "1") |$ value="1" name="ipv4Option2.l2tpRus_useIspDns" class="sameDnsRadio" id="tf1_channe29ISP" onClick="changeOptions ('tf1_channe29ISP', '', 'tf1_rl2tpDns_div', 'tf1_rl2tpDns', 2);">
+												Get Dynamically from ISP
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.l2tp_useIspDns"] == "2") |$ value="2"  name="ipv4Option2.l2tpRus_useIspDns" class="sameDnsRadio" id="tf1_channe29DNS" onClick="changeOptions ('tf1_channe29DNS', '', 'tf1_rl2tpDns_div', 'tf1_rl2tpDns', 2);">
+												Use
+												These DNS Servers
+											</p>
+										</div>
+										<div id="tf1_rl2tpDns_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Primary DNS Server </label>
+												<input type="text" name="ipv4Option2.primaryDNS" value="$| outputTable["ipv4Option2.l2tp_primaryDNS"] or defaultIP |$"  id="tf1_RL2tpPriDnsServer" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> Secondary DNS Server </label>
+												<input type="text" name="ipv4Option2.secondaryDNS" value="$| outputTable["ipv4Option2.l2tp_secondaryDNS"] or defaultIP |$"  id="tf1_RL2tpSecDnsServer" maxlength="15" onkeypress="return numericValueCheck (event, '.')" onkeydown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>MAC Address</h2>
+										<div class="configRow">
+											<label> MAC Address Source </label>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "1") |$ value="1" name="ipv4Option2.l2tpRus_macAddressType" class="sameMacRadio" id="tf1_channe31DefaultMAC" onClick="changeOptions ('tf1_channe31DefaultMAC', '', 'tf1_rl2tp_div', 'tf1_rl2tp', 3);">
+												Use Default MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "2") |$ value="2"  name="ipv4Option2.l2tpRus_macAddressType" class="sameMacRadio" id="tf1_channe31CloneMAC" onClick="changeOptions ('tf1_channe31CloneMAC', '', 'tf1_rl2tp_div', 'tf1_rl2tp', 3);">
+												Clone
+												your PC's MAC
+											</p>
+											<p>
+												<input type="radio" $| web.radioSelected(outputTable["ipv4Option2.macAddressType"] == "3") |$ value="3"  name="ipv4Option2.l2tpRus_macAddressType" class="sameMacRadio" id="tf1_channe31ThisMAC" onClick="changeOptions ('tf1_channe31ThisMAC', '', 'tf1_rl2tp_div', 'tf1_rl2tp', 3);">
+												Use
+												this MAC
+											</p>
+										</div>
+										<div id="tf1_rl2tp_div">
+											<div class="break">
+												&nbsp;
+											</div>
+											<div class="configRow">
+												<label> MAC Address </label>
+												<input type="text" name="ipv4Option2.macAddress" value="$| outputTable["ipv4Option2.macAddress"] or '' |$"  id="tf1_RL2tpMacAddr" maxlength="17" onkeypress="return numericValueCheck (event, 'ABCDEFabcdef:')" onkeydown="return macAddrVerify(event, this, true, 'Invalid MAC address:', '')">
+											</div>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<h2>Port Setup</h2>
+										<div class="configRow">
+											<label> MTU Size </label>
+											<p>
+												<input type="radio"  $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "1") |$ name="ipv4Option2.l2tpRus_mtuType" class="sameMtuRadio" id="tf1_rl2tpPortSetup1" value="1" onClick="portSetupChangeMode('tf1_rl2tpPortSetup1','','tf1_rl2tpCustomMTU1');">
+												Default
+											</p>
+											<p>
+												<input type="radio"  $| web.radioSelected(outputTable["ipv4Option2.mtuType"] == "2") |$ name="ipv4Option2.l2tpRus_mtuType" class="sameMtuRadio" id="tf1_rl2tpPortSetup2" value="2" onClick="portSetupChangeMode('tf1_rl2tpPortSetup2','tf1_rl2tpCustomMTU1','');">
+												Custom
+											</p>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_rl2tpCustomMTU1_div">
+											<label> Custom MTU </label>
+											<input type="text" name="ipv4Option2.mtu" value="$| outputTable["ipv4Option2.mtu"] or '' |$" id="tf1_rl2tpCustomMTU1" class="one" maxlength="4" onkeypress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1200, 1500, true, 'Invalid Custom MTU.', 'Bytes');}">
+											<dl>
+												[Range: 1200 to 1500] Bytes
+											</dl>
+										</div>
+										<div class="break">
+											&nbsp;
+										</div>
+										<div class="configRow" id="tf1_rl2tpPortSpeed_div">
+											<label> Port Speed </label>
+											<select size="1" id="tf1_rl2tpPortSpeed" name="ipv4Option2.speed">
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "1") |$ value="1">Auto Sense</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "2") |$ value="2">10 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "3") |$ value="3">10 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "4") |$ value="4">100 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "5") |$ value="5">100 BaseT Full Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "6") |$ value="6">1000 BaseT Half Duplex</option>
+												<option $| web.dropdownSelected(outputTable["ipv4Option2.speed"] == "7") |$ value="7">1000 BaseT Full Duplex</option>
+											</select>
+										</div>
+									</div>
+									<div class="break">
+										&nbsp;
+									</div>
+									<!-- ======= Russian L2TP Ends Here ======= -->
+								</div>
+								<!-- ======= DMZ Settings Start Here ======= -->
+								<div id="tf1_DMZSettingsBlock_div">
+									<h2>DMZ IP Address</h2>
+									<div class="configRow">
+										<label> IP Address </label>
+										<input type="text" name="ipv4Option2.ipAddress" value="$| outputTable1["ipv4Option2.dmz_ipAddress"] or defaultDmzIP |$" maxlength="15" value="" id="tf1_ipv4_addr" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+									</div>
+									<div class="break" id="break1_div">
+										&nbsp;
+									</div>
+									<div class="configRow">
+										<label> Subnet Mask </label>
+										<input type="text" name="ipv4Option2.subnetMask" value="$| outputTable1["ipv4Option2.dmz_subnetMask"] or defaultDmzSubnet |$" maxlength="15" value="" id="tf1_snet" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return validNetMask (this.id) }">
+									</div>
+									<div class="break" id="break2_div">
+										&nbsp;
+									</div>
+									<h2>DHCP for DMZ</h2>
+									<div class="configRow" id="tf1_dhcpMode_div">
+										<label> DHCP Mode </label>
+										<p>
+                                            <?lua 
+                                                if (outputTable1["ipv4Option2.dmz_dhcpType"] == nil) then
+                                                    outputTable1["ipv4Option2.dmz_dhcpType"] = defaultUseDhcp
+                                                end
+                                            ?>
+											<input type="radio" $| web.radioSelected(outputTable1["ipv4Option2.dmz_dhcpType"] == "1") |$ name="ipv4Option2.dhcpType" value="1" onClick="changeDhcpMode('tf1_radNtp1');" id="tf1_radNtp1">
+											None
+										</p>
+										<p>
+											<input type="radio" $| web.radioSelected(outputTable1["ipv4Option2.dmz_dhcpType"] == "2") |$ name="ipv4Option2.dhcpType" value="2" onClick="changeDhcpMode('tf1_radNtp2');" id="tf1_radNtp2">
+											DHCP Server
+										</p>
+										<p>
+											<input type="radio" $| web.radioSelected(outputTable1["ipv4Option2.dmz_dhcpType"] == "3") |$ name="ipv4Option2.dhcpType" value="3" onClick="changeDhcpMode('tf1_radNtp3');" id="tf1_radNtp3">
+											DHCP Relay
+										</p>
+									</div>
+									<div class="break" id="break3_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_ipv4_start_div">
+										<label> Starting IP Address </label>
+										<input type="text" name="ipv4Option2.startIPAddress" value="$| outputTable1["ipv4Option2.dmz_startIPAddress"] or defaultIP |$" id="tf1_ipv4_start" size="30" class="txt1" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+									</div>
+									<div class="break" id="break4_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_ipv4_end_div">
+										<label> Ending IP Address </label>
+										<input type="text" name="ipv4Option2.endIPAddress" value="$| outputTable1["ipv4Option2.dmz_endIPAddress"] or defaultIP |$" id="tf1_ipv4_end" size="30" class="txt1" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+									</div>
+									<div class="break" id="break5_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_ipv4_gateway_div">
+										<label> Default Gateway </label>
+										<input type="text" name="ipv4Option2.gateWay" value="$| outputTable1["ipv4Option2.dmz_gateWay"] or defaultIP |$" maxlength="15" class="txt1" id="tf1_ipv4_gateway" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+									</div>
+									<div class="break" id="break6_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_domain_div">
+										<label> Domain Name </label>
+										<input type="text" name="ipv4Option2.domainName" value="$| outputTable1["ipv4Option2.dmz_domainName"] or '' |$" id="tf1_domain">
+									</div>
+									<div class="break" id="break7_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_lease_time_div">
+										<label> Lease Time </label>
+										<input type="text" name="ipv4Option2.leaseTime" value="$| outputTable1["ipv4Option2.dmz_leaseTime"] or '' |$" class="one" value id="tf1_lease_time" maxlength="6" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 262800, true, 'Invalid Lease Time.', 'Hours');}">
+										<dl>
+											[Range: 1 - 262800] Hours
+										</dl>
+									</div>
+									<div class="break" id="break8_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_dns_wins_div">
+										<label> Configure DNS / WINS </label>
+                                            <?lua 
+                                                 
+                                            if (outputTable1["ipv4Option2.dmz_dnsProxy"] == "1") then
+                                                statusStr="enable-disable-on"
+                                                statusVar = "1"
+                                            else
+                                                statusStr="enable-disable-off"
+                                                statusVar = "0"
+                                            end
+                                            ?>
+											<a class="$| statusStr |$" id="tf1_dns_wins" alt=""  ></a>
+											<input type="hidden" name="ipv4Option2.dnsProxy" value="$|statusVar|$">
+
+									</div>
+									<div class="break" id="break9_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_ipv4_primary_div">
+										<label> Primary DNS Server </label>
+										<input type="text" name="ipv4Option2.primaryDnsServer" value="$| outputTable1["ipv4Option2.dmz_primaryDnsServer"] or defaultIP |$" id="tf1_ipv4_primary" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+									</div>
+									<div class="break" id="break10_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_ipv4_secondary_div">
+										<label> Secondary DNS Server </label>
+										<input type="text" name="ipv4Option2.secondaryDnsServer" value="$| outputTable1["ipv4Option2.dmz_secondaryDnsServer"] or defaultIP |$" id="tf1_ipv4_secondary" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+									</div>
+									<div class="break" id="break11_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_wins_server_div">
+										<label> WINS Server </label>
+										<input type="text" name="ipv4Option2.winsServer" value="$| outputTable1["ipv4Option2.dmz_winsServer"] or defaultIP |$" id="tf1_wins_server" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+									</div>
+									<div class="break" id="break12_div">
+										&nbsp;
+									</div>
+									<div class="configRow" id="tf1_gateway_div">
+										<label> Gateway </label>
+										<input type="text" name="ipv4Option2.dhcpRelay" value="$| outputTable1["ipv4Option2.dmz_dhcpRelay"] or defaultIP |$" id="tf1_gateway" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address.', 'for octet ', true); }">
+									</div>
+									<div class="break" id="break13_div">
+										&nbsp;
+									</div>
+								</div>
+								<!-- ======= DMZ Settings Ends Here ======= -->
+								<div class="submitRow">
+									<input type="submit" name="button.config.ipv4Option2DmzSetting.ipv4Option2DmzSetting.-1"  onclick="return ispValidate ('tf1_frmIpv4Option2DmzSetting')" class="btnSubmit" title="Save" value="Save" id="btSave">
+									<input type="button" class="btnReset" title="Cancel" value="Cancel" id="btSave" onclick="this.form.reset(); resetImgOnOff('tf1_frmIpv4Option2DmzSetting'); ispOnReset('tf1_frmIpv4Option2DmzSetting')" >
+								</div>
+								<div class="break">
+									&nbsp;
+								</div>
+							</form>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/macValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/option2Settings.js"></script>
+	</body>
+</html>
+<?lua end ?>

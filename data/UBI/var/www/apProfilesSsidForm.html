@@ -1,0 +1,648 @@
+<?lua
+require "teamf1lualib/bl_networkProfiles"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+local nwProfile = require("com.teamf1.bl.wlan.networkProfiles")
+local errorMap           = require ("com.teamf1.core.errorMap")
+local returnCodes        = require ("com.teamf1.core.returnCodes")
+
+local networkProfileList = {}
+local configRow = cgi
+local cookieInfo = util.split (cgi.configRowId, "-")
+local networkId = cookieInfo[4]
+configRowId = cgi["configRowId"]
+returnCode, networkProfileList = nwProfile.networkProfileListGetCur(networkId)
+if (returnCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (errorCode)
+end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<!-- Section for Pop up dialog starts -->
+            <div id="tf1_apProfilesSsidDailogContent">
+                <div class="topBg">
+                    <h1>SSID Configuration</h1>
+                    <close>
+                        <a href="#" id="btnClose" title="Close">X</a>
+                    </close>
+                </div>
+                <div class="dialogMidArea">
+                    <div class="configRow">
+                        <label>SSID </label>
+                        <input type="text" maxlength="32"
+                        name="networkProfileConfig.ssid" value ="$|
+                        networkProfileList.ssid or '' |$" id="tf1_ssid"> <!--
+                        class="one" maxlength="4"  onkeypress="return
+                        numericValueCheck (event)" onkeydown="if (event.keyCode
+                        == 9) {return numericValueRangeCheck (this, '', '', 1,
+                        4096, true, 'Invalid VLAN ID.', '');}">-->
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Hide SSID </label>
+                        <?lua
+                  if (networkProfileList.hide == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+                 ?>
+                 <a class="$| statusStr |$" alt="" ></a>
+            <input type="hidden" name="networkProfileConfig.hideSsid" value="$| statusVar |$">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Ignore Broadcast </label>
+                        <?lua
+                  if (networkProfileList.denyBrcast == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+            <a class="$| statusStr |$" alt="" ></a>
+            <input type="hidden" name="networkProfileConfig.denyBrcast" value="$| statusVar |$">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>VLAN </label>
+                        <input type="text" name ="networkProfileConfig.vlan" value = "$| networkProfileList.vlan or ''|$" id="tf1_VLANId" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1, 4093, true, 'Invalid VLAN', ''); }" class="one">
+                        <dl>
+                            [Range: 1 - 4093]
+                        </dl>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>MAC Authentication </label>
+                        <p>
+                            <input type="radio" $| web.radioSelected(networkProfileList.macAuthMode == 1) |$ check="checked" value="1" name="networkProfileConfig.macAuthMode">
+                            Local
+                        </p>
+                        <p>
+                            <input type="radio" $| web.radioSelected(networkProfileList.macAuthMode == 2) |$ value="2" name="networkProfileConfig.macAuthMode">
+                            Radius
+                        </p>
+                        <p>
+                            <input type="radio" $| web.radioSelected(networkProfileList.macAuthMode == 3) |$ value="3" name="networkProfileConfig.macAuthMode">
+                            Disable
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Redirect </label>
+                        <p>
+                            <input type="radio" $| web.radioSelected(networkProfileList.redirectMode == 1) |$ value="1" check="checked" name="networkProfileConfig.redirectMode" id="tf1_redirectNone" onclick="enbaleRedirectUrl('tf1_redirectNone')">
+                            None
+                        </p>
+                        <p>
+                            <input type="radio" $|
+                            web.radioSelected(networkProfileList.redirectMode ==
+                            2) |$ value="2" name="networkProfileConfig.redirectMode" id="tf1_redirectHTTP" onclick="enbaleRedirectUrl('tf1_redirectHTTP')">
+                            HTTP
+                        </p>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_redirectUrl_div">
+                        <label>Redirect URL </label>
+                        <input type="text" name ="networkProfileConfig.redirectUrl" value = "$| networkProfileList.redirectUrl or ''|$" id="tf1_redirectUrl" maxlength="127">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>Wireless ARP Suppression
+                            <br />
+                            Mode </label>
+                        <?lua
+                  if (networkProfileList.arpsupressionMode == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+            <a class="$| statusStr |$" alt="" ></a>
+            <input type="hidden" name="networkProfileConfig.arpsuppressionMode" value="$| statusVar |$">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                    <div class="configRow">
+                        <label>L2 Distributed Tunneling
+                            <br />
+                            Mode </label>
+                         <?lua
+                  if (networkProfileList.l2TunnelMode == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+            <a class="$| statusStr |$" alt="" ></a>
+            <input type="hidden" name="networkProfileConfig.l2TunnelMode" value="$| statusVar |$">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+                   
+                   <!-- <div class="configRow">
+                        <label>Band Steering </label>
+                         <?lua
+                  if (networkProfileList.bandSteerMode == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+            <a class="$| statusStr |$" alt="" ></a>
+            <input type="hidden" name="networkProfileConfig.bandSteerMode" value="$| statusVar |$">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div> -->
+                    <!--<div class="configRow">
+                        <label>RADIUS Authentication
+                            <br />
+                            Server IP Address </label>
+                        <input type="text" id="tf1_radiusAuthServerIP" maxlength="15" onKeyPress="return numericValueCheck (event, '.')" onKeyDown="if (event.keyCode == 9) { return ipv4AddrValidate (this, 'IP', false, true, 'Invalid IP address', 'for octet ', true); }">
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>-->
+         <div class="configRow">
+                                    <label> Radius Server Name </label>
+                                    <input type="text"
+                                    name="networkProfileConfig.radiusServerName"
+                                    value ="$|networkProfileList.radiusServerName or 'Default-Radius-Server'|$"  maxlength="64" id="tf1_Secret" onkeypress ="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }">
+                                </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>RADIUS Authentication <br />
+                Server Status </label>
+<?lua if
+                                    (networkProfileList.RadServerStatus == 0) then
+                                            networkProfileList.RadServerStatus = "None"
+                                             elseif(networkProfileList.RadServerStatus== 1)then
+                                              networkProfileList.RadServerStatus = "Not-Configured"
+                                             elseif(networkProfileList.RadServerStatus == 2) then
+                                               networkProfileList.RadServerStatus = "Configured"
+                                          end
+                                          ?>
+            <p> $| networkProfileList.RadServerStatus|$ </p>
+
+        </div>
+        <div class="break">
+            &nbsp; </div>
+                                        <div class="configRow">
+                                            <label> Radius Accounting <br/> Server Name </label>
+                                    <input type="text"
+                                    name="networkProfileConfig.radiusAccountingServerName"
+                                    value ="$|networkProfileList.radiusAccountingServerName or 'Default-Radius-Server'|$"  maxlength="64" id="tf1_Secret" onkeypress ="if (event.keyCode != 9) { this.value = ''; this.onkeypress=''; }">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label> Radius Accounting <br/>Server Status </label>
+                                    <?lua
+                  if (networkProfileList.radiusAccountingServerStatus == 0) then
+                      networkProfileList.radiusAccountingServerStatus ="None"
+                  elseif (networkProfileList.radiusAccountingServerStatus == 1) then
+                      networkProfileList.radiusAccountingServerStatus ="Not-Configured"
+                 elseif (networkProfileList.radiusAccountingServerStatus == 2) then
+                      networkProfileList.radiusAccountingServerStatus ="Configured"
+                 end
+                                    ?>
+                                    <p>$|networkProfileList.radiusAccountingServerStatus|$</p> 
+                                </div>
+        <div class="break">
+&nbsp; </div>
+        <div class="configRow">
+            <label>RADIUS Use Network <br />
+                Configuration </label>
+            <?lua
+                  if (networkProfileList.radiusUseConfig == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = 1
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = 0
+                      CheckedVar = ""
+                 end
+             ?>
+            <a class="$| statusStr |$" alt="" ></a>
+            <input type="hidden" name="networkProfileConfig.radiusUseConfig" value="$| statusVar|$">
+        </div>
+        
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div><div class="configRow">
+                                    <label> Accounting Mode </label>
+                                   <?lua if (networkProfileList.RadAccServerEnable == 1) then
+                                               statusStr="enable-disable-on"
+                                               statusVar = 1
+                                          else
+                                               statusStr="enable-disable-off"
+                                               statusVar = 0
+                                          end
+                                        ?>
+                                        <a class="$| statusStr |$" alt=""></a>
+              <input type="hidden" name="networkProfileConfig.RadAccServerEnable" value="$| statusVar|$">
+                                </div> 
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                   
+                    <div class="configRow">
+                        <label>Security </label>
+                        <p>
+                            <input type="radio" value="1" $| web.radioSelected(networkProfileList.security == "1") |$ checked="checked"   name="networkProfileConfig.security" id="tf1_SecurityNone" onclick="checkSecurity('tf1_SecurityNone')">
+                            None
+                        </p>
+                        <p>
+                            <input type="radio" value="2" $| web.radioSelected(networkProfileList.security == "2") |$  name="networkProfileConfig.security" id="tf1_SecurityWEP" onclick="checkSecurity('tf1_SecurityWEP')">
+                            WEP
+                        </p>
+                        <p>
+                            <input type="radio" value="3" $|
+                            web.radioSelected(networkProfileList.security == "3") |$  name="networkProfileConfig.security" id="tf1_SecurityWPA2" onclick="checkSecurity('tf1_SecurityWPA2')">
+                            WPA/WPA2
+                        </p>
+                    </div>
+                    <div class="break" id="break1_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_Security2_div">
+                        <label>&nbsp; </label>
+                        <p>
+                            <input type="radio" value="1" $| web.radioSelected(networkProfileList.wpaSecurityMode == "1") |$ check="checked" name="networkProfileConfig.wpaSecurityMode" id="tf1_Security2Personal" onclick="checkWEPPersonalOrEnterprice('tf1_Security2Personal')">
+                            WPA
+                            Personal
+                        </p>
+                        <p>
+                            <input type="radio" value="2" $| web.radioSelected(networkProfileList.wpaSecurityMode == "2") |$  name="networkProfileConfig.wpaSecurityMode" id="tf1_Security2Enterprise" onclick="checkWEPPersonalOrEnterprice('tf1_Security2Enterprise')">
+                            WPA
+                            Enterprise
+                        </p>
+                    </div>
+                    <div class="break" id="break2_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_Security3_div">
+                        <label>&nbsp; </label>
+                        <p>
+                            <input type="radio" value="1" $| web.radioSelected(networkProfileList.wepSecurityMode == "1") |$ check="checked" name="networkProfileConfig.wepSecurityMode" id="tf1_Security3Static" onclick="checkWEPSecurity('tf1_Security3Static')">
+                            Static
+                            WEP
+                        </p>
+                        <p>
+                            <input type="radio" value="2" $| web.radioSelected(networkProfileList.wepSecurityMode == "2") |$ name="networkProfileConfig.wepSecurityMode" id="tf1_Security3IEEE" onclick="checkWEPSecurity('tf1_Security3IEEE')">
+                            WEP
+                            IEEE802.1x
+                        </p>
+                    </div>
+                    <div class="break" id="break3_div">
+                        &nbsp;
+                    </div>
+                    <div id="tf1_securityAuthenticationBlock_div">
+                        <h2>Authentication</h2>
+                        <div class="configRow" id="tf1_openSystem_div">
+                            <label>Open System </label>
+                            <?lua
+                  if (networkProfileList.openSystem == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+                <a class="$| statusStr |$" id="tf1_openSystem"></a>
+                <input type="hidden" name="networkProfileConfig.openSystem" value="$| statusVar |$">
+                        </div>
+                        <div class="break" id="break4_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_sharedKey_div">
+                            <label>Shared Key </label>
+                            <?lua
+                  if (networkProfileList.sharedKey == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+               <a class="$| statusStr |$" id="tf1_sharedKey"></a>
+               <input type="hidden" name="networkProfileConfig.sharedKey" value="$| statusVar |$">
+                            </p>
+                        </div>
+                        <div class="break" id="break5_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_wepkeyType_div">
+                            <label>WEP Key Type </label>
+                            <p>
+                                <input type="radio" value="1" $|
+                                web.radioSelected(networkProfileList.wepKeyType
+                                == 1) |$ checked="checked"  name="networkProfileConfig.wepKeyType" id="tf1_wepkeyTypeASCII" onclick="changeCharLimitDynamically('tf1_wepkeyTypeASCII','tf1_wepkeyLength64')">
+                                ASCII
+                            </p>
+                            <p>
+                                <input type="radio" value="2" $| web.radioSelected(networkProfileList.wepKeyType == 2) |$ name="networkProfileConfig.wepKeyType" id="tf1_wepkeyTypeHEX" onclick="changeCharLimitDynamically('tf1_wepkeyTypeHEX','tf1_wepkeyLength128')">
+                                HEX
+                            </p>
+                        </div>
+                        <div class="break" id="break6_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_wepkeyLength_div">
+                            <label>WEP Key Length (bits) </label>
+                            <p>
+                                <input type="radio" value="1" $|
+                                web.radioSelected(networkProfileList.wepKeyLength
+                                == 1) |$ checked="checked" name="networkProfileConfig.wepKeyLength" id="tf1_wepkeyLength64" onclick="changeCharLimitDynamically('tf1_wepkeyTypeASCII','tf1_wepkeyLength64')">
+                                64
+                            </p>
+                            <p>
+                                <input type="radio" value="2" $|
+                                web.radioSelected(networkProfileList.wepKeyLength
+                                == 2) |$ name="networkProfileConfig.wepKeyLength" id="tf1_wepkeyLength128" onclick="changeCharLimitDynamically('tf1_wepkeyTypeHEX','tf1_wepkeyLength128')">
+                                128
+                            </p>
+                        </div>
+                        <div class="break" id="break7_div">
+                            &nbsp;
+                        </div>
+                        <div id="tf1_WAPKeysBlock_div">
+                            <div class="configRow" id="tf1_WEPKeys">
+                                <label>WEP Keys </label>
+                                <p id="tf1_dynamicCharLimit">
+                                    Tx (Characters required: 5)
+                                </p>
+                            </div>
+                            <div class="break" id="break8_div">
+                                &nbsp;
+                            </div>
+                            <div class="configRow">
+                                <label>&nbsp; </label>
+                                <p>
+                                    <input type="radio" value="1" $|
+                                    web.radioSelected(networkProfileList.wepKeyIndex
+                                    == 1) |$ checked="checked" name="networkProfileConfig.wepKeyIndex" id="tf1_Keys1" onclick="enableWepKeysChars('tf1_Keys1')">
+                                    1
+                                </p>
+                                <input type="password" name="networkProfileConfig.staticWepKey1" value ="$| networkProfileList.staticWepKey1 or ''|$" id="tf1_WEPKeyCharValue1" maxlength="5">
+                            </div>
+                            <div class="break" id="break9_div">
+                                &nbsp;
+                            </div>
+                            <div class="configRow">
+                                <label>&nbsp; </label>
+                                <p>
+                                    <input type="radio" value="2" $| web.radioSelected(networkProfileList.wepKeyIndex == 2) |$ name="networkProfileConfig.wepKeyIndex" id="tf1_Keys2" onclick="enableWepKeysChars('tf1_Keys2')">
+                                    2
+                                </p>
+                                <input type="password" id="tf1_WEPKeyCharValue2"
+                    name="networkProfileConfig.staticWepKey2" value ="$|
+                    networkProfileList.staticWepKey2 or ''|$" maxlength="5">
+                            </div>
+                            <div class="break" id="break10_div">
+                                &nbsp;
+                            </div>
+                            <div class="configRow">
+                                <label>&nbsp; </label>
+                                <p>
+                                    <input type="radio" value="3" $| web.radioSelected(networkProfileList.wepKeyIndex == 3) |$ name="networkProfileConfig.wepKeyIndex" id="tf1_Keys3" onclick="enableWepKeysChars('tf1_Keys3')">
+                                    3
+                                </p>
+                                <input type="password" id="tf1_WEPKeyCharValue3" name="networkProfileConfig.staticWepKey3" value ="$| networkProfileList.staticWepKey3 or '' |$" maxlength="5">
+                            </div>
+                            <div class="break" id="break11_div">
+                                &nbsp;
+                            </div>
+                            <div class="configRow">
+                                <label>&nbsp; </label>
+                                <p>
+                                    <input type="radio" value="4" $| web.radioSelected(networkProfileList.wepKeyIndex == 4) |$ name="networkProfileConfig.wepKeyIndex" id="tf1_Keys4" onclick="enableWepKeysChars('tf1_Keys4')">
+                                    4
+                                </p>
+                                <input type="password" id="tf1_WEPKeyCharValue4" name="networkProfileConfig.staticWepKey4" value ="$| networkProfileList.staticWepKey4 or '' |$" maxlength="5">
+                            </div>
+                        </div>
+                        <div class="break" id="break12_div">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div id="tf1_securityWPAVersionsBlock_div">
+                        <h2>WPA Versions</h2>
+                        <div class="configRow" id="tf1_WPA_div">
+                            <label>WPA </label>
+                            <?lua
+                  if (networkProfileList.wpaVersion == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+                <a class="$| statusStr |$" id="tf1_WPA"></a>
+                <input type="hidden" name="networkProfileConfig.wpaVersion" value="$| statusVar |$">
+                        </div>
+                        <div class="break" id="break12_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_WPA2_div">
+                            <label>WPA2 </label>
+                            <?lua
+                  if (networkProfileList.wpa2Version == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+                <a class="$| statusStr |$" id="tf1_WPA2"></a>
+                <input type="hidden" name="networkProfileConfig.wpa2Version" value="$| statusVar |$">
+                            </p>
+                        </div>
+                        <div class="break" id="break13_div">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div id="tf1_securityWPACiphersBlock_div">
+                        <h2>WPA Ciphers</h2>
+                        <div class="configRow" id="tf1_TKIP_div">
+                            <label>TKIP </label>
+                            <?lua
+                  if (networkProfileList.cipherTKIP == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+                <a class="$| statusStr |$" id="tf1_TKIP"></a>
+                <input type="hidden" name="networkProfileConfig.cipherTKIP" value="$| statusVar |$">
+                            </p>
+                        </div>
+                        <div class="break" id="break14_div">
+                            &nbsp;
+                        </div>
+                        <div class="configRow" id="tf1_CCMP_div">
+                            <label>CCMP(AES) </label>
+                            <?lua
+                  if (networkProfileList.cipherCCMP == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+                <a class="$| statusStr |$" id="tf1_CCMP"></a>
+                <input type="hidden" name="networkProfileConfig.cipherCCMP" value="$| statusVar |$">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="break" id="break15_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_WPAKeyType_div">
+                        <label>WPA Key Type </label>
+                        <p>
+                            ASCII
+                        </p>
+                    </div>
+                    <div class="break" id="break16_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_WPAKey_div">
+                        <label>WPA Key </label>
+                        <input type="password" id="tf1_WPAKey" name="networkProfileConfig.wpaKey" value ="$| networkProfileList.wpaKey or '' |$" maxlength="63">
+                    </div>
+                    <div class="break" id="break18_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_preAuth_div">
+                        <label>Pre-Authentication </label>
+                        <?lua
+                  if (networkProfileList.wpaPreAuthMode == 1) then
+                      statusStr = "enable-disable-on"
+                      statusVar = "1"
+                      CheckedVar = "checked"
+                 else
+                      statusStr = "enable-disable-off"
+                      statusVar = "0"
+                      CheckedVar = ""
+                 end
+             ?>
+            <a class="$| statusStr |$" alt="" id="tf1_preAuth"></a>
+            <input type="hidden" name="networkProfileConfig.wpaPreAuthMode" value="$| statusVar |$">
+                    </div>
+                    <div class="break" id="break19_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_preAuthLimit_div">
+                        <label>Pre-Authentication Limit </label>
+                        <input type="text" class="one" name="networkProfileConfig.wpaPreAuthLimit" value="$| networkProfileList.wpaPreAuthLimit or '0' |$" id="tf1_preAuthLimit" maxlength="3" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 192, true, 'Invalid Pre-Authentication Limit', ''); }" class="one">
+                        <dl>
+                            [Default: 0, Range: 0 - 192]
+                        </dl>
+                    </div>
+                    <div class="break" id="break20_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_keyCachingHoldTime_div">
+                        <label>Key Caching Hold Time </label>
+                        <input type="text" class="one" name="networkProfileConfig.wpa2KeyCachingHoldTime"  value="$| networkProfileList.wpa2KeyCachingHoldTime or '10' |$" id="tf1_keyCachingHoldTime" maxlength="4" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 1440, true, 'Invalid Key Caching Hold Time', ''); }" class="one">
+                        <dl>
+                            [Default: 10, Range: 0 - 1440]
+                        </dl>
+                    </div>
+                    <div class="break" id="break21_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_bcastKeyRefreshRate_div">
+                        <label>Bcast Key Refresh Rate </label>
+                        <input type="text" class="one" name="networkProfileConfig.groupKeyRefreshRate"  value="$|
+            networkProfileList.groupKeyRefreshRate or '300' |$" id="tf1_bcastKeyRefreshRate" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 86400, true, 'Invalid Bcast Key Refresh Rate', ''); }" class="one">
+                        <dl>
+                            [Default: 300, Range: 0 - 86400] Seconds
+                        </dl>
+                    </div>
+                    <div class="break" id="break22_div">
+                        &nbsp;
+                    </div>
+                    <div class="configRow" id="tf1_sessionKeyRefreshRate_div">
+                        <label>Session Key Refresh Rate </label>
+                        <input type="text" class="one" name="networkProfileConfig.sessionKeyRefreshRate"  value="$|
+            networkProfileList.sessionKeyRefreshRate or '0' |$" id="tf1_sessionKeyRefreshRate" maxlength="5" onkeypress="return numericValueCheck (event)" onkeydown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 0, 86400, true, 'Invalid Session Key Refresh Rate', ''); }" class="one">
+                        <dl>
+                            [Default: 0, Range: 30 - 86400] 0 - Disable
+                        </dl>
+                        <div class="break">
+                            &nbsp;
+                        </div>
+                    </div>
+                </div>
+                <div class="dialogSubmitRow">
+                    <input type="submit" id="btSave"
+                    name="button.config.apProfilesSsid.apProfilesSsid.$|
+                    cgi.configRowId |$" value="Save" title="Save"
+                    class="btnSubmit" onclick="return apProfilesSsidValidate('tf1_frmApProfilesSsid')">
+                </div>
+            </div>
+            <!-- Section for Pop up dialog ends -->

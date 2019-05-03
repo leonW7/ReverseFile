@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# statusDInit - initialization script for statusD.
+#
+# Copyright (c) 2012, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,22Feb12,db  written.
+#
+# DESCRIPTION
+# This script is the initialization script for linkDetect component and is called
+# during boot up. For more details see platformInit.
+#
+
+if [ "$INCLUDE_STATUSD" = "y" ]; then
+    echo -n "Starting status monitor daemon"
+    $STATUSD_INSTALL_PATH/bin/statusD &
+    echo "Done"
+fi

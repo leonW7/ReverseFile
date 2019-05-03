@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <COMMAND name="show security firewall" license_support="Y" help="Display Firewall Rules "/>
+    <COMMAND name="show security firewall ipv4" help="Display Firewall Rules "/>
+    <COMMAND name="show security firewall ipv4 setup"
+            help="Display Firewall Rules ">
+	    <ACTION>lua clishCmdExec (accessControlRuleInfoGet)</ACTION>
+    </COMMAND>
+<!--=======================================================-->
+    <COMMAND name="show security firewall algs" 
+            help="Display ALGs protocals status">
+	    <ACTION>lua clishCmdExec (FirewalALGsGet)</ACTION>
+    </COMMAND>
+
+</CLISH_MODULE>

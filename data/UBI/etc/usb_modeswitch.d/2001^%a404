@@ -1,0 +1,11 @@
+DefaultVendor=  0x2001
+DefaultProduct= 0xa404
+
+TargetVendor=   0x2001
+TargetProductList=0x7d0c
+
+MessageContent="555342430826568a000000000000061b000000020000000000000000000000"
+
+NeedResponse=1
+
+CheckSuccess=8

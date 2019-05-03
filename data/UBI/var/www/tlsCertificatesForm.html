@@ -1,0 +1,32 @@
+<?lua
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+<div id="tf1_tlsCertificatesDailogContent">
+    <div class="topBg">
+        <h1 data-localize="50188">TLS Key Configuration</h1>
+        <close>
+            <a href="#" id="btnClose" title="Close">X</a>
+        </close>
+    </div>
+    <div class="dialogMidArea">
+        <div align="left">
+            <div class="configRow">
+                <label data-localize="11748">Name</label>
+                <input type="text" name="tlsCertificates.certificateName" id="tf1_tlsCertName" maxlength="">
+            </div>
+            <div class="break">
+                &nbsp;
+            </div>
+            <div class="configRow">
+                <label data-localize="50187">TLS Authentication Key</label>
+                <input type="file" name="tlsCertificates.tlsUpload" id="tf1_txtUploadTlsFile">
+            </div>
+            <div class="break">
+                &nbsp;
+            </div>
+        </div>
+    </div>
+    <div class="dialogSubmitRow">
+        <input data-localize="12758" type="submit" name="button.config.tlsCertificates" class="btnSubmit" title="Save" value="Save" id="btSave" onclick="return validateTlsCert()">
+    </div>
+</div>

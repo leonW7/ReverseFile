@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <COMMAND name="show net routing ospfv2" check_supported="Y" license_support="Y" help="show OSPFv2 Configuration"/>
+<!--=======================================================-->
+    <COMMAND name="show net routing ospfv3" check_supported="Y" license_support="Y" help="show OSPFv3 Configuration"/>
+<!--=======================================================-->
+    <COMMAND name="show net routing ospfv2 setup"
+            help="Display OSPFv2 Configuration">
+	    <ACTION>lua clishCmdExec (ospfInfoGet)</ACTION>
+    </COMMAND>
+	<COMMAND name="show net routing ospfv3 setup"
+            help="Display OSPFv3 Configuration">
+	    <ACTION>lua clishCmdExec (ospf6InfoGet)</ACTION>
+    </COMMAND>
+</CLISH_MODULE>

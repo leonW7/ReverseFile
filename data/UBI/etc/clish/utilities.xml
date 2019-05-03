@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+    <!--===================================================-->
+    <COMMAND name="util restore-factory-defaults" 
+	     access="admin"
+	     help="Revert to factory default settings.">
+	<ACTION>lua utilCLIFactoryReset()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util system_check" access="admin" help="system check options"/>
+    <!--===================================================-->
+
+    <COMMAND name="util system_check ping"
+	         help="Ping an Internet Address.">
+	<PARAM name="ip_address" 
+	       help="Ping target IP address."
+	       ptype="STRING"/>
+	<ACTION>lua utilCLIPing ("${ip_address}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+     <COMMAND name="util system_check dns_lookup"
+	         help="To retrieve the IP address of a Web, FTP, Mail or any other Server on the Internet">
+	<PARAM name="dns" 
+	       help="internet name"
+	       ptype="STRING"/>
+	<ACTION>lua utilCLIDns ("${dns}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+     <COMMAND name="util system_check traceroute"
+	         help="display all the routers present between the destination IP address and this router">
+	<PARAM name="ip_address" 
+	       help="target IP address."
+	       ptype="STRING"/>
+	<ACTION>lua utilCLITrace ("${ip_address}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util system_check display_IPV4_routingtable"
+	         help="Display IPV4 Routing Table">
+		<ACTION>lua utilCLIipv4Routing ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util system_check display_IPV6_routingtable"
+	         help="Display IPV6 Routing Table">
+		<ACTION>lua utilCLIipv6Routing ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util system_check capturePackets" help="Allows you to capture all packets that pass through the selected interface"/>
+	         
+    <!--===================================================-->
+    <COMMAND name="util system_check capturePackets start"
+        help="Start the packet capture">
+    <PARAM name="interface" 
+	       help="enter <util system_check capturePackets avail_interfaces> command to get the available interfaces for packet capture"
+	       ptype="STRING"/>
+       <ACTION>lua utilCLIcapturePacketStart ("${interface}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util system_check capturePackets avail_interfaces" help="Display available interfaces for packet capture">
+	     <ACTION>lua clishCmdExec (captureInterfaces)
+              </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util system_check capturePackets stop"
+        help="Stop the packet capture"> 
+       <ACTION>lua utilCLIcapturePacketStop ()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util system_check capturePackets download"
+        help="Download the packet capture to the host machine"> 
+        	<PARAM name="fileName" 
+	       help="create a file pkt.cap in the tftp server root directory to
+           which the capture is transfer."
+           ptype="STRING_FILE"/>
+    <PARAM name="ipAddr" 
+	       help="ip address of tftp server"
+	       ptype="IP_ADDR"/>
+
+       <ACTION>lua utilCLIcapturePacketDownload ("${fileName}","${ipAddr}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util dbglog_download"
+             access="admin"
+        help="Download Dbglogs to the host machine"> 
+        	<PARAM name="fileName" 
+	       help="create a file dbglog.tgz in the tftp server root directory to 
+	  which the dbglogs will be transfered."
+           ptype="STRING_FILE"/>
+    <PARAM name="ipAddr" 
+	       help="ip address of tftp server"
+	       ptype="IP_ADDR"/>
+       <ACTION>lua utilCLIdbgLogDownload ("${fileName}","${ipAddr}")</ACTION>
+    </COMMAND>
+
+   <!--===================================================-->
+    <COMMAND name="util reboot" 
+             access="admin"
+	         help="Reboot the system.">
+	<ACTION>lua cliReboot()</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show system firmwareVersion" 
+	     help="Get's the firmware Version.">
+	<ACTION>lua utilCLIFirmVer ()</ACTION>
+    </COMMAND>
+   <!--===================================================-->
+    <COMMAND name="util usb_test"
+             access="admin" 
+	     help="To test the USB.">
+	<PARAM name="ipAddr" 
+	       help="Ip Address of the LAN host."
+           ptype="STRING"/>
+    <PARAM name="fileName" 
+	       help="File to be tftp to DUT."
+	       ptype="STRING_FILE"/>
+	<ACTION>lua utilCLIUsbTest ("${ipAddr}", "${fileName}")</ACTION>
+    </COMMAND>
+<!--===================================================-->
+    <COMMAND name="util firmware_upgrade"
+             access="admin" 
+	     help="To upgrade the firmware.">
+	<PARAM name="IpAddr" 
+	       help="Ip Address of the LAN host."
+           ptype="IP_ADDR"/>
+    <PARAM name="FileName" 
+	       help="Image that to be upgraded."
+           	       ptype="STRING"/>
+	<ACTION>lua utilCLIFirmUpgrade ("${IpAddr}", "${FileName}")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+	<COMMAND name="util enable_auto_backup"
+             help="Enable/Disable Auto Backup support">
+            <PARAM name="status"
+                    help="Enable/Disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua autoBackupSupport ("${status}")
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+	<COMMAND name="util enable_config_encryp"
+             help="Enable/Disable Configuration encryption support">
+             <PARAM name="status"
+                    help="Enable/Disable"
+                    ptype="CHOICE_INT"/>
+             <ACTION>lua configEncryptionSupport ("${status}")
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="util third_party_logs_ctrl"
+             help="control for gpl open components logs" check_supported="Y">
+             <PARAM name="status"
+                 help="Enable(Alert or All)/Disable"
+                    ptype="GPL_OPEN_CTRL"/>
+             <ACTION>lua utilCLIThirdPartyLogCtrl ("${status}")
+             </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+       
+</CLISH_MODULE>

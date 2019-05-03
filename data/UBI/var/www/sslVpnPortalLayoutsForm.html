@@ -1,0 +1,305 @@
+<?lua
+require "teamf1lualib/sslVpnPortalLayouts_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+local sslvpn_portalLayout = require("com.teamf1.bl.sslvpn_portallayout")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local sslAuthType, groupName, editDisabled,defaultdisable
+if(ButtonType == "add" or ButtonType == "edit") then
+    
+    if (cgi["configRowId"] ~= "-1") then
+        if (cgi["configRowId"] == "1") then
+            defaultdisable = "disabled"
+        else 
+            defaultdisable = ""
+        end
+	    editDisabled = "disabled"
+            configRowId = cgi["configRowId"]
+            returnCode, cookie, portalLayoutName, defaultPortal, 
+            siteTitle, bannerTitle, bannerMessage, portalBanner, HTTPMetaTags, 
+            activeXWebCacheCleaner, VPNTunnel, portForwarding, useCount, 
+            portalURL, profileName = sslvpn_portalLayout.sslVpnPortalLayoutsSectionGetCur(configRowId)
+			returnCode1, profileRow = sslvpn_portalLayout.loginProfilesGet()
+                        returnCode2, sslAuthType, groupName = sslvpn_portalLayout.sslDomainGetCur (configRowId)
+        if(returnCode ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        elseif(returnCode1 ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (returnCode1)
+        elseif(returnCode2 ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (returnCode1)
+        end
+    else
+        defaultdisable = ""
+	    editDisabled = ""
+        configRowId = "-1"
+		portalBanner,HTTPMetaTags,activeXWebCacheCleaner,VPNTunnel,portForwarding
+                            = sslvpn_portalLayout.sslVpnPortalLayoutsSectionDefaultsGet ()
+
+         -- For the new SSLVPN Portal insertion we enable the VPNTunnel by default.
+         VPNTunnel = "1"
+
+		returnCode1, profileRow = sslvpn_portalLayout.loginProfilesGet()
+    --[[if(returnCode ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        elseif(returnCode1 ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (returnCode1)
+        end]]--
+
+        if(returnCode1 ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (returnCode1)
+        end
+    end
+    returnCode, groupTable = sslvpn_portalLayout.sslDomainLocalGetAll ()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+cgilua.header ("Content-Type", "text/html; charset=UTF-8")
+?>
+<div id="tf1_sslVpnPortalLayoutsDailogContent">
+	<div class="topBg">
+		<h1 data-localize="12941">SSL VPN Portal Layout Configuration</h1>
+					<close>
+						<a href="#" id="btnClose" title="Close">X</a>
+					</close>
+				</div>
+	<div class="dialogMidArea">
+		<h2 data-localize="12490">Portal Layout and Theme Name</h2>
+		<div class="configRow">
+			<?lua if (cgi["configRowId"] == "-1") then ?>
+			<label data-localize="12491">Portal Layout Name </label>
+			<input type="text" name="sslVpnPortalLayouts.portalLayoutName" value="$| portalLayoutName or '' |$" maxlength="31" id="tf1_porName" onkeypress="return alphaNumericCheck (event, '')">
+			<?lua else ?>
+            <div class="configRow">
+            <label data-localize="12491"> Portal Layout Name </label>
+            $| portalLayoutName |$
+            <input type="hidden" name="sslVpnPortalLayouts.portalLayoutName" value="$| portalLayoutName or '' |$" >
+            </div>
+            <div class="break" id="break6_div">
+            &nbsp;
+            </div>
+			<?lua end ?>
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label data-localize="11622">Login Profile Name</label> <select name="sslVpnPortalLayouts.profileName" $| defaultdisable |$>
+            <?lua
+                for k, v in pairs(profileRow) do
+                local outputTable = {}
+                outputTable = profileRow[k]
+                local loginProfile = outputTable["CaptivePortalPageDetails.configurationName"]
+             ?>
+			<option $| web.dropdownSelected(profileName == loginProfile) |$ value="$|loginProfile or '' |$" >$|loginProfile|$</option>
+			<?lua end ?>
+			</select> 
+                   <?lua if (defaultdisable == "disabled") then ?>
+                <input type="hidden" name="sslVpnPortalLayouts.profileName" value="$| profileName or '' |$">    
+                <?lua end ?>
+                </div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label data-localize="12495">Portal Site Title </label>
+			<input type="text" name="sslVpnPortalLayouts.siteTitle" value="$| siteTitle or '' |$" id="tf1_porTle" onKeyPress="return specialCharCheck (event,'')" maxlength="64" $| defaultdisable |$>
+                        <?lua if (defaultdisable == "disabled") then ?> 
+                        <input type="hidden" name="sslVpnPortalLayouts.siteTitle" value="$| siteTitle or '' |$" >
+                        <?lua end ?>
+                </div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label data-localize="10365">Banner Title </label>
+			<input type="text" name="sslVpnPortalLayouts.bannerTitle" value="$| bannerTitle or '' |$" id="tf1_banTle" onKeyPress="return specialCharCheck (event,'')" maxlength="64" $| defaultdisable |$>
+                        <?lua if (defaultdisable == "disabled") then ?> 
+                        <input type="hidden" name="sslVpnPortalLayouts.bannerTitle" value="$| bannerTitle or '' |$" >
+                        <?lua end ?>
+                </div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label data-localize="10364">Banner Message </label>
+			<textarea type="text" name="sslVpnPortalLayouts.bannerMessage" onKeyPress="return specialCharCheck (event,'')" rows="3" id="tf1_banMessage" $| defaultdisable |$> $|bannerMessage or ''|$
+                        </textarea>
+                        <?lua if (defaultdisable == "disabled") then ?> 
+                        <input type="hidden" name="sslVpnPortalLayouts.bannerMessage" value="$| bannerMessage or '' |$" >
+                        <?lua end ?>
+                 </div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+            <label><span data-localize="14103">Display Banner Message</span> <br />
+                <span data-localize="14104">on Login Page</span> </label>
+                <?lua 
+                        
+                if (portalBanner == "1") then
+                    if (defaultdisable == "disabled") then
+                        statusStr="enable-disable-on-noclick"
+                    else
+                        statusStr="enable-disable-on"
+                    end
+                     statusVar = "1"
+                else
+                     if (defaultdisable == "disabled") then
+                         statusStr="enable-disable-off-noclick"
+                     else
+                         statusStr="enable-disable-off"
+                     end
+                     statusVar = "0"
+                end
+                ?>
+			<a class="$| statusStr |$" alt="" id="tf1_dispBanMsg"></a>
+			<input type="hidden" name="sslVpnPortalLayouts.portalBanner" value="$|statusVar |$" >
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+            <label><span data-localize="14101">HTTP Meta Tags for Cache</span> <br />
+                <span data-localize="14102">Control (Recommended)</span> </label>
+                <?lua 
+                        
+                if (HTTPMetaTags == "1") then
+                    if (defaultdisable == "disabled") then
+                        statusStr="enable-disable-on-noclick"
+                    else
+                        statusStr="enable-disable-on"
+                    end
+                     statusVar = "1"
+                else
+                     if (defaultdisable == "disabled") then
+                         statusStr="enable-disable-off-noclick"
+                     else
+                         statusStr="enable-disable-off"
+                     end
+                     statusVar = "0"
+                end
+                ?>
+			<a class="$| statusStr |$" alt="" id="tf1_dhttpMetaTag"></a>
+			<input type="hidden" name="sslVpnPortalLayouts.HTTPMetaTags" value="$| statusVar |$">
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label data-localize="10094">ActiveX Web Cache Cleaner </label>
+               <?lua 
+                        
+                if (activeXWebCacheCleaner == "1") then
+                     if (defaultdisable == "disabled") then
+                        statusStr="enable-disable-on-noclick"
+                    else
+                        statusStr="enable-disable-on"
+                    end
+                     statusVar = "1"
+                else
+                     if (defaultdisable == "disabled") then
+                         statusStr="enable-disable-off-noclick"
+                     else
+                         statusStr="enable-disable-off"
+                     end
+                     statusVar = "0"
+                end
+                ?>
+			<a class="$| statusStr |$" alt=""  id="tf1_activexWebCatch"></a>
+			<input type="hidden" name="sslVpnPortalLayouts.activeXWebCacheCleaner" value="$| statusVar |$">
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<h2 data-localize="12940">SSL VPN Portal Authentication</h2>
+		<div class="configRow" id="tf1_sslAuthType_div">
+		<label data-localize="10330">Authentication Type</label>
+			<select size="1" name="sslVpnPortalLayouts.sslAuthType" id="tf1_sslAuthType" onchange="changeAuthType('tf1_sslAuthType')" $| editDisabled |$>
+			    <option data-localize="14077" $|web.dropdownSelected(sslAuthType == "local") |$ value="local">Local User Database</option>
+          		    <option data-localize="30193" $|web.dropdownSelected(sslAuthType == "radius_pap") |$ value="radius_pap">Radius-PAP</option>
+            		    <option data-localize="30194" $|web.dropdownSelected(sslAuthType == "radius_chap") |$ value="radius_chap">Radius-CHAP</option>
+            		    <option data-localize="30195" $|web.dropdownSelected(sslAuthType == "radius_mschap") |$ value="radius_mschap">Radius-MSCHAP</option>
+            		    <option data-localize="30196" $|web.dropdownSelected(sslAuthType == "radius_mschapv2") |$ value="radius_mschapv2">Radius-MSCHAPv2</option>
+            		    <option data-localize="11802" $|web.dropdownSelected(sslAuthType == "ntdomain") |$ value="ntdomain">NT Domain</option>
+           		    <option data-localize="30469" $|web.dropdownSelected(sslAuthType == "active-directory") |$ value="active-directory">Active Directory</option>
+           		    <option data-localize="30198" $|web.dropdownSelected(sslAuthType == "ldap") |$ value="ldap">LDAP</option>
+            		    <option data-localize="12462" $|web.dropdownSelected(sslAuthType == "pop") |$ value="pop">POP3</option>
+			</select>
+                <?lua if (configRowId ~= "-1") then ?>
+                <input type="hidden" id="tf1_sslAuthTypeN" name="sslVpnPortalLayouts.sslAuthType" value="$| sslAuthType or '' |$">    
+                <?lua end ?>
+		</div>
+		<div class="break" id="break_sslAuthType_div">&nbsp;</div>
+		<div class="configRow" id="tf1_group_div">
+			<label data-localize="11082">Group</label>
+			 <select size="1" name="sslVpnPortalLayouts.groupName" id="tf1_group">
+			    <option data-localize="11789" $| web.dropdownSelected(groupName == "None") |$ value="None">None</option>
+<?lua
+                                    local i = 0
+                                    if (groupTable ~= nil or #groupTable ~= 0) then
+                                        for k, v in pairs (groupTable) do
+                                            i = i + 1
+                                            local row = groupTable[i]
+                                ?>
+
+              <option $|web.dropdownSelected(groupName == row["UserGroups.GroupName"])|$ value="$|row["UserGroups.GroupName"]|$">$|row["UserGroups.GroupName"] or '' |$</option>
+                                 <?lua
+                                        end
+                                    end
+                                ?> 
+			</select>
+		</div>
+		<div class="break" id="break_group_div">
+			&nbsp;
+		</div>
+		<h2 data-localize="12943">SSL VPN Portal Pages to Display</h2>
+		<div class="configRow">
+			<label data-localize="13298">VPN Tunnel page </label>
+                <?lua 
+                        
+                if (VPNTunnel == "1") then
+                     if (defaultdisable == "disabled") then
+                        statusStr="enable-disable-on-noclick"
+                    else
+                        statusStr="enable-disable-on"
+                    end
+                     statusVar = "1"
+                else
+                     if (defaultdisable == "disabled") then
+                         statusStr="enable-disable-off-noclick"
+                     else
+                         statusStr="enable-disable-off"
+                     end
+                     statusVar = "0"
+                end
+                ?>
+			<a class="$| statusStr |$" alt="" id="tf1_vanTunnelPage"></a>
+			<input type="hidden" name="sslVpnPortalLayouts.VPNTunnel" value="$| statusVar |$">
+		</div>
+		<div class="break">
+&nbsp; </div>
+		<div class="configRow">
+			<label data-localize="12468">Port Forwarding </label>
+                <?lua 
+                        
+                if (portForwarding == "1") then
+                     if (defaultdisable == "disabled") then
+                         statusStr="enable-disable-on-noclick"
+                     else
+                         statusStr="enable-disable-on"
+                     end
+                     statusVar = "1"
+                else
+                     if (defaultdisable == "disabled") then
+                         statusStr="enable-disable-off-noclick"
+                     else
+                         statusStr="enable-disable-off"
+                     end
+                     statusVar = "0"
+                end
+                ?>
+			<a class="$| statusStr |$" alt="" id="tf1_portForward"></a>
+			<input type="hidden" name="sslVpnPortalLayouts.portForwarding" value="$| statusVar |$">
+		</div>
+		<div class="break">
+&nbsp; </div>
+	</div>
+	<div class="dialogSubmitRow">
+		<input data-localize="12758" type="submit" name="button.config.sslVpnPortalLayouts.sslVpnPortalLayouts.$| configRowId |$" onclick="return pageValidate('tf1_frmSslVpnPortalLayouts')" class="btnSubmit" title="Save" value="Save" id="btSave">
+	</div>
+</div>
+<?lua end?>

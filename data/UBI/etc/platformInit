@@ -1,0 +1,328 @@
+#!/bin/sh
+#
+# platformInit - platform initialization script
+#
+# Copyright (c) 2008-2016, TeamF1 Networks Pvt. Ltd. 
+#(Subsidiary of D-Link India).
+#
+# modification history
+# --------------------
+# 02g,06feb16,abd  AC Merge : adding some global macros.
+# 02f,20jan15,avr  added changes for merge task
+# 02e,04nov15,vvs  ported OmniSSL changes to M8.
+# 02d,29may15,vvs  made changes for spr 48089
+# 02c,18dec14,nrb  made changes for ICSA timestamp vioaltion spr 48337
+# 02b,19feb13,AS   added auth init script 
+# 02a,31jan13,nis  added samba321 init script 
+# 01z,22jan13,vik  Fixed Spr #36467
+# 01y,24sep12,adi  added greInit
+# 01x,27apr12,vik  moved firewallInit above (spr#31345)
+# 01w,07feb12,vik  move ipsetInit above iptableInit for spr#22245 
+# 01v,18jan11,kt   added intelAmtInit
+# 01u,20oct10,kt   added captivePortalInit
+# 01t,07dec09,mdn  added WpsPBInit.
+# 01s,26aug09,sen  reverted position for firmwareInit.
+# 01r,25aug09,sen  moved firmwareInit before userInit to allow wireless led.
+# 01q,13jun09,smd  added 8021pRemarkInit.
+# 01p,23jan09,pnm  moved the urlFilterInit before sqliteInit to catch update
+#                  from sqlite.
+# 01o,05jan09,pnm  moved protectLinkInit call after userInit
+# 01n,29nov08,smd  added cdpInit.
+# 01m,30sep08,chd  added firewallPolicyInit.
+# 01l,24jul08,mk   added verisign 2 fctr authentication support.
+# 01k,24jul08,vms  added portMgmtInit.
+# 01j,20jul08,rks  added protectlinkInit.
+# 01i,26jun08,vpp  added bwLimitInit
+# 01h,17jun08,rks  added snort(sam),ips init
+# 01g,17may08,gpr  added vipsec init
+# 01f,14mar08,anp  added nimf init.
+# 01e,24jan08,sam  added natpt.
+# 01d,12dec07,sam  moved cac daemon init.
+# 01c,07sep07,sdk  added ifDev init.
+# 01b,27aug07,sdk  added firmware init.
+# 01a,01jun07,rks  written.
+
+# load the configuration
+. ./platform.config
+[ -e ./umiInit ] && . ./umiInit
+if [ "$MODEL_ID" == "DSR-1000AC" ] || [ "$MODEL_ID" == "DSR-500AC" ] || [ "$PRODUCT_ID" == "DSR-1000_Bx" ] || [ "$PRODUCT_ID" == "DSR-500_Bx" ]; then
+[ -e ./usbInit ] && . ./usbInit
+fi
+[ -e ./udevInit ] && . ./udevInit
+$PLATFORM_INSTALL_PATH/bin/platformd $DB_FILENAME &
+[ -e ./evtDsptchInit ] && . ./evtDsptchInit
+[ -e ./sqliteInit ] && . ./sqliteInit
+[ -e ./pnacInit ] && . ./pnacInit
+[ -e ./dot11Init ] && . ./dot11Init
+[ -e ./userInit ] && . ./userInit
+[ -e ./linkdetectInit ] && . ./linkdetectInit
+[ -e ./ipsetInit ] && . ./ipsetInit
+[ -e ./iptablesInit ] && . ./iptablesInit
+[ -e ./openvpn_privatetunnelInit ] && . ./openvpn_privatetunnelInit
+[ -e ./configInit ] && . ./configInit
+[ -e ./portMgmtInit ] && . ./portMgmtInit
+[ -e ./bridgeLibInit ] && . ./bridgeLibInit
+[ -e ./watchdogInit ] && . ./watchdogInit
+[ -e ./switchdriverInit ] && . ./switchdriverInit
+[ -e ./nimfInit ] && . ./nimfInit
+[ -e ./dproxyInit ] && . ./dproxyInit
+[ -e ./kliteInit ] && . ./kliteInit
+[ -e ./endChantInit ] && . ./endChantInit
+ 
+# Make WLAN UP
+/pfrm2.0/bin/du dot11GlobalConfig
+/pfrm2.0/bin/du dot11Radio
+/pfrm2.0/bin/du dot11Interface
+/pfrm2.0/bin/du dot11Profile
+/pfrm2.0/bin/du dot11VAP
+/pfrm2.0/bin/du dot11Radio11n
+if [ $PRODUCT_ID != "DSR-1000_Bx" ] && [ $PRODUCT_ID != "DSR-500_Bx" ]; then
+/pfrm2.0/bin/du dot11WDSPeers
+fi
+
+[ -e ./firewallInit ] && . ./firewallInit
+
+#Making LAN UP
+/pfrm2.0/bin/du bridgeTable
+/pfrm2.0/bin/du bridgePorts > /dev/null 2>&1
+/pfrm2.0/bin/du vlan > /dev/null 2>&1
+/pfrm2.0/bin/du VlanPortMgmt > /dev/null 2>&1
+/pfrm2.0/bin/du vlanCfgLoad > /dev/null 2>&1
+/pfrm2.0/bin/du VlanStatus > /dev/null 2>&1
+/pfrm2.0/bin/du PortMgmt > /dev/null 2>&1
+/pfrm2.0/bin/du networkInfo > /dev/null 2>&1
+/pfrm2.0/bin/du ifStatic 1 > /dev/null 2>&1
+/pfrm2.0/bin/du ifStatic 3 > /dev/null 2>&1
+/pfrm2.0/bin/du ifStatic 4 > /dev/null 2>&1
+/pfrm2.0/bin/du ifStatic 5 > /dev/null 2>&1
+/pfrm2.0/bin/du ifStatic 6 > /dev/null 2>&1
+/pfrm2.0/bin/du ifStatic 7 > /dev/null 2>&1
+/pfrm2.0/bin/du ifStatic 2 > /dev/null 2>&1
+/pfrm2.0/bin/du ifStatic > /dev/null 2>&1
+/pfrm2.0/bin/du dhcp > /dev/null 2>&1
+
+[ -e ./vipsecInit ] && . ./vipsecInit
+[ -e ./nitroxInit ] && . ./nitroxInit
+[ -e ./x509Init ] && . ./x509Init
+[ -e ./pkgMgmtInit ] && . ./pkgMgmtInit
+[ -e ./userdbInit ] && . ./userdbInit
+[ -e ./thttpdInit ] && . ./thttpdInit
+[ -e ./sslvpnInit ] && . ./sslvpnInit
+[ -e ./firmwareInit ] && . ./firmwareInit
+[ -e ./guiOptimizationsInit ] && . ./guiOptimizationsInit
+
+/pfrm2.0/bin/du ddns 1 &
+
+
+/pfrm2.0/bin/du x509SelfCertReq
+/pfrm2.0/bin/du cert
+/pfrm2.0/bin/du SSLVPNPortalLayout
+/pfrm2.0/bin/du USERDBDomains
+/pfrm2.0/bin/du UserGroups
+/pfrm2.0/bin/du Users
+[ -e ./statusDInit ] && . ./statusDInit
+
+
+[ -e ./pppInit ] && . ./pppInit
+[ -e ./pppoeInit ] && . ./pppoeInit
+[ -e ./pptpInit ] && . ./pptpInit
+[ -e ./pptpdInit ] && . ./pptpdInit
+[ -e ./threegInit ] && . ./threegInit
+[ -e ./l2tpClientInit ] && ./l2tpClientInit
+
+#MAKE WAN UP
+if [ "$MODEL_ID" == "DSR-1000AC" ] || [ "$MODEL_ID" == "DSR-500AC" ] || [ "$PRODUCT_ID" == "DSR-1000_Bx" ] || [ "$PRODUCT_ID" == "DSR-500_Bx" ]; then
+/pfrm2.0/bin/du VlanOverWan
+else
+/pfrm2.0/bin/du WanIfNameMap
+fi
+/pfrm2.0/bin/du NimfConf
+
+[ -e ./ifDevInit ] && . ./ifDevInit
+
+# starting ntpd to listen on upcoming events from ntp and ntpDefServers
+[ -e ./timeInit ] && . ./timeInit
+
+[ -e ./natptInit ] && . ./natptInit
+# adding IPtables
+
+/pfrm2.0/bin/du BwMonStat 1 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 2 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 3 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 4 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 5 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 6 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 7 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 8 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 9 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 10 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 11 UMI_COMP_FIREWALL
+
+/pfrm2.0/bin/du ntpDefServers
+/pfrm2.0/bin/du ntp
+
+/pfrm2.0/bin/du resolverConfig 1
+/pfrm2.0/bin/du DefaultIfGrpInfo
+/pfrm2.0/bin/du networkInterface 0 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du ipAddressTable 0 UMI_COMP_FIREWALL
+
+if [ "$MODEL_ID" == "DSR-250" -o "$MODEL_ID" == "DSR-250N" ]; then
+#To turn on system LEDs
+[ -e ./ledInit ] && lua ledInit
+fi
+
+/pfrm2.0/bin/du ipAddressTable 0 UMI_COMP_PLATFORM
+/pfrm2.0/bin/du NatTable
+/pfrm2.0/bin/du FirewallRules
+/pfrm2.0/bin/du fwPriorityMap UMI_COMP_FIREWALL
+/pfrm2.0/bin/du fwDefaultOutBoundPolicy 1 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 12 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 13 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 14 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 15 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 16 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 17 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 18 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 19 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 20 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 21 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 22 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 23 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 24 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 25 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 26 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 27 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 28 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 29 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 30 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 31 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 32 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 33 UMI_COMP_FIREWALL
+if [ "$MODEL_ID" == "DSR-1000" ] || [ "$MODEL_ID" == "DSR-1000N" ] || [ "$MODEL_ID" == "DSR-1000AC" ]; then
+/pfrm2.0/bin/du BwMonStat 34 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 35 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 36 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 37 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 38 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 39 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 40 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 41 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 42 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 43 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du BwMonStat 44 UMI_COMP_FIREWALL
+fi
+/pfrm2.0/bin/du DhcpRelay 0 UMI_COMP_PLATFORM
+/pfrm2.0/bin/du DhcpRelay 1 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du interVlanRouting
+/pfrm2.0/bin/du dhcpv6s
+touch /var/fwRestartStatus
+[ -e ./sslimInit ] && . ./sslimInit
+
+
+#  Initialize the components 
+# The initialization order is important here. Components which depends/uses
+# other components should be initialized after those.
+
+
+# following two daemons needs to be started before DB is initialized
+[ -e ./loggingInit ] && . ./loggingInit
+[ -e ./sshdInit ] && . ./sshdInit
+[ -e ./urlFilterInit ] && . ./urlFilterInit
+
+# initialize sqlite management database
+
+[ -e ./kerberosInit ] && . ./kerberosInit
+[ -e ./sslimInit ] && . ./sslimInit
+[ -e ./radiusInit ] && . ./radiusInit
+[ -e ./mibctlInit ] && . ./mibctlInit
+[ -e ./stpInit ] && . ./stpInit
+[ -e ./wlanInit ] && . ./wlanInit
+[ -e ./WpsPBInit ] && . ./WpsPBInit
+
+[ -e ./luaInit ] && . ./luaInit
+[ -e ./keplerInit ] && . ./keplerInit
+[ -e ./rebootInit ] && . ./rebootInit
+[ -e ./snmpInit ] && . ./snmpInit
+[ -e ./cronInit ] && . ./cronInit
+[ -e ./idsInit ] && . ./idsInit
+[ -e ./pcscliteInit ] && . ./pcscliteInit
+[ -e ./tcpdumpInit ] && . ./tcpdumpInit
+[ -e ./l2tpInit ] && . ./l2tpInit
+[ -e ./openl2tpInit ] && . ./openl2tpInit
+[ -e ./sipInit ] && . ./sipInit                            
+[ -e ./telnetdInit ] && . ./telnetdInit
+[ -e ./snort_inlineInit ] && . ./snort_inlineInit
+[ -e ./lighttpdInit ] && . ./lighttpdInit
+[ -e ./bwLimitInit ] && . ./bwLimitInit
+[ -e ./snortsamInit ] && . ./snortsamInit
+[ -e ./snortInit ] && . ./snortInit
+[ -e ./ipsInit ] && . ./ipsInit
+[ -e ./openvpnInit ] && . ./openvpnInit
+[ -e ./signaturesInit ] && . ./signaturesInit
+[ -e ./streamAVInit ] && . ./streamAVInit
+[ -e ./p3scanInit ] && . ./p3scanInit
+[ -e ./imfInit ] && . ./imfInit
+[ -e ./havpInit ] && . ./havpInit
+[ -e ./ripInit ] && . ./ripInit
+[ -e ./ripngInit ] && . ./ripngInit
+[ -e ./authInit ] && . ./authInit
+[ -e ./cdpInit ] && . ./cdpInit
+[ -e ./bonjourInit ] && . ./bonjourInit
+[ -e ./8021pRemarkInit ] && . ./8021pRemarkInit
+[ -e ./xlr8NatInit ] && . ./xlr8NatInit
+[ -e ./captivePortalInit ] && . ./captivePortalInit
+[ -e ./intelAmtInit ] && . ./intelAmtInit
+[ -e ./lmInit ] && . ./lmInit
+[ -e ./qosInit ] && . ./qosInit
+[ -e ./accountingInit ] && . ./accountingInit
+
+#if [ $MODEL_ID == "DWC-1000" ]; then
+#[ -e ./cfpDaemonInit ] && . ./cfpDaemonInit
+#fi
+
+#bsp specfic initialization
+
+[ -e ./protectlinkInit ] && . ./protectlinkInit
+[ -e ./fResetInit ] && . ./fResetInit
+[ -e ./wirelessCtrlInit ] && . ./wirelessCtrlInit
+
+[ -e ./firewallPolicyInit ] && . ./firewallPolicyInit
+
+# Adding print server component
+[ -e ./cupsInit ] && . ./cupsInit
+
+# components that need data from the restored configuration to start up
+[ -e ./cacInit ] && . ./cacInit
+
+# Adding NAS components
+[ -e ./sambaInit ] && . ./sambaInit
+[ -e ./samba321Init ] && . ./samba321Init
+
+
+# adding PortMgmt Component
+# adding vsign2fctr authentication
+[ -e ./vsign2fctrInit ] && . ./vsign2fctrInit
+[ -e ./ifgroupInit ] && . ./ifgroupInit
+if [ "$MODEL_ID" == "DSR-1000AC" ] || [ "$MODEL_ID" == "DSR-500AC" ]; then
+/pfrm2.0/bin/du dot11WDSPeers
+fi
+[ -e ./manfacCodeInit ] && . ./manfacCodeInit
+[ -e ./l2tpdInit ] && . ./l2tpdInit
+[ -e ./userInitFinal ] && . ./userInitFinal
+[ -e ./greInit ] && . ./greInit
+
+/pfrm2.0/bin/du FirewallRules6
+/pfrm2.0/bin/du fwPriorityMap6 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du fwDefaultOutBoundPolicy 2 UMI_COMP_FIREWALL
+/pfrm2.0/bin/du &
+/pfrm2.0/bin/du NimfAFStatus
+/pfrm2.0/bin/du siteCategory
+#USB MANUAL RESET
+if [ "$MODEL_ID" == "DSR-250N" ] || [ "$MODEL_ID" == "DSR-250" ] || [ "$MODEL_ID" == "DSR-150N" ] || [ "$MODEL_ID" == "DSR-150" ]; then
+/pfrm2.0/bin/usb_manual_reset.sh
+fi
+#touch /tmp/bootComplete
+if [ "$MODEL_ID" == "DSR-1000AC" ] || [ "$MODEL_ID" == "DSR-500AC" ] || [ "$PRODUCT_ID" == "DSR-1000_Bx" ] || [ "$PRODUCT_ID" == "DSR-500_Bx" ]; then
+[ -e ./teredoInit ] && . ./teredoInit
+fi
+

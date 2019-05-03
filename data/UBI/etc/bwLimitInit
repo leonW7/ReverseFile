@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+# bwLimitInit - initialization script for bwLimit
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,19Feb14,abd executing with the lua bin.
+# 01a,04jun08,vpp written
+
+echo -n "Bandwidth Profile Initialization..."
+if [ "$INCLUDE_BWLIMIT" = "y" ]; then
+
+#user-defined chains in mangle table
+$IPTABLES -t mangle -N fwBWLimit
+$IPTABLES -t mangle -N fwINBWLimit
+$IPTABLES -t mangle -N fwBWLimitLogs
+$IPTABLES -t mangle -N fwINBWLimitLogs
+#Add default rules.
+/pfrm2.0/bin/bwLimitDefaults /tmp/system.db ADD
+
+if [ $CONFIG_L2_BRIDGE_MODE_SUPPORT = "y" ]; then
+/pfrm2.0/bin/l2bwLimitDefaults /tmp/system.db ADD
+fi
+#start the script for checking speed at run time.
+/pfrm2.0/bin/lua /pfrm2.0/share/lua/5.1/teamf1lualib/bwLimitMax.lua /tmp/system.db &
+
+if [ $MODEL_ID != "DSR-1000AC" ] && [ $MODEL_ID != "DSR-500AC" ] && [
+    $PRODUCT_ID != "DSR-1000_Bx" ] && [ $PRODUCT_ID != "DSR-500_Bx" ]; then
+    /pfrm2.0/bin/bwLinkSpeedDetect /tmp/system.db &
+fi
+
+fi
+
+echo "Done"
+

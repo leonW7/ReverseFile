@@ -1,0 +1,8 @@
+IFNAME="$1";
+PREFIXIN="$2";
+echo $PREFIXIN > "/tmp/prefix.txt"
+chmod 777 /tmp/prefix.txt
+PREFIXOUT=$(cut -d'/' -f1 /tmp/prefix.txt)
+PREFIXLEN=$(cut -d'/' -f2 /tmp/prefix.txt)
+IP=$(($IFNAME + 1))
+ifconfig ppp$IFNAME add $PREFIXOUT$IP/$PREFIXLEN

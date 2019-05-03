@@ -1,0 +1,470 @@
+<?lua
+
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/login"
+require "teamf1lualib/util"
+
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+if (ButtonType and ButtonType == "internetConfig") then
+
+    require "teamf1lualib/wanWizard_bl"
+    local wanWizard = require("com.teamf1.bl.wan.wan_wizard")
+    local inputTable = web.cgiToLuaTable(cgi)
+    local returnCode, cookie = wanWizard.wanWizardSectionSet (inputTable)
+
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end    
+
+elseif (ButtonType and ButtonType == "wpsWizard") then
+    require "teamf1lualib/wps_bl"
+    require "teamf1lualib/dot11_returnCodes"
+
+    local wps = require("com.teamf1.bl.wireless.wps")
+    local dot11ReturnCodes = require("com.teamf1.core.wireless.dot11.returnCodes")
+    local inputTable = web.cgiToLuaTable(cgi)
+    local returnCode = returnCodes.SUCCESS
+    
+    if ( inputTable["wps.name"] ~= nil and tonumber(inputTable["wps.name"]) ~= 1 ) then
+       -- if its a WPS pin
+       if(tonumber(inputTable["wps.method"]) == 0) then
+          returnCode, cookie = wps.wpsPinSectionSet(inputTable)
+       else
+          -- if its PBC
+          returnCode, cookie = wps.wpsPbcSectionSet(inputTable)
+       end
+    else
+       returnCode = returnCodes.SUCCESS
+    end
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end    
+
+elseif (ButtonType and ButtonType == "usersWizard") then
+
+    require "teamf1lualib/users_bl"
+    local WIZARD_USER = "Wizard_user"
+    local DISABLE = "0"
+    local gui_users = require("com.teamf1.bl.userdb.users")
+    local inputTable = web.cgiToLuaTable(cgi)
+    inputTable["userTable.firstName"] = WIZARD_USER
+    inputTable["userTable.lastName"] = WIZARD_USER
+    inputTable["userTable.multiLogin"] = DISABLE
+    inputTable["userTable.isPwdChange"] = DISABLE
+    errorFlag, cookie = gui_users.userProfileCreate (inputTable)
+    if (errorFlag == 0) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end    
+     
+elseif (ButtonType and ButtonType == "dateTime") then
+
+    require "teamf1lualib/dateTime_bl"
+    local dateAndTime = require ("com.teamf1.bl.system.time")
+
+    local inputTable = web.cgiToLuaTable(cgi)
+    local ROWID      = "1"
+    inputTable["dateTime.cookie"] = ROWID
+    local returnCode, cookie = 
+            dateAndTime.dateTimeSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end   
+ 
+
+elseif (ButtonType and ButtonType == "wirelessWizard") then
+
+	require "teamf1lualib/profileConfig_bl"
+	local wirelessWizard = require ("com.teamf1.bl.wireless.profile")
+
+    local wizardTable = web.cgiToLuaTable(cgi)
+    wizardTable["dot11Profile.authMethods"] = "PSK"
+    wizardTable["dot11Profile.broadcastSSID"] = "1"
+    wizardTable["dot11Profile.pairwiseCiphers"] = "TKIP+CCMP"
+    wizardTable["dot11Profile.preAuthStatus"] = "0"
+    wizardTable["dot11Profile.security"] = "WPA+WPA2"
+    if (PRODUCT_ID ~= "DSR-1000AC_Ax" and PRODUCT_ID ~= "DSR-500AC_Ax" and
+        PRODUCT_ID ~= "DSR-1000_Bx" and PRODUCT_ID ~= "DSR-500_Bx") then
+    	wizardTable["dot11Profile.rowID"] = "1"
+	else
+    	-- update profileName , rowid and radio mode
+    	local profileTb = util.split (wizardTable["dot11Profile.rowID"],"@")
+    	wizardTable["dot11Profile.profileName"] = profileTb[1]
+    	wizardTable["dot11Profile.rowID"] = profileTb[2]
+    	wizardTable["dot11Profile.radioMode"] = profileTb[3]
+    end
+    if (wizardTable["dot11Profile.networkType"] == "1") then
+        wizardTable["dot11Profile.pskPassAscii"] = "passphrase"
+    end
+    local errorCode, statusMessage = wirelessWizard.wirelessProfileEditSet (wizardTable, "edit")
+    if (errorCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (statusMessage)
+    else
+        statusErrorMessage = errorMap.errorStringGet (statusMessage)
+    end
+        
+elseif (ButtonType and ButtonType == "dynamicDnsConfig") then
+
+require "teamf1lualib/dynamicDns_bl"
+local dnsConfig =  require("com.teamf1.bl.services.ddns")
+
+   local inputTable = web.cgiToLuaTable(cgi)
+     inputTable["dynamicDns.cookie"] = cgi["dynamicDns.option"]
+    returnCode, cookie = dnsConfig.ddnsSectionSet (inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+elseif (ButtonType and ButtonType == "securityWizardConfig") then
+
+   require "teamf1lualib/firewallRules_bl"
+   require "teamf1lualib/vpnPassthrough_bl"
+   require "teamf1lualib/policies_bl"
+   require "teamf1lualib/deviceInfo_bl"
+   require "teamf1lualib/wan_status"
+   local ipsecPolicies = require ("com.teamf1.bl.ipsec.policy")
+   local deviceInfo   = require("com.teamf1.bl.system.deviceInfo")
+   local wanStatus    = require("com.teamf1.core.wan.status")
+
+   local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag, cookie = firewallRulesDefaultPolicySet (inputTable)
+    errorFlag, cookie = vpnPassthroughSet (inputTable)
+if (HIGH_SEC == "HIGH") then
+    inputTable["policies.3Des"] = "1"
+    inputTable["policies.AES128"]="1"
+    inputTable["policies.Phase2AES128"]="1"
+    inputTable["policies.Sha1"]="1"
+    inputTable["policies.Phase2Sha1"]="1"
+    inputTable["policies.Phase23DES"]="1"
+    inputTable["policies.Des"]="0"
+    inputTable["policies.Phase2DES"]="0"
+else
+    inputTable["policies.3Des"] = "0"
+    inputTable["policies.AES128"]="0"
+    inputTable["policies.Phase2AES128"]="0"
+    inputTable["policies.Sha1"]="1"
+    inputTable["policies.Phase2Sha1"]="1"
+    inputTable["policies.Phase23DES"]="0"
+    inputTable["policies.Des"]="1"
+    inputTable["policies.Phase2DES"]="1"
+end
+inputTable["policies.AES192"]="0"
+inputTable["policies.AES256"]="0"
+inputTable["policies.BLOWFISH"]="0"
+inputTable["policies.CAST128"]="0"
+inputTable["policies.DPD"]="0"
+inputTable["policies.Md5"]="0"
+inputTable["policies.Phase2AES192"]="0"
+inputTable["policies.Phase2AES256"]="0"
+inputTable["policies.Phase2AESCCM"]="0"
+inputTable["policies.Phase2AESGCM"]="0"
+inputTable["policies.Phase2BLOWFISH"]="0"
+inputTable["policies.Phase2Cast128"]="0"
+inputTable["policies.Phase2EncrNONE"]="0"
+inputTable["policies.Phase2Md5"]="0"
+inputTable["policies.Phase2Sha224"]="0"
+inputTable["policies.Phase2Sha256"]="0"
+inputTable["policies.Phase2Sha384"]="0"
+inputTable["policies.Phase2Sha512"]="0"
+inputTable["policies.Phase2TWOFISH128"]="0"
+inputTable["policies.Phase2TWOFISH192"]="0"
+inputTable["policies.Phase2TWOFISH256"]="0"
+inputTable["policies.Sha256"]="0"
+inputTable["policies.Sha384"]="0"
+inputTable["policies.Sha512"]="0"
+inputTable["policies.authenticationType"]="1"
+inputTable["policies.dhGroup"]="2"
+inputTable["policies.dhcpOverIpsec"]="0"
+inputTable["policies.exchangeMode"]="1"
+inputTable["policies.extendedAuthentication"]="1"
+inputTable["policies.ipsecMode"]="1"
+inputTable["policies.keepAlive"]="0"
+inputTable["policies.modeConfigStatus"]="0"
+inputTable["policies.natKeepAliveTime"]="20"
+inputTable["policies.natTraversal"]="1"
+inputTable["policies.netbios"]="0"
+inputTable["policies.policyDirection"]="3"
+inputTable["policies.policyType"]="1"
+inputTable["policies.protocol"]="2"
+inputTable["policies.rollover"]="0"
+inputTable["policies.rvgStatus"]="0"
+inputTable["policies.saLifeTime"]="28800"
+inputTable["policies.saLifeTimeType"]="1"
+inputTable["policies.saLifeTimeVpn"]="3600"
+inputTable["policies.localNetworkType"]="4"
+inputTable["policies.remoteNetworkType"]="4"
+inputTable["policies.pfsKeyGroup"]= "1" 
+inputTable["policies.pfsKeyGroup1"]= "2"
+inputTable["policies.remoteEndPointType"]=
+                     inputTable["policies.remoteIdentifierType"]
+inputTable["policies.remoteEndPoint"]=inputTable["policies.remoteIdentifier"]
+
+if (inputTable["policies.tunnelType"] == "2") then
+    inputTable["policies.netbios"]="0" 
+    inputTable["policies.remoteNetworkType"] = "1"
+    inputTable["policies.exchangeMode"]= "2"
+    inputTable["policies.policyDirection"]= "2"
+    returnCode, lanIpAddressTbl4  = 
+              wanStatus.ipAddressInfoGet ("LAN", "2")
+    lanIpAddr = deviceInfo.ipAddressDisplay("", lanIpAddressTbl4)
+    local lanIPTbl = util.split(lanIpAddr, " / ")
+    inputTable["policies.localStartIP"] = lanIPTbl[1]
+    inputTable["policies.localSubnetmask"] = lanIPTbl[2]
+    if(inputTable["policies.addressFamily"] == "2") then
+        returnCode, lanIpAddressTbl6 = wanStatus.ipAddressInfoGet ("LAN", "10")
+        lanAddrStr6       = deviceInfo.ipAddressDisplay6(lanIpAddressTbl6)
+        local lanIP6Tbl = util.split(lanAddrStr6, " / ")
+        inputTable["policies.localStartIP"] =  lanIP6Tbl[1]
+        inputTable["policies.localPrefixLength"] = lanIP6Tbl[2]
+    end  
+end
+
+    errorFlag, cookie = ipsecPolicies.policiesSectionCreate(inputTable)
+    if (errorFlag == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+elseif (ButtonType and ButtonType == "controller") then
+local user_status = ""
+    require "teamf1lualib/wanWizard_bl"
+    local wanWizard = require("com.teamf1.bl.wan.wan_wizard")
+    local inputTable = web.cgiToLuaTable(cgi)
+    local returnCode, cookie = wanWizard.wanWizardSectionSet (inputTable)
+    local statusErrorMessage1
+    statusErrorMessage = ""
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage1 = errorMap.errorStringGet (returnCode)
+        statusErrorMessage = statusErrorMessage1.. "- Internet Connection"
+    end    
+
+    if(inputTable["userTable.editPwd"] == "1")then
+        require "teamf1lualib/users_bl"
+        local WIZARD_USER = "Wizard_user"
+        local DISABLE = "0"
+        local ENABLE = "1"
+        local gui_users = require("com.teamf1.bl.userdb.users")
+        local userTable = {}
+        local user_cookie
+        returnCode, user_cookie, userTable  = gui_users.loggedInProfileGetRow ()
+        inputTable["userTable.cookie"] = user_cookie
+        inputTable["userTable.confirmPassword"] =     inputTable["userTable.password"]
+        inputTable["userTable.userName"] = userTable["name"]
+        inputTable["userTable.firstName"] = userTable["firstName"]
+        inputTable["userTable.lastName"] = userTable["lastName"]
+        inputTable["userTable.multiLogin"] = userTable["multiLogin"]
+        inputTable["userTable.groupName"] = userTable["groupName"]
+        errorFlag, cookie = gui_users.userProfileSet (inputTable)
+        user_status = errorFlag
+        local statusErrorMessage2
+        if (errorFlag == 0) then
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else
+            statusErrorMessage2 = errorMap.errorStringGet (errorFlag)
+            if (statusErrorMessage ~= "") then
+                statusErrorMessage = statusErrorMessage .. "<br>" .. statusErrorMessage2 .. "- User" 
+            else
+                statusErrorMessage = statusErrorMessage2.. "- User"
+            end
+        end    
+    end
+ 
+
+    require "teamf1lualib/dateTime_bl"
+    local dateAndTime = require ("com.teamf1.bl.system.time")
+
+    local ROWID      = "1"
+    inputTable["dateTime.cookie"] = ROWID
+    returnCode, cookie = 
+            dateAndTime.dateTimeSectionSet(inputTable)
+    local statusErrorMessage3
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage3 = errorMap.errorStringGet (returnCode)
+        if (statusErrorMessage ~= "") then
+            statusErrorMessage = statusErrorMessage.. "<br>"..statusErrorMessage3.."- Date and Time"
+        else
+            statusErrorMessage = statusErrorMessage3.. "- Date and Time"
+        end
+    end   
+ 
+
+
+
+	require "teamf1lualib/bl_wlanWizard"
+	local wlanWizard = require ("com.teamf1.bl.wlan.wizard")
+
+    returnCode = wlanWizard.wlanWizardConfig (inputTable)
+    local statusErrorMessage4
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage4 = errorMap.errorStringGet (returnCode)
+        if (statusErrorMessage ~= "") then
+            statusErrorMessage = statusErrorMessage.. "<br>"..statusErrorMessage4.."- WLAN"
+        else
+            statusErrorMessage = statusErrorMessage4.. "- WLAN"
+        end
+    end
+        
+
+    require "teamf1lualib/dynamicDns_bl"
+    local dnsConfig =  require("com.teamf1.bl.services.ddns")
+
+
+     inputTable["dynamicDns.cookie"] = cgi["dynamicDns.option"]
+    returnCode, cookie = dnsConfig.ddnsSectionSet (inputTable)
+    local statusErrorMessage5
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage5 = errorMap.errorStringGet (returnCode)
+        if (statusErrorMessage ~= "") then
+            statusErrorMessage = statusErrorMessage.. "<br>"..statusErrorMessage5.."- Dynamic DNS"
+        else
+            statusErrorMessage = statusErrorMessage5.. "- Dynamic DNS"
+        end
+    end
+
+
+   require "teamf1lualib/firewallRules_bl"
+   require "teamf1lualib/vpnPassthrough_bl"
+   require "teamf1lualib/policies_bl"
+   require "teamf1lualib/deviceInfo_bl"
+   require "teamf1lualib/wan_status"
+   local ipsecPolicies = require ("com.teamf1.bl.ipsec.policy")
+   local deviceInfo   = require("com.teamf1.bl.system.deviceInfo")
+   local wanStatus    = require("com.teamf1.core.wan.status")
+
+    errorFlag, cookie = firewallRulesDefaultPolicySet (inputTable)
+    errorFlag, cookie = vpnPassthroughSet (inputTable)
+    inputTable["policies.3Des"] = "0"
+    inputTable["policies.AES128"]="1"
+    inputTable["policies.AES192"]="0"
+    inputTable["policies.AES256"]="0"
+    inputTable["policies.BLOWFISH"]="0"
+    inputTable["policies.CAST128"]="0"
+    inputTable["policies.DPD"]="0"
+    inputTable["policies.Des"]="0"
+    inputTable["policies.Md5"]="0"
+    inputTable["policies.Phase23DES"]="0"
+    inputTable["policies.Phase2AES128"]="1"
+    inputTable["policies.Phase2AES192"]="0"
+    inputTable["policies.Phase2AES256"]="0"
+    inputTable["policies.Phase2AESCCM"]="0"
+    inputTable["policies.Phase2AESGCM"]="0"
+    inputTable["policies.Phase2BLOWFISH"]="0"
+    inputTable["policies.Phase2Cast128"]="0"
+    inputTable["policies.Phase2DES"]="0"
+    inputTable["policies.Phase2EncrNONE"]="0"
+    inputTable["policies.Phase2Md5"]="0"
+    inputTable["policies.Phase2Sha1"]="1"
+    inputTable["policies.Phase2Sha224"]="0"
+    inputTable["policies.Phase2Sha256"]="0"
+    inputTable["policies.Phase2Sha384"]="0"
+    inputTable["policies.Phase2Sha512"]="0"
+    inputTable["policies.Phase2TWOFISH128"]="0"
+    inputTable["policies.Phase2TWOFISH192"]="0"
+    inputTable["policies.Phase2TWOFISH256"]="0"
+    inputTable["policies.Sha1"]="1"
+    inputTable["policies.Sha256"]="0"
+    inputTable["policies.Sha384"]="0"
+    inputTable["policies.Sha512"]="0"
+    inputTable["policies.authenticationType"]="1"
+    inputTable["policies.dhGroup"]="2"
+    inputTable["policies.dhcpOverIpsec"]="0"
+    inputTable["policies.exchangeMode"]="1"
+    inputTable["policies.extendedAuthentication"]="1"
+    inputTable["policies.ipsecMode"]="1"
+    inputTable["policies.keepAlive"]="0"
+    inputTable["policies.modeConfigStatus"]="0"
+    inputTable["policies.natKeepAliveTime"]="20"
+    inputTable["policies.natTraversal"]="1"
+    inputTable["policies.netbios"]="0"
+    inputTable["policies.policyDirection"]="3"
+    inputTable["policies.policyType"]="1"
+    inputTable["policies.protocol"]="2"
+    inputTable["policies.rollover"]="0"
+    inputTable["policies.rvgStatus"]="0"
+    inputTable["policies.saLifeTime"]="28800"
+    inputTable["policies.saLifeTimeType"]="1"
+    inputTable["policies.saLifeTimeVpn"]="3600"
+    inputTable["policies.localNetworkType"]="4"
+    inputTable["policies.remoteNetworkType"]="4"
+    inputTable["policies.pfsKeyGroup"]= "1" 
+    inputTable["policies.pfsKeyGroup1"]= "2"
+    inputTable["policies.remoteEndPointType"]=
+                         inputTable["policies.remoteIdentifierType"]
+    inputTable["policies.remoteEndPoint"]=inputTable["policies.remoteIdentifier"]
+
+    if (inputTable["policies.tunnelType"] == "2") then
+        inputTable["policies.netbios"]="0" 
+        inputTable["policies.remoteNetworkType"] = "1"
+        inputTable["policies.exchangeMode"]= "2"
+        inputTable["policies.policyDirection"]= "2"
+        returnCode, lanIpAddressTbl4  = 
+                  wanStatus.ipAddressInfoGet ("LAN", "2")
+        lanIpAddr = deviceInfo.ipAddressDisplay("", lanIpAddressTbl4)
+        local lanIPTbl = util.split(lanIpAddr, " / ")
+        inputTable["policies.localStartIP"] = lanIPTbl[1]
+        inputTable["policies.localSubnetmask"] = lanIPTbl[2]
+        if(inputTable["policies.addressFamily"] == "2") then
+            returnCode, lanIpAddressTbl6 = wanStatus.ipAddressInfoGet ("LAN", "10")
+            lanAddrStr6       = deviceInfo.ipAddressDisplay6(lanIpAddressTbl6)
+            local lanIP6Tbl = util.split(lanAddrStr6, " / ")
+            inputTable["policies.localStartIP"] =  lanIP6Tbl[1]
+            inputTable["policies.localPrefixLength"] = lanIP6Tbl[2]
+        end  
+    end
+    errorFlag, cookie = ipsecPolicies.policiesSectionCreate(inputTable)
+    local statusErrorMessage6
+    if (errorFlag == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else 
+        statusErrorMessage6 = errorMap.errorStringGet (errorFlag)
+        if (statusErrorMessage ~= "") then
+            statusErrorMessage = statusErrorMessage.. "<br>"..statusErrorMessage6.."- Security"
+        else
+            statusErrorMessage = statusErrorMessage6.. "- Security"
+        end
+    end
+end
+    if(user_status == returnCodes.SUCCESS) then
+        local result, errorStr = login.logout(cgilua.cookies.get("TeamF1Login"), SAPI.Request.servervariable("REMOTE_ADDR"))
+        --if success, delete cookie
+        if (result == 0) then
+            util.appendDebugOut("SUCCESSFULLY LOGGED OUT!<br>")
+        end
+    end
+
+
+
+
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+if (statusErrorMessage ~= nil and statusErrorMessage ~= "") then ?>
+
+<span id='errorWizard'><font color="red" >$| statusErrorMessage |$</font> </span>
+
+<?lua else ?>
+success:$| statusSuccessMessage |$ $| statusErrorMessage or ''|$
+<?lua end ?>
+
+
+

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+    <!--=======================================================-->
+<VIEW name="net-upnp-config" prompt="net-config[upnp]> "> 
+    <COMMAND name="save" help="Save upnp configuration changes.">
+	     <ACTION>lua clishCfgObjExec("upnp")</ACTION>
+    </COMMAND>
+    <COMMAND name="cancel" help="Roll back upnp configuration changes.">
+	     <ACTION>lua clishCfgObjReset()</ACTION>
+    </COMMAND>
+    <COMMAND name="exit" help="Save upnp configuration changes and current mode."
+    	     view="root-view" viewid="">
+	     <ACTION>lua clishCfgObjExec("upnp")</ACTION>
+    </COMMAND>
+
+    <COMMAND name="enable" help="Enable/Disable UPNP">
+         <PARAM name="UpnpEnable"
+            help="Enable/Disable UPNP"
+            ptype="CHOICE_INT"/>
+         <ACTION>lua clishCfgObjAdd ("upnp", "upnp.upnpEnable", "${UpnpEnable}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="Interface" help="Select the interface from LAN/VLAN">
+         <PARAM name="interface"
+            help="select interface"
+            ptype="STRING"/>
+         <ACTION>lua clishCfgObjAdd ("upnp", "upnp.interfaceName", "${interface}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="advertisement" help="Set upnp advertisement parameters"/>
+    <COMMAND name="advertisement period" help="Set Advertisement Period (in seconds)">
+         <PARAM name="AdvPeriod"
+            help="Set Advertisement Period (in seconds)"
+            ptype="UPNP_ADVP_T"/>
+         <ACTION>lua clishCfgObjAdd ("upnp", "upnp.advPeriod", "${AdvPeriod}")
+             </ACTION>
+    </COMMAND>
+    <COMMAND name="advertisement time_to_live" help="Set Advertisement Time To Live (in seconds)">
+         <PARAM name="AdvTimeToLive"
+            help="Set Advertisement Time To Live (in seconds)"
+            ptype="UPNP_TTL_T"/>
+         <ACTION>lua clishCfgObjAdd ("upnp", "upnp.advTimeToLive", "${AdvTimeToLive}")
+             </ACTION>
+         </COMMAND>
+         <COMMAND name="avail_vlan" help="Display available vlan">
+             <ACTION>lua clishCmdExec (upnpAvailVlan)
+             </ACTION>
+         </COMMAND>
+
+</VIEW>
+    <!--=======================================================-->
+    <COMMAND name="net upnp" license_support="Y" help="Upnp configuration mode"/>
+    <!--=======================================================-->
+    <COMMAND name="net upnp configure"
+             help="Upnp configuration mode"
+             view="net-upnp-config" viewid="">
+             <ACTION>lua clishCfgObjNew ("upnp", upnpConfigInit, upnpConfigSave, upnpConfigVal)
+                 </ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show net upnp" license_support="Y" help="Display UPnP Information"/>
+    <!--===================================================-->
+    <COMMAND name="show net upnp portmap"
+	     help="Display UPnP portmap Information.">
+	     <ACTION>lua clishCmdExec (upnpPortmapGet)
+                 </ACTION>
+         </COMMAND>
+     <!--===================================================-->
+    <COMMAND name="show net upnp setup"
+             help="Display UPnP portmap Information.">
+             <ACTION>lua clishCmdExec (upnpGet)
+                 </ACTION>
+    </COMMAND>
+</CLISH_MODULE>

@@ -1,0 +1,301 @@
+<?lua 
+require "teamf1lualib/deviceInfo_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "wan3Info"
+
+local deviceInfo = require("com.teamf1.bl.system.deviceInfo")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+logIfName = "WAN3"
+addressFamily = "2"
+if (cgi["logIfName"] ~= nil) then
+	logIfName = cgi["logIfName"]
+	addressFamily = cgi["addressFamily"]
+elseif (logicalIntName ~= "" and addrFamily ~= "") then
+	addressFamily = addrFamily
+	logIfName = logicalIntName
+end
+
+if (ButtonType and ButtonType == "renew") then
+	errorFlag = deviceInfo.dhcpStatusChangeWrap("renew",logIfName,addressFamily)
+
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+
+	addrFamily = addressFamily
+	logicalIntName = logIfName
+    web.goToPage(NextPage, true, true)
+    
+elseif (ButtonType and ButtonType == "release") then
+	errorFlag = deviceInfo.dhcpStatusChangeWrap("release",logIfName,addressFamily)
+
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+
+	addrFamily = addressFamily
+	logicalIntName = logIfName
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "Enable") then
+	errorFlag = deviceInfo.wanStatusChangeWrap("Enable",logIfName,addressFamily)
+	
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+
+	addrFamily = addressFamily
+	logicalIntName = logIfName
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "Disable") then
+	errorFlag = deviceInfo.wanStatusChangeWrap("Disable",logIfName,addressFamily)
+	
+        if (errorFlag == returnCodes.SUCCESS) then 
+            statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (errorFlag)
+        end
+
+	addrFamily = addressFamily
+	logicalIntName = logIfName
+    web.goToPage(NextPage, true, true)
+
+else
+local wan3Info = {}
+returnCode, lanInfo, wan1Info, wan2Info, wan3Info, portName =  deviceInfo.portInformationGet ()
+if(returnCode ~= returnCodes.SUCCESS) then
+    statusErrorMessage = errorMap.errorStringGet (returnCode)
+end
+
+	local logicalifName
+	if(UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250"  and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150"  ) then
+	    logicalifName = "WAN3"
+        else
+	    logicalifName = "WAN2"
+        end
+	status = deviceInfo.wanDhcpStatus (logicalifName)
+
+local notExistInfo = "N/A"
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+LANG_LOCALE = "30014,30015,30016,30017,13036,11515,30018,13446,13329,10702,30024,11636,11430,13569,13004,11450,11449,12527,11750,11432,11431,11576,13307,11057,12536,12781,30021,30022,10749,10875,10777,13663"
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        	<tr>
+                	<td class="header" valign="top" align="center">
+                	<?lua web.includeMenu("header.html")?></td>
+            	</tr>
+		<tr>
+		<td valign="top" align="center">
+			<div class="midWidth">
+			<script language="JavaScript">
+				mmSel("mainMenu1");
+			</script>
+			<?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			<div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			</div>
+		   	<?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			<div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                        </div> 
+            		<?lua  end?>
+			<div align="left">
+				<nav class="nav-bg">
+					<ul class="menu">
+						<?lua 
+							local wan1DispName
+							local wan2DispName
+							if (UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-250" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-150") then
+								wan1DispName = LANG_LOCALE['30014']
+								wan2DispName = LANG_LOCALE['30016']
+							else
+								wan1DispName = LANG_LOCALE['30015']
+								wan2DispName = LANG_LOCALE['30017']
+							end
+						?>
+						<li><a href="?page=deviceInfo.html">$| LANG_LOCALE['13036'] |$</a></li>
+						<li><a href="?page=lanInfo.html">$| LANG_LOCALE['11515'] |$</a> </li>
+						<li><a href="?page=wan1Info.html">$|wan1DispName|$</a> </li>
+                        <?lua if ( UNIT_NAME ~= "DSR-250N" and UNIT_NAME ~= "DSR-250" and UNIT_NAME ~= "DSR-150N" and UNIT_NAME ~= "DSR-150") then
+                            if (portName ~= "DMZ") then
+                        ?>
+                        <li><a href="?page=wan2Info.html">$|wan2DispName|$</a></li>
+                        <?lua else ?>
+                        <li><a href="?page=dmzInfo.html">$| LANG_LOCALE['10777'] |$</a></li>
+                        <?lua end else ?>
+                        <li><a href="?page=wan2Info.html">$|wan2DispName|$</a></li>
+			<?lua if (portName == "DMZ") then ?>
+                        <li><a href="?page=dmzInfo.html">$| LANG_LOCALE['10777'] |$</a></li>
+						<?lua end end if( UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-1000" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-1000_Bx") then ?>
+						<li class="current"><a href="?page=wan3Info.html">$| LANG_LOCALE['30018'] |$</a></li>
+						<?lua end 
+						    if (UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-1000N" or PRODUCT_ID == "DSR-1000AC_Ax" or PRODUCT_ID == "DSR-500AC_Ax") then
+						?>
+						<li><a href="?page=wirelessInfo.html">$| LANG_LOCALE['13446'] |$</a></li>
+						<?lua end ?>
+					</ul>
+				</nav>
+			</div>
+			<div class="FL2">
+				<p class="hint">$| helpHintText |$</p>
+			</div>
+			<h1>$| LANG_LOCALE['13329'] |$</h1>
+			<div class="CLR">
+                        <div class="demo_jui">
+                            <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                <thead>
+                                    <tr>
+                                        <th>$| LANG_LOCALE['10702'] |$</th>
+                                        <th>$| LANG_LOCALE['30024'] |$</th>
+                                    </tr>
+                                </thead>
+                                	<tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11636'] |$</td>
+                                            <td> $| wan3Info[1] or notExistInfo |$ </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11430'] |$</td>
+                                            <td> $| wan3Info[2] or notExistInfo |$</td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['13569'] |$ / $| LANG_LOCALE['13663'] |$</td>
+                                            <td> N/A </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['13004'] |$</td>
+                                            <td> $| wan3Info[4] or notExistInfo |$</td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11450'] |$</td>
+                                            <td> N/A  </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11449'] |$</td>
+                                            <td> N/A </td>
+                                        </tr>
+                                        <!--<tr class="gradeA">
+                                            <td>$| LANG_LOCALE['12527'] |$</td>
+                                            <td> N/A </td>
+                                        </tr>-->
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11750'] |$</td>
+                                            <td> $| wan3Info[8] or notExistInfo |$ </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11432'] |$</td>
+                                            <td> $| wan3Info[9] or notExistInfo |$ </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11431'] |$</td>
+                                            <td> $| wan3Info[10] or notExistInfo |$ </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11576'] |$</td>
+                                            <td> $| wan3Info[11] or notExistInfo |$ </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['13307'] |$</td>
+                                            <td> $| wan3Info[12] or notExistInfo |$ </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['11057'] |$</td>
+                                            <td> $| wan3Info[13] or notExistInfo |$ </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['12536'] |$</td>
+                                            <td> $| wan3Info[14] or notExistInfo |$ </td>
+                                        </tr>
+                                        <tr class="gradeA">
+                                            <td>$| LANG_LOCALE['12781'] |$</td>
+                                            <td> $| wan3Info[15] or notExistInfo |$ </td>
+                                        </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+		    <div class="submitRow">
+			<form method="post" action="platform.cgi?logIfName=$| logIfName |$&addressFamily=$| addressFamily |$">
+			<input type="hidden" name="thispage" value="wan3Info.html">
+			<?lua
+				if (wan3Info[9] == "Dynamic IP (DHCP)") then
+					if (addressFamily ~= "10") then    
+			?>
+                        <input type="submit" name="button.renew.wan3Info" class="btnSubmit" title="$| LANG_LOCALE['30021'] |$" value="$| LANG_LOCALE['30021'] |$" id="btRenew">
+                        <input type="submit" name="button.release.wan3Info" class="btnSubmit" title="$| LANG_LOCALE['30022'] |$" value="$| LANG_LOCALE['30022'] |$" id="btRelease">
+			<?lua
+					end
+                else
+                    local BtnTitle
+                    if (status == "Disable") then
+                        BtnTitle = LANG_LOCALE['10749']
+                    else
+                        BtnTitle = LANG_LOCALE['10875']
+                    end                    
+			?>
+						<input type="submit" value="$| BtnTitle |$" name="button.$| status |$.wan3Info" class="btnSubmit" title="$| BtnTitle |$">
+			<?lua end ?>
+			</form>
+                    </div>
+                    <div class="break">
+                        &nbsp;
+                    </div>
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td><?lua web.includeMenu("footer.html")?></td>
+	</tr>
+        </table>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('#recordsData').dataTable({
+                    "bJQueryUI" : true,
+                    "bJQueryUI" : true,
+                    "bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : false,
+                    "bInfo" : false,
+                    "bAutoWidth" : false
+                });
+            });
+        </script>
+    </body>
+</html>
+<?lua end ?>

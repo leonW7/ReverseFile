@@ -1,0 +1,582 @@
+/*
+ Copyright (c) 2012 TeamF1, Inc. (www.TeamF1.com)
+ All rights reserved.
+ Created on 17th Aug 2012 - suresh
+ */ @charset "utf-8";
+/* for Traffic Overview Pie Chart */
+#container {
+    float: left;
+  /*  height: 190px;*/
+    width: 295px;
+}
+
+#chart {
+    display: block;
+    float: left;
+    margin-left: -5px;
+}
+
+#chartData {
+    border-collapse: collapse;
+    margin-top: 20px;
+    float: left;
+    width: 130px;
+}
+
+#chartData th, #chartData td {
+    padding: 0.5em;
+    border: 1px dashed #666666;
+    text-align: left;
+}
+
+#chartData th {
+    border-bottom: 2px solid #333333;
+}
+
+#chartData td {
+    cursor: pointer;
+}
+
+#chartData td.highlight {
+    color: #FFFFFF;
+    background: #64B1D9;
+}
+
+#chartData tr:hover td {
+    color: #FFFFFF;
+    background: #64B1D9;
+}
+
+#txtR {
+    text-align: right !important;
+}
+
+/* end Traffic Overview Pie Chart */
+
+/* for Discovered APs Bar Chart */
+
+#barChart {
+    display: block;
+    float: left;
+    margin-top:-7px;
+}
+
+.barChartDetails {
+	float: right;
+	margin: 10px 0 0 10px;
+	width: 70px;	
+}
+
+.barChartDetailsTwo {
+	float: right;
+    font-family: trebuchet ms;
+    font-size: 8pt;
+    width: 40%;
+}
+
+.barOne {
+	clear: both;
+	margin: 0 0 12px 0;
+	overflow: hidden;
+}
+	
+#barOne {
+	border: 1px solid #aa6533;
+	height: 10px;
+	width: 13px;
+}
+#barOne > div{
+	background: #ff8733;
+	border: 1px solid #fff;
+	color: #fff;
+	font-size: 6pt;
+	height: 8px;
+	line-height: 6pt;
+	text-align: center;
+	width: 11px;
+}
+
+.barOne span {
+	color: #535353;	
+	float: left;
+	width: 50%;
+}
+.barOne b {
+	font-weight: normal;
+	float: left;
+	color: #535353;
+	width: 50%;	
+}
+
+
+#barTwo {
+	border: 1px solid #83335b;
+	height: 10px;
+	width: 13px;
+}
+
+#barTwo > div{
+	background: #ab3383;
+	border: 1px solid #fff;
+	color: #fff;
+	font-size: 6pt;
+	height: 8px;
+	line-height: 6pt;
+	text-align: center;
+	width: 11px;
+}
+#barThree {
+	border: 1px solid #b09c5f;
+	height: 10px;
+	width: 13px;
+}
+
+#barThree > div{
+	background: #a05d56;
+	border: 1px solid #fff;
+	color: #fff;
+	font-size: 6pt;
+	height: 8px;
+	line-height: 6pt;
+	text-align: center;
+	width: 11px;
+}
+
+#barFour {
+	border: 1px solid #336f97;
+	height: 10px;
+	width: 13px;
+}
+
+#barFour > div{
+	background: #5b97d3;
+	border: 1px solid #fff;
+	color: #fff;
+	font-size: 6pt;
+	height: 8px;
+	line-height: 6pt;
+	text-align: center;
+	width: 11px;
+}
+
+#barFive {
+	border: 1px solid #5C8533;
+	height: 10px;
+	width: 13px;
+}
+
+#barFive > div{
+	background: #5C8533;
+	border: 1px solid #fff;
+	color: #fff;
+	font-size: 6pt;
+	height: 8px;
+	line-height: 6pt;
+	text-align: center;
+	width: 11px;
+}
+
+#barSix {
+	border: 1px solid #b09c5f;
+	height: 10px;
+	width: 13px;
+}
+
+#barSix > div{
+	background: #d3bf5b;
+	border: 1px solid #fff;
+	color: #fff;
+	font-size: 6pt;
+	height: 8px;
+	line-height: 6pt;
+	text-align: center;
+	width: 11px;
+}
+
+/* end Discovered APs Bar Chart */
+
+/* for WANs line Chart */
+
+#wansChart {
+	clear: both;
+	display: block;
+    margin-left: -5px;
+}
+
+.wansChartData {
+	margin: 10px 10px 15px 10px;
+	overflow: hidden;
+	clear:both;	 
+}
+
+.wansUp {
+	background:  url("../images/upArrow.gif") no-repeat scroll 0 0  transparent;
+	color: #5c5c5c;
+	float: left;
+	padding: 0 0 0 20px;
+	width: 110px;
+}
+
+.wansDown {
+	background:  url("../images/downArrow.gif") no-repeat scroll 0 0  transparent;
+	color: #5c5c5c;
+	float: left;
+	padding: 0 0 0 20px;
+	width: 110px;
+}
+
+.wansUp span, .wansDown span {
+	color: #3385ad;
+}
+	
+
+/* end WANs line Chart */
+
+/* for VPNs line Chart */
+
+#vpnsChart {
+	clear: both;
+    display: block;
+    margin-left: -5px;  
+}
+
+.vpnsChartData {
+	clear: both;	 
+	margin: 15px 0;
+	overflow: hidden;
+}
+
+.vpnsUp {
+	color: #5c5c5c;
+	padding: 0 0 10px 20px;
+	width: 260px;
+}
+
+.vpnsUp > div {
+	border: 1px solid #45657a;
+	float: left;
+	height: 10px;
+	margin: 3px 10px 0 0;
+	width: 14px;
+}
+
+.vpnsUp > div > div {
+	background: #5797c2;
+	border: 1px solid #ffffff;
+	height: 8px;
+	width: 12px;
+}
+
+.vpnsDown {
+	color: #5c5c5c;
+	padding: 0 0 0 20px;
+	width: 260px;
+}
+
+.vpnsClient {
+    color: #5C5C5C;
+    padding: 0 0 10px 20px;
+    width: 260px;
+}
+
+.vpnsClient > div {
+    border: 1px solid #AB3383;
+    float: left;
+    height: 10px;
+    margin: 3px 10px 0 0;
+    width: 14px;
+}
+
+.vpnsClient > div > div {
+	background: #AB3383;
+	border: 1px solid #ffffff;
+	height: 8px;
+	width: 12px;
+}
+
+.vpnsDown > div {
+	border: 1px solid #b89b41;
+	float: left;
+	height: 10px;
+	margin: 3px 10px 0 0;
+	width: 14px;
+}
+
+.vpnsDown > div > div {
+	background: #f8cd4a;
+	border: 1px solid #ffffff;
+	height: 8px;
+	width: 12px;
+}
+
+.vpnsUp span, .vpnsDown span, .vpnsClient span {
+	color: #3385ad;
+}
+
+/* end VPNs line Chart */
+/* for Discovered APs Bar Chart */
+
+#wlanChart {
+    display: block;
+    float: left;
+    margin-left: -5px;
+    
+}
+#wlanBarChart {
+	display: block;
+/*  float: left;
+*/  margin-top: -7px;
+/*	width: 200px;*/
+}
+
+.wlanChartDetails {
+	float: left;
+	margin: 10px 0 0 0;
+	width: 85px;	
+}
+
+.wlanOne {
+	clear: both;
+	color: #535353;	
+	margin: 0 0 12px 0;
+	padding: 0 5px 0 0;
+	text-align: right;
+	overflow: hidden;
+}
+	
+#wlanOne {
+	background: #ff8733;
+	border: 1px solid #aa6533;
+	height: 8px;
+	padding: 1px;
+	width: 11px;
+}
+
+#wlanTwo {
+	background: #ab3383;
+	border: 1px solid #83335b;
+	height: 8px;
+	padding: 1px;
+	width: 11px;
+}
+
+#wlanThree {
+	background: #d3bf5b;
+	border: 1px solid #b09c5f;
+	height: 8px;
+	padding: 1px;
+	width: 11px;
+}
+
+#wlanFour {
+	background: #5b97d3;
+	border: 1px solid #336f97;
+	height: 8px;
+	padding: 1px;
+	width: 11px;
+}
+
+/* end Discovered APs Bar Chart */
+
+/* styles added By Lakshmi on 17 Apr 2013 */
+
+.dashboard > section > h1 > select {
+	height:24px;
+}
+
+#cpuChart {
+    display: block;
+    float: left;
+    margin-left: -5px;
+}
+
+#cpuChartData {
+    border-collapse: collapse;
+    margin-top: 21px;
+    float: left;
+    width: 130px;
+}
+
+#cpuChartData th, #cpuChartData td {
+    padding: 0.5em;
+    border: 1px dashed #666666;
+    text-align: left;
+}
+
+#cpuChartData th {
+    border-bottom: 2px solid #333333;
+}
+
+#cpuChartData td {
+    cursor: pointer;
+}
+
+#cpuChartData td.highlight {
+    color: #FFFFFF;
+    background: #64B1D9;
+}
+
+#cpuChartData tr:hover td {
+    color: #FFFFFF;
+    background: #64B1D9;
+}
+
+/* 
+#ActivInfoBarChart{
+    display: block;
+    float: left;
+    margin-top:-7px;
+}*/
+
+/* Widget Loading */
+.widgetLoading {
+	background: none repeat scroll 0 0 #FFFFFF;
+    color: #666666;
+	float: left;
+    height: 290px;
+    line-height: 275px;
+	margin: 15px;
+	padding: 10px;
+    text-align: center;
+	width: 280px;	
+}
+
+
+/* Dashboad Styles */
+.configDialogDashboard {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #B6B6B6;
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 0 6px #333333;
+    display: none;
+    font-family: Verdana;
+    font-size: 10pt;
+    height: 250px;
+    left: 10%;
+    margin: 0 auto;
+    padding: 0;
+    position: fixed;
+    top: 30%;
+    width: 75%;
+    z-index: 102;
+}
+.dashboardDialogMidArea{
+ 	background: none repeat scroll 0 0 #EAEAEA;
+ 	border-bottom: 1px solid #CCCCCC;
+ 	height: 130px;
+ 	margin: 0;
+ 	overflow: auto;
+ 	padding: 15px;
+}
+
+.configRow > label.five{
+	width: 18%;
+	min-width: 10%;
+}
+
+.configRow > p.five{
+	width: 9%;
+	min-width: 8%;
+}
+
+.option1ImgUp {
+	background:  url("../images/upArrow.gif") no-repeat scroll 0 0  transparent;
+    float:left;
+	height: 16px;    
+    width:15px;
+}
+
+.option1ImgDown {
+	background:  url("../images/upArrow.gif") no-repeat scroll 0 0  transparent;
+    float:left;
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+	height: 16px;    
+    width:15px;
+}
+
+.option1Text, .option3Text, .option2Text {	
+	color: #5c5c5c;
+	float: left;
+        padding: 0 5px 0 3px;
+	width: 220px;
+
+}
+
+.option2ImgDown {
+	background:  url("../images/downArrow.gif") no-repeat scroll 0 0  transparent;
+    float: left;
+    height: 16px;
+    width:15px;	
+}
+.option2ImgUp {
+	background:  url("../images/downArrow.gif") no-repeat scroll 0 0  transparent;	
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    float: left;
+    width:15px;
+    height: 16px;
+}
+
+
+.option3ImgDown {
+    background:  url("../images/wan3Arrow.gif") no-repeat scroll 0 0  transparent;
+    float: left;
+    width:15px;   
+    height: 16px;
+    clear:both;
+}
+.option3ImgUp {
+    background:  url("../images/wan3Arrow.gif") no-repeat scroll 0 0  transparent;   
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    float: left;
+    width:15px;
+    height: 16px;
+}
+
+.optionPorts {
+   overflow: hidden;
+   clear: both;
+   padding: 0 0 10px 0;
+}
+
+.barChart {
+	overflow: hidden;
+	width: 100%;
+}
+.barChart  > canvas {
+	/*float: left;*/
+	margin: 0 auto;
+	width: 100%;
+}
+
+.graphTable{
+	font-size: 8pt;
+	margin: 0;
+}
+
+.graphTable tbody tr td{
+	color: #5c5c5c;
+     height: 18px;
+    padding: 0;
+}
+ 
+.chartsHeading {
+	color: #333;
+    font-size: 10px;
+    padding: 0 0 4px 0;
+}
+#bandWidthChart, #barChart, #MemoryBarChart, #ActivInfoBarChart{
+	display: block;
+    margin-top: -7px;
+}
+.chartEerrorMsg {
+	color: red;
+    font-family: trebuchet ms;
+    font-size: 10px;
+    bottom: 20px !important;
+}

@@ -1,0 +1,151 @@
+#!/bin/sh
+# modified by anp
+
+# @copyright 2015 TeamF1 Networks Pvt. Ltd.
+# (Subsidiary of D-Link India)  
+
+
+# modification history
+# --------------------
+# 01a,06oct15,vvs  reverted changes of spr 41944
+
+
+# If an argument comes with TF1_PPPOE_MAGIC_NUM, it means that is empty.
+TF1_PPPOE_MAGIC_NUM="$1";
+
+# User Name
+if [ "$2" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    echo "No Username specified!" > /dev/null;
+    USERNAME="";
+else
+    USERNAME="user $2";
+fi
+
+# Password
+if [ "$3" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    echo "No Password specified!" > /dev/null;
+    PASSWORD="";
+else
+    PASSWORD="password $3";
+fi
+
+# MTU
+if [ "$4" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    echo "No MTU specified!" > /dev/null;
+    MTU="mtu 1492";
+else
+    MTU="mtu $4";
+fi
+
+# Interface
+if [ "$5" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    echo "No interface specified!" > /dev/null;
+    IFNAME="";
+else
+    IFNAME="nic-$5";
+fi
+
+# Link Suffix
+if [ "$6" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    echo "No link suffix specified!" > /dev/null;
+    LINKSUFFIX="";
+else
+    LINKSUFFIX="linkname $6 unit $6";
+fi
+
+# Idle Timeout
+if [ "$7" = "0" ]; then
+    echo "Idle Timeout not requested!" > /dev/null;
+    IDLETIME="idle 0";
+else
+    IDLETIME="demand idle $7";
+fi
+
+# Authentication support
+if [ "$8" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    # Nothing specified
+    echo "No Auth Specified!" > /dev/null;
+    AUTH="noauth"; 
+elif [ "$8" = "0" ]; then     
+    # No authentication requested
+    echo "No Auth Specified!" > /dev/null;
+    AUTH="noauth";
+elif [ "$8" = "1" ]; then     
+    # Plain authentication requested
+    echo "Plain Auth Specified!" > /dev/null;
+    AUTH=""; 
+elif [ "$8" = "2" ]; then       
+    # PAP authentication requested
+    echo "PAP Auth Specified!" > /dev/null;
+    AUTH="refuse-chap refuse-mschap refuse-mschap-v2 refuse-eap";
+elif [ "$8" = "3" ]; then     
+    # CHAP authentication requested
+    echo "CHAP Auth Specified!" > /dev/null;
+    AUTH="refuse-pap refuse-mschap refuse-mschap-v2 refuse-eap";
+elif [ "$8" = "4" ]; then     
+    # MS-CHAP authentication requested
+    echo "MS-CHAP Auth Specified!" > /dev/null;
+    AUTH="refuse-chap refuse-pap refuse-mschap-v2 refuse-eap";
+elif [ "$8" = "5" ]; then     
+    # MS-CHAPv2 authentication requested
+    echo "MS-CHAP v2 Auth Specified!" > /dev/null;
+    AUTH="refuse-chap refuse-mschap refuse-pap refuse-eap";
+else
+    echo "Unknown Auth Specified!" > /dev/null;
+    exit 1;
+fi
+
+# Service Name
+if [ "$9" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    echo "No Service Requested!" > /dev/null;
+    SERVICE="";
+else
+    SERVICE="rp_pppoe_service $9";
+fi
+
+# IP Address Name
+if [ "$10" = "0.0.0.0" ]; then
+    echo "IP Address not specified!" > /dev/null;
+    IP_ADDR="";
+else
+    IP_ADDR="$10:0.0.0.0";
+fi
+
+# Subnet Mask
+if [ "$11" = "0.0.0.0" ]; then
+    echo "Subnet Mask not specified!" > /dev/null;
+    SUBNET_MASK="";
+else
+    SUBNET_MASK="$11";
+fi
+
+# Getting DNS from ISP
+if [ "$12" = "0" ]; then
+    echo "DNS servers not requested!" > /dev/null;
+    USEPEERDNS="";
+else
+    USEPEERDNS="usepeerdns";
+fi
+
+# Disabling ipv4 address negotiation
+if [ "$13" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    NOIP="";
+else
+    NOIP="noip";
+fi
+
+# Enabling ipv6 address negotiation
+if [ "$14" = "$TF1_PPPOE_MAGIC_NUM" ]; then
+    IPV6="";
+    MRU="";
+else
+    IPV6="+ipv6";
+    MRU="mru 1492";
+fi
+
+if [ "$MODEL_ID" == "DSR-1000AC" ] || [ "$MODEL_ID" == "DSR-500AC" ] || [
+    "$PRODUCT_ID" == "DSR-1000_Bx" ] || [ "$PRODUCT_ID" == "DSR-5000_Bx" ]; then
+/pfrm2.0/bin/pppd nologfd $IP_ADDR plugin /pfrm2.0/var/rp-pppoe.so $SERVICE $IFNAME  updetach lcp-echo-failure 10 lcp-echo-interval 5 defaultroute $USERNAME $PASSWORD $MTU $MRU $LINKSUFFIX $IDLETIME $USEPEERDNS $AUTH $NOIP $IPV6
+else
+/pfrm2.0/bin/pppd $IP_ADDR plugin /pfrm2.0/var/rp-pppoe.so $SERVICE $IFNAME updetach lcp-echo-failure 10 lcp-echo-interval 5 defaultroute $USERNAME $PASSWORD $MTU $MRU $LINKSUFFIX $IDLETIME $USEPEERDNS $AUTH $NOIP $IPV6
+fi

@@ -1,0 +1,27 @@
+#!/bin/sh
+# modified by anp.
+
+SERIP="$1";
+USERNAME="$2";
+PASSWORD="$3";
+MTU="$4";
+IFNAME="$5";
+LINKSUFFIX="$6";
+IDLETIME="$7";
+
+# IP Address Name
+if [ "$8" = "0.0.0.0" ]; then
+    echo "IP Address not specified!";
+    IP_ADDR="";
+else
+    IP_ADDR="$8:0.0.0.0";
+fi
+
+SUBNET_MASK="$9";
+[ $10 -eq 1 ] && USEPEERDNS="usepeerdns";
+[ $7 -ne 0 ] && DEMAND="demand";
+[ $11 -eq 0 ] && DEFROUTE="defaultroute";
+[ $12 -eq 1 ] && MPPESUPPORT="require-mppe";
+echo "Establishing PPTP Connection... "
+echo "/pfrm2.0/bin/pppd $IP_ADDR updetach lcp-echo-failure 10 lcp-echo-interval 5 $DEMAND $DEFROUTE user $USERNAME password $PASSWORD mtu $MTU linkname $LINKSUFFIX unit $LINKSUFFIX idle $IDLETIME $USEPEERDNS plugin 'pptp.so' pptp_server $SERIP" $MPPESUPPORT refuse-eap nodeflate nobsdcomp 
+/pfrm2.0/bin/pppd $IP_ADDR updetach lcp-echo-failure 10 lcp-echo-interval 5 $DEMAND $DEFROUTE user $USERNAME password $PASSWORD mtu $MTU  linkname $LINKSUFFIX unit $LINKSUFFIX idle $IDLETIME $USEPEERDNS plugin "pptp.so" pptp_server $SERIP $MPPESUPPORT refuse-eap nodeflate nobsdcomp 

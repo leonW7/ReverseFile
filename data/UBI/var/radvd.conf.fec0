@@ -1,0 +1,9 @@
+interface bdg1
+    {
+    AdvSendAdvert on;
+    prefix fec0::/64
+        {
+        AdvOnLink on;
+        AdvAutonomous on;
+        };
+    };

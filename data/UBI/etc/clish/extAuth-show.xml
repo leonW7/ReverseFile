@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+    http://clish.sourceforge.net/XMLSchema/clish.xsd">
+
+    <!--===================================================-->
+    <COMMAND name="show NT-Domain-Settings"
+            help="Display NT Domain configuration.">
+	    <ACTION>lua clishCmdExec(ntdomainGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show Active-Directory-Settings"
+            help="Display Active Directory configuration.">
+	    <ACTION>lua clishCmdExec(activedirectoryGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show LDAP-Settings"
+            help="Display LDAP configuration.">
+	    <ACTION>lua clishCmdExec(ldapGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show POP3-Settings"
+            help="Display POP3 configuration.">
+	    <ACTION>lua clishCmdExec(pop3Get)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show POP3-Trusted-CA"
+            help="Display POP3 Trusted Certificates.">
+	    <ACTION>lua clishCmdExec(pop3CaGet)</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show ntDomain-serverCheck"
+            help="Display status of NT Domain servers.">
+	    <ACTION>lua clishCmdExec(serverStatusGet, "ntDomain", "NTDomainSettings")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show activeDirectory-serverCheck"
+            help="Display status of Active Directory servers.">
+	    <ACTION>lua clishCmdExec(serverStatusGet, "activeDirectory", "ActiveDirectorySettings")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show ldap-serverCheck"
+            help="Display status of Ldap servers.">
+	    <ACTION>lua clishCmdExec(serverStatusGet, "ldap", "LDAPSettings")</ACTION>
+    </COMMAND>
+    <!--===================================================-->
+    <COMMAND name="show pop3-serverCheck"
+            help="Display status of Pop3 servers.">
+	    <ACTION>lua clishCmdExec(serverStatusGet, "pop3", "POPProfiles")</ACTION>
+    </COMMAND>
+
+</CLISH_MODULE>

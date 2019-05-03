@@ -1,0 +1,453 @@
+<?lua
+require "teamf1lualib/policies_bl"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+
+	PAGE_HELP = "vpn"
+	PAGE_HELP_SECTION = "policies"
+
+local ipsecPolicies = require("com.teamf1.bl.ipsec.policy")
+local errorMap    = require ("com.teamf1.core.errorMap")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+
+local configRowId
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if (RowId == "-1") then 
+        local returnCode, cookie =
+            ipsecPolicies.policiesSectionCreate(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    else
+        inputTable["policies.cookie"] = RowId
+        local returnCode, cookie = 
+            ipsecPolicies.policiesSectionSet(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if(type(cgi["policies.checkbox"]) == "string") then
+        inputTable["policies.cookie"] = 
+                cgi["policies.checkbox"]
+        local returnCode, cookie = 
+            ipsecPolicies.policiesSectionDelete(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+            web.goToPage(NextPage, true, true)
+    elseif(type(cgi["policies.checkbox"]) == "table") then
+        local returnCode = ipsecPolicies.policiesSectionDeleteAll()
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+        web.goToPage(NextPage, true, true)
+    end
+elseif(ButtonType == "disable" or ButtonType == "enable") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable["policies.cookie"] = 
+                    inputTable["policies.checkbox"]
+    if(ButtonType == "disable") then
+        inputTable["policies.status"] = "0"
+    else
+        inputTable["policies.status"] = "1"
+    end
+    if(type(cgi["policies.checkbox"]) == "string") then
+        local returnCode, cookie = 
+        ipsecPolicies.policiesStatusSet(inputTable)
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+
+    elseif (type(cgi["policies.checkbox"]) == "table" and ButtonType == "disable") then
+        local returnCode, cookie = 
+        ipsecPolicies.policiesDisableAll()
+        if (returnCode == returnCodes.SUCCESS) then
+            statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        else 
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+	end
+    end
+            web.goToPage(NextPage, true, true)
+elseif(ButtonType and ButtonType == "configExport") then
+    local fileName = "/tmp/ezvpn.cfg"
+    local inputTable = web.cgiToLuaTable (cgi)
+    inputTable["policies.cookie"] = RowId
+    inputTable["policies.exportFlag"] = "-10"
+    local returnCode, cookie = 
+        ipsecPolicies.policiesSectionSet(inputTable)
+    if (returnCode == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    else 
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    local downloadfileName = "ezvpn"
+    web.download (fileName, downloadfileName .. ".cfg")
+else    
+    local configRow = {}
+    local returnCode
+    returnCode, configRow = ipsecPolicies.policiesSectionGetAll()
+    if(returnCode ~= returnCodes.SUCCESS) then
+        statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+    local currentTime = os.time() or '0'
+
+    LANG_LOCALE =
+    "13818,11423,11748,13819,14204,13820,13173,13821,11593,12656,10306,10914,10131,10352,11424,11061,12458,12459,14346,14345,11412,30186,11444,11158,14130,14131,30187,13448,11057,11422,30154,30132,30016,12803,30015,30017,12660,11387,14125,11389,10895,10897,30188,13455,14343,14342,10884,11599,10226,14340,14339,11607,14341,11608,14115,11294,12663,12672,12659,12673,14119,11335,14338,13655,10712,10723,11246,30189,11332,11938,10967,14337,14336,10748,14335,14334,13650,11753,11751,12732,11597,14333,14331,14330,11596,12662,14332,12661,10917,10701,10008,14319,14318,14317,10408,11227,10465,11228,10313,11701,14316,14308,14307,14306,10321,12532,14329,11323,11565,10746,30190,30191,30192,14302,14301,14300,14299,14298,12755,11345,10881,14328,11332,10984,14327,14326,10330,13238,30193,30194,30195,30196,30197,12462,30198,30199,13242,11899,14322,14321,14320,10200,10201,14312,14311,14310,14111,14315,14314,11182,14309,11939,12754,14313,11937,14305,14304,14303,14297,10900,30200,11260,14296,14295,14347,13524,10751,13818,13514,13160,14344,13515,11262,12335,12308,12304,12309,12307,12359,12354,12360,12358,30201,12251,12255,12352,12327,12305,12231,12233,12340,12370,12410,12333,12385,12386,12263,12264,12265,12286,12287,12370,12261,12262,12272,12292,12025,12073,12855,14288,14285,14284,14283,14282,14281,14280,14279,14278,14277,14276,14275,14274,14287,14286,30436,30465,30466,30467,30468,12795,10862,10875,10749,13818,10695,13004,30014,50050,50053,50164"
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>				
+		<form action="platform.cgi" method="post" name="tf1_frmPolicies" id="tf1_frmPolicies">		
+			<input type="hidden" name="thispage" id="thispage" value="policies.html">			
+			<div id="tf1_dialog" class="configDialog"></div>		
+		</form>		
+		<!-- Section for Pop up dialog ends -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+			<ul>
+				<li>
+					<input id="optionSelectAll" type="checkbox" onclick="setSelectAll (this.id, 'edit enable export');"/>
+					&nbsp;$| LANG_LOCALE['12795'] |$
+				</li>
+				<li id="edit">
+					$| LANG_LOCALE['10862'] |$
+				</li>
+				<li id="enable">
+					$| LANG_LOCALE['10875'] |$
+				</li>
+				<li id="disable">
+					$| LANG_LOCALE['10749'] |$
+				</li>
+				<li id="export">
+					$| LANG_LOCALE['13818'] |$
+				</li>
+				<li id="delete">
+					$| LANG_LOCALE['10695'] |$
+				</li>
+
+			</ul>
+		</div>
+        <!-- Right click Div End -->
+        <!-- Right click Div starts for backup policies table -->
+        <div class="contextMenu" id="backupTbl">
+            <ul>
+                <li id="edit">
+                    $| LANG_LOCALE['10862'] |$
+                </li>
+            </ul>
+        </div>
+		<!-- Right click Div End for backup policies table -->
+            <tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu4");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					-->
+                                        <?lua if(statusErrorMessage ~= returnCodes.NIL) then?>
+                                       <div class="msgError">
+                                        <p>$| statusErrorMessage |$</p>
+                                         </div>
+                                        <?lua elseif (statusSuccessMessage ~= returnCodes.NIL) then?>
+                                       <div class="msgSuccess">
+                                       <p>$| statusSuccessMessage |$</p>
+                                        </div>
+                                       <?lua end ?>
+					<div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$ 
+						</p>
+					</div>
+					<h1>$| LANG_LOCALE['11423'] |$</h1>
+					<div class="CLR">
+						<div class="demo_jui" id="tf1_policies">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+										<th> $| LANG_LOCALE['13004'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['11748'] |$<br>&nbsp;<br>&nbsp;</th>
+                                        <th> $| LANG_LOCALE['13819'] |$</th>
+										<th> $| LANG_LOCALE['13173'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['13821'] |$<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['11593'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['12656'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['10306'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['10914'] |$<br>&nbsp;<br>&nbsp;</th>
+									</tr>
+                                </thead>
+                                <?lua
+                                    local policyTitle
+                                    local policyLen
+                                    for k, v in pairs(configRow) do
+                                        local outputTable = {}
+                                        outputTable = configRow[k]
+                                        local rowId = outputTable["_ROWID_"]
+                                        local status = outputTable["Status"]
+                                        local policyName = outputTable["VPNPolicyName"]
+                                        local policyType = outputTable["PolicyType"]
+                                        local ipsecMode = outputTable["TunnelOrTransport"]
+                                        local localNetworkType = outputTable["LocalNetworkType"]
+                                        local remoteNetworkType = outputTable["RemoteNetworkType"]
+                                        local encryptionAlgo = outputTable["EncryptionAlgorithm"]
+                                        local authAlgo = outputTable["AuthAlgorithm"]
+                                        policyTitle = outputTable["VPNPolicyName"] or ''
+                                        policyLen = #(outputTable["VPNPolicyName"])
+                                        if (policyLen > 16) then
+                                            policyName = string.sub(outputTable["VPNPolicyName"],1,16) .. "..."
+                                        else
+                                            policyName = outputTable["VPNPolicyName"]
+                                        end
+                                        if(policyType == "1") then
+                                            policyType = LANG_LOCALE['14346']
+                                        else
+                                            policyType = LANG_LOCALE['14345']
+                                        end
+                                        
+                                        if(ipsecMode == "Transport Mode") then
+                                            ipsecMode = LANG_LOCALE['14344']
+                                        else
+                                            ipsecMode = LANG_LOCALE['13160']
+                                        end
+
+                                        local statusVal 
+                                        if(status == "1") then
+                                            statusVal = LANG_LOCALE['13524']
+                                        else
+                                            statusVal = LANG_LOCALE['10751']
+                                        end
+                                        if (localNetworkType == "Any") then
+                                            localNetworkType = LANG_LOCALE['10226']
+                                        end
+                                        if (remoteNetworkType == "Any") then
+                                            remoteNetworkType = LANG_LOCALE['10226']
+                                        end
+                                        if (outputTable["TypeofPolicy"] == nil or outputTable["TypeofPolicy"] == "1") then
+                                            local backupPolicyName = LANG_LOCALE['11789']
+					                         if (outputTable["BackupPolicyName"] ~= nil and 
+                                                               outputTable["BackupPolicyName"] ~= "") then
+			   		                            backupPolicyName = outputTable["BackupPolicyName"]
+					                         end
+                               ?>
+								<tr class="gradeA" id="policies$| rowId |$" status="$| status |$">
+									<td> $| statusVal or  '' |$ </td>
+									<td title="$| policyTitle |$"> $| policyName or '' |$ </td>
+                                    <td> $| backupPolicyName or '' |$ </td>
+									<td> $| policyType or  '' |$</td>
+									<td> $| ipsecMode or '' |$ </td>
+									<td>$| localNetworkType or '' |$</td>
+									<td> $| remoteNetworkType or ''|$</td>
+									<td> $| authAlgo or '' |$</td>
+									<td> $| encryptionAlgo or  '' |$ </td>
+                                </tr>
+                                <?lua end
+                                        end?>
+							</table>
+						</div>
+					</div>
+					<div class="buttonsRow" id="tf1_btnShowModal">
+						<input type="button" name="button.add.policies.policies.-1" class="btnSubmit" title="$| LANG_LOCALE['10131'] |$" value="$| LANG_LOCALE['10131'] |$" id="btSave" onclick="openForm('button.add.policies.policies',-1,'tf1_dialog','policies','policiesForm.html', 'tf1_policiesDailogContent','onloadPoliciesFn');">
+					</div>
+					<div class="break">
+                        &nbsp;
+                    </div>
+					<h1>$| LANG_LOCALE['10352'] |$</h1>
+					<div class="CLR">
+						<div class="demo_jui" id="tf1_backUppolicies">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData2">
+								<thead>
+									<tr>
+										<th> $| LANG_LOCALE['13004'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['11748'] |$<br>&nbsp;<br>&nbsp;</th>
+                                        <th> $| LANG_LOCALE['14204'] |$<br>$| LANG_LOCALE['13820'] |$<br>$| LANG_LOCALE['11748'] |$</th>
+										<th> $| LANG_LOCALE['13173'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['13821'] |$<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['11593'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['12656'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['10306'] |$<br>&nbsp;<br>&nbsp;</th>
+										<th> $| LANG_LOCALE['10914'] |$<br>&nbsp;<br>&nbsp;</th>
+									</tr>
+                                </thead>
+                                <?lua
+                                    local policyTitle
+                                    local policyLen
+                                    for k, v in pairs(configRow) do
+                                        local outputTable = {}
+                                        outputTable = configRow[k]
+                                        local rowId = outputTable["_ROWID_"]
+                                        local status = outputTable["Status"]
+                                        local policyName = outputTable["VPNPolicyName"]
+                                        local policyType = outputTable["PolicyType"]
+                                        local ipsecMode = outputTable["TunnelOrTransport"]
+                                        local localNetworkType = outputTable["LocalNetworkType"]
+                                        local remoteNetworkType = outputTable["RemoteNetworkType"]
+                                        local encryptionAlgo = outputTable["EncryptionAlgorithm"]
+                                        local authAlgo = outputTable["AuthAlgorithm"]
+                                        local statusVal 
+                                        if(status == "1") then
+                                            statusVal = LANG_LOCALE['13524']
+                                        else
+                                            statusVal = LANG_LOCALE['10751']
+                                        end
+                                        policyTitle = outputTable["VPNPolicyName"] or ''
+                                        policyLen = #(outputTable["VPNPolicyName"])
+                                        if (policyLen > 16) then
+                                            policyName = string.sub(outputTable["VPNPolicyName"],1,16) .. "..."
+                                        else
+                                            policyName = outputTable["VPNPolicyName"]
+                                        end
+                                        if(policyType == "1") then
+                                            policyType = LANG_LOCALE['14346']
+                                        else
+                                            policyType = LANG_LOCALE['14345']
+                                        end
+                                        if(ipsecMode == "Transport Mode") then
+                                            ipsecMode = LANG_LOCALE['14344']
+                                        else
+                                            ipsecMode = LANG_LOCALE['13160']
+                                        end
+                                        if (localNetworkType == "Any") then
+                                            localNetworkType = LANG_LOCALE['10226']
+                                        end
+                                        if (remoteNetworkType == "Any") then
+                                            remoteNetworkType = LANG_LOCALE['10226']
+                                        end
+                                        if (outputTable["TypeofPolicy"] ~= nil and outputTable["TypeofPolicy"] == "2") then
+                                            local returnCode, primaryPolName = 
+                                                     ipsecPolicies.backuPolicyNameGet (policyName)
+                                         
+                               ?>
+					<tr class="gradeA" id="policies$| rowId |$" statusBackup="$| status |$">
+									<td> $| statusVal or  '' |$ </td>
+                                    <td title="$| policyTitle |$"> $| policyName or '' |$ </td>
+									<td> $| primaryPolName or '' |$ </td>
+									<td> $| policyType or  '' |$</td>
+									<td> $| ipsecMode or '' |$ </td>
+									<td>$| localNetworkType or '' |$</td>
+									<td> $| remoteNetworkType or ''|$</td>
+									<td> $| authAlgo or '' |$</td>
+									<td> $| encryptionAlgo or  '' |$ </td>
+                                </tr>
+                                <?lua end?>
+                                <?lua end?>
+							</table>
+						</div>
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/ecmascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/ecmascript" language="javascript" src="js/ipv6AddrValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/policies.js?updated='$| currentTime |$'"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#tf1_policies .gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'editMenu' : function(t, e, rowId) {
+							openForm('button.edit.policies.policies',rowId,'tf1_dialog','policies','policiesForm.html', 'tf1_policiesDailogContent','onloadPoliciesFn');
+						},
+						'deleteMenu' : function(t, e, rowId) {
+							deleteRows('button.delete.policies.policies', 'tf1_frmPolicies', rowId, 'optionSelectAll', 'tf1_dialog', 'policies', 'policies');
+						},
+						'disableMenu' : function(t, e, rowId) {
+							changeRowStauts('disable', 'tf1_frmPolicies', rowId, 'tf1_dialog', 'policies', 'policies', 'policies.policies', 'optionSelectAll');
+						},
+						'enableMenu' : function(t, e, rowId) {
+							changeRowStauts('enable', 'tf1_frmPolicies', rowId, 'tf1_dialog', 'policies', 'policies', 'policies.policies', 'optionSelectAll');
+						},
+                                                'exportMenu' : function(t, e, rowId) {
+							openForm('button.export.policies.policies',rowId,'tf1_dialog','policies','policiesForm.html', 'tf1_policiesExportDailogContent','onloadPoliciesFn');
+						}
+					},
+                    onShowMenu: function(e,menu,rowId) {
+						if ($("#"+rowId).attr("status") == "1"){							
+							$('#enableMenu', menu).remove();
+						} else {
+							$('#disableMenu', menu).remove();
+						}
+						return menu;
+					}
+				});
+				$('#tf1_backUppolicies .gradeA').contextMenu('backupTbl', {
+					bindings : {
+						'editMenu' : function(t, e, rowId) {
+							openForm('button.backup.policies.policies',rowId,'tf1_dialog','policies','backupPoliciesForm.html', 'tf1_policiesDailogContent','onloadPoliciesFn');
+                            }
+                        },
+                    });
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 5 },
+                        { type: 'ip-address', targets: 6 }
+                    ]
+				});
+				dataRightClick(true,"recordsData");
+				oTable = $('#recordsData2').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers",
+                    "columnDefs": [
+                        { type: 'ip-address', targets: 5 },
+                        { type: 'ip-address', targets: 6 }
+                    ]
+				});
+				dataRightClick(false,"recordsData2");
+				$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+			   	});
+			});
+		</script>
+	</body>
+</html>
+<?lua end ?>

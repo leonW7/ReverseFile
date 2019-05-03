@@ -1,0 +1,262 @@
+<?lua
+require "teamf1lualib/bl_networkProfiles"
+require "teamf1lualib/captivePortal_networkProfiles_bl"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/errorMap"
+
+	PAGE_HELP = "wireless"
+	PAGE_HELP_SECTION = "networkProfiles"
+
+local nwProfile = require("com.teamf1.bl.wlan.networkProfiles")
+local capPortalProfile = require("com.teamf1.bl.captivePortal.networkProfiles")
+local returnCodes = require("com.teamf1.core.returnCodes")
+local errorMap    = require ("com.teamf1.core.errorMap")
+
+local configRowId, returnCode
+if(ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    if (RowId == "-1") then
+        returnCode, networkId = nwProfile.networkProfilesCreate(inputTable)
+        if (returnCode == returnCodes.NOT_IMPLEMENTED_YET) then
+            statusErrorMessage = networkId
+        elseif(returnCode ~= returnCodes.SUCCESS) then
+             statusErrorMessage = errorMap.errorStringGet (returnCode)
+        elseif(returnCode == returnCodes.SUCCESS)then
+             statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        end
+        if (returnCode == returnCodes.SUCCESS) then
+            returnCode, cookie, networkId, vlanId, ssid, intfNum, captivePortalType, authenticationType, authenticationSubType, loginProfile = capPortalProfile.networkProfileCaptivePortalGet(networkId)
+            if ( returnCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (returnCode)
+            end
+
+            inputTable["networkProfileConfig.intfNum"] = intfNum 
+            inputTable["networkProfileConfig.cookie"] = networkId
+            returnCode, cookie = capPortalProfile.networkProfileCaptivePortalSet(inputTable)
+             if(returnCode ~= returnCodes.SUCCESS) then
+                statusErrorMessage = errorMap.errorStringGet (returnCode)
+             elseif(returnCode == returnCodes.SUCCESS)then
+                statusSuccessMessage = errorMap.errorStringGet (returnCode)
+             end
+        end
+        web.goToPage (NextPage, true, true)
+    else
+        --inputTable["networkId"] = RowId
+    returnCode, cookie, networkId, vlanId, ssid, intfNum, captivePortalType, authenticationType, authenticationSubType, loginProfile = capPortalProfile.networkProfileCaptivePortalGet(RowId)
+    if ( returnCode ~= returnCodes.SUCCESS) then
+         statusErrorMessage = errorMap.errorStringGet (returnCode)
+    end
+
+    inputTable["networkProfileConfig.intfNum"] = intfNum 
+    inputTable["networkProfileConfig.cookie"] = RowId
+    returnCode = nwProfile.networkProfileListSet(inputTable)  
+    if(returnCode ~= returnCodes.SUCCESS) then
+           statusErrorMessage = errorMap.errorStringGet (returnCode)
+    elseif(returnCode == returnCodes.SUCCESS)then
+           statusSuccessMessage = errorMap.errorStringGet (returnCode)
+    end
+    if (returnCode == returnCodes.SUCCESS) then 
+        local returnCode, cookie = capPortalProfile.networkProfileCaptivePortalSet(inputTable)
+        if (tonumber(cookie) == returnCodes.NIL) then
+            statusErrorMessage = cookie
+        elseif ( returnCode ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (returnCode)
+        elseif(returnCode == returnCodes.SUCCESS)then
+             statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        end
+    end
+    web.goToPage (NextPage, true, true)
+    end
+elseif(ButtonType and ButtonType == "delete") then
+    local inputTable = web.cgiToLuaTable (cgi)
+    local deleteTable = inputTable["networkProfiles.checkbox"]
+    if(type(deleteTable) == "string") then
+        local returnCode, cookie = nwProfile.networkProfilesDelete(cgi["networkProfiles.checkbox"])
+        if ( returnCode ~= returnCodes.SUCCESS) then
+            statusErrorMessage = errorMap.errorStringGet (tonumber(returnCode))
+        elseif(returnCode == returnCodes.SUCCESS)then
+             statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        end
+        web.goToPage (NextPage, true, true)
+    else
+        local returnCode =nwProfile.networkProfilesDeleteAll()
+        if ( returnCode ~= returnCodes.SUCCESS) then
+             statusErrorMessage = errorMap.errorStringGet (tonumber(returnCode))
+        elseif(returnCode == returnCodes.SUCCESS)then
+             statusSuccessMessage = errorMap.errorStringGet (returnCode)
+        end
+        web.goToPage (NextPage, true, true)
+    end
+else
+local configRow = {}
+    local returnCode 
+    returnCode, configRow = nwProfile.networkProfileListGet1 ()
+     if ( returnCode ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (tonumber(returnCode))
+    end
+cgilua.header ("Content-Type","text/html; charset=UTF-8")
+?>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="en-us">
+		<title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+		<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/menu.css" />
+		<link rel="stylesheet" type="text/css" href="css/table.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+	</head>
+	<body>
+		<!-- Section for Pop up dialog starts -->
+		<div id="tf1_overlay" class="configDialogMask"></div>				
+		<form action="platform.cgi" method="post" name="tf1_frmNetworkProfiles" id="tf1_frmNetworkProfiles">		
+			<input type="hidden" name="thispage" id="thispage" value="networkProfiles.html">			
+			<div id="tf1_dialog" class="configDialog"></div>		
+		</form>		
+		<!-- Section for Pop up dialog ends -->
+		
+		<!-- Right click Div Start -->
+		<div class="contextMenu" id="contextMenu">
+			<ul>
+				<li id="edit" name ="button.edit.networkProfiles.networkProfiles">
+					Edit
+				</li>
+				<li id="delete" name ="button.delete.networkProfiles.networkProfiles" >
+					Delete
+				</li>
+			</ul>
+		</div>
+		<!-- Right click Div End -->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td class="header" valign="top" align="center">
+				<?lua web.includeMenu("header.html")?></td>
+			</tr>
+			<tr>
+				<td valign="top" align="center">
+				<div class="midWidth">
+					<script language="JavaScript">
+						mmSel("mainMenu2");
+					</script>
+					<!-- Status message place holder... [ 1. for error use "msgError" 2. for information use "msgInfo" 3. for sucess use "msgSuccess" CSS classes ]
+					<div class="msgInfo">
+					<p>Status Message Place Holder.</p>
+					</div>
+					-->
+                                        <?lua if ( statusErrorMessage ~= returnCodes.NIL) then
+                                          ?>
+                                         <div class="msgError">
+                                             <p>$| statusErrorMessage |$</p>
+                                         </div>
+                                         <?lua else if(statusSuccessMessage ~= returnCodes.NIL) then
+                                         ?>
+                                        <div class="msgSuccess">
+                                              <p>$| statusSuccessMessage |$</p>
+                                        </div>
+                                        <?lua end end ?>
+                                        <div class="FL2">
+						<p class="hint">
+                        $| helpHintText |$
+						</p>
+					</div>
+					<h1>SSID Profile List</h1>
+					<div class="CLR">
+						<div class="demo_jui" id="tf1_networkProfiles">
+							<table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+								<thead>
+									<tr>
+                                                                                <th>SSID<br>&nbsp;</th>
+                                                                                <th>Name<br>&nbsp;</th>
+										<th>VLAN ID<br>&nbsp;</th>
+										<th>Hide SSID<br>&nbsp;</th>
+										<th>Security<br>&nbsp;</th>
+										<th>Redirect<br>&nbsp;</th>
+										<th>Captive<br>Portal</th>
+										<th>Authentication<br>Server</th>
+									</tr>
+                                                                 </thead>
+                                                                 <?lua
+                                                                   for k,v in pairs (configRow) do                                                                                                  local row = configRow[k]
+                                                                       local authServer = row.authServer
+                                                                       if (row.captivePortalType == "Free" or row.captivePortalType == "SLA") then
+                                                                            authServer = "None"
+                                                                       end
+                                                                       local networkName = row.ssid or ''
+                                                                       if (row.ssid ~= nil) then
+                                                                           if (#row.ssid > 10) then
+                                                                               networkName = string.sub(networkName, 1, 10) .. "..."
+                                                                           end
+                                                                       end
+                                                                 ?>
+								<tr class="gradeA" id="networkProfiles$|row.networkId|$">
+                                                                        <td> $| row.networkId |$ </td>
+                                                                        <td title="$| row.ssid or '' |$"> $| networkName or '' |$ </td>
+									<td> $| row.vlanId |$ </td>
+									<td> $| row.hideSsid  |$ </td>
+									<td> $| row.security  or '' |$ </td>
+                                                                        <td> $| row.redirect |$ </td>
+                                                                        <td> $|row.captivePortalType|$</td>
+                                                                        <td> $|authServer or 'None'|$ </td> </tr>
+                                                                    <?lua end ?>
+							</table>
+						</div>
+					</div>
+					<div class="buttonsRow">
+						<input type="button" name="button.add.networkProfiles.networkProfiles.-1" id="tf1_btnShowModal" value=" Add New SSID Profile" title=" Add New SSID Profile" class="btnSubmit" onclick="openForm('button.add.networkProfiles.networkProfiles',-1,'tf1_dialog','networkProfiles','networkProfilesForm.html', 'tf1_networkProfilesDailogContent','onloadNetworkprofilesFn');">
+
+					</div>
+				</div></td>
+			</tr>
+			<tr>
+				<td>
+				<?lua web.includeMenu("footer.html")?></td>
+			</tr>
+		</table>
+
+		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mis.js"></script>
+		<script type="text/javascript" language="javascript" src="js/textValidations.js"></script>
+		<script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+		<script type="text/javascript" language="javascript" src="js/networkProfiles.js"></script>
+		<script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+		<script type="text/javascript" language="javascript" src="js/ipv4AddrValidations.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#tf1_networkProfiles .gradeA').contextMenu('contextMenu', {
+					bindings : {
+						'editMenu' : function(t, e, rowId) {
+							openForm('button.edit.networkProfiles.networkProfiles',rowId,'tf1_dialog','networkProfiles','networkProfilesForm.html', 'tf1_networkProfilesDailogContent','onloadNetworkprofilesFn');
+						},
+						'deleteMenu' : function(t, e, rowId) {
+							deleteRows('button.delete.networkProfiles.networkProfiles', 'tf1_frmNetworkProfiles', rowId, 'optionSelectAll', 'tf1_dialog', 'networkProfiles', 'networkProfiles');
+						}
+					}
+				});
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+				dataRightClick(true);
+				onloadCall();
+
+				$("#btnClose").live("click",function(e){
+					HideDialog('tf1_dialog', 'tf1_overlay');
+					e.preventDefault();
+			   	});
+
+			});
+
+		</script>
+	</body>
+</html>
+<?lua end ?>

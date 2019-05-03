@@ -1,0 +1,9 @@
+interface eth1
+    {
+    AdvSendAdvert on;
+    prefix 3ffe:501:ffff:101::/64
+        {
+        AdvOnLink on;
+        AdvAutonomous on;
+        };
+    };

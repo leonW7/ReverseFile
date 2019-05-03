@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	      xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+              http://clish.sourceforge.net/XMLSchema/clish.xsd">
+<!--=======================================================-->
+    <COMMAND name="show system switch_setting" help="."/>
+    <!--=======================================================-->
+    <COMMAND name="show system switch_setting power_mode"
+         help="Display power mode configuration">
+	     <ACTION>lua clishCmdExec (powerModeCfgGet)</ACTION>
+    </COMMAND>
+      <!--=======================================================-->
+    <COMMAND name="show system switch_setting jumbo_frame"
+         help="Display jumbo frame configuration">
+	    <ACTION>lua clishCmdExec (jumboFrameCfgGet)</ACTION>
+    </COMMAND>   
+</CLISH_MODULE>

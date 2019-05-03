@@ -1,0 +1,111 @@
+<?lua
+require "teamf1lualib/ipv6_radvd_bl"
+require "teamf1lualib/returnCodes"
+local radvd = require("com.teamf1.bl.ipv6.radvd")
+
+    local returnCode, cookie
+    local configRow = {}
+    if (ButtonType and ButtonType == "edit") then
+        configRowId = cgi["configRowId"]
+        returnCode, cookie, configRow = radvd.radvdAdvSectionGet(configRowId)
+?>
+
+<div id="tf1_routerAdvertisementDailogContent">
+    <div class="topBg">
+        <h1 data-localize="50105">Router Advertisement Configuration</h1>
+		<close>
+			<a href="#" id="btnClose" title="Close">X</a>
+		</close>
+    </div>
+    <div class="dialogMidArea">
+        <h2 data-localize="50106">Router Advertisement</h2>
+        <div class="configRow">
+		    <label data-localize="10189">Advertise Mode</label>
+			<p>
+				<input type="radio" $| web.radioSelected(configRow["radvd.mode"]== "0") |$ value="1" checked name="radvd.mode" id="tf1_routerAdvtMode1" onClick="routerAdvtModeChange('tf1_routerAdvtMode1')">
+                <span data-localize="13189">Unsolicited Multicast</span>
+			</p>
+			<p>
+				<input type="radio" $| web.radioSelected(configRow["radvd.mode"]== "1") |$ value="2" name="radvd.mode"  id="tf1_routerAdvtMode2" onClick="routerAdvtModeChange('tf1_routerAdvtMode2')">
+                <span data-localize="13177">Unicast Only</span>
+			</p>
+		</div>
+		<div class="break" id="break1_div">	&nbsp; </div>
+	    <div class="configRow" id="tf1_routerAdvtInterval_div">
+			<label data-localize="10188">Advertise Interval</label>
+			<input type="text" class="one" maxlength="4" name="radvd.interval" value="$| configRow["radvd.interval"] or '' |$" id="tf1_routerAdvtInterval" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 10, 1800, true, LANG_LOCALE['11206']+': ',  LANG_LOCALE['12732']);}">
+	        <dl>
+                [<span data-localize="12627">Range</span>: 10 - 1800]
+			</dl>
+		</div>
+		<div class="break" id="break2_div">	&nbsp; </div>
+        <h2 data-localize="12586">RA Flags</h2>
+		<div class="configRow" id="tf1_routerAdvtManaged_div">
+		    <label data-localize="11661">Managed</label>
+            <?lua
+                if (configRow["radvd.managed"] == "1") then
+                    statusStr="enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr="enable-disable-off"
+                    statusVar = "0"
+                end
+            ?>
+		    <a class="$| statusStr |$" alt="" id="tf1_routerAdvtManaged"></a>
+			<input type="hidden" value="$| statusVar |$" name="radvd.managed">
+		</div>
+		<div class="break" id="break3_div"> &nbsp; </div>
+		<div class="configRow" id="tf1_routerAdvtOther_div">
+		    <label data-localize="11871">Other</label>
+            <?lua
+                if (configRow["radvd.other"] == "1") then
+                    statusStr="enable-disable-on"
+                    statusVar = "1"
+                else
+                    statusStr="enable-disable-off"
+                    statusVar = "0"
+                end
+            ?>
+		    <a class="$| statusStr |$" alt="" id="tf1_routerAdvtOther"></a>
+			<input type="hidden" value="$| statusVar |$" name="radvd.other">
+		</div>
+		<div class="break" id="break4_div">	&nbsp; </div>
+		<div class="configRow" id="tf1_routerPreference_div">
+		    <label data-localize="12730">Router Preference</label>
+			<p>
+			    <input type="radio" value="1" name="radvd.routerPreference" $| web.radioSelected(configRow["radvd.routerPreference"] == "1") |$  id="tf1_routerPreference1">
+                <span data-localize="13659">Low</span>
+			</p>
+			<p>
+				<input type="radio" name="radvd.routerPreference" $| web.radioSelected(configRow["radvd.routerPreference"] == "2") |$ value="2" id="tf1_routerPreference2">
+                <span data-localize="11705">Medium</span>
+		    </p>
+			<p>
+			    <input type="radio" name="radvd.routerPreference" $| web.radioSelected(configRow["radvd.routerPreference"] == "3") |$ value="3" id="tf1_routerPreference3">
+                <span data-localize="11113">High</span>
+			</p>
+		</div>
+        <div class="break" id="break5_div">	&nbsp; </div>
+        <div class="configRow" id="tf1_routerAdvtMTU_div">
+		    <label data-localize="11733">MTU</label>
+			<input type="text" class="one" maxlength="4" name="radvd.mtu" value="$| configRow["radvd.mtu"] or '' |$" id="tf1_routerAdvtMTU" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return numericValueRangeCheck (this, '', '', 1280, 1500, true, LANG_LOCALE['11309']+': ', '');}">
+			<dl>
+				[<span data-localize="12627">Range</span>: 1280 - 1500]
+			</dl>
+		</div>
+		<div class="break" id="break6_div">	&nbsp; </div>
+		<div class="configRow" id="tf1_routerAdvtLifetime_div">
+		    <label data-localize="12729">Router Lifetime</label>
+			<input class="one" type="text" maxlength="4" name="radvd.lifetime" value="$| configRow["radvd.lifetime"] or '' |$" id="tf1_routerAdvtLifetime" onKeyPress="return numericValueCheck (event)" onKeyDown="if (event.keyCode == 9) {return checkLifetime ();}">
+			<dl>
+                <span data-localize="12732">Seconds</span>
+			</dl>
+        </div>
+        <div class="break" id="break7_div"> &nbsp; </div>
+    </div>
+		<div class="dialogSubmitRow">
+			<input data-localize="12758" type="submit" onclick="return routerAdvtValidate('tf1_frmrouterAdvertisement')" class="btnSubmit" title="Save" value="Save" id="btSave" name="button.config.routerAdvertisement.routerAdvertisement.$| configRowId |$">
+        </div>
+</div>
+<?lua end?>
+

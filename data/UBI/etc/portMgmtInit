@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# portMgmtInit - initialization script for portMgmt
+#
+# Copyright (c) 2008, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01a,20jul08,vms written
+/bin/sh /pfrm2.0/bin/ConfigPort.sh  

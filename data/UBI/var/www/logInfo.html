@@ -1,0 +1,525 @@
+<?lua
+require "teamf1lualib/bl_logInfo"
+require "teamf1lualib/errorMap"
+require "teamf1lualib/returnCodes"
+require "teamf1lualib/smtpClient_returnCodes"
+require "teamf1lualib/admin_license"
+
+PAGE_HELP = "status"
+PAGE_HELP_SECTION = "allLogs"
+
+local log = require("com.teamf1.bl.view.logging")
+local returnCodes = require ("com.teamf1.core.returnCodes")
+local errorMap = require("com.teamf1.core.errorMap")
+local smtpReturnCodes = require ("com.teamf1.core.smtpClient.returnCodes")
+local license  = require ("com.teamf1.core.admin.license")
+
+local wcfLicence = license.wcfLicenseStatusGet ()
+local wcfLicenceStatus
+if ( wcfLicence ) then
+wcfLicenceStatus  = 1
+else
+wcfLicenceStatus  = 0
+end
+
+if (ButtonType and ButtonType == "config") then
+    local inputTable = web.cgiToLuaTable(cgi)
+    errorFlag = log.logEncInfoSet(inputTable)
+    if (errorFlag == 0) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    elseif (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage (NextPage, true, true)
+elseif (ButtonType and ButtonType == "clearLog") then
+    local errorFlag 
+    errorFlag = log.logEncLogDelete(cgi["logInfo.checkbox"])
+
+    -- display the status
+    if (errorFlag == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "clearLogs") then
+    local errorFlag 
+    errorFlag = log.logEncLogDeleteAll()
+    -- display the status
+    if (errorFlag == returnCodes.SUCCESS) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+
+elseif (ButtonType and ButtonType == "sendLogs") then
+    local errorFlag 
+    errorFlag = log.logEncLogSendAll()
+    -- display the status
+    if (errorFlag == smtpReturnCodes.LOGGING_EMAIL_PASSED) then
+        statusSuccessMessage = errorMap.errorStringGet (errorFlag)
+    else
+        statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+    web.goToPage(NextPage, true, true)
+else
+    local currentLogsTbl = {}
+    errorFlag, facilityLevel, severityLevel, category, currentLogsTbl = log.logEncInfoGet()
+    if (errorFlag ~= returnCodes.SUCCESS) then
+       statusErrorMessage = errorMap.errorStringGet (errorFlag)
+    end
+
+    LANG_LOCALE = "14348,10632,14349,10207,13563,30013,13036,13446,11761,13447,14350,11007,14351,14352,14401,14402,14403,14404,14405,14406,14407,14408,14409,14410,11010,11077,14356,14411,14357,11416,14412,11502,14413,14428,14358,14414,14415,11863,14359,12507,12509,14416,14417,14418,12714,14419,12879,12917,14420,14421,14422,14423,30348,13272,14360,14424,14425,14361,10872,10205,10620,10949,13330,11801,11178,10682,14362,10991,12844,11708,10507,12813,14363,12864,14427,30186,11444,14258,12874,13447"
+    cgilua.header ("Content-Type","text/html; charset=UTF-8")
+
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Language" content="en-us">
+        <title>$|COMPANY_NAME|$ : $|APP_NAME|$</title>
+<!--
+Copyright (c) 2012 - 2013 TeamF1, Inc. (www.TeamF1.com)
+All rights reserved.
+-->
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+        <link rel="stylesheet" type="text/css" href="css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.4.custom.css" />
+        <script type="text/javascript" language="javascript" src="js/jquery-1.8.0.min.js"></script>
+        <?lua web.includeMenu("metaInclude.html")?>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="header" valign="top" align="center">
+                <?lua web.includeMenu("header.html")?></td>
+            </tr>
+        	<!-- Right click Div Start -->
+        	<div class="contextMenu" id="contextMenu">
+            	<ul>
+            	    <li id="delete">$| LANG_LOCALE['14348'] |$</li>
+            	</ul>
+        	</div>
+        	<!-- Right click Div End -->
+            <tr>
+                <td valign="top" align="center">
+                <div class="midWidth">
+                    <script language="JavaScript">
+                        mmSel("mainMenu1");
+                    </script>
+                    <?lua if (statusSuccessMessage ~= returnCodes.NIL) then ?>
+			            <div class="msgSuccess">
+                            <p>$| statusSuccessMessage or '' |$</p>
+			            </div>
+		   	            <?lua elseif (statusErrorMessage ~= returnCodes.NIL) then?>
+			            <div class="msgError">
+                            <p>$| statusErrorMessage or '' |$</p>
+                       </div> 
+                       <?lua  end?>               
+                    <div class="FL2">
+                        <p class="hint">
+                            $| helpHintText |$
+                        </p>
+                    </div>
+                    <h1>$| LANG_LOCALE['10632'] |$</h1>
+                        <div class="midArea">
+                            <div align="left">
+                                <form name="tf1_frmCurrentLogs" id="tf1_frmCurrentLogs" action="platform.cgi" method="post">
+                                    <input type="hidden" name="thispage" id="thispage" value="logInfo.html">
+                                    <div id="tf1_dialog" class="configDialog"></div>
+                                    <div class="configRow">
+                                    <label>$| LANG_LOCALE['14349'] |$</label>
+                                    <select id="tf1_facilityLevel" name="logInfo.facility" size="1" onchange="$('#tf1_facilityBtn').trigger('click')">
+                                        <option $| web.dropdownSelected(facilityLevel == 255) |$ value=255>$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(facilityLevel == 0) |$ value=0>$| LANG_LOCALE['13563'] |$</option>
+                                        <option $| web.dropdownSelected(facilityLevel == 3) |$ value=3>$| LANG_LOCALE['13036'] |$</option>
+                                        <?lua if(UNIT_NAME == "DSR-1000N" or UNIT_NAME == "DSR-500N" or UNIT_NAME == "DSR-250N" or UNIT_NAME == "DSR-150N" or UNIT_NAME == "DSR-1000AC" or UNIT_NAME == "DSR-500AC") then ?>
+
+                                        <option $| web.dropdownSelected(facilityLevel == 16) |$ value=16>$| LANG_LOCALE['13446'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(facilityLevel == 18) |$ value=18>$| LANG_LOCALE['11761'] |$</option>
+                                        <option $| web.dropdownSelected(facilityLevel == 19) |$ value=19>$| LANG_LOCALE['13447'] |$</option>
+                                        <?lua if (wcfLicence) then ?>
+                                        <option $| web.dropdownSelected(facilityLevel == 20) |$ value=20>$| LANG_LOCALE['14350'] |$</option>
+                                        <?lua end ?>
+                                        <option $| web.dropdownSelected(facilityLevel == 21) |$ value=21>$| LANG_LOCALE['11007'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['14351'] |$</label>
+                                    <select id="tf1_categoryDyn" name="logInfo.category" size="1" onchange="$('#tf1_facilityBtn').trigger('click')"></select>
+                                    <input type="hidden" id="tf1_hid_categoryDyn" value="$| category or '' |$">
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>
+                                <div class="configRow">
+                                    <label>$| LANG_LOCALE['14361'] |$</label>
+                                    <select id="tf1_severityLevel" name="logInfo.severity" size="1" onchange="$('#tf1_facilityBtn').trigger('click')">
+                                        <option $| web.dropdownSelected(severityLevel == 0) |$ value=0>$| LANG_LOCALE['10207'] |$</option>
+                                        <option $| web.dropdownSelected(severityLevel == 1) |$ value=1>$| LANG_LOCALE['10872'] |$</option>
+                                        <option $| web.dropdownSelected(severityLevel == 2) |$ value=2>$| LANG_LOCALE['10205'] |$</option>
+                                        <option $| web.dropdownSelected(severityLevel == 4) |$ value=4>$| LANG_LOCALE['10620'] |$</option>
+                                        <option $| web.dropdownSelected(severityLevel == 8) |$ value=8>$| LANG_LOCALE['10949'] |$</option>
+                                        <option $| web.dropdownSelected(severityLevel == 16) |$ value=16>$| LANG_LOCALE['13330'] |$</option>
+                                        <option $| web.dropdownSelected(severityLevel == 32) |$ value=32>$| LANG_LOCALE['11801'] |$</option>
+                                        <option $| web.dropdownSelected(severityLevel == 64) |$ value=64>$| LANG_LOCALE['11178'] |$</option>
+                                        <option $| web.dropdownSelected(severityLevel == 128) |$ value=128>$| LANG_LOCALE['10682'] |$</option>
+                                    </select>
+                                </div>
+                                <div class="break">
+                                    &nbsp;
+                                </div>                                
+					            <div class="submitRow" style="display:none">							
+                                    <input type="submit" id="tf1_facilityBtn" name="button.config.logInfo.logInfo" class="btnSubmit">							
+                                </div>
+                                <div class="break">&nbsp;</div>
+                                </form>
+                            </div> <!-- close align = left -->                           
+							    <div class="break">
+								    &nbsp;
+							    </div>
+							</form>
+                            <h2>$| LANG_LOCALE['14362'] |$</h2>
+                            <div class="break"> &nbsp; </div>                            
+                            <div class="CLR">
+                                <div class="demo_jui" id="tf1_currentLogs">
+                                    <table cellpadding="0" cellspacing="0" border="0" class="display" id="recordsData">
+                                        <thead>
+                                            <tr>
+                                                <th>$| LANG_LOCALE['10991'] |$</th>
+                                                <th>$| LANG_LOCALE['12844'] |$</th>
+                                                <th>$| LANG_LOCALE['11708'] |$</th>
+                                            </tr>
+                                        </thead>
+                                        <?lua 
+                                            for k, v in pairs (currentLogsTbl) do
+                                            local outputTable = {}
+                                            outputTable = currentLogsTbl[k]
+                                            local rowId = outputTable["eventLogging._ROWID_"]
+                                            local facility = outputTable["eventLogging.facilityId"]
+                                            if (facility == "0") then
+                                               facility = LANG_LOCALE['14427']
+                                            elseif (facility == "3") then
+                                               facility = LANG_LOCALE['14422']
+                                            elseif (facility == "16") then
+                                               facility = LANG_LOCALE['14424']
+                                            elseif (facility == "18") then
+                                               facility = LANG_LOCALE['14425']
+                                            elseif (facility == "19") then
+                                               facility = LANG_LOCALE['13447']
+                                            elseif (facility == "20") then
+                                               facility = LANG_LOCALE['14350']
+                                            elseif (facility == "21") then
+                                               facility = LANG_LOCALE['14409']
+                                            end
+                                            local severity = outputTable["eventLogging.logLevel"]
+                                            local imgToolTip = ""
+                                            if (severity == "1") then                                           
+                                                class = "emergencyIcon" 
+                                                imgToolTip = LANG_LOCALE['10872']
+                                            elseif (severity == "2") then
+                                                class = "alertIcon" 
+                                                imgToolTip = LANG_LOCALE['10205']
+                                            elseif (severity == "4") then
+                                                class = "criticalIcon" 
+                                                imgToolTip = LANG_LOCALE['10620']
+                                            elseif (severity == "8") then
+                                                class = "errorIcon" 
+                                                imgToolTip = LANG_LOCALE['10949']
+                                            elseif (severity == "16") then
+                                                class = "warningIcon" 
+                                                imgToolTip = LANG_LOCALE['13330']
+                                            elseif (severity == "32") then
+                                                class = "noticeIcon" 
+                                                imgToolTip = LANG_LOCALE['11801']
+                                            elseif (severity == "64") then
+                                                class = "informationalIcon" 
+                                                imgToolTip = LANG_LOCALE['11178']
+                                            elseif (severity == "128") then
+                                                class = "debugIcon" 
+                                                imgToolTip = LANG_LOCALE['10682']
+                                            end
+                                            local message = outputTable["eventLogging.textMessage"]
+                                            local subMessage = message
+                                            if (#message > 100) then
+                                                subMessage = string.sub(message, 1, 100) .. "..."
+                                            end
+                                        ?>
+                                        <tr class="gradeA" id="$| rowId |$">
+                                            <td style="text-align:center">$| facility or '' |$</td>
+                                            <td title="$| imgToolTip |$">
+                                                <p class = $| class |$>&nbsp;</p>
+                                            </td>
+                                            <td title="$| message |$">$| subMessage or '' |$ <span class='hide'>$| message |$</span></td>
+                                        </tr>
+                                        <?lua end?>
+                                    </table>
+                                </div>
+                            </div> <!-- close CLR class tag -->
+                            <form name action="platform.cgi" method="post" name="tf1_frLogInfo" id="tf1_frLogInfo">    
+                                <input type="hidden" name="thispage" id="thispage" value="logInfo.html">
+                                <div class="buttonsRow">
+                                    <input type="submit" value="$| LANG_LOCALE['10507'] |$" name="button.clearLogs.logInfo" title="$| LANG_LOCALE['10507'] |$" class="btnSubmit" id="btSave">
+                                    <input type="submit" value="$| LANG_LOCALE['12813'] |$" name="button.sendLogs.logInfo" title="$| LANG_LOCALE['12813'] |$" class="btnSubmit" id="btSave">
+                                </div>
+                            </form>         
+                            <form name="tf1_frmExport" id="tf1_frmExport" action="platform.cgi?action=logExport" method="post">
+					            <input type="hidden" name="thispage" id="thispage" value="logInfo.html">                            
+                                <div class="buttonsRow">
+				                    <input type="submit" class="btnSubmit" title="$| LANG_LOCALE['14363'] |$" value="$| LANG_LOCALE['14363'] |$" id="btSave">
+							    </div>
+							</form>                            
+                            <div class="break">
+                                &nbsp;
+                            </div>                            
+</div> <!-- close midArea class tag -->
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <?lua web.includeMenu("footer.html")?></td>
+            </tr>
+        </table>
+        <input type="hidden" value="$| HIGH_SEC or '' |$" id="tf1_hd_highSec" >
+        <input type="hidden" value="$| wcfLicenceStatus |$" id="tf1_hd_wcfLicence" >
+        <input type="hidden" value="$| UNIT_NAME or '' |$" id="tf1_unitName" >
+        <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mis.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mgmt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/contextMenu.js"></script>
+        <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+		$('#tf1_currentLogs .gradeA').contextMenu('contextMenu', {
+                     bindings : {                   
+                        'deleteMenu' : function(t, e, rowId) {
+							deleteRows('button.clearLog.logInfo.logInfo', 'tf1_frmCurrentLogs', rowId, 'optionSelectAll', 'tf1_dialog', 'logInfo', 'logInfo');
+						},
+					},
+				});
+
+				oTable = $('#recordsData').dataTable({
+					"bJQueryUI" : true,
+					"sPaginationType" : "full_numbers"
+				});
+                dataRightClick(true);
+                
+                var categoryList, categoryOptions,facilityLevel,highSec,unitName,wcfLicence;
+                facilityLevel = $('#tf1_facilityLevel').val();
+                highSec = $('#tf1_hd_highSec').val();
+                unitName = $('#tf1_unitName').val();
+                wcfLicence = $('#tf1_hd_wcfLicence').val();
+                if (!facilityLevel) return;
+                switch (parseInt (facilityLevel, 10))
+                    {
+                        case 0: // Kernel
+                            $('#tf1_categoryDyn').find('option').remove();
+                            categoryList = [
+                                {'val':'all','label':LANG_LOCALE['30013']},
+                                {'val':'KERNEL','label':LANG_LOCALE['14427']}
+                            ];
+                            break;
+                        case 21: // Firewall
+                            $('#tf1_categoryDyn').find('option').remove();
+                            categoryList = [
+                                {'val':'all','label':LANG_LOCALE['30013']},
+                                {'val':'CAPTIVE_PORTAL','label':LANG_LOCALE['14403']},
+                                {'val':'FIREWALL','label':LANG_LOCALE['14409']},
+                                {'val':'QOS','label':LANG_LOCALE['14418']},
+                                {'val':'IPS','label':LANG_LOCALE['11416']}];
+                            break;
+                        case 20: // WCF
+                            $('#tf1_categoryDyn').find('option').remove();
+                            categoryList = [
+                                {'val':'all','label':LANG_LOCALE['30013']},
+                                {'val':'SYSTEM','label':LANG_LOCALE['14422']},
+                                {'val':'WCF','label':LANG_LOCALE['14350']}
+                            ];
+                            break;
+                        case 18: // Network
+                            $('#tf1_categoryDyn').find('option').remove();
+                            categoryList = [
+                                {'val':'all','label':LANG_LOCALE['30013']},
+                                {'val':'AUTH','label':LANG_LOCALE['14401']},
+                                {'val':'PPP','label':LANG_LOCALE['14359']},
+                                {'val':'DNS','label':LANG_LOCALE['14407']},
+                                {'val':'IPv4','label':LANG_LOCALE['30186']},
+                                {'val':'DHCP_CLIENT','label':LANG_LOCALE['14404']},
+                                {'val':'DHCP_SERVER','label':LANG_LOCALE['14406']},
+                                {'val':'DHCP_RELAY','label':LANG_LOCALE['14405']},
+                                {'val':'IPv6','label':LANG_LOCALE['11444']},
+                                {'val':'IGMP','label':LANG_LOCALE['14356']},
+                                {'val':'L2TP','label':LANG_LOCALE['11502']},
+                                {'val':'L2TP_CLIENT','label':LANG_LOCALE['14413']},
+                                {'val':'SYSTEM','label':LANG_LOCALE['14422']},
+                                {'val':'L2TP_SERVER','label':LANG_LOCALE['14428']},
+                                {'val':'RIP','label':LANG_LOCALE['12714']},
+                                {'val':'PPTP','label':LANG_LOCALE['12509']},
+                                {'val':'PPTP_SERVER','label':LANG_LOCALE['14417']},
+                                {'val':'QOS','label':LANG_LOCALE['14418']}
+                            ];
+                            break;
+                        case 16: // Wireless
+                            $('#tf1_categoryDyn').find('option').remove();
+                            categoryList = [
+                                {'val':'all','label':LANG_LOCALE['30013']},
+                                {'val':'WIRELESS','label':LANG_LOCALE['14424']}
+                            ];
+                            break;
+                        case 3: // System
+                            $('#tf1_categoryDyn').find('option').remove();
+                            categoryList = [
+                                {'val':'all','label':LANG_LOCALE['30013']},
+                                {'val':'SYSTEM','label':LANG_LOCALE['14422']},
+                                {'val':'AUTH','label':LANG_LOCALE['14401']},
+                                {'val':'VLAN','label':LANG_LOCALE['13272']},
+                                {'val':'QOS','label':LANG_LOCALE['14418']},
+                                {'val':'CLI','label':'CLI'},
+                                {'val':'DNS','label':LANG_LOCALE['14407']},
+                                {'val':'DHCP_CLIENT','label':LANG_LOCALE['14404']},
+                                {'val':'DHCP_RELAY','label':LANG_LOCALE['14405']},
+                                {'val':'DHCP_SERVER','label':LANG_LOCALE['14406']},
+                                {'val':'FIRMWARE','label':LANG_LOCALE['14410']},
+                                {'val':'FRESET','label':LANG_LOCALE['14408']},
+                                {'val':'Bandwidth','label':LANG_LOCALE['14258']},
+                                {'val':'GRE','label':LANG_LOCALE['11077']},
+                                {'val':'IPv4','label':LANG_LOCALE['30186']},
+                                {'val':'IFSTATIC','label':LANG_LOCALE['14421']},
+                                {'val':'IGMP','label':LANG_LOCALE['14356']},
+                                {'val':'INTEL_AMT','label':LANG_LOCALE['14411']},
+                                {'val':'FIREWALL','label':LANG_LOCALE['14409']},
+                                {'val':'RIP','label':LANG_LOCALE['12714']},
+                                {'val':'IPv6','label':LANG_LOCALE['11444']},
+                                {'val':'L2TP_CLIENT','label':LANG_LOCALE['14413']},
+                                {'val':'LM','label':LANG_LOCALE['14358']},
+                                {'val':'PPP','label':LANG_LOCALE['14359']},
+                                {'val':'PPPoE','label':LANG_LOCALE['12507']},
+                                {'val':'PPTP_CLIENT','label':LANG_LOCALE['14416']},
+                                {'val':'SIP','label':LANG_LOCALE['12864']},
+                                {'val':'SMTP','label':LANG_LOCALE['12874']},
+                                {'val':'SNMP','label':LANG_LOCALE['12879']},
+                                {'val':'SSH','label':LANG_LOCALE['12917']},
+                                {'val':'3G','label':LANG_LOCALE['14352']},
+                                {'val':'USERAUTH','label':'USERAUTH'},
+                                {'val':'L2TP','label':LANG_LOCALE['11502']},
+                                {'val':'PPTP_SERVER','label':LANG_LOCALE['14417']},
+                                {'val':'L2TP_SERVER','label':LANG_LOCALE['14428']},
+                                {'val':'SMTPALG','label':LANG_LOCALE['14419']},
+                                {'val':'BRIDGE','label':LANG_LOCALE['14402']},
+                                {'val':'LOGIN','label':LANG_LOCALE['14414']},
+                                {'val':'TIME','label':LANG_LOCALE['14423']},
+                                {'val':'USB','label':LANG_LOCALE['30348']},
+                                {'val':'WATCH_DOG','label':LANG_LOCALE['14360']},
+                                {'val':'OSPF','label':LANG_LOCALE['11863']}
+                            ];
+                                
+                                if (highSec == 'HIGH') {
+                                    categoryList.push({'val':'OPEN_VPN','label':LANG_LOCALE['14415']});
+                                }
+                                if (unitName == "DSR-1000N" || unitName == "DSR-500N" || unitName == "DSR-250N" || unitName == "DSR-150N" || unitName == "DSR-1000AC" || unitName == "DSR-500AC") {
+                                    categoryList.push({'val':'WIRELESS','label':LANG_LOCALE['14424']});
+                                }
+                            break;
+                        case 19: // VPN
+                            $('#tf1_categoryDyn').find('option').remove();
+                            categoryList = [
+                                {'val':'all','label':LANG_LOCALE['30013']},
+                                {'val':'IPSEC','label':LANG_LOCALE['14412']},
+                                {'val':'VPN','label':LANG_LOCALE['13447']}
+                            ];
+                            if (highSec == 'HIGH') {
+                                categoryList.push({'val':'OPEN_VPN','label':LANG_LOCALE['14415']});
+                                categoryList.push({'val':'SSLVPN','label':LANG_LOCALE['14420']});
+                            }
+                            break;
+                        default: // 255 All
+                            $('#tf1_categoryDyn').find('option').remove();
+                            categoryList = [
+                                {'val':'all','label':LANG_LOCALE['30013']},
+                                {'val':'KERNEL','label':LANG_LOCALE['14427']},
+                                {'val':'CAPTIVE_PORTAL','label':LANG_LOCALE['14403']},
+                                {'val':'FIREWALL','label':LANG_LOCALE['14409']},
+                                {'val':'QOS','label':LANG_LOCALE['14418']},
+                                {'val':'IPS','label':LANG_LOCALE['11416']},
+                                {'val':'SYSTEM','label':LANG_LOCALE['14422']},
+                                {'val':'DHCP_CLIENT','label':LANG_LOCALE['14404']},
+                                {'val':'DHCP_SERVER','label':LANG_LOCALE['14406']},
+                                {'val':'DHCP_RELAY','label':LANG_LOCALE['14405']},
+                                {'val':'IPv6','label':LANG_LOCALE['11444']},
+                                {'val':'IGMP','label':LANG_LOCALE['14356']},
+                                {'val':'L2TP','label':LANG_LOCALE['11502']},
+                                {'val':'L2TP_CLIENT','label':LANG_LOCALE['14413']},
+                                {'val':'L2TP_SERVER','label':LANG_LOCALE['14428']},
+                                {'val':'RIP','label':LANG_LOCALE['12714']},
+                                {'val':'PPTP','label':LANG_LOCALE['12509']},
+                                {'val':'PPTP_SERVER','label':LANG_LOCALE['14417']},
+                                {'val':'AUTH','label':LANG_LOCALE['14401']},
+                                {'val':'VLAN','label':LANG_LOCALE['13272']},
+                                {'val':'CLI','label':'CLI'},
+                                {'val':'DNS','label':LANG_LOCALE['14407']},
+                                {'val':'FIRMWARE','label':LANG_LOCALE['14410']},
+                                {'val':'FRESET','label':LANG_LOCALE['14408']},
+                                {'val':'Bandwidth','label':LANG_LOCALE['14258']},
+                                {'val':'GRE','label':LANG_LOCALE['11077']},
+                                {'val':'IPv4','label':LANG_LOCALE['30186']},
+                                {'val':'IFSTATIC','label':LANG_LOCALE['14421']},
+                                {'val':'INTEL_AMT','label':LANG_LOCALE['14411']},
+                                {'val':'LM','label':LANG_LOCALE['14358']},
+                                {'val':'PPP','label':LANG_LOCALE['14359']},
+                                {'val':'PPPoE','label':LANG_LOCALE['12507']},
+                                {'val':'PPTP_CLIENT','label':LANG_LOCALE['14416']},
+                                {'val':'SIP','label':LANG_LOCALE['12864']},
+                                {'val':'SMTP','label':LANG_LOCALE['12874']},
+                                {'val':'SNMP','label':LANG_LOCALE['12879']},
+                                {'val':'SSH','label':LANG_LOCALE['12917']},
+                                {'val':'3G','label':LANG_LOCALE['14352']},
+                                {'val':'USERAUTH','label':'USERAUTH'},
+                                {'val':'SMTPALG','label':LANG_LOCALE['14419']},
+                                {'val':'BRIDGE','label':LANG_LOCALE['14402']},
+                                {'val':'LOGIN','label':LANG_LOCALE['14414']},
+                                {'val':'TIME','label':LANG_LOCALE['14423']},
+                                {'val':'USB','label':LANG_LOCALE['30348']},
+                                {'val':'WATCH_DOG','label':LANG_LOCALE['14360']},
+                                {'val':'OSPF','label':LANG_LOCALE['11863']},
+                                {'val':'IPSEC','label':LANG_LOCALE['14412']},
+                                {'val':'VPN','label':LANG_LOCALE['13447']}
+                            ];
+                            if (highSec == 'HIGH') {
+                                categoryList.push({'val':'OPEN_VPN','label':LANG_LOCALE['14415']});
+                                categoryList.push({'val':'SSLVPN','label':LANG_LOCALE['14420']});
+                            }
+                            if (unitName == "DSR-1000N" || unitName == "DSR-500N" || unitName == "DSR-250N" || unitName == "DSR-150N" || unitName == "DSR-1000AC" || unitName == "DSR-500AC") {
+                                categoryList.push({'val':'WIRELESS','label':LANG_LOCALE['14424']});
+                            }
+                            if (wcfLicence == "1") {
+                                categoryList.push({'val':'WCF','label':LANG_LOCALE['14350']});
+                            }
+                            break;
+                    }
+                    
+                    if (categoryList.length > 0)
+                        {
+                            for (var i =0; i < categoryList.length; i++)
+                                {
+                                    categoryOptions = categoryOptions + '<option value="' + categoryList[i].val + '">' + categoryList[i].label + "</option>";
+                                }
+                            $("#tf1_categoryDyn").html(categoryOptions);
+                        }
+                    
+                    $("#tf1_categoryDyn").val($("#tf1_hid_categoryDyn").val());
+                
+    });
+        </script>
+    </body>
+</html>
+<?lua end?>

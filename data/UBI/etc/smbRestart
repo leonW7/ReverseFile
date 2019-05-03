@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# smbdRestart - script to restart the samba server
+#
+# Copyright (c) 2008 - 2010, TeamF1, Inc.
+#
+# modification history
+# --------------------
+# 01b,08sep10,pnm  added nmbd
+# 01a,22sep08,pnm  written.
+
+if [ $# -ne 2 ]
+then
+    echo "Usage - $0 <smb config file> <action>"
+    exit 1
+fi
+
+if [ "$2" = "start" ]
+then
+    # Kill the existing server
+    killall -9 smbd
+    killall -9 nmbd
+    
+    # Start the smb server
+    /pfrm2.0/bin/smbd -s $1 -D
+    sleep 2
+    /pfrm2.0/bin/nmbd -s $1 -D
+
+else
+    # Kill the existing server
+    killall -9 smbd
+    killall -9 nmbd
+    rm -rf /tmp/smb.conf
+fi
