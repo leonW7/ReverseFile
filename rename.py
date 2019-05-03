@@ -1,6 +1,6 @@
 import os
 
-path = "E:\\firmware\\DSR\\UBI"
+path = "data\\UBI"
 
 if __name__ == "__main__":
     dirfile = os.walk(path)
@@ -25,13 +25,11 @@ if __name__ == "__main__":
                         else:
                             new_path = fullpath
                         print(new_path)
-                        un_path = new_path + "_de"
-                        if not os.path.exists(un_path):
-                            try:
-                                os.system("7z x -r" + new_path + "-o " + un_path)
-                                print("Unzip to %s ..." % un_path)
-                            except OSError as e:
-                                print('Reason:', e)
+                        try:
+                            os.system("7z x -r " + new_path + " -o " + dirpath)
+                            print("Unzip to %s ..." % dirpath)
+                        except OSError as e:
+                            print('Reason:', e)
                     else:
                         print("not 7z file")
             except IOError:
