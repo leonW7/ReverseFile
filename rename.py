@@ -17,12 +17,21 @@ if __name__ == "__main__":
                         print("find 7z file")
                         file.close()
                         if ".7z" not in fullpath:
-                            newpath = fullpath + ".7z"
-                        print(newpath)
-                        try:
-                            os.rename(fullpath, newpath)
-                        except OSError as e:
-                            print('Reason:', e)
+                            new_path = fullpath + ".7z"
+                            try:
+                                os.rename(fullpath, new_path)
+                            except OSError as e:
+                                print('Reason:', e)
+                        else:
+                            new_path = fullpath
+                        print(new_path)
+                        un_path = new_path + "_de"
+                        if not os.path.exists(un_path):
+                            try:
+                                os.system("7z x -r" + new_path + "-o " + un_path)
+                                print("Unzip to %s ..." % un_path)
+                            except OSError as e:
+                                print('Reason:', e)
                     else:
                         print("not 7z file")
             except IOError:
