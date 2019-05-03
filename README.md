@@ -1,4 +1,4 @@
-# Renamefile
+# Reversefile
 rename file according to its fileformat
 
 ## add unzip 
