@@ -1,7 +1,7 @@
 import os
 
-# path = "data\\UBI" #test data
-path = "E:\\firmware\\DSR\\_DSR-500_Bx_FW3.12B101H_WW.extracted\\extracted\\1086010322\\UBI"
+path = "data\\UBI" #test data
+#path = "E:\\firmware\\DSR\\_DSR-500_Bx_FW3.12B101H_WW.extracted\\extracted\\1086010322\\UBI"
 #path = "E:\\IoT\\dlink\\DSR\\bin"
 
 def unzip7z(filepath,dirpath):

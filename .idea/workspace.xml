@@ -2,15 +2,660 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="11f05859-c940-4bd2-afa2-894414fce89c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/UBI/sslvpn/bin/httpd.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/UBI/sslvpn/bin/httpd.c.backend.bc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/UBI/sslvpn/bin/httpd.c.backend.ll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/UBI/sslvpn/bin/httpd.c.frontend.dsm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/UBI/sslvpn/bin/httpd.c.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/UBI/sslvpn/bin/httpd.dec-backup.idb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/UBI/sslvpn/bin/httpd.idb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/UBI/sslvpn/bin/httpd.idb.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/ShowFirmVersion.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/ShowFirmVersion.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/apt_get.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/apt_get.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/configUpdate.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/configUpdate.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/configUpdate2.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/configUpdate2.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/dot11mgmt.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/dot11mgmt.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/dpkg.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/dpkg.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/exportCfg.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/exportCfg.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/hwFamilyHandler.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/hwFamilyHandler.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/pkgMgmtInit.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/pkgMgmtInit.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/radAcctRouteTblUpdate.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/radAcctRouteTblUpdate.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/restoreDB.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/restoreDB.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/bin/saveDB.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/bin/saveDB.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/CLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/CLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/config.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/config.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/cookies.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/cookies.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/lp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/lp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/post.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/post.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/readuntil.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/readuntil.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/serialize.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/serialize.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/session.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/session.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/urlcode.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/cgilua/urlcode.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/copas.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/copas.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/ltn12.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/ltn12.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/mime.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/mime.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/sapi/cgi/info.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/sapi/cgi/info.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/sapi/cgi/request.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/sapi/cgi/request.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/sapi/cgi/response.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/sapi/cgi/response.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/ftp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/ftp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/http.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/http.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/smtp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/smtp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/tp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/tp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/url.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/socket/url.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/stable.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/stable.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/6to4CLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/6to4CLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/I18N.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/I18N.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ThreeGInternet.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ThreeGInternet.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/accessPoints_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/accessPoints_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/accountingCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/accountingCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/accounting_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/accounting_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/accounting_core.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/accounting_core.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeL2tpVpns_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeL2tpVpns_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeOpenVpn_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeOpenVpn_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activePptpVpns_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activePptpVpns_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeSelfCertificates_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeSelfCertificates_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeSessions_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeSessions_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeSslVpns_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeSslVpns_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeVpns_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/activeVpns_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/adServer_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/adServer_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/admin_intelAmt.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/admin_intelAmt.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/admin_license.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/admin_license.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/admin_smtp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/admin_smtp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/admin_snmp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/admin_snmp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/advancedCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/advancedCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/advancedVlan.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/advancedVlan.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/advancedWireless_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/advancedWireless_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/algs.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/algs.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/algs_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/algs_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/apProvisioning_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/apProvisioning_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/applicationRulesStatus_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/applicationRulesStatus_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/applicationRules_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/applicationRules_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/applicationrulesCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/applicationrulesCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/approvedCategory_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/approvedCategory_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/approvedMailIds_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/approvedMailIds_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/approvedUrls_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/approvedUrls_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/attackChecks.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/attackChecks.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/attackChecks_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/attackChecks_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/auth_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/auth_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/auth_validations.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/auth_validations.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_activedirectory.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_activedirectory.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_ldap.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_ldap.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_ntdomain.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_ntdomain.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_pop3.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_pop3.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_radius.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/authentication_radius.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/backupConfigurations_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/backupConfigurations_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bandwidthProfilesConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bandwidthProfilesConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bandwidthProfilesReturnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bandwidthProfilesReturnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bandwidthProfiles_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bandwidthProfiles_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/billingDesk_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/billingDesk_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/billingProfile_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/billingProfile_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/billingsUsers_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/billingsUsers_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_adHocClients.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_adHocClients.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_adminSettings.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_adminSettings.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_allAps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_allAps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apChannelList.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apChannelList.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apFirmwareStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apFirmwareStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apHwCapabilities.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apHwCapabilities.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apProfiles.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apProfiles.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apProfilesQos.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apProfilesQos.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apProfilesRadio.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apProfilesRadio.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apProfilesSsid.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apProfilesSsid.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apSoftwareDownload.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apSoftwareDownload.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apWidsClientSecurity.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apWidsClientSecurity.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apWidsSecurity.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_apWidsSecurity.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_authFailedAps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_authFailedAps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_autoVoip.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_autoVoip.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_backupRestore.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_backupRestore.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_captivePortalSessions.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_captivePortalSessions.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_capturePackets.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_capturePackets.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_clientNeighborsAps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_clientNeighborsAps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_controllerAssociatedClients.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_controllerAssociatedClients.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_cosDscpMarking.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_cosDscpMarking.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_dashboard.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_dashboard.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_deAuthAttacks.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_deAuthAttacks.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_dettectedClients.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_dettectedClients.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_discoveredIpAddresses.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_discoveredIpAddresses.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_discoveredVlans.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_discoveredVlans.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_distributedTunnels.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_distributedTunnels.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_eventLogs.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_eventLogs.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_facilityLogs.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_facilityLogs.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_globalStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_globalStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_globalStatusAps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_globalStatusAps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_interfaces.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_interfaces.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_ipAliasing.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_ipAliasing.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_ipDscp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_ipDscp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_knownClients.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_knownClients.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_lanQos.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_lanQos.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_localOuiDatabase.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_localOuiDatabase.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logInfo.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logInfo.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsCaptivePortal.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsCaptivePortal.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsFirewall.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsFirewall.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsIpsecVpn.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsIpsecVpn.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsSslVpn.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsSslVpn.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsWcf.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsWcf.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsWlan.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_logsWlan.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_manageAp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_manageAp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_managedAps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_managedAps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_manualPowerAdjustment.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_manualPowerAdjustment.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_networkProfiles.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_networkProfiles.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_networkTools.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_networkTools.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_payment.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_payment.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerConfiguration.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerConfiguration.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerControllerConfigurationStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerControllerConfigurationStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerControllerInfo.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerControllerInfo.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerControllerManagedAps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerControllerManagedAps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerControllerReceiveStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerControllerReceiveStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_peerStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_policyBasedQos.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_policyBasedQos.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_powerAlgorithm.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_powerAlgorithm.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_powerSaving.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_powerSaving.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_priority802.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_priority802.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_queueManagement.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_queueManagement.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_queueScheduler.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_queueScheduler.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_remoteManagement.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_remoteManagement.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_rfScanAps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_rfScanAps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_routingLogs.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_routingLogs.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_softReboot.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_softReboot.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_syslogServer.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_syslogServer.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_systemCheck.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_systemCheck.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_systemPc.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_systemPc.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_teredoTunnel.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_teredoTunnel.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_trafficSelectors.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_trafficSelectors.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_trustMode.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_trustMode.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_usbStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_usbStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_validAps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_validAps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsAPGroupsStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsAPGroupsStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsAPLink.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsAPLink.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsApStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsApStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsGroupsLinkStatistics.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsGroupsLinkStatistics.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsGroupsLinkStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsGroupsLinkStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsGroupsStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsGroupsStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsManagedAP.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsManagedAP.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsManagedAPGroups.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wdsManagedAPGroups.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wirelessControllerSnmpTrap.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wirelessControllerSnmpTrap.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wlanAssociatedClients.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wlanAssociatedClients.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wlanWizard.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bl_wlanWizard.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/blockedClients_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/blockedClients_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/blockedKeywords_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/blockedKeywords_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/blockedMailIds_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/blockedMailIds_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeBandwidthProfilesConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeBandwidthProfilesConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeBandwidthProfiles_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeBandwidthProfiles_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeFirewallRules_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeFirewallRules_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeLib.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeLib.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeTrafficSelectorsConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeTrafficSelectorsConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeTrafficSelectors_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bridgeTrafficSelectors_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bwLimit.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bwLimit.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bwLimitCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bwLimitCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bwLimitMax.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/bwLimitMax.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortal.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortal.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortalSessions_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortalSessions_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortalSla_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortalSla_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortal_networkProfiles_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortal_networkProfiles_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortal_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captivePortal_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_billing.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_billing.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_loginProfile.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_loginProfile.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_loginProfileSla.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_loginProfileSla.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_payment.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_payment.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_sessions.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_sessions.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_sla.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_sla.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_validations.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/captiveportal_validations.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/certificates_selfCertificates.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/certificates_selfCertificates.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/certificates_trustedCertificates.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/certificates_trustedCertificates.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/cfpDefines.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/cfpDefines.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/cfpWebDBIface.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/cfpWebDBIface.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/cfp_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/cfp_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/changePassword_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/changePassword_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/channelAlg2_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/channelAlg2_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/channelAlg5GHz_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/channelAlg5GHz_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/channelPlanHistory2_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/channelPlanHistory2_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/channelPlanHistory5GHz_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/channelPlanHistory5GHz_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/checkFirmVersion.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/checkFirmVersion.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/checkUpdate_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/checkUpdate_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/clishCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/clishCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/config.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/config.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/contentFiltering_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/contentFiltering_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/cookie.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/cookie.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/createSms_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/createSms_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/crontab.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/crontab.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/customService_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/customService_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/customServicesCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/customServicesCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dashBoardHistoryScript.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dashBoardHistoryScript.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dashboardWanInfoCore.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dashboardWanInfoCore.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dateTime_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dateTime_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/db.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/db.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ddns.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ddns.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ddnsCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ddnsCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ddns_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ddns_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dettectedClientsInfo_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dettectedClientsInfo_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/deviceInfo_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/deviceInfo_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/deviceStatistics_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/deviceStatistics_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpClientInfoDmz_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpClientInfoDmz_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpClientInfoLan_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpClientInfoLan_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpClientInfoV6_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpClientInfoV6_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpOverIpSec.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpOverIpSec.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpRange_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpRange_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_leasedClientsDMZ.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_leasedClientsDMZ.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_leasedClientsIPv6.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_leasedClientsIPv6.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_leasedClientsLAN.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_leasedClientsLAN.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_macIpReservations.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_macIpReservations.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_reservedIpDMZ.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_reservedIpDMZ.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_reservedIpLAN.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_reservedIpLAN.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_serverDMZ.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_serverDMZ.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_serverLAN.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_serverLAN.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_serverVLAN.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcp_serverVLAN.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpc.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpc.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpcCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dhcpcCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/diagnostics_network.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/diagnostics_network.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/discoveredAps_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/discoveredAps_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/distributedTunneling_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/distributedTunneling_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/distributedTunnels_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/distributedTunnels_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmz.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmz.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmzCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmzCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmzDhcpReservedIps_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmzDhcpReservedIps_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmzReservedIpCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmzReservedIpCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmzSettings_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmzSettings_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmz_addressing.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmz_addressing.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmz_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dmz_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11ConfigCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11ConfigCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11ShowCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11ShowCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11TrExtn.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11TrExtn.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11View.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11View.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dot11_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dproxyMgmt.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dproxyMgmt.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dynamicDns_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dynamicDns_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dynamicwebFiltringCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/dynamicwebFiltringCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/easyVpnSetup_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/easyVpnSetup_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/errorMap.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/errorMap.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ethernet.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ethernet.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ethernetCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ethernetCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/extAuth.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/extAuth.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/extAuthCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/extAuthCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/external_auth.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/external_auth.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ezvpn.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ezvpn.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/factDef.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/factDef.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_approvedUrls.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_approvedUrls.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_blockedKeywords.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_blockedKeywords.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_content.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_content.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_dynamic.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_dynamic.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_validation.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/filter_validation.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewall-ruleCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewall-ruleCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewall.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewall.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewall6-ruleCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewall6-ruleCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewallRules6_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewallRules6_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewallRules_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewallRules_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewall_snmp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firewall_snmp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firmware.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/firmware.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/flowControl_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/flowControl_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/forcedLogin_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/forcedLogin_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/frontDesk_core.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/frontDesk_core.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwAlgConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwAlgConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwApplicationRules.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwApplicationRules.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwApplicationRulesUl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwApplicationRulesUl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwAttackChecks.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwAttackChecks.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwCustomServices.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwCustomServices.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwCustomServicesUl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwCustomServicesUl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwIpMacBinding.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwIpMacBinding.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwIpv4firewallRules.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwIpv4firewallRules.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwIpv6firewallRules.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwIpv6firewallRules.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwL2firewallRules.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwL2firewallRules.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwLogging.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwLogging.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwPriorityMap.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwPriorityMap.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwProtocolBinding.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwProtocolBinding.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwProtocolBindingValidation.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwProtocolBindingValidation.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwRemoteMgmt.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwRemoteMgmt.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwReturnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwReturnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwRules.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwRules.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwSchedules.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwSchedules.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwSchedulesUl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwSchedulesUl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwSmtpAlg.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwSmtpAlg.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwValidations.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwValidations.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwView.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwView.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwVpnPassThrough.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwVpnPassThrough.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwWebAccess.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/fwWebAccess.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/getUserDb.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/getUserDb.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/gre.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/gre.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/greCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/greCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/greTunnels_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/greTunnels_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/gre_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/gre_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/groups_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/groups_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/groups_ul.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/groups_ul.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/gvrp_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/gvrp_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/header_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/header_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/idsCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/idsCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ifDev.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ifDev.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ifDevCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ifDevCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ifStatic.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ifStatic.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmpCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmpCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmpSetup_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmpSetup_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmpSnooping_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmpSnooping_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmp_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmp_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmp_snooping.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/igmp_snooping.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/inbox_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/inbox_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/intelAmt.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/intelAmt.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/intelAmtCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/intelAmtCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/intelAmt_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/intelAmt_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/intelAmt_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/intelAmt_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipAlias.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipAlias.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipAliasCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipAliasCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipMacBinding_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipMacBinding_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipModeCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipModeCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipSec.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipSec.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/iproute.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/iproute.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/iprouteCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/iprouteCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ips.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ips.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ips_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ips_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_connectionStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_connectionStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_dhcpserver.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_dhcpserver.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_export.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_export.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_ike.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_ike.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_import.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_import.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_modeConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_modeConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_modeConfigVPN.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_modeConfigVPN.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_oneToOneMapping.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_oneToOneMapping.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_vpn.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipsec_vpn.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv4Option1Settings_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv4Option1Settings_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv4Option2settings_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv4Option2settings_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6AddressPools_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6AddressPools_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6LanWanConflict.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6LanWanConflict.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6Logs_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6Logs_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_6to4.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_6to4.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_6to4_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_6to4_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_dhcpv6ServerVlan.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_dhcpv6ServerVlan.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_isatap.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_isatap.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_isatap_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_isatap_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lan.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lan.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lanAddrPools_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lanAddrPools_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lanAddressPools.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lanAddressPools.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lanPrefixPools.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lanPrefixPools.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lan_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_lan_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_mode.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_mode.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_mode_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_mode_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_option1Settings_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_option1Settings_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_option2Settings_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_option2Settings_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_prefixLength_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_prefixLength_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_radvd.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_radvd.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_radvdPrefixes_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_radvdPrefixes_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_radvd_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_radvd_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_static_routes_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_static_routes_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_teredo.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_teredo.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_wanclients_dhcp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_wanclients_dhcp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_wanclients_pppoe.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_wanclients_pppoe.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_wanclients_static.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_wanclients_static.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_wanclients_static_routes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ipv6_wanclients_static_routes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/isatapCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/isatapCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/jumboFrame.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/jumboFrame.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/jumboFrame_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/jumboFrame_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/jumbo_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/jumbo_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2Firewall.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2Firewall.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2bwLimit.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2bwLimit.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpActiveUsers_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpActiveUsers_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpClient.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpClient.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpClientCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpClientCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpClient_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpClient_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpClient_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpClient_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpServer.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpServer.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpServer_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpServer_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpdCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpdCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpd_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/l2tpd_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lan.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lan.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanClients_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanClients_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanDhcpReservedIps_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanDhcpReservedIps_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanGroups.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanGroups.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanSettings_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanSettings_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lan_addressing.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lan_addressing.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lan_staticDns.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lan_staticDns.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lang.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lang.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanqos_autoVoip.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanqos_autoVoip.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanqos_flowControl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanqos_flowControl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanqos_priority.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanqos_priority.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanqos_trafficShaping.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lanqos_trafficShaping.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ldapServer_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ldapServer_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/libupnp_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/libupnp_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/licenseDefines.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/licenseDefines.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/licenseUpdate_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/licenseUpdate_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lmCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lmCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lmUtils.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lmUtils.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lm_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/lm_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logConfigCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logConfigCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logging.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logging.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/loggingCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/loggingCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logging_configuration.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logging_configuration.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logging_syslog.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logging_syslog.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logging_view.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/logging_view.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/login.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/login.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/loginProfilesSla_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/loginProfilesSla_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/loginProfiles_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/loginProfiles_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/login_sessionSettings.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/login_sessionSettings.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/macBasedVlan_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/macBasedVlan_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/macFilter_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/macFilter_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/mailFiltering_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/mailFiltering_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/managedAPs_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/managedAPs_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/management_config.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/management_config.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/management_string_map.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/management_string_map.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/manualChannelPlan2_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/manualChannelPlan2_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/manualChannelPlan5_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/manualChannelPlan5_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/multiLan.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/multiLan.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nat.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nat.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/natCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/natCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/net-snmp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/net-snmp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/networkProfile_captivePortal.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/networkProfile_captivePortal.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/network_snmp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/network_snmp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimf.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimf.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimf6CLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimf6CLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimfCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimfCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimfView.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimfView.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimfWanStatus.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimfWanStatus.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimf_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/nimf_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ntDomainServer_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ntDomainServer_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/omniSslClientConfig_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/omniSslClientConfig_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/oneToOneMapping_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/oneToOneMapping_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnAuthentication_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnAuthentication_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnCertificates_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnCertificates_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnEasyrsa.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnEasyrsa.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnLocalNetworks_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnLocalNetworks_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnRemoteNetworks_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnRemoteNetworks_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnServerPolicy_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnServerPolicy_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnSettings_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openVpnSettings_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpn.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpn.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpnCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpnCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpnStatusGet.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpnStatusGet.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpn_core.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpn_core.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpn_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpn_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpn_server_policy.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/openvpn_server_policy.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/optionMode_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/optionMode_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/optionQos_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/optionQos_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospf.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospf.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospfCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospfCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospfV3_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospfV3_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospf_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospf_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospf_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ospf_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/packageManager_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/packageManager_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pageListAccess.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pageListAccess.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pkgMgmt.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pkgMgmt.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pkg_drivers.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pkg_drivers.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pkg_language.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pkg_language.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pkg_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pkg_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/platform_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/platform_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/policies_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/policies_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pop.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pop.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pop3Server_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pop3Server_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portManagementCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portManagementCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portMgmt.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portMgmt.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portRateControl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portRateControl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portShapingRate_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portShapingRate_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portVlan_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portVlan_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portalInfo_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/portalInfo_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/powersaving.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/powersaving.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pppoe.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pppoe.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pppoeCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pppoeCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pppoeProfile.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pppoeProfile.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpActiveUsers_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpActiveUsers_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpClient.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpClient.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpClientCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpClientCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpClient_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpClient_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpClient_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpClient_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpServer.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpServer.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpServer_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpServer_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpdCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpdCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpd_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/pptpd_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/profileConfig_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/profileConfig_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/protocolBinding.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/protocolBinding.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/protocolBindingCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/protocolBindingCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/protocolBinding_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/protocolBinding_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/protocolVlan_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/protocolVlan_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radAccStats_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radAccStats_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radAccounting_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radAccounting_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radioConfig_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radioConfig_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radius.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radius.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radiusAccounting_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radiusAccounting_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radiusCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radiusCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radiusServer_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radiusServer_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radius_accounting.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radius_accounting.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radvd.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radvd.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radvdCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/radvdCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/remoteCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/remoteCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/remoteLogs_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/remoteLogs_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/resourceUsage_cpu.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/resourceUsage_cpu.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/resourceUsage_memory.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/resourceUsage_memory.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_dhcpv6.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_dhcpv6.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_ifStatic6.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_ifStatic6.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_ipv6_nimf.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_ipv6_nimf.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_isatap.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_isatap.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_pppoe.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_pppoe.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_radvd.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_radvd.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_route6.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/returnCodes_route6.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/rip.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/rip.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ripCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ripCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/rip_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/rip_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/rip_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/rip_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/route_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/route_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routingMode_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routingMode_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routing_ospf.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routing_ospf.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routing_ospfv3.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routing_ospfv3.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routing_rip.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routing_rip.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routing_static_routes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/routing_static_routes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/schedulesCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/schedulesCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/schedules_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/schedules_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/security_ips.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/security_ips.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/security_snmp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/security_snmp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/selfCertificateRequest_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/selfCertificateRequest_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/serverCheck.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/serverCheck.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/servicesRouteMgmt_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/servicesRouteMgmt_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/services_ddns.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/services_ddns.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/services_igmpProxy.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/services_igmpProxy.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/services_routeMgmt.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/services_routeMgmt.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/services_upnp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/services_upnp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sessionLimitProfilesConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sessionLimitProfilesConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sessionLimitProfiles_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sessionLimitProfiles_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sessionSettings_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sessionSettings_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/setLanguage_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/setLanguage_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sharePort.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sharePort.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sharePortCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sharePortCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/simCardAuth_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/simCardAuth_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sms.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sms.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smsEvent_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smsEvent_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smtpAlg.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smtpAlg.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smtpAlgCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smtpAlgCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smtpAlg_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smtpAlg_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smtpClient_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/smtpClient_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpACL_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpACL_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpMib.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpMib.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpSystemInfo_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpSystemInfo_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpTrapList_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmpTrapList_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_acl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_acl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_sysInfo.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_sysInfo.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_traps.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_traps.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_users.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/snmp_users.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sourceMacFilteringCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sourceMacFilteringCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/splitDnsNames_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/splitDnsNames_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sshd.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sshd.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslAdmin.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslAdmin.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslEnable.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslEnable.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslVpnClientRoutes_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslVpnClientRoutes_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslVpnPortalLayouts_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslVpnPortalLayouts_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslVpnServer_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslVpnServer_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpnCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpnCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpnClient_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpnClient_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpnResourceConfig_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpnResourceConfig_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpnResources_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpnResources_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_client.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_client.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_client_route.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_client_route.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_currentUsers.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_currentUsers.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_loginProfile.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_loginProfile.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_portForwarding.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_portForwarding.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_portalLayout.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_portalLayout.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_resource.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_resource.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_resourceConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_resourceConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_server_policy.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/sslvpn_server_policy.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/staticRouting_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/staticRouting_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/statistics_activeInfo.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/statistics_activeInfo.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/statistics_traffic.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/statistics_traffic.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/stats_db.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/stats_db.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/switchdriverCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/switchdriverCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/systemCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/systemCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/systemLogs_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/systemLogs_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_actions.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_actions.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_activeSessions.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_activeSessions.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_maintenance.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_maintenance.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_management.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_management.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_productData.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_productData.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_remoteManagement.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_remoteManagement.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_time.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/system_time.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/tahiCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/tahiCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/tcpdump.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/tcpdump.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/teredoCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/teredoCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_createSms.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_createSms.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_inbox.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_inbox.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_simCardAuth.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_simCardAuth.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_smsEvent.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/threeg_smsEvent.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/time.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/time.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/timeCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/timeCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/time_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/time_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/tools_snmp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/tools_snmp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trafficMeterCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trafficMeterCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trafficSelectorConfig.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trafficSelectorConfig.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trafficSelectorReturnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trafficSelectorReturnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trafficSelector_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trafficSelector_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trustedCertificates_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/trustedCertificates_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/tunnelMode_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/tunnelMode_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ul_contentFiltering.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/ul_contentFiltering.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/upnp.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/upnp.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/upnpCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/upnpCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/upnp_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/upnp_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/urlFilter_accessControl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/urlFilter_accessControl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/urlFilteringAccessControl_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/urlFilteringAccessControl_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usbCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usbCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usbSharePorts_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usbSharePorts_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_cookie.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_cookie.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_printing.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_printing.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_status.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/usb_status.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_browserPolicies.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_browserPolicies.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_export.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_export.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_groups.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_groups.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_networkPolicies.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_networkPolicies.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_users.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/user-management_users.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/userdb.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/userdb.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/userdbCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/userdbCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/userdb_returnCodes.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/userdb_returnCodes.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/userdb_validations.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/userdb_validations.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/users_bl.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/users_bl.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/util.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/util.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/utilitiesCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/utilitiesCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/utilsCLI.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/utilsCLI.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/validations.lua" beforeDir="false" afterPath="$PROJECT_DIR$/data/UBI/share/lua/5.1/teamf1lualib/validations.lua" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rename.py" beforeDir="false" afterPath="$PROJECT_DIR$/rename.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,7 +671,7 @@
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="161">
-                <caret line="7" column="13" lean-forward="true" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+                <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
               </first_editor>
               <second_editor />
             </state>
@@ -36,8 +681,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rename.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-357">
-              <caret line="46" column="42" selection-start-line="46" selection-start-column="42" selection-end-line="46" selection-end-column="42" />
+            <state relative-caret-position="-483">
+              <caret line="3" column="1" selection-start-line="3" selection-start-column="1" selection-end-line="3" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -171,11 +816,19 @@
       <option name="project" value="LOCAL" />
       <updated>1556873850289</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="add unluac for LuaQ file">
+      <created>1556890452846</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1556890452846</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17767504" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -200,14 +853,15 @@
     <MESSAGE value="ren 7zip file done." />
     <MESSAGE value="ren 7zip file &amp;&amp; unzip &amp;&amp; data test" />
     <MESSAGE value="data test for UBI unzip 7z" />
-    <option name="LAST_COMMIT_MESSAGE" value="data test for UBI unzip 7z" />
+    <MESSAGE value="add unluac for LuaQ file" />
+    <option name="LAST_COMMIT_MESSAGE" value="add unluac for LuaQ file" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="161">
-            <caret line="7" column="13" lean-forward="true" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+            <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
           </first_editor>
           <second_editor />
         </state>
@@ -215,8 +869,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rename.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-357">
-          <caret line="46" column="42" selection-start-line="46" selection-start-column="42" selection-end-line="46" selection-end-column="42" />
+        <state relative-caret-position="-483">
+          <caret line="3" column="1" selection-start-line="3" selection-start-column="1" selection-end-line="3" selection-end-column="1" />
         </state>
       </provider>
     </entry>
